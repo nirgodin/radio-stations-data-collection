@@ -6,7 +6,7 @@ from postgres_client import get_database_engine
 from spotipyio import AccessTokenGenerator, SpotifyClient
 from spotipyio.logic.authentication.spotify_grant_type import SpotifyGrantType
 
-from data_collectors import BillboardManager
+from data_collectors import BillboardManager, RadioStationsSnapshotsManager
 from data_collectors.components.collectors import CollectorsComponentFactory
 from data_collectors.components.inserters import InsertersComponentFactory
 
@@ -28,6 +28,14 @@ class ComponentFactory:
             tracks_inserter=self.inserters.billboard.get_tracks_inserter(),
             charts_inserter=self.inserters.billboard.get_charts_inserter(),
             tracks_updater=self.inserters.billboard.get_tracks_updater()
+        )
+
+    def get_radio_snapshots_manager(self, session: ClientSession) -> RadioStationsSnapshotsManager:
+        spotify_client = self.get_spotify_client(session)
+        return RadioStationsSnapshotsManager(
+            spotify_client=spotify_client,
+            spotify_insertions_manager=self.inserters.spotify.get_insertions_manager(spotify_client),
+            radio_tracks_database_inserter=self.inserters.get_radio_tracks_inserter()
         )
 
     @staticmethod

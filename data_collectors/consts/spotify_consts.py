@@ -4,3 +4,4 @@ ARTISTS = 'artists'
 ID = 'id'
 ALBUMS = 'albums'
 TRACKS = "tracks"
+ITEMS = "items"
