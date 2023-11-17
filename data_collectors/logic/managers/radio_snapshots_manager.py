@@ -3,7 +3,7 @@ from typing import List
 from postgres_client import SpotifyArtist, SpotifyStation
 from spotipyio.logic.spotify_client import SpotifyClient
 
-from data_collectors import SpotifyInsertionsManager, RadioTracksDatabaseInserter
+from data_collectors.logic.inserters import SpotifyInsertionsManager, RadioTracksDatabaseInserter
 from data_collectors.consts.spotify_consts import ID, TRACKS, ARTISTS, ITEMS
 from data_collectors.logs import logger
 
