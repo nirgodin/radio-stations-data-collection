@@ -1,0 +1,14 @@
+[tool.poetry]
+name = "data_collectors"
+version = "0.1.0"
+description = ""
+authors = ["nirgodin <70273595+nirgodin@users.noreply.github.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.8,<3.12"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
