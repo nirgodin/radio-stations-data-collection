@@ -33,7 +33,7 @@ class ComponentFactory:
     @staticmethod
     async def get_session() -> ClientSession:
         async with AccessTokenGenerator() as token_generator:
-            response = await token_generator.generate(SpotifyGrantType.CLIENT_CREDENTIALS)
+            response = await token_generator.generate(SpotifyGrantType.CLIENT_CREDENTIALS, None)
 
         access_token = response["access_token"]
         headers = {
