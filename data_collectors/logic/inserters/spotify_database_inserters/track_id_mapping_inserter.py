@@ -2,7 +2,7 @@ from typing import Type, List
 
 from postgres_client import BaseSpotifyORMModel, TrackIDMapping
 
-from data_collectors.inserters.spotify_database_inserters.base_spotify_database_inserter import \
+from data_collectors.logic.inserters.spotify_database_inserters.base_spotify_database_inserter import \
     BaseSpotifyDatabaseInserter
 
 

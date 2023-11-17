@@ -1,4 +1,5 @@
-from data_collectors.inserters import *
+from data_collectors.logic import *
+
 __all__ = [
     # Inserters
     "BillboardChartsDatabaseInserter",

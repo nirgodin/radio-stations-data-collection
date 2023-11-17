@@ -4,7 +4,7 @@ from postgres_client.models.orm.spotify.base_spotify_orm_model import BaseSpotif
 from postgres_client.models.orm.spotify.spotify_track import SpotifyTrack
 
 from data_collectors.consts.spotify_consts import TRACKS
-from data_collectors.inserters.spotify_database_inserters.base_spotify_database_inserter import \
+from data_collectors.logic.inserters.spotify_database_inserters.base_spotify_database_inserter import \
     BaseSpotifyDatabaseInserter
 
 

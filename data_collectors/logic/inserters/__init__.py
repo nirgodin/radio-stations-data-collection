@@ -1,0 +1,3 @@
+from data_collectors.logic.inserters.billboard_database_inserters import *
+from data_collectors.logic.inserters.spotify_database_inserters import *
+from data_collectors.logic.inserters.spotify_insertions_manager import SpotifyInsertionsManager
