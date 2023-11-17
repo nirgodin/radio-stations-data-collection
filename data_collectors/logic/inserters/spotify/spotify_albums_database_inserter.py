@@ -5,7 +5,7 @@ from postgres_client.models.orm.spotify.spotify_album import SpotifyAlbum
 from postgres_client.utils.spotify_utils import extract_artist_id
 
 from data_collectors.consts.spotify_consts import TRACK, ALBUM, ARTISTS, ID, ALBUMS
-from data_collectors.logic.inserters.spotify_database_inserters.base_spotify_database_inserter import \
+from data_collectors.logic.inserters.spotify.base_spotify_database_inserter import \
     BaseSpotifyDatabaseInserter
 
 

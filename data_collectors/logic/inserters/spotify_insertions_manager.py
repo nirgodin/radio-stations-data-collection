@@ -1,7 +1,7 @@
 from typing import List, Dict
 
 from postgres_client import BaseSpotifyORMModel
-from data_collectors.logic.inserters.spotify_database_inserters import *
+from data_collectors.logic.inserters.spotify import *
 
 
 class SpotifyInsertionsManager:
