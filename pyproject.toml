@@ -8,7 +8,7 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = ">=3.8,<3.12"
 postgres-client = {git = "https://github.com/nirgodin/radio-stations-postgres-client.git", rev = "00252e92"}
-spotipyio = {git = "https://github.com/nirgodin/spotipyio.git", rev = "c45226a2"}
+spotipyio = {git = "https://github.com/nirgodin/spotipyio.git", rev = "b92b8cd8"}
 
 
 [build-system]
