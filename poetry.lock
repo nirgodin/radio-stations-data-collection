@@ -690,8 +690,8 @@ sqlalchemy = "<2.0.0"
 [package.source]
 type = "git"
 url = "https://github.com/nirgodin/radio-stations-postgres-client.git"
-reference = "00252e92"
-resolved_reference = "00252e9202b7fd813659ac5072503641d4253eb3"
+reference = "fce7c607"
+resolved_reference = "fce7c607dafea40d9edc335960d78febe7fd12fd"
 
 [[package]]
 name = "requests"
@@ -742,8 +742,8 @@ tqdm = "4.65.0"
 [package.source]
 type = "git"
 url = "https://github.com/nirgodin/spotipyio.git"
-reference = "2cc183cf"
-resolved_reference = "2cc183cffc1781573a263adb5b1a2526f7ebaaf4"
+reference = "5dbaab72"
+resolved_reference = "5dbaab721850927013bdc85c0dbf4413ef6e1548"
 
 [[package]]
 name = "sqlalchemy"
@@ -929,4 +929,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<3.12"
-content-hash = "4381d348d6fbb1ef7dd0e74177bac98cb2b986a3453d61e8e7ca6def0ee89155"
+content-hash = "48384b706e081e250997b6f526852194274f1a37a96278594125a644ba0f8f2e"
