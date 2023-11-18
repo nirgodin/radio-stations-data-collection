@@ -10,13 +10,14 @@ from postgres_client.models.enum.billboard_chart import BillboardChart
 from tqdm import tqdm
 
 from data_collectors.consts.billboard_consts import BILLBOARD_DATETIME_FORMAT, BILLBOARD_DAILY_CHARTS_URL_FORMAT
+from data_collectors.contract.collector_interface import ICollector
 
 
-class BillboardChartsCollector:
+class BillboardChartsCollector(ICollector):
     def __init__(self, session: ClientSession):
         self._session = session
 
-    async def collect(self, dates: List[datetime]):
+    async def collect(self, dates: List[datetime]) -> List[ChartData]:
         pool = AioPool(5)
 
         with tqdm(total=len(dates)) as progress_bar:

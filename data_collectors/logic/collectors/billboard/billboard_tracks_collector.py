@@ -14,14 +14,15 @@ from tqdm import tqdm
 
 from data_collectors.consts.billboard_consts import BILLBOARD_DATETIME_FORMAT
 from data_collectors.consts.spotify_consts import TRACK
+from data_collectors.contract.collector_interface import ICollector
 
 
-class BillboardTracksCollector:
+class BillboardTracksCollector(ICollector):
     def __init__(self, session: ClientSession, spotify_client: SpotifyClient):
         self._session = session
         self._spotify_client = spotify_client
 
-    async def collect(self, charts: List[ChartData]):
+    async def collect(self, charts: List[ChartData]) -> List[ChartEntryData]:
         chart_entries = self._get_flattened_chart_entries(charts)
         pool = AioPool(3)
 
