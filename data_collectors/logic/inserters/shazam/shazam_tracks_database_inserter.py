@@ -7,7 +7,7 @@ from data_collectors.contract.base_database_inserter import BaseDatabaseInserter
 from data_collectors.logs import logger
 
 
-class ShazamTopTracksDatabaseInserter(BaseDatabaseInserter):
+class ShazamTracksDatabaseInserter(BaseDatabaseInserter):
     async def insert(self, locations_tracks: Dict[ShazamLocation, List[dict]]) -> List[ShazamTopTrack]:
         logger.info("Starting to insert shazam top tracks to database")
         records = self._to_records(locations_tracks)
