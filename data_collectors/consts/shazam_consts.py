@@ -1,1 +1,2 @@
 ISRAEL_COUNTRY_CODE = "IL"
+KEY = "key"

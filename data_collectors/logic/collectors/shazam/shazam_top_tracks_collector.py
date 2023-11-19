@@ -6,6 +6,7 @@ from shazamio import Shazam
 from data_collectors.consts.shazam_consts import ISRAEL_COUNTRY_CODE
 from data_collectors.consts.spotify_consts import TRACKS
 from data_collectors.contract.collector_interface import ICollector
+from data_collectors.logs import logger
 
 
 class ShazamTopTracksCollector(ICollector):
@@ -13,14 +14,21 @@ class ShazamTopTracksCollector(ICollector):
         self._shazam = shazam
 
     async def collect(self) -> Dict[ShazamLocation, List[dict]]:
+        logger.info("Starting to execute shazam top tracks collection")
         results = {}
 
         for location, request_method in self._location_to_request_method_mapping.items():
-            response = await request_method
-            tracks = response[TRACKS]
+            tracks = await self._collect_single_location_tracks(location, request_method)
             results[location] = tracks
 
         return results
+
+    @staticmethod
+    async def _collect_single_location_tracks(location: ShazamLocation, request_method: Coroutine) -> List[dict]:
+        logger.info(f"Starting to collect tracks for `{location.value}`")
+        response = await request_method
+
+        return response[TRACKS]
 
     @property
     def _location_to_request_method_mapping(self) -> Dict[ShazamLocation, Coroutine]:
