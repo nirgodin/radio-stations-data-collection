@@ -13,7 +13,7 @@ class AioPoolExecutor:
 
     async def run(self, iterable: Sized, func: Callable[..., Awaitable[Any]]) -> List[Any]:
         with tqdm(total=len(iterable)) as progress_bar:
-            monitored_func = partial(PoolExecutor._execute_single, progress_bar, func)
+            monitored_func = partial(self._execute_single, progress_bar, func)
             return await self._pool.map(monitored_func, iterable)
 
     @staticmethod
