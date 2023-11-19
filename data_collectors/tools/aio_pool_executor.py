@@ -9,12 +9,14 @@ from data_collectors.logs import logger
 
 class AioPoolExecutor:
     def __init__(self, pool_size: int = 5):
-        self._pool = AioPool(pool_size)
+        self._pool_size = pool_size
 
     async def run(self, iterable: Sized, func: Callable[..., Awaitable[Any]]) -> List[Any]:
+        pool = AioPool(self._pool_size)
+
         with tqdm(total=len(iterable)) as progress_bar:
             monitored_func = partial(self._execute_single, progress_bar, func)
-            return await self._pool.map(monitored_func, iterable)
+            return await pool.map(monitored_func, iterable)
 
     @staticmethod
     async def _execute_single(progress_bar: tqdm, func: Callable[..., Awaitable[Any]], value: Any) -> Any:
