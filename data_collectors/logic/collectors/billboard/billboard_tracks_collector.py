@@ -1,39 +1,36 @@
 from datetime import datetime
-from functools import partial
 from typing import List
 
 from aiohttp import ClientSession
-from asyncio_pool import AioPool
 from billboard import ChartData
 from postgres_client import ChartEntryData
 from spotipyio.logic.collectors.search_collectors.search_item import SearchItem
 from spotipyio.logic.collectors.search_collectors.spotify_search_type import SpotifySearchType
 from spotipyio.logic.spotify_client import SpotifyClient
 from spotipyio.utils.spotify_utils import extract_first_search_result
-from tqdm import tqdm
 
 from data_collectors.consts.billboard_consts import BILLBOARD_DATETIME_FORMAT
 from data_collectors.consts.spotify_consts import TRACK
 from data_collectors.contract.collector_interface import ICollector
+from data_collectors.tools import AioPoolExecutor
 
 
 class BillboardTracksCollector(ICollector):
-    def __init__(self, session: ClientSession, spotify_client: SpotifyClient):
+    def __init__(self,
+                 session: ClientSession,
+                 spotify_client: SpotifyClient,
+                 pool_executor: AioPoolExecutor = AioPoolExecutor(3)):
         self._session = session
         self._spotify_client = spotify_client
+        self._pool_executor = pool_executor
 
     async def collect(self, charts: List[ChartData]) -> List[ChartEntryData]:
         chart_entries = self._get_flattened_chart_entries(charts)
-        pool = AioPool(3)
-
-        with tqdm(total=len(chart_entries)) as progress_bar:
-            func = partial(self._collect_single, progress_bar)
-            results = await pool.map(func, chart_entries)
+        results = await self._pool_executor.run(iterable=chart_entries, func=self._collect_single)
 
         return [result for result in results if isinstance(result, ChartEntryData)]
 
-    async def _collect_single(self, progress_bar: tqdm, entry_data: ChartEntryData) -> ChartEntryData:
-        progress_bar.update(1)
+    async def _collect_single(self, entry_data: ChartEntryData) -> ChartEntryData:
         search_item = SearchItem(
             search_types=[SpotifySearchType.TRACK],
             artist=entry_data.entry.artist,
