@@ -6,7 +6,7 @@ from postgres_client.postgres_operations import execute_query, insert_records
 from sqlalchemy import select
 
 from data_collectors.consts.spotify_consts import ID
-from data_collectors.logic.inserters.base_database_inserter import BaseDatabaseInserter
+from data_collectors.contract.base_database_inserter import BaseDatabaseInserter
 from data_collectors.logs import logger
 
 

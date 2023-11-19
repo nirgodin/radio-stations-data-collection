@@ -5,7 +5,7 @@ from postgres_client.utils.spotify_utils import extract_artist_id
 from sqlalchemy import tuple_, select
 
 from data_collectors.consts.spotify_consts import TRACK, ID
-from data_collectors.logic.inserters.base_database_inserter import BaseDatabaseInserter
+from data_collectors.contract.base_database_inserter import BaseDatabaseInserter
 from data_collectors.logs import logger
 
 

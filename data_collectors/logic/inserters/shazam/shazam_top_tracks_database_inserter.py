@@ -3,7 +3,7 @@ from typing import List, Dict
 from postgres_client import ShazamTopTrack, ShazamLocation, insert_records
 
 from data_collectors.consts.shazam_consts import KEY
-from data_collectors.logic.inserters.base_database_inserter import BaseDatabaseInserter
+from data_collectors.contract.base_database_inserter import BaseDatabaseInserter
 from data_collectors.logs import logger
 
 
