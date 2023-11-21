@@ -20,7 +20,7 @@ __all__ = [
     "SpotifyInsertionsManager",
 
     # Shazam
-    "ShazamTracksDatabaseInserter",
+    "ShazamTopTracksDatabaseInserter",
 
     # Other
     "RadioTracksDatabaseInserter"
