@@ -1,34 +1,31 @@
-from typing import List, Dict, Coroutine
+from typing import List, Dict, Coroutine, Tuple
 
 from postgres_client import ShazamLocation
-from shazamio import Shazam
 
 from data_collectors.consts.shazam_consts import ISRAEL_COUNTRY_CODE
 from data_collectors.consts.spotify_consts import TRACKS
-from data_collectors.contract.collector_interface import ICollector
+from data_collectors.logic.collectors.shazam.base_shazam_collector import BaseShazamCollector
+from data_collectors.logic.utils.dict_utils import merge_dicts
 from data_collectors.logs import logger
 
 
-class ShazamTopTracksCollector(ICollector):
-    def __init__(self, shazam: Shazam = Shazam()):
-        self._shazam = shazam
-
+class ShazamTopTracksCollector(BaseShazamCollector):
     async def collect(self) -> Dict[ShazamLocation, List[dict]]:
         logger.info("Starting to execute shazam top tracks collection")
-        results = {}
+        results = await self._pool_executor.run(
+            iterable=self._location_to_request_method_mapping.items(),
+            func=self._collect_single_location_tracks
+        )
 
-        for location, request_method in self._location_to_request_method_mapping.items():
-            tracks = await self._collect_single_location_tracks(location, request_method)
-            results[location] = tracks
-
-        return results
+        return merge_dicts(*results)
 
     @staticmethod
-    async def _collect_single_location_tracks(location: ShazamLocation, request_method: Coroutine) -> List[dict]:
+    async def _collect_single_location_tracks(location_and_request_method: Tuple[ShazamLocation, Coroutine]) -> Dict[ShazamLocation, List[dict]]:
+        location, request_method = location_and_request_method
         logger.info(f"Starting to collect tracks for `{location.value}`")
         response = await request_method
 
-        return response[TRACKS]
+        return {location: response[TRACKS]}
 
     @property
     def _location_to_request_method_mapping(self) -> Dict[ShazamLocation, Coroutine]:

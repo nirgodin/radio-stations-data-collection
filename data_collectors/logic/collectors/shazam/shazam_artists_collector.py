@@ -1,22 +1,16 @@
 from typing import Any, List, Dict, Optional
 
-from shazamio import Shazam
 from shazamio.schemas.artists import ArtistQuery
 from shazamio.schemas.enums import ArtistView, ArtistExtend
 
 from data_collectors.consts.shazam_consts import ADAM_ID, KEY
 from data_collectors.consts.spotify_consts import ARTISTS
-from data_collectors.contract.collector_interface import ICollector
+from data_collectors.logic.collectors.shazam.base_shazam_collector import BaseShazamCollector
 from data_collectors.logic.utils import get_all_enum_values
 from data_collectors.logs import logger
-from data_collectors.tools import AioPoolExecutor
 
 
-class ShazamArtistsCollector(ICollector):
-    def __init__(self, shazam: Shazam = Shazam(language="EN"), pool_executor: AioPoolExecutor = AioPoolExecutor()):
-        self._shazam = shazam
-        self._pool_executor = pool_executor
-
+class ShazamArtistsCollector(BaseShazamCollector):
     async def collect(self, tracks: List[dict]) -> Any:
         logger.info(f"Starting to collect Shazam artists for {len(tracks)} tracks")
         results = await self._pool_executor.run(iterable=tracks, func=self._extract_single_track_artist)
