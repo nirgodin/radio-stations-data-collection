@@ -16,6 +16,7 @@ class ShazamTopTracksCollector(BaseShazamCollector):
             iterable=self._location_to_request_method_mapping.items(),
             func=self._collect_single_location_tracks
         )
+        logger.info("Successfully finished executing shazam top tracks collector")
 
         return merge_dicts(*results)
 

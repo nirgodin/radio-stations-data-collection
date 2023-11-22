@@ -1,32 +1,24 @@
-import asyncio
 from itertools import chain
 
 from data_collectors import ShazamTopTracksCollector, ShazamTopTracksDatabaseInserter
-from data_collectors.components import ComponentFactory
-from data_collectors.logic.collectors.shazam.shazam_artists_collector import ShazamArtistsCollector
+from data_collectors.consts.spotify_consts import ID
+from data_collectors.logic.inserters import ShazamInsertionsManager
+from data_collectors.logs import logger
 
 
 class ShazamTopTracksManager:
     def __init__(self,
                  shazam_top_tracks_collector: ShazamTopTracksCollector,
-                 shazam_artists_collector: ShazamArtistsCollector,
-                 shazam_tracks_inserter: ShazamTopTracksDatabaseInserter):
+                 shazam_insertions_manager: ShazamInsertionsManager,
+                 shazam_top_tracks_inserter: ShazamTopTracksDatabaseInserter):
         self._top_tracks_collector = shazam_top_tracks_collector
-        self._artists_collector = shazam_artists_collector
-        self._tracks_inserter = shazam_tracks_inserter
+        self._insertions_manager = shazam_insertions_manager
+        self._top_tracks_inserter = shazam_top_tracks_inserter
 
     async def run(self):
+        logger.info("Starting to run shazam top tracks manager")
         top_tracks = await self._top_tracks_collector.collect()
         flattened_tracks = list(chain.from_iterable(top_tracks.values()))
-        artists = await self._artists_collector.collect(flattened_tracks)
-
-
-if __name__ == '__main__':
-    component_factory = ComponentFactory()
-    manager = ShazamTopTracksManager(
-        shazam_top_tracks_collector=component_factory.collectors.shazam.get_top_tracks_collector(),
-        shazam_artists_collector=component_factory.collectors.shazam.get_artists_collector(),
-        shazam_tracks_inserter=component_factory.inserters.shazam.get_top_tracks_inserter()
-    )
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(manager.run())
+        tracks_ids = [track[ID] for track in flattened_tracks]
+        await self._insertions_manager.insert(tracks_ids)
+        await self._top_tracks_inserter.insert(top_tracks)
