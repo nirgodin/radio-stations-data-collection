@@ -820,8 +820,8 @@ sqlalchemy = "<2.0.0"
 [package.source]
 type = "git"
 url = "https://github.com/nirgodin/radio-stations-postgres-client.git"
-reference = "e86601ea"
-resolved_reference = "e86601ea75285d2caac2b4c9541b300ed296decf"
+reference = "998aaaef"
+resolved_reference = "998aaaef\n"
 
 [[package]]
 name = "pydantic"
@@ -1217,4 +1217,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<3.12"
-content-hash = "62625571b77904aa83ee8a29c44bef9ca2dcf13926bd0b20fc968cc148d92922"
+content-hash = "8208bdcee7fb9b0c6168e95cda736642b8c80282a105aa0ab1e9af273147e3c7"

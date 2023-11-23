@@ -2,7 +2,7 @@ from typing import Dict, List
 
 from postgres_client import BaseORMModel
 
-from data_collectors import ShazamArtistsCollector, ShazamTracksCollector
+from data_collectors.logic.collectors import ShazamArtistsCollector, ShazamTracksCollector
 from data_collectors.logic.inserters.shazam.shazam_artists_database_inserter import ShazamArtistsDatabaseInserter
 from data_collectors.logic.inserters.shazam.shazam_tracks_database_inserter import ShazamTracksDatabaseInserter
 from data_collectors.logs import logger

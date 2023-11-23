@@ -1,5 +1,5 @@
 from typing import List, Dict
-
+from datetime import date
 from postgres_client import ShazamTopTrack, ShazamLocation, insert_records
 
 from data_collectors.consts.shazam_consts import KEY
@@ -18,22 +18,24 @@ class ShazamTopTracksDatabaseInserter(BaseDatabaseInserter):
 
     def _to_records(self, locations_tracks: Dict[ShazamLocation, List[dict]]) -> List[ShazamTopTrack]:
         records = []
+        today = date.today()
 
         for location, tracks in locations_tracks.items():
-            location_records = self._get_location_records(location, tracks)
+            location_records = self._get_location_records(location, tracks, today)
             records.extend(location_records)
 
         return records
 
     @staticmethod
-    def _get_location_records(location: ShazamLocation, tracks: List[dict]) -> List[ShazamTopTrack]:
+    def _get_location_records(location: ShazamLocation, tracks: List[dict], today: date) -> List[ShazamTopTrack]:
         logger.info(f"Turning `{location.value}` tracks to ORM records")
         records = []
 
         for i, track in enumerate(tracks):
             record = ShazamTopTrack(
-                shazam_id=track[KEY],
+                track_id=track[KEY],
                 location=location,
+                date=today,
                 position=i+1
             )
             records.append(record)
