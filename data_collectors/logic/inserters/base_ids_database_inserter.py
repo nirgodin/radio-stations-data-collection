@@ -15,7 +15,8 @@ class BaseIDsDatabaseInserter(BaseDatabaseInserter, ABC):
         logger.info(f"Starting to run {self.__class__.__name__}")
         raw_records = await self._get_raw_records(iterable)
         records = [getattr(self._orm, self._serialization_method)(record) for record in raw_records]
-        unique_records = self._filter_duplicate_ids(records)
+        valid_records = [record for record in records if isinstance(record, BaseORMModel)]
+        unique_records = self._filter_duplicate_ids(valid_records)
         existing_ids = await self._query_existing_ids(unique_records)
         await self._insert_non_existing_records(unique_records, existing_ids)
 
