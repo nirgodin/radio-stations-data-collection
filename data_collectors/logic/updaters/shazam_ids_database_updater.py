@@ -6,7 +6,7 @@ from data_collectors.contract import BaseDatabaseUpdater
 from data_collectors.logs import logger
 
 
-class ShazamIDsDatabaseDsUpdater(BaseDatabaseUpdater):
+class ShazamIDsDatabaseUpdater(BaseDatabaseUpdater):
     async def update(self, ids_mapping: Dict[str, Optional[str]]) -> None:
         logger.info(f"Starting to update shazam ids in tracks_ids_mapping table for {len(ids_mapping)} records")
         await self._update_by_mapping(

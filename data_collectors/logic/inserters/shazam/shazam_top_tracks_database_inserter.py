@@ -11,7 +11,7 @@ class ShazamTopTracksDatabaseInserter(BaseDatabaseInserter):
     async def insert(self, locations_tracks: Dict[ShazamLocation, List[dict]]) -> List[ShazamTopTrack]:
         logger.info("Starting to insert shazam top tracks to database")
         records = self._to_records(locations_tracks)
-        await insert_records(engine=self._db_engine, records=records)
+        await insert_records(engine=self._db_engine, records=records)  # TODO: Add base class that handles UniqueConstraint existing records
         logger.info("Successfully inserted shazam top tracks to database")
 
         return records

@@ -1,13 +1,13 @@
 from typing import List, Dict, Optional
 
 from postgres_client import TrackIDMapping, SpotifyTrack, SpotifyArtist, execute_query
-from sqlalchemy import select, update, case
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncEngine
 
-from data_collectors import ShazamIDsDatabaseDsUpdater
-from data_collectors.logic.inserters import ShazamInsertionsManager
+from data_collectors.logic.updaters import ShazamIDsDatabaseUpdater
 from data_collectors.contract import IManager
 from data_collectors.logic.collectors.shazam import ShazamSearchCollector
+from data_collectors.logic.inserters import ShazamInsertionsManager
 from data_collectors.logic.models import MissingTrack
 from data_collectors.logs import logger
 
@@ -27,7 +27,7 @@ class ShazamMissingTracksManager(IManager):
                  db_engine: AsyncEngine,
                  search_collector: ShazamSearchCollector,
                  insertions_manager: ShazamInsertionsManager,
-                 ids_updater: ShazamIDsDatabaseDsUpdater,
+                 ids_updater: ShazamIDsDatabaseUpdater,
                  limit: int):
         self._db_engine = db_engine
         self._search_collector = search_collector
