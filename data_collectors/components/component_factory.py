@@ -8,7 +8,7 @@ from spotipyio import AccessTokenGenerator, SpotifyClient
 from spotipyio.logic.authentication.spotify_grant_type import SpotifyGrantType
 
 from data_collectors import BillboardManager, RadioStationsSnapshotsManager, ShazamTopTracksManager, \
-    ShazamInsertionsManager
+    ShazamInsertionsManager, ShazamMissingTracksManager
 from data_collectors.components.collectors import CollectorsComponentFactory
 from data_collectors.components.inserters import InsertersComponentFactory
 from data_collectors.tools import AioPoolExecutor
@@ -29,6 +29,17 @@ class ComponentFactory:
             top_tracks_collector=self.collectors.shazam.get_top_tracks_collector(shazam, pool_executor),
             insertions_manager=self.get_insertions_manager(shazam, pool_executor),
             top_tracks_inserter=self.inserters.shazam.get_top_tracks_inserter()
+        )
+
+    def get_shazam_missing_tracks_manager(self, limit: int) -> ShazamMissingTracksManager:
+        shazam = Shazam("EN")
+        pool_executor = AioPoolExecutor()
+
+        return ShazamMissingTracksManager(
+            db_engine=get_database_engine(),
+            search_collector=self.collectors.shazam.get_search_collector(shazam, pool_executor),
+            insertions_manager=self.get_insertions_manager(shazam, pool_executor),
+            limit=limit
         )
 
     def get_insertions_manager(self, shazam: Shazam, pool_executor: AioPoolExecutor) -> ShazamInsertionsManager:
