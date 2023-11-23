@@ -10,6 +10,7 @@ from data_collectors.contract import IManager
 from data_collectors.logic.collectors.billboard import *
 from data_collectors.logic.inserters.billboard import *
 from data_collectors.logic.inserters import SpotifyInsertionsManager
+from data_collectors.logic.updaters import BillboardTracksDatabaseUpdater
 
 
 class BillboardManager(IManager):
@@ -20,7 +21,7 @@ class BillboardManager(IManager):
                  spotify_insertions_manager: SpotifyInsertionsManager,
                  tracks_inserter: BillboardTracksDatabaseInserter,
                  charts_inserter: BillboardChartsDatabaseInserter,
-                 tracks_updater: BillboardTracksUpdater):
+                 tracks_updater: BillboardTracksDatabaseUpdater):
         self._db_engine = db_engine
         self._charts_collector = charts_collector
         self._tracks_collector = tracks_collector

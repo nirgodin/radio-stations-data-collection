@@ -4,6 +4,7 @@ from postgres_client import TrackIDMapping, SpotifyTrack, SpotifyArtist, execute
 from sqlalchemy import select, update, case
 from sqlalchemy.ext.asyncio import AsyncEngine
 
+from data_collectors import ShazamIDsDatabaseDsUpdater
 from data_collectors.logic.inserters import ShazamInsertionsManager
 from data_collectors.contract import IManager
 from data_collectors.logic.collectors.shazam import ShazamSearchCollector
@@ -26,10 +27,12 @@ class ShazamMissingTracksManager(IManager):
                  db_engine: AsyncEngine,
                  search_collector: ShazamSearchCollector,
                  insertions_manager: ShazamInsertionsManager,
+                 ids_updater: ShazamIDsDatabaseDsUpdater,
                  limit: int):
         self._db_engine = db_engine
         self._search_collector = search_collector
         self._insertions_manager = insertions_manager
+        self._ids_updater = ids_updater
         self._limit = limit
 
     async def run(self):
@@ -82,17 +85,4 @@ class ShazamMissingTracksManager(IManager):
     async def _insert_records(self, matched_ids: Dict[str, Optional[str]]) -> None:
         non_missing_shazam_ids = [shazam_id for shazam_id in matched_ids.values() if shazam_id is not None]
         await self._insertions_manager.insert(non_missing_shazam_ids)
-        update_query = (
-            update(TrackIDMapping)
-            .where(TrackIDMapping.id.in_(matched_ids.keys()))
-            .values(
-                {
-                    TrackIDMapping.shazam_id: case(
-                        matched_ids, value=TrackIDMapping.id
-                    )
-                }
-            )
-        )
-        logger.info("Updating shazam ids in tracks_ids_mapping table")
-
-        await execute_query(engine=self._db_engine, query=update_query)
+        await self._ids_updater.update(matched_ids)

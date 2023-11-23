@@ -11,15 +11,18 @@ from data_collectors import BillboardManager, RadioStationsSnapshotsManager, Sha
     ShazamInsertionsManager, ShazamMissingTracksManager
 from data_collectors.components.collectors import CollectorsComponentFactory
 from data_collectors.components.inserters import InsertersComponentFactory
+from data_collectors.components.updaters import UpdatersComponentFactory
 from data_collectors.tools import AioPoolExecutor
 
 
 class ComponentFactory:
     def __init__(self,
                  collectors: CollectorsComponentFactory = CollectorsComponentFactory(),
-                 inserters: InsertersComponentFactory = InsertersComponentFactory()):
+                 inserters: InsertersComponentFactory = InsertersComponentFactory(),
+                 updaters: UpdatersComponentFactory = UpdatersComponentFactory()):
         self.collectors = collectors
         self.inserters = inserters
+        self.updaters = updaters
 
     def get_shazam_top_tracks_manager(self) -> ShazamTopTracksManager:
         shazam = Shazam("EN")
@@ -39,6 +42,7 @@ class ComponentFactory:
             db_engine=get_database_engine(),
             search_collector=self.collectors.shazam.get_search_collector(shazam, pool_executor),
             insertions_manager=self.get_insertions_manager(shazam, pool_executor),
+            ids_updater=self.updaters.get_shazam_ids_updater(),
             limit=limit
         )
 
@@ -59,7 +63,7 @@ class ComponentFactory:
             spotify_insertions_manager=self.inserters.spotify.get_insertions_manager(spotify_client),
             tracks_inserter=self.inserters.billboard.get_tracks_inserter(),
             charts_inserter=self.inserters.billboard.get_charts_inserter(),
-            tracks_updater=self.inserters.billboard.get_tracks_updater()
+            tracks_updater=self.updaters.get_billboard_tracks_updater()
         )
 
     def get_radio_snapshots_manager(self, session: ClientSession) -> RadioStationsSnapshotsManager:

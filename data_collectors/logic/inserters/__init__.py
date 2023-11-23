@@ -9,7 +9,6 @@ __all__ = [
     # Billboard
     "BillboardChartsDatabaseInserter",
     "BillboardTracksDatabaseInserter",
-    "BillboardTracksUpdater",
 
     # Spotify
     "SpotifyAlbumsDatabaseInserter",
