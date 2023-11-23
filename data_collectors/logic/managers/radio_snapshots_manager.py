@@ -5,10 +5,11 @@ from spotipyio.logic.spotify_client import SpotifyClient
 
 from data_collectors.logic.inserters import SpotifyInsertionsManager, RadioTracksDatabaseInserter
 from data_collectors.consts.spotify_consts import ID, TRACKS, ARTISTS, ITEMS
+from data_collectors.contract import IManager
 from data_collectors.logs import logger
 
 
-class RadioStationsSnapshotsManager:
+class RadioStationsSnapshotsManager(IManager):
     def __init__(self,
                  spotify_client: SpotifyClient,
                  spotify_insertions_manager: SpotifyInsertionsManager,
@@ -17,7 +18,7 @@ class RadioStationsSnapshotsManager:
         self._spotify_insertions_manager = spotify_insertions_manager
         self._radio_tracks_database_inserter = radio_tracks_database_inserter
 
-    async def collect(self, stations: List[SpotifyStation]) -> None:
+    async def run(self, stations: List[SpotifyStation]) -> None:
         logger.info('Starting to run `RadioStationsSnapshotsCollector`')
         playlists_ids = [station.value for station in stations]
         playlists = await self._spotify_client.playlists.collect(playlists_ids)

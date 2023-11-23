@@ -1,14 +1,14 @@
 from itertools import chain
 
+from data_collectors.contract import IManager
 from data_collectors.consts.shazam_consts import KEY
-from data_collectors.logic.inserters import ShazamTopTracksDatabaseInserter
 from data_collectors.logic.collectors import ShazamTopTracksCollector
-from data_collectors.consts.spotify_consts import ID
 from data_collectors.logic.inserters import ShazamInsertionsManager
+from data_collectors.logic.inserters import ShazamTopTracksDatabaseInserter
 from data_collectors.logs import logger
 
 
-class ShazamTopTracksManager:
+class ShazamTopTracksManager(IManager):
     def __init__(self,
                  top_tracks_collector: ShazamTopTracksCollector,
                  insertions_manager: ShazamInsertionsManager,

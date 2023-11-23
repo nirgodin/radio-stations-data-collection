@@ -6,12 +6,13 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncEngine
 
 from data_collectors.consts.billboard_consts import FIRST_BILLBOARD_CHART_DATE
+from data_collectors.contract import IManager
 from data_collectors.logic.collectors.billboard import *
 from data_collectors.logic.inserters.billboard import *
 from data_collectors.logic.inserters import SpotifyInsertionsManager
 
 
-class BillboardManager:
+class BillboardManager(IManager):
     def __init__(self,
                  db_engine: AsyncEngine,
                  charts_collector: BillboardChartsCollector,
@@ -28,7 +29,7 @@ class BillboardManager:
         self._charts_inserter = charts_inserter
         self._tracks_updater = tracks_updater
 
-    async def collect(self, dates: List[datetime] = None) -> None:
+    async def run(self, dates: List[datetime] = None) -> None:
         if dates is None:
             dates = await self._retrieve_next_missing_date()
 
