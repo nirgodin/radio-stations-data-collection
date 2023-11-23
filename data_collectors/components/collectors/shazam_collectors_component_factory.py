@@ -1,12 +1,19 @@
-from data_collectors import ShazamTopTracksCollector
+from shazamio import Shazam
+
+from data_collectors import ShazamTopTracksCollector, ShazamTracksCollector
 from data_collectors.logic.collectors.shazam.shazam_artists_collector import ShazamArtistsCollector
+from data_collectors.tools import AioPoolExecutor
 
 
 class ShazamCollectorsComponentFactory:
     @staticmethod
-    def get_top_tracks_collector() -> ShazamTopTracksCollector:
-        return ShazamTopTracksCollector()
+    def get_top_tracks_collector(shazam: Shazam, pool_executor: AioPoolExecutor) -> ShazamTopTracksCollector:
+        return ShazamTopTracksCollector(shazam, pool_executor)
 
     @staticmethod
-    def get_artists_collector() -> ShazamArtistsCollector:
-        return ShazamArtistsCollector()
+    def get_artists_collector(shazam: Shazam, pool_executor: AioPoolExecutor) -> ShazamArtistsCollector:
+        return ShazamArtistsCollector(shazam, pool_executor)
+
+    @staticmethod
+    def get_tracks_collector(shazam: Shazam, pool_executor: AioPoolExecutor) -> ShazamTracksCollector:
+        return ShazamTracksCollector(shazam, pool_executor)

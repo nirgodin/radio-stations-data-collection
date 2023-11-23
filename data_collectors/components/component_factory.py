@@ -3,12 +3,15 @@ from ssl import create_default_context
 from aiohttp import ClientSession, TCPConnector, CookieJar
 from certifi import where
 from postgres_client import get_database_engine
+from shazamio import Shazam
 from spotipyio import AccessTokenGenerator, SpotifyClient
 from spotipyio.logic.authentication.spotify_grant_type import SpotifyGrantType
 
-from data_collectors import BillboardManager, RadioStationsSnapshotsManager
+from data_collectors import BillboardManager, RadioStationsSnapshotsManager, ShazamTopTracksManager, \
+    ShazamInsertionsManager
 from data_collectors.components.collectors import CollectorsComponentFactory
 from data_collectors.components.inserters import InsertersComponentFactory
+from data_collectors.tools import AioPoolExecutor
 
 
 class ComponentFactory:
@@ -17,6 +20,24 @@ class ComponentFactory:
                  inserters: InsertersComponentFactory = InsertersComponentFactory()):
         self.collectors = collectors
         self.inserters = inserters
+
+    def get_shazam_top_tracks_manager(self) -> ShazamTopTracksManager:
+        shazam = Shazam("EN")
+        pool_executor = AioPoolExecutor()
+
+        return ShazamTopTracksManager(
+            top_tracks_collector=self.collectors.shazam.get_top_tracks_collector(shazam, pool_executor),
+            insertions_manager=self.get_insertions_manager(shazam, pool_executor),
+            top_tracks_inserter=self.inserters.shazam.get_top_tracks_inserter()
+        )
+
+    def get_insertions_manager(self, shazam: Shazam, pool_executor: AioPoolExecutor) -> ShazamInsertionsManager:
+        return ShazamInsertionsManager(
+            artists_collector=self.collectors.shazam.get_artists_collector(shazam, pool_executor),
+            tracks_collector=self.collectors.shazam.get_tracks_collector(shazam, pool_executor),
+            artists_inserter=self.inserters.shazam.get_artists_inserter(),
+            tracks_inserter=self.inserters.shazam.get_tracks_inserter()
+        )
 
     def get_billboard_manager(self, session: ClientSession) -> BillboardManager:
         spotify_client = self.get_spotify_client(session)

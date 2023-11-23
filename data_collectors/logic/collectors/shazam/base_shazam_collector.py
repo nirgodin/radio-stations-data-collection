@@ -7,6 +7,6 @@ from data_collectors.tools import AioPoolExecutor
 
 
 class BaseShazamCollector(ICollector, ABC):
-    def __init__(self, shazam: Shazam = Shazam("EN"), pool_executor: AioPoolExecutor = AioPoolExecutor()):
+    def __init__(self, shazam: Shazam, pool_executor: AioPoolExecutor):
         self._shazam = shazam
         self._pool_executor = pool_executor
