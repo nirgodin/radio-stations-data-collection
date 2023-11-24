@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import List, Type, Iterable, Any
 
 from postgres_client import BaseORMModel
-from postgres_client.postgres_operations import execute_query, insert_records
+from postgres_client.postgres_operations import execute_query, insert_records_ignoring_conflicts
 from sqlalchemy import select
 
 from data_collectors.consts.spotify_consts import ID
@@ -74,7 +74,7 @@ class BaseIDsDatabaseInserter(BaseDatabaseInserter, ABC):
 
         if non_existing_records:
             logger.info(f"Inserting {len(non_existing_records)} records to table {self._orm.__tablename__}")
-            await insert_records(engine=self._db_engine, records=non_existing_records)
+            await insert_records_ignoring_conflicts(engine=self._db_engine, records=non_existing_records)
 
         self._log_summary(records, non_existing_records)
 
