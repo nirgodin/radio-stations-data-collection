@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import List, Type, Iterable, Any
 
-from postgres_client import BaseORMModel
+from postgres_client import BaseORMModel, query_existing_column_values
 from postgres_client.postgres_operations import execute_query, insert_records_ignoring_conflicts
 from sqlalchemy import select
 
@@ -55,15 +55,15 @@ class BaseIDsDatabaseInserter(BaseDatabaseInserter, ABC):
 
     async def _query_existing_ids(self, records: List[BaseORMModel]) -> List[str]:
         logger.info(f"Querying database to find existing ids for table `{self._orm.__tablename__}`")
-        records_ids = [record.id for record in records]
-        id_column = getattr(self._orm, ID)
-        query = (
-            select(id_column)
-            .where(id_column.in_(records_ids))
+        existing_ids = await query_existing_column_values(
+            orm=self._orm,
+            column_name=ID,
+            records=records,
+            engine=self._db_engine
         )
-        query_result = await execute_query(engine=self._db_engine, query=query)
+        logger.info(f"Found {len(existing_ids)} existing record in table `{self._orm.__tablename__}`")
 
-        return query_result.scalars().all()
+        return existing_ids
 
     async def _insert_non_existing_records(self, records: List[BaseORMModel], existing_ids: List[str]) -> None:
         non_existing_records = []
