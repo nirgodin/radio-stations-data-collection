@@ -7,7 +7,7 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = ">=3.8,<3.12"
-postgres-client = {git = "https://github.com/nirgodin/radio-stations-postgres-client.git", rev = "bc3edd05"}
+postgres-client = {git = "https://github.com/nirgodin/radio-stations-postgres-client.git", rev = "a396a0e2"}
 spotipyio = {git = "https://github.com/nirgodin/spotipyio.git", rev = "5dbaab72"}
 shazamio = "^0.4.0.1"
 asyncio-pool = "^0.6.0"
