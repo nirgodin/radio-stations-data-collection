@@ -1,4 +1,5 @@
 from ssl import create_default_context
+from typing import Optional
 
 from aiohttp import ClientSession, TCPConnector, CookieJar
 from certifi import where
@@ -6,6 +7,7 @@ from postgres_client import get_database_engine
 from shazamio import Shazam
 from spotipyio import AccessTokenGenerator, SpotifyClient
 from spotipyio.logic.authentication.spotify_grant_type import SpotifyGrantType
+from spotipyio.logic.authentication.spotify_session import SpotifySession
 
 from data_collectors import BillboardManager, RadioStationsSnapshotsManager, ShazamTopTracksManager, \
     ShazamInsertionsManager, ShazamMissingIDsManager
@@ -68,19 +70,19 @@ class ComponentFactory:
             tracks_inserter=self.inserters.shazam.get_tracks_inserter()
         )
 
-    def get_billboard_manager(self, session: ClientSession) -> BillboardManager:
-        spotify_client = self.get_spotify_client(session)
+    def get_billboard_manager(self, spotify_session: SpotifySession, client_session: ClientSession) -> BillboardManager:
+        spotify_client = self.get_spotify_client(spotify_session)
         return BillboardManager(
             db_engine=get_database_engine(),
-            charts_collector=self.collectors.billboard.get_charts_collector(session),
-            tracks_collector=self.collectors.billboard.get_tracks_collector(session, spotify_client),
+            charts_collector=self.collectors.billboard.get_charts_collector(client_session),
+            tracks_collector=self.collectors.billboard.get_tracks_collector(client_session, spotify_client),
             spotify_insertions_manager=self.inserters.spotify.get_insertions_manager(spotify_client),
             tracks_inserter=self.inserters.billboard.get_tracks_inserter(),
             charts_inserter=self.inserters.billboard.get_charts_inserter(),
             tracks_updater=self.updaters.get_billboard_tracks_updater()
         )
 
-    def get_radio_snapshots_manager(self, session: ClientSession) -> RadioStationsSnapshotsManager:
+    def get_radio_snapshots_manager(self, session: SpotifySession) -> RadioStationsSnapshotsManager:
         spotify_client = self.get_spotify_client(session)
         return RadioStationsSnapshotsManager(
             spotify_client=spotify_client,
@@ -89,24 +91,10 @@ class ComponentFactory:
         )
 
     @staticmethod
-    async def get_session() -> ClientSession:
-        async with AccessTokenGenerator() as token_generator:
-            response = await token_generator.generate(SpotifyGrantType.CLIENT_CREDENTIALS, None)
-
-        access_token = response["access_token"]
-        headers = {
-            "Accept": "application/json",
-            "Content-Type": "application/json",
-            "Authorization": f"Bearer {access_token}"
-        }
-        ssl_context = create_default_context(cafile=where())
-
-        return ClientSession(
-            headers=headers,  # TODO: Replace later with SpotifySession
-            connector=TCPConnector(ssl=ssl_context),
-            cookie_jar=CookieJar(quote_cookie=False)
-        )
+    async def get_spotify_session(grant_type: SpotifyGrantType = SpotifyGrantType.CLIENT_CREDENTIALS,
+                                  access_code: Optional[str] = None) -> SpotifySession:
+        return await SpotifySession().__aenter__(grant_type, access_code)
 
     @staticmethod
-    def get_spotify_client(session: ClientSession) -> SpotifyClient:
+    def get_spotify_client(session: SpotifySession) -> SpotifyClient:
         return SpotifyClient.create(session)

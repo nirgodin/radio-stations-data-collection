@@ -1008,8 +1008,8 @@ tqdm = "4.65.0"
 [package.source]
 type = "git"
 url = "https://github.com/nirgodin/spotipyio.git"
-reference = "fbd9611d"
-resolved_reference = "fbd9611d08f9a5902ed7160984e4d616d3d3b3b3"
+reference = "02cde4a4"
+resolved_reference = "02cde4a4329d78ccebcc37e6c86416632d6d21c9"
 
 [[package]]
 name = "sqlalchemy"
@@ -1233,4 +1233,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<3.12"
-content-hash = "5a33d35c201fc8f27247af06dbaf57e4d58a71d3d21a508fb5a73a04eac474a8"
+content-hash = "60febf19d95816450e81f3454b329e402516803e627868ed909f119ec9c08d39"
