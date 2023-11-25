@@ -9,7 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncEngine
 from data_collectors.consts.spotify_consts import TRACK, ID
 from data_collectors.logic.inserters.spotify.base_spotify_database_inserter import \
     BaseSpotifyDatabaseInserter
-from data_collectors.logic.utils.dict_utils import safe_nested_get
+from data_collectors.logic.utils import safe_nested_get
 
 
 class SpotifyAudioFeaturesDatabaseInserter(BaseSpotifyDatabaseInserter):
