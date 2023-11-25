@@ -14,7 +14,8 @@ class ShazamTopTracksCollector(BaseShazamCollector):
         logger.info("Starting to execute shazam top tracks collection")
         results = await self._pool_executor.run(
             iterable=self._location_to_request_method_mapping.items(),
-            func=self._collect_single_location_tracks
+            func=self._collect_single_location_tracks,
+            expected_type=dict
         )
         logger.info("Successfully finished executing shazam top tracks collector")
 

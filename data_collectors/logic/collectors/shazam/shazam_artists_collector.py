@@ -11,11 +11,11 @@ from data_collectors.logs import logger
 class ShazamArtistsCollector(BaseShazamCollector):
     async def collect(self, ids: List[str]) -> Any:
         logger.info(f"Starting to collect {len(ids)} Shazam artists")
-        results = await self._pool_executor.run(iterable=ids, func=self._extract_single_track_artist)
-        valid_results = [result for result in results if isinstance(result, dict)]
-        logger.info(f"Successfully retrieved {len(valid_results)} Shazam artists from {len(ids)} tracks")
-
-        return valid_results
+        return await self._pool_executor.run(
+            iterable=ids,
+            func=self._extract_single_track_artist,
+            expected_type=dict
+        )
 
     async def _extract_single_track_artist(self, artist_id: Tuple[dict, str]) -> Optional[dict]:
         if artist_id is None:

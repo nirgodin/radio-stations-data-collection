@@ -8,7 +8,7 @@ from data_collectors.logs import logger
 
 
 class AioPoolExecutor:
-    def __init__(self, pool_size: int = 5, validate_results: bool = False):
+    def __init__(self, pool_size: int = 5, validate_results: bool = True):
         self._pool_size = pool_size
         self._validate_results = validate_results
 
@@ -23,7 +23,7 @@ class AioPoolExecutor:
             results = await pool.map(monitored_func, iterable)
 
         if self._validate_results:
-            return [result for result in results if isinstance(result, expected_type)]
+            return self._filter_out_invalid_results(results, expected_type)
 
         return results
 
@@ -38,3 +38,10 @@ class AioPoolExecutor:
 
         finally:
             progress_bar.update(1)
+
+    @staticmethod
+    def _filter_out_invalid_results(results: List[Any], expected_type: Type) -> List[Any]:
+        valid_results = [result for result in results if isinstance(result, expected_type)]
+        logger.info(f"Successfully retrieved {len(valid_results)} valid results out of {len(results)} total requests")
+
+        return valid_results

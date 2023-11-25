@@ -13,7 +13,8 @@ class ShazamSearchCollector(BaseShazamCollector):
         logger.info(f"Starting to search shazam for {n_queries} queries")
         results = await self._pool_executor.run(
             iterable=queries,
-            func=self._search_single_track
+            func=self._search_single_track,
+            expected_type=dict
         )
         valid_results = [result for result in results if isinstance(result, dict)]
         logger.info(f"Got {len(valid_results)} valid results from shazam search collector out of {n_queries}")

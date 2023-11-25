@@ -19,16 +19,18 @@ class BillboardTracksCollector(ICollector):
     def __init__(self,
                  session: ClientSession,
                  spotify_client: SpotifyClient,
-                 pool_executor: AioPoolExecutor = AioPoolExecutor(3)):
+                 pool_executor: AioPoolExecutor = AioPoolExecutor()):
         self._session = session
         self._spotify_client = spotify_client
         self._pool_executor = pool_executor
 
     async def collect(self, charts: List[ChartData]) -> List[ChartEntryData]:
         chart_entries = self._get_flattened_chart_entries(charts)
-        results = await self._pool_executor.run(iterable=chart_entries, func=self._collect_single)
-
-        return [result for result in results if isinstance(result, ChartEntryData)]
+        return await self._pool_executor.run(
+            iterable=chart_entries,
+            func=self._collect_single,
+            expected_type=ChartEntryData
+        )
 
     async def _collect_single(self, entry_data: ChartEntryData) -> ChartEntryData:
         search_item = SearchItem(

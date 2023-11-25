@@ -17,7 +17,11 @@ class BillboardChartsCollector(ICollector):
         self._pool_executor = pool_executor
 
     async def collect(self, dates: List[datetime]) -> List[ChartData]:
-        return await self._pool_executor.run(iterable=dates, func=self._collect_single_date_charts)
+        return await self._pool_executor.run(
+            iterable=dates,
+            func=self._collect_single_date_charts,
+            expected_type=ChartData
+        )
 
     async def _collect_single_date_charts(self, date: datetime) -> ChartData:
         formatted_date = date.strftime(BILLBOARD_DATETIME_FORMAT)
