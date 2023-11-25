@@ -635,13 +635,13 @@ test = ["faulthandler", "objgraph", "psutil"]
 
 [[package]]
 name = "idna"
-version = "3.4"
+version = "3.6"
 description = "Internationalized Domain Names in Applications (IDNA)"
 optional = false
 python-versions = ">=3.5"
 files = [
-    {file = "idna-3.4-py3-none-any.whl", hash = "sha256:90b77e79eaa3eba6de819a0c442c0b4ceefc341a7a2ab77d7562bf49f425c5c2"},
-    {file = "idna-3.4.tar.gz", hash = "sha256:814f528e8dead7d329833b91c5faa87d60bf71824cd12a7530b5526063d02cb4"},
+    {file = "idna-3.6-py3-none-any.whl", hash = "sha256:c05567e9c24a6b9faaa835c4821bad0590fbb9d5779e7caa6e1cc4978e7eb24f"},
+    {file = "idna-3.6.tar.gz", hash = "sha256:9ecdbbd083b06798ae1e86adcbfe8ab1479cf864e4ee30fe4e46a003d12491ca"},
 ]
 
 [[package]]
@@ -820,8 +820,8 @@ sqlalchemy = "<2.0.0"
 [package.source]
 type = "git"
 url = "https://github.com/nirgodin/radio-stations-postgres-client.git"
-reference = "50e37a2f"
-resolved_reference = "50e37a2f77d77c35e70bebf4ae49687e0342ee72"
+reference = "4a5f1725"
+resolved_reference = "4a5f1725a8ab2f2a2928fbacfd6dae159bd047c8"
 
 [[package]]
 name = "pydantic"
@@ -1233,4 +1233,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<3.12"
-content-hash = "b629278fc210f28e4a2f19df74bcc816ce75593431d5f18bc285b3468c2ee45a"
+content-hash = "5a33d35c201fc8f27247af06dbaf57e4d58a71d3d21a508fb5a73a04eac474a8"
