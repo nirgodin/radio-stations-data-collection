@@ -15,6 +15,7 @@ from data_collectors.components.collectors import CollectorsComponentFactory
 from data_collectors.components.environment_component_factory import EnvironmentComponentFactory
 from data_collectors.components.inserters import InsertersComponentFactory
 from data_collectors.components.sessions_component_factory import SessionsComponentFactory
+from data_collectors.components.tools_component_factory import ToolsComponentFactory
 from data_collectors.components.updaters import UpdatersComponentFactory
 from data_collectors.logic.managers.missing_ids_managers.musixmatch_missing_ids_manager import \
     MusixmatchMissingIDsManager
@@ -27,15 +28,17 @@ class ComponentFactory:
                  inserters: InsertersComponentFactory = InsertersComponentFactory(),
                  updaters: UpdatersComponentFactory = UpdatersComponentFactory(),
                  env: EnvironmentComponentFactory = EnvironmentComponentFactory(),
-                 sessions: SessionsComponentFactory = SessionsComponentFactory()):
+                 sessions: SessionsComponentFactory = SessionsComponentFactory(),
+                 tools: ToolsComponentFactory = ToolsComponentFactory()):
         self.collectors = collectors
         self.inserters = inserters
         self.updaters = updaters
         self.env = env
         self.sessions = sessions
+        self.tools = tools
 
     def get_musixmatch_missing_ids_manager(self, session: ClientSession) -> MusixmatchMissingIDsManager:
-        pool_executor = AioPoolExecutor()
+        pool_executor = self.tools.get_pool_executor()
         api_key = self.env.get_musixmatch_api_key()
 
         return MusixmatchMissingIDsManager(
@@ -45,8 +48,8 @@ class ComponentFactory:
         )
 
     def get_shazam_top_tracks_manager(self) -> ShazamTopTracksManager:
-        shazam = Shazam("EN")
-        pool_executor = AioPoolExecutor()
+        shazam = self.tools.get_shazam()
+        pool_executor = self.tools.get_pool_executor()
 
         return ShazamTopTracksManager(
             top_tracks_collector=self.collectors.shazam.get_top_tracks_collector(shazam, pool_executor),
@@ -55,8 +58,8 @@ class ComponentFactory:
         )
 
     def get_shazam_missing_ids_manager(self) -> ShazamMissingIDsManager:
-        shazam = Shazam("EN")
-        pool_executor = AioPoolExecutor()
+        shazam = self.tools.get_shazam()
+        pool_executor = self.tools.get_pool_executor()
 
         return ShazamMissingIDsManager(
             db_engine=get_database_engine(),
@@ -74,7 +77,7 @@ class ComponentFactory:
         )
 
     def get_billboard_manager(self, spotify_session: SpotifySession, client_session: ClientSession) -> BillboardManager:
-        spotify_client = self.get_spotify_client(spotify_session)
+        spotify_client = self.tools.get_spotify_client(spotify_session)
         return BillboardManager(
             db_engine=get_database_engine(),
             charts_collector=self.collectors.billboard.get_charts_collector(client_session),
@@ -85,14 +88,10 @@ class ComponentFactory:
             tracks_updater=self.updaters.get_billboard_tracks_updater()
         )
 
-    def get_radio_snapshots_manager(self, session: SpotifySession) -> RadioStationsSnapshotsManager:
-        spotify_client = self.get_spotify_client(session)
+    def get_radio_snapshots_manager(self, spotify_session: SpotifySession) -> RadioStationsSnapshotsManager:
+        spotify_client = self.tools.get_spotify_client(spotify_session)
         return RadioStationsSnapshotsManager(
             spotify_client=spotify_client,
             spotify_insertions_manager=self.inserters.spotify.get_insertions_manager(spotify_client),
             radio_tracks_database_inserter=self.inserters.get_radio_tracks_inserter()
         )
-
-    @staticmethod
-    def get_spotify_client(session: SpotifySession) -> SpotifyClient:
-        return SpotifyClient.create(session)

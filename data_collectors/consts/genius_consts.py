@@ -1,0 +1,5 @@
+GENIUS_BASE_URL = 'https://api.genius.com'
+META = 'meta'
+STATUS = 'status'
+RESPONSE = 'response'
+RESULT = 'result'

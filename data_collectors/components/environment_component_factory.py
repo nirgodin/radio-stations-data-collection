@@ -7,3 +7,8 @@ class EnvironmentComponentFactory:
     @lru_cache
     def get_musixmatch_api_key() -> str:
         return os.environ["MUSIXMATCH_API_KEY"]
+
+    @staticmethod
+    @lru_cache
+    def get_genius_access_token() -> str:
+        return os.environ["GENIUS_CLIENT_ACCESS_TOKEN"]

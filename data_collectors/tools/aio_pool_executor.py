@@ -8,7 +8,7 @@ from data_collectors.logs import logger
 
 
 class AioPoolExecutor:
-    def __init__(self, pool_size: int = 5, validate_results: bool = True):
+    def __init__(self, pool_size: int = 5, validate_results: bool = True):  # TODO: Remove defaults
         self._pool_size = pool_size
         self._validate_results = validate_results
 
