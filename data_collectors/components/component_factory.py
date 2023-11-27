@@ -1,24 +1,17 @@
-from ssl import create_default_context
-from typing import Optional
-
-from aiohttp import ClientSession, TCPConnector, CookieJar
-from certifi import where
+from aiohttp import ClientSession
 from postgres_client import get_database_engine
 from shazamio import Shazam
-from spotipyio import AccessTokenGenerator, SpotifyClient
-from spotipyio.logic.authentication.spotify_grant_type import SpotifyGrantType
 from spotipyio.logic.authentication.spotify_session import SpotifySession
 
-from data_collectors import BillboardManager, RadioStationsSnapshotsManager, ShazamTopTracksManager, \
-    ShazamInsertionsManager, ShazamMissingIDsManager
 from data_collectors.components.collectors import CollectorsComponentFactory
 from data_collectors.components.environment_component_factory import EnvironmentComponentFactory
 from data_collectors.components.inserters import InsertersComponentFactory
 from data_collectors.components.sessions_component_factory import SessionsComponentFactory
 from data_collectors.components.tools_component_factory import ToolsComponentFactory
 from data_collectors.components.updaters import UpdatersComponentFactory
-from data_collectors.logic.managers.missing_ids_managers.musixmatch_missing_ids_manager import \
-    MusixmatchMissingIDsManager
+
+from data_collectors.logic.inserters.shazam_insertions_manager import ShazamInsertionsManager
+from data_collectors.logic.managers import *
 from data_collectors.tools import AioPoolExecutor
 
 

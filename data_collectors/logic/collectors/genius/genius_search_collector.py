@@ -1,9 +1,7 @@
-import asyncio
 from typing import Dict, Optional
 
 from aiohttp import ClientSession
 
-from data_collectors.components.sessions_component_factory import SessionsComponentFactory
 from data_collectors.consts.genius_consts import RESPONSE, RESULT
 from data_collectors.consts.shazam_consts import HITS
 from data_collectors.consts.spotify_consts import ID
@@ -48,14 +46,3 @@ class GeniusSearchCollector(BaseSearchCollector, BaseGeniusCollector):
     @property
     def _route(self) -> str:
         return "search"
-
-
-async def main():
-    client_session = SessionsComponentFactory().get_genius_session()
-    async with client_session as session:
-        collector = GeniusSearchCollector(session, AioPoolExecutor())
-        await collector.collect([MissingTrack(spotify_id="", artist_name="Queen", track_name="Radio Ga Ga")])
-
-if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())

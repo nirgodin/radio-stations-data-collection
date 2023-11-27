@@ -1,7 +1,7 @@
 from aiohttp import ClientSession
 from spotipyio import SpotifyClient
 
-from data_collectors import BillboardChartsCollector, BillboardTracksCollector
+from data_collectors.logic.collectors import BillboardChartsCollector, BillboardTracksCollector
 
 
 class BillboardCollectorsComponentFactory:
