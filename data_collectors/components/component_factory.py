@@ -14,6 +14,7 @@ from data_collectors import BillboardManager, RadioStationsSnapshotsManager, Sha
 from data_collectors.components.collectors import CollectorsComponentFactory
 from data_collectors.components.environment_component_factory import EnvironmentComponentFactory
 from data_collectors.components.inserters import InsertersComponentFactory
+from data_collectors.components.sessions_component_factory import SessionsComponentFactory
 from data_collectors.components.updaters import UpdatersComponentFactory
 from data_collectors.logic.managers.missing_ids_managers.musixmatch_missing_ids_manager import \
     MusixmatchMissingIDsManager
@@ -25,11 +26,13 @@ class ComponentFactory:
                  collectors: CollectorsComponentFactory = CollectorsComponentFactory(),
                  inserters: InsertersComponentFactory = InsertersComponentFactory(),
                  updaters: UpdatersComponentFactory = UpdatersComponentFactory(),
-                 env: EnvironmentComponentFactory = EnvironmentComponentFactory()):
+                 env: EnvironmentComponentFactory = EnvironmentComponentFactory(),
+                 sessions: SessionsComponentFactory = SessionsComponentFactory()):
         self.collectors = collectors
         self.inserters = inserters
         self.updaters = updaters
         self.env = env
+        self.sessions = sessions
 
     def get_musixmatch_missing_ids_manager(self, session: ClientSession) -> MusixmatchMissingIDsManager:
         pool_executor = AioPoolExecutor()
@@ -89,11 +92,6 @@ class ComponentFactory:
             spotify_insertions_manager=self.inserters.spotify.get_insertions_manager(spotify_client),
             radio_tracks_database_inserter=self.inserters.get_radio_tracks_inserter()
         )
-
-    @staticmethod
-    async def get_spotify_session(grant_type: SpotifyGrantType = SpotifyGrantType.CLIENT_CREDENTIALS,
-                                  access_code: Optional[str] = None) -> SpotifySession:
-        return await SpotifySession().__aenter__(grant_type, access_code)
 
     @staticmethod
     def get_spotify_client(session: SpotifySession) -> SpotifyClient:
