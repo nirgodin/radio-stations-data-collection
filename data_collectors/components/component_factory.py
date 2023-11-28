@@ -30,6 +30,14 @@ class ComponentFactory:
         self.sessions = sessions
         self.tools = tools
 
+    def get_genius_missing_ids_manager(self, session: ClientSession) -> GeniusMissingIDsManager:
+        pool_executor = self.tools.get_pool_executor()
+        return GeniusMissingIDsManager(
+            db_engine=get_database_engine(),
+            search_collector=self.collectors.genius.get_search_collector(session, pool_executor),
+            track_ids_updater=self.updaters.get_track_ids_updater()
+        )
+
     def get_musixmatch_missing_ids_manager(self, session: ClientSession) -> MusixmatchMissingIDsManager:
         pool_executor = self.tools.get_pool_executor()
         api_key = self.env.get_musixmatch_api_key()
