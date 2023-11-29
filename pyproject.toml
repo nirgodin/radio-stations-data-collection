@@ -9,6 +9,7 @@ readme = "README.md"
 python = ">=3.8,<3.12"
 postgres-client = {git = "https://github.com/nirgodin/radio-stations-postgres-client.git", rev = "4a5f1725"}
 spotipyio = {git = "https://github.com/nirgodin/spotipyio.git", rev = "79df5f56"}
+genie-common = {git = "https://github.com/nirgodin/genie-common.git", rev = "05f7d085"}
 shazamio = "^0.4.0.1"
 asyncio-pool = "^0.6.0"
 tqdm = "4.65.0"

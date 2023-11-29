@@ -3,6 +3,7 @@ from data_collectors.components.collectors.billboard_collectors_component_factor
 from data_collectors.components.collectors.genius_collectors_component_factory import GeniusCollectorsComponentFactory
 from data_collectors.components.collectors.musixmatch_collectors_component_factory import \
     MusixmatchCollectorsComponentFactory
+from data_collectors.components.collectors.openai_collectors_component_factory import OpenAICollectorsComponentFactory
 from data_collectors.components.collectors.shazam_collectors_component_factory import ShazamCollectorsComponentFactory
 
 
@@ -11,8 +12,10 @@ class CollectorsComponentFactory:
                  billboard: BillboardCollectorsComponentFactory = BillboardCollectorsComponentFactory(),
                  shazam: ShazamCollectorsComponentFactory = ShazamCollectorsComponentFactory(),
                  musixmatch: MusixmatchCollectorsComponentFactory = MusixmatchCollectorsComponentFactory(),
-                 genius: GeniusCollectorsComponentFactory = GeniusCollectorsComponentFactory()):
+                 genius: GeniusCollectorsComponentFactory = GeniusCollectorsComponentFactory(),
+                 openai: OpenAICollectorsComponentFactory = OpenAICollectorsComponentFactory()):
         self.billboard = billboard
         self.shazam = shazam
         self.musixmatch = musixmatch
         self.genius = genius
+        self.openai = openai

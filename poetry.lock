@@ -561,6 +561,25 @@ files = [
 ]
 
 [[package]]
+name = "genie-common"
+version = "0.1.0"
+description = ""
+optional = false
+python-versions = ">=3.8,<3.12"
+files = []
+develop = false
+
+[package.dependencies]
+aiohttp = ">=3.6.3,<3.9.0"
+asyncio-pool = "^0.6.0"
+
+[package.source]
+type = "git"
+url = "https://github.com/nirgodin/genie-common.git"
+reference = "05f7d085"
+resolved_reference = "05f7d085e4b69377e83d7af7e4927554752f815f"
+
+[[package]]
 name = "greenlet"
 version = "2.0.1"
 description = "Lightweight in-process concurrent programming"
@@ -1233,4 +1252,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<3.12"
-content-hash = "d2ff88178b79a3b7cdf57502da09c50a3ed7c5ec2e543a4eea0eb3b18ccfc56e"
+content-hash = "a1d1d23d4b8b522e6a819cf80f9a0b49c2aa4e4a84a7d897b4791e11c5202c22"
