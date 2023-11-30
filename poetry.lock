@@ -576,8 +576,8 @@ asyncio-pool = "^0.6.0"
 [package.source]
 type = "git"
 url = "https://github.com/nirgodin/genie-common.git"
-reference = "416d0ec"
-resolved_reference = "416d0ecb97688a4dc7f67e2707e4dae88366149f"
+reference = "42c0c66f"
+resolved_reference = "42c0c66fb0ad5b732e7f03fe80fe7bb92a2e0f25"
 
 [[package]]
 name = "genie-datastores"
@@ -592,15 +592,15 @@ develop = false
 asyncmy = "0.2.8"
 asyncpg = "0.28.0"
 billboard-py = "^7.0.0"
-genie-common = {git = "https://github.com/nirgodin/genie-common.git", rev = "416d0ec"}
+genie-common = {git = "https://github.com/nirgodin/genie-common.git", rev = "42c0c66f"}
 greenlet = "2.0.1"
 sqlalchemy = "<2.0.0"
 
 [package.source]
 type = "git"
 url = "https://github.com/nirgodin/genie-datastores.git"
-reference = "1d4669fa"
-resolved_reference = "1d4669fac8c9fc65d485543ef33fd79dd15e0a1e"
+reference = "2872f922"
+resolved_reference = "2872f922b50e8edd097068c73dfd8bc9cc1014d2"
 
 [[package]]
 name = "greenlet"
@@ -1253,4 +1253,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<3.12"
-content-hash = "521d898cdfabf6dfd22f7bfffcac99c3d0936014d4e5337e16de76815ff9168a"
+content-hash = "d521ea9411259ce343ddce7c7277f9d872823cce74706658075560bc2202b9a4"
