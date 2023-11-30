@@ -4,7 +4,7 @@ from typing import Sized, Any, Awaitable, Callable, List, Optional, Type
 from asyncio_pool import AioPool
 from tqdm import tqdm
 
-from data_collectors.logs import logger
+from genie_common.tools import logger
 
 
 class AioPoolExecutor:

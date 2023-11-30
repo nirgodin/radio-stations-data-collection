@@ -6,7 +6,7 @@ from data_collectors.consts.shazam_consts import ISRAEL_COUNTRY_CODE
 from data_collectors.consts.spotify_consts import TRACKS
 from data_collectors.logic.collectors.shazam.base_shazam_collector import BaseShazamCollector
 from data_collectors.logic.utils import merge_dicts
-from data_collectors.logs import logger
+from genie_common.tools import logger
 
 
 class ShazamTopTracksCollector(BaseShazamCollector):

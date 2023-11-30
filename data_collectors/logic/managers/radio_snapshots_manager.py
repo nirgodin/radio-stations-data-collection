@@ -6,7 +6,7 @@ from spotipyio.logic.spotify_client import SpotifyClient
 from data_collectors.logic.inserters import SpotifyInsertionsManager, RadioTracksDatabaseInserter
 from data_collectors.consts.spotify_consts import ID, TRACKS, ARTISTS, ITEMS
 from data_collectors.contract import IManager
-from data_collectors.logs import logger
+from genie_common.tools import logger
 
 
 class RadioStationsSnapshotsManager(IManager):

@@ -10,7 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncEngine
 from data_collectors.logic.updaters import TrackIDsDatabaseUpdater
 from data_collectors.contract import IManager, BaseSearchCollector
 from data_collectors.logic.models import MissingTrack
-from data_collectors.logs import logger
+from genie_common.tools import logger
 
 MISSING_TRACKS_SELECT_COLUMNS = [
     TrackIDMapping.id,

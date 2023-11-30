@@ -7,7 +7,7 @@ from data_collectors.consts.spotify_consts import ARTISTS
 from data_collectors.logic.collectors import ShazamArtistsCollector, ShazamTracksCollector
 from data_collectors.logic.inserters.shazam.shazam_artists_database_inserter import ShazamArtistsDatabaseInserter
 from data_collectors.logic.inserters.shazam.shazam_tracks_database_inserter import ShazamTracksDatabaseInserter
-from data_collectors.logs import logger
+from genie_common.tools import logger
 
 
 class ShazamInsertionsManager:

@@ -5,7 +5,7 @@ from genie_datastores.postgres.operations import insert_records
 
 from data_collectors.consts.shazam_consts import KEY
 from data_collectors.contract.base_database_inserter import BaseDatabaseInserter
-from data_collectors.logs import logger
+from genie_common.tools import logger
 
 
 class ShazamTopTracksDatabaseInserter(BaseDatabaseInserter):

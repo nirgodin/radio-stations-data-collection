@@ -7,7 +7,7 @@ from genie_datastores.postgres.utils import query_existing_column_values
 
 from data_collectors.consts.spotify_consts import ID
 from data_collectors.contract.base_database_inserter import BaseDatabaseInserter
-from data_collectors.logs import logger
+from genie_common.tools import logger
 
 
 class BaseIDsDatabaseInserter(BaseDatabaseInserter, ABC):

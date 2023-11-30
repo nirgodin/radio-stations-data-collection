@@ -5,7 +5,7 @@ from data_collectors.consts.shazam_consts import KEY
 from data_collectors.logic.collectors import ShazamTopTracksCollector
 from data_collectors.logic.inserters import ShazamInsertionsManager
 from data_collectors.logic.inserters import ShazamTopTracksDatabaseInserter
-from data_collectors.logs import logger
+from genie_common.tools import logger
 
 
 class ShazamTopTracksManager(IManager):

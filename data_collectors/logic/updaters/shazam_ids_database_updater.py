@@ -4,7 +4,7 @@ from genie_datastores.postgres.models import TrackIDMapping
 from genie_datastores.postgres.models.orm.base_orm_model import BaseORMModel
 
 from data_collectors.contract import BaseDatabaseUpdater
-from data_collectors.logs import logger
+from genie_common.tools import logger
 
 
 class TrackIDsDatabaseUpdater(BaseDatabaseUpdater):

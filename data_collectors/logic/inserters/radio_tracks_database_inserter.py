@@ -7,7 +7,7 @@ from sqlalchemy import tuple_, select
 
 from data_collectors.consts.spotify_consts import TRACK, ID
 from data_collectors.contract.base_database_inserter import BaseDatabaseInserter
-from data_collectors.logs import logger
+from genie_common.tools import logger
 
 
 class RadioTracksDatabaseInserter(BaseDatabaseInserter):
