@@ -1,9 +1,9 @@
 from abc import ABC, abstractmethod
 from typing import List, Type, Iterable, Any
 
-from postgres_client import BaseORMModel, query_existing_column_values
-from postgres_client.postgres_operations import execute_query, insert_records_ignoring_conflicts
-from sqlalchemy import select
+from genie_datastores.postgres.models.orm.base_orm_model import BaseORMModel
+from genie_datastores.postgres.operations import insert_records_ignoring_conflicts
+from genie_datastores.postgres.utils import query_existing_column_values
 
 from data_collectors.consts.spotify_consts import ID
 from data_collectors.contract.base_database_inserter import BaseDatabaseInserter

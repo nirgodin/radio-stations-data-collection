@@ -1,4 +1,4 @@
-from postgres_client import get_database_engine
+from genie_datastores.postgres.operations import get_database_engine
 
 from data_collectors import RadioTracksDatabaseInserter
 from data_collectors.components.inserters.billboard_inserters_component_factory import \

@@ -1,15 +1,8 @@
-from typing import List, Dict, Optional
+from typing import Dict, Optional
 
-from postgres_client import TrackIDMapping, SpotifyTrack, SpotifyArtist, execute_query, BaseORMModel
-from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncEngine
+from genie_datastores.postgres.models import TrackIDMapping
 
 from data_collectors.logic.managers.missing_ids_managers.base_missing_ids_manager import BaseMissingIDsManager
-from data_collectors.logic.updaters import TrackIDsDatabaseUpdater
-from data_collectors.contract import IManager
-from data_collectors.logic.collectors.shazam import ShazamSearchCollector
-from data_collectors.logic.inserters import ShazamInsertionsManager
-from data_collectors.logic.models import MissingTrack
 from data_collectors.logs import logger
 
 

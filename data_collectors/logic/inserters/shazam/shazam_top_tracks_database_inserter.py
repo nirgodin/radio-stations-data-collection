@@ -1,6 +1,7 @@
 from typing import List, Dict
 from datetime import date
-from postgres_client import ShazamTopTrack, ShazamLocation, insert_records
+from genie_datastores.postgres.models import ShazamTopTrack, ShazamLocation
+from genie_datastores.postgres.operations import insert_records
 
 from data_collectors.consts.shazam_consts import KEY
 from data_collectors.contract.base_database_inserter import BaseDatabaseInserter

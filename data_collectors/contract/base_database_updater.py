@@ -1,7 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import Type
 
-from postgres_client import BaseORMModel, execute_query
+from genie_datastores.postgres.models.orm.base_orm_model import BaseORMModel
+from genie_datastores.postgres.operations import execute_query
 from sqlalchemy import update, case
 from sqlalchemy.ext.asyncio import AsyncEngine
 

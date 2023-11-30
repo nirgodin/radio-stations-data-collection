@@ -1,6 +1,6 @@
 from typing import List, Dict, Coroutine, Tuple
 
-from postgres_client import ShazamLocation
+from genie_datastores.postgres.models import ShazamLocation
 
 from data_collectors.consts.shazam_consts import ISRAEL_COUNTRY_CODE
 from data_collectors.consts.spotify_consts import TRACKS

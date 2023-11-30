@@ -1,6 +1,6 @@
 from typing import Dict, Optional
 
-from postgres_client import TrackIDMapping
+from genie_datastores.postgres.models import TrackIDMapping
 from sqlalchemy.ext.asyncio import AsyncEngine
 
 from data_collectors.logic.collectors.shazam import ShazamSearchCollector

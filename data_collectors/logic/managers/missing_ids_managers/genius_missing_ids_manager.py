@@ -1,6 +1,6 @@
 from typing import Dict, Optional
 
-from postgres_client import TrackIDMapping
+from genie_datastores.postgres.models import TrackIDMapping
 
 from data_collectors.logic.managers.missing_ids_managers.base_missing_ids_manager import BaseMissingIDsManager
 from data_collectors.logs import logger

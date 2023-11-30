@@ -1,8 +1,8 @@
 from typing import List, Optional, Type
 
-from postgres_client.models.orm.spotify.base_spotify_orm_model import BaseSpotifyORMModel
-from postgres_client.models.orm.spotify.spotify_album import SpotifyAlbum
-from postgres_client.utils.spotify_utils import extract_artist_id
+from genie_datastores.postgres.models.orm.spotify.base_spotify_orm_model import BaseSpotifyORMModel
+from genie_datastores.postgres.models import SpotifyAlbum
+from genie_datastores.postgres.inner_utils.spotify_utils import extract_artist_id
 
 from data_collectors.consts.spotify_consts import TRACK, ALBUM, ARTISTS, ID, ALBUMS
 from data_collectors.logic.inserters.spotify.base_spotify_database_inserter import \

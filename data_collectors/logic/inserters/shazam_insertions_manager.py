@@ -1,6 +1,6 @@
 from typing import Dict, List, Optional
 
-from postgres_client import BaseORMModel
+from genie_datastores.postgres.models.orm.base_orm_model import BaseORMModel
 
 from data_collectors.consts.shazam_consts import ADAM_ID
 from data_collectors.consts.spotify_consts import ARTISTS

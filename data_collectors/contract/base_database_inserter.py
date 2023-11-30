@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import List
 
-from postgres_client import BaseORMModel
+from genie_datastores.postgres.models.orm.base_orm_model import BaseORMModel
 from sqlalchemy.ext.asyncio import AsyncEngine
 
 

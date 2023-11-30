@@ -1,7 +1,6 @@
-from abc import abstractmethod
 from typing import Iterable, Type
 
-from postgres_client import ShazamArtist
+from genie_datastores.postgres.models import ShazamArtist
 
 from data_collectors.logic.inserters.base_ids_database_inserter import BaseIDsDatabaseInserter
 

@@ -1,9 +1,10 @@
-from typing import Any, List, Dict, Tuple, Optional
+from typing import List, Dict, Optional
 
 from genie_common.models.openai import EmbeddingsModel
 from genie_common.openai import OpenAIClient
 from genie_common.tools import logger
-from postgres_client import SpotifyTrack, execute_query
+from genie_datastores.postgres.models import SpotifyTrack
+from genie_datastores.postgres.operations import execute_query
 from sqlalchemy import select
 from sqlalchemy.engine import Row
 from sqlalchemy.ext.asyncio import AsyncEngine

@@ -1,5 +1,5 @@
 from aiohttp import ClientSession
-from postgres_client import get_database_engine
+from genie_datastores.postgres.operations import get_database_engine
 from shazamio import Shazam
 from spotipyio.logic.authentication.spotify_session import SpotifySession
 

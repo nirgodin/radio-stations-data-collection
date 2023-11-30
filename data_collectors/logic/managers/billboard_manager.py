@@ -1,7 +1,8 @@
 from datetime import datetime, timedelta
 from typing import List
 
-from postgres_client import BillboardChartEntry, execute_query
+from genie_datastores.postgres.models import BillboardChartEntry
+from genie_datastores.postgres.operations import execute_query
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncEngine
 

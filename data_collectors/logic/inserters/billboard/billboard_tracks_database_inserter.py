@@ -1,6 +1,6 @@
 from typing import Iterable, Type
 
-from postgres_client import BillboardTrack, ChartEntryData
+from genie_datastores.postgres.models import BillboardTrack, ChartEntryData
 
 from data_collectors.logic.inserters.base_ids_database_inserter import BaseIDsDatabaseInserter
 

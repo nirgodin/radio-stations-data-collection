@@ -576,8 +576,31 @@ asyncio-pool = "^0.6.0"
 [package.source]
 type = "git"
 url = "https://github.com/nirgodin/genie-common.git"
-reference = "05f7d085"
-resolved_reference = "05f7d085e4b69377e83d7af7e4927554752f815f"
+reference = "416d0ec"
+resolved_reference = "416d0ecb97688a4dc7f67e2707e4dae88366149f"
+
+[[package]]
+name = "genie-datastores"
+version = "0.1.2"
+description = ""
+optional = false
+python-versions = ">=3.8,<3.12"
+files = []
+develop = false
+
+[package.dependencies]
+asyncmy = "0.2.8"
+asyncpg = "0.28.0"
+billboard-py = "^7.0.0"
+genie-common = {git = "https://github.com/nirgodin/genie-common.git", rev = "416d0ec"}
+greenlet = "2.0.1"
+sqlalchemy = "<2.0.0"
+
+[package.source]
+type = "git"
+url = "https://github.com/nirgodin/genie-datastores.git"
+reference = "1d4669fa"
+resolved_reference = "1d4669fac8c9fc65d485543ef33fd79dd15e0a1e"
 
 [[package]]
 name = "greenlet"
@@ -819,28 +842,6 @@ files = [
 [package.extras]
 dev = ["pre-commit", "tox"]
 testing = ["pytest", "pytest-benchmark"]
-
-[[package]]
-name = "postgres-client"
-version = "0.1.2"
-description = ""
-optional = false
-python-versions = ">=3.8,<3.12"
-files = []
-develop = false
-
-[package.dependencies]
-asyncmy = "0.2.8"
-asyncpg = "0.28.0"
-billboard-py = "^7.0.0"
-greenlet = "2.0.1"
-sqlalchemy = "<2.0.0"
-
-[package.source]
-type = "git"
-url = "https://github.com/nirgodin/radio-stations-postgres-client.git"
-reference = "4a5f1725"
-resolved_reference = "4a5f1725a8ab2f2a2928fbacfd6dae159bd047c8"
 
 [[package]]
 name = "pydantic"
@@ -1252,4 +1253,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<3.12"
-content-hash = "a1d1d23d4b8b522e6a819cf80f9a0b49c2aa4e4a84a7d897b4791e11c5202c22"
+content-hash = "521d898cdfabf6dfd22f7bfffcac99c3d0936014d4e5337e16de76815ff9168a"

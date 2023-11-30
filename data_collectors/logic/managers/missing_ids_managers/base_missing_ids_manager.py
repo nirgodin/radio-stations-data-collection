@@ -1,7 +1,9 @@
 from abc import ABC, abstractmethod
 from typing import Optional, List, Dict
 
-from postgres_client import TrackIDMapping, SpotifyTrack, SpotifyArtist, execute_query, BaseORMModel
+from genie_datastores.postgres.models import TrackIDMapping, SpotifyTrack, SpotifyArtist
+from genie_datastores.postgres.models.orm.base_orm_model import BaseORMModel
+from genie_datastores.postgres.operations import execute_query
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncEngine
 

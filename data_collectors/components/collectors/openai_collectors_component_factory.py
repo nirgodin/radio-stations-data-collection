@@ -1,6 +1,6 @@
 from aiohttp import ClientSession
 from genie_common.openai import OpenAIClient
-from postgres_client import get_database_engine
+from genie_datastores.postgres.operations import get_database_engine
 
 from data_collectors.logic.collectors import TrackNamesEmbeddingsCollector
 from data_collectors.tools import AioPoolExecutor

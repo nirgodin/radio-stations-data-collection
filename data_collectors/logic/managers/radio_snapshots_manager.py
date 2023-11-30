@@ -1,6 +1,6 @@
 from typing import List
 
-from postgres_client import SpotifyArtist, SpotifyStation
+from genie_datastores.postgres.models import SpotifyArtist, SpotifyStation
 from spotipyio.logic.spotify_client import SpotifyClient
 
 from data_collectors.logic.inserters import SpotifyInsertionsManager, RadioTracksDatabaseInserter

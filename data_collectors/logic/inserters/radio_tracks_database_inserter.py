@@ -1,7 +1,8 @@
 from typing import List
 
-from postgres_client import insert_records, RadioTrack, execute_query
-from postgres_client.utils.spotify_utils import extract_artist_id
+from genie_datastores.postgres.operations import insert_records, execute_query
+from genie_datastores.postgres.models import RadioTrack
+from genie_datastores.postgres.inner_utils.spotify_utils import extract_artist_id
 from sqlalchemy import tuple_, select
 
 from data_collectors.consts.spotify_consts import TRACK, ID

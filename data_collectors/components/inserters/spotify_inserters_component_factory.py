@@ -1,4 +1,4 @@
-from postgres_client import get_database_engine
+from genie_datastores.postgres.operations import get_database_engine
 from spotipyio import SpotifyClient
 
 from data_collectors import SpotifyInsertionsManager, SpotifyArtistsDatabaseInserter, SpotifyAlbumsDatabaseInserter, \

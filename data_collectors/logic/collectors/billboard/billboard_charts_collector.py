@@ -4,7 +4,7 @@ from typing import List
 from aiohttp import ClientSession
 from billboard import ChartData
 from bs4 import BeautifulSoup
-from postgres_client.models.enum.billboard_chart import BillboardChart
+from genie_datastores.postgres.models import BillboardChart
 
 from data_collectors.consts.billboard_consts import BILLBOARD_DATETIME_FORMAT, BILLBOARD_DAILY_CHARTS_URL_FORMAT
 from data_collectors.contract.collector_interface import ICollector

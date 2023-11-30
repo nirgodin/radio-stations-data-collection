@@ -1,6 +1,6 @@
 from typing import List
 
-from postgres_client import ChartEntryData, BillboardTrack
+from genie_datastores.postgres.models import ChartEntryData, BillboardTrack
 
 from data_collectors.contract import BaseDatabaseUpdater
 
