@@ -5,7 +5,7 @@ from aiohttp import ClientSession
 
 from data_collectors.consts.genius_consts import GENIUS_BASE_URL, META, STATUS
 from data_collectors.contract import ICollector
-from data_collectors.logic.utils import safe_nested_get
+from genie_common.utils import safe_nested_get
 
 
 class BaseGeniusCollector(ICollector, ABC):

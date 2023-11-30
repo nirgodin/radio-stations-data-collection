@@ -7,7 +7,7 @@ from data_collectors.consts.spotify_consts import TRACKS
 from data_collectors.contract import BaseSearchCollector
 from data_collectors.logic.collectors.shazam.base_shazam_collector import BaseShazamCollector
 from data_collectors.logic.models import MissingTrack
-from data_collectors.logic.utils import safe_nested_get
+from genie_common.utils import safe_nested_get
 from genie_common.tools import logger
 from data_collectors.tools import AioPoolExecutor
 

@@ -8,7 +8,7 @@ from data_collectors.consts.spotify_consts import ID
 from data_collectors.contract import BaseSearchCollector
 from data_collectors.logic.collectors.genius.base_genius_collector import BaseGeniusCollector
 from data_collectors.logic.models import MissingTrack
-from data_collectors.logic.utils import safe_nested_get
+from genie_common.utils import safe_nested_get
 from data_collectors.tools import AioPoolExecutor
 
 
