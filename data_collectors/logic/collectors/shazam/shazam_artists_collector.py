@@ -4,8 +4,8 @@ from shazamio.schemas.artists import ArtistQuery
 from shazamio.schemas.enums import ArtistView, ArtistExtend
 
 from data_collectors.logic.collectors.shazam.base_shazam_collector import BaseShazamCollector
-from data_collectors.logic.utils import get_all_enum_values
 from genie_common.tools import logger
+from genie_common.utils import get_all_enum_values
 
 
 class ShazamArtistsCollector(BaseShazamCollector):

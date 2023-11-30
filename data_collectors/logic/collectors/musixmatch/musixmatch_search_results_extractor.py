@@ -6,7 +6,7 @@ from data_collectors.consts.musixmatch_consts import MESSAGE, BODY, TRACK_LIST, 
 from data_collectors.consts.spotify_consts import TRACK
 from data_collectors.logic.models import MissingTrack
 from genie_common.utils import safe_nested_get
-from data_collectors.logic.utils import compute_similarity_score
+from genie_common.utils import compute_similarity_score
 
 
 class MusixmatchSearchResultsExtractor:

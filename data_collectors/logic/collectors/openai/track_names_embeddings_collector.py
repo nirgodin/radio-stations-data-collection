@@ -10,7 +10,7 @@ from sqlalchemy.engine import Row
 from sqlalchemy.ext.asyncio import AsyncEngine
 
 from data_collectors.contract import ICollector
-from data_collectors.logic.utils import merge_dicts
+from genie_common.utils import merge_dicts
 from data_collectors.tools import AioPoolExecutor
 
 

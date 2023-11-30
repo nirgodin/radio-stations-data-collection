@@ -3,7 +3,7 @@ from typing import Any, List, Dict, Optional
 
 from data_collectors.contract.collector_interface import ICollector
 from data_collectors.logic.models import MissingTrack
-from data_collectors.logic.utils import merge_dicts
+from genie_common.utils import merge_dicts
 from genie_common.tools import logger
 from data_collectors.tools import AioPoolExecutor
 
