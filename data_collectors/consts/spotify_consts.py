@@ -5,3 +5,5 @@ ID = 'id'
 ALBUMS = 'albums'
 TRACKS = "tracks"
 ITEMS = "items"
+IMAGES = "images"
+URL = "url"

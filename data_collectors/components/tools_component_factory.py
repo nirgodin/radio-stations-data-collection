@@ -1,8 +1,7 @@
+from genie_common.tools import AioPoolExecutor
 from shazamio import Shazam
 from spotipyio import SpotifyClient
 from spotipyio.logic.authentication.spotify_session import SpotifySession
-
-from data_collectors.tools import AioPoolExecutor
 
 
 class ToolsComponentFactory:
