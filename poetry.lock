@@ -613,8 +613,8 @@ sqlalchemy = "<2.0.0"
 [package.source]
 type = "git"
 url = "https://github.com/nirgodin/genie-datastores.git"
-reference = "8cb0ca98"
-resolved_reference = "8cb0ca9817bf033d6f98c918ca66ce445bf5e49c"
+reference = "beb551d0"
+resolved_reference = "beb551d0171a29260067becc190e81a39b977e99"
 
 [[package]]
 name = "google-api-core"
@@ -1486,4 +1486,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<3.12"
-content-hash = "50d28fb0ed0fb146d9599fd54455ce8e0172bc17e0e4ba3703d98d082d3c032e"
+content-hash = "eb6fdf24b87282e3d99052afa4040dea003d195974c7b65b0d665b2b86f24d4d"
