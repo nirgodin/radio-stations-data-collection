@@ -1,3 +1,4 @@
+from data_collectors.logic.managers.artists_images_gender_manager import ArtistsImagesGenderManager
 from data_collectors.logic.managers.billboard_manager import BillboardManager
 from data_collectors.logic.managers.missing_ids_managers.genius_missing_ids_manager import GeniusMissingIDsManager
 from data_collectors.logic.managers.missing_ids_managers.musixmatch_missing_ids_manager import \
@@ -12,5 +13,6 @@ __all__ = [
     "ShazamTopTracksManager",
     "ShazamMissingIDsManager",
     "MusixmatchMissingIDsManager",
-    "GeniusMissingIDsManager"
+    "GeniusMissingIDsManager",
+    "ArtistsImagesGenderManager"
 ]

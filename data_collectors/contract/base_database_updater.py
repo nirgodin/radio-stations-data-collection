@@ -1,10 +1,12 @@
 from abc import ABC, abstractmethod
-from typing import Type
+from typing import Type, Any, Dict
 
 from genie_datastores.postgres.models.orm.base_orm_model import BaseORMModel
 from genie_datastores.postgres.operations import execute_query
 from sqlalchemy import update, case
+from sqlalchemy.dialects.postgresql import ExcludeConstraint
 from sqlalchemy.ext.asyncio import AsyncEngine
+from sqlalchemy.sql.elements import BinaryExpression
 
 
 class BaseDatabaseUpdater(ABC):
@@ -31,4 +33,15 @@ class BaseDatabaseUpdater(ABC):
                 }
             )
         )
+        await execute_query(engine=self._db_engine, query=query)
+
+    async def _update_by_values(self,
+                                orm: Type[BaseORMModel],
+                                values: Dict[BaseORMModel, Any],
+                                *conditions: BinaryExpression) -> None:
+        query = update(orm).values(values)
+
+        for condition in conditions:
+            query = query.where(condition)
+
         await execute_query(engine=self._db_engine, query=query)

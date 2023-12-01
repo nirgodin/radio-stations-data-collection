@@ -16,7 +16,7 @@ class SpotifyArtistsImagesCollector(ICollector):
         self._spotify_client = spotify_client
         self._pool_executor = pool_executor
 
-    async def collect(self, ids: List[str]) -> Dict[str, bytes]:
+    async def collect(self, ids: List[str]) -> Dict[str, ndarray]:
         unique_ids = list(set(ids))
         n_artists = len(unique_ids)
         logger.info(f"Starting to collect images of {n_artists} artists")

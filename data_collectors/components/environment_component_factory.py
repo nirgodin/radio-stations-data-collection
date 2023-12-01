@@ -17,3 +17,8 @@ class EnvironmentComponentFactory:
     @lru_cache
     def get_openai_api_key() -> str:
         return os.environ["OPENAI_API_KEY"]
+
+    @staticmethod
+    @lru_cache
+    def get_gender_model_folder_id() -> str:
+        return os.environ["GENDER_MODEL_FOLDER_ID"]

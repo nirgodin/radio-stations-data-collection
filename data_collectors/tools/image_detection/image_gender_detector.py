@@ -1,27 +1,37 @@
-from typing import Tuple, List, Optional
+from typing import List, Optional
 
 import cv2
 import numpy as np
 from cv2 import dnn_Net
-from models.gender import Gender
+from genie_common.typing import Image
+from genie_datastores.postgres.models import Gender
 from numpy import ndarray
 
+from data_collectors.consts.image_gender_detector_consts import MODEL_MEAN_VALUES, FACE_MODEL_PATH, \
+    FACE_MODEL_WEIGHTS_PATH, GENDER_MODEL_PATH, GENDER_MODEL_WEIGHTS_PATH, LABELS
 from data_collectors.logic.models import ArtistGender
-
-MODEL_MEAN_VALUES = (78.4263377603, 87.7689143744, 114.895847746)
-LABELS = ['male', 'female']
-Image = Tuple[int, int, int, int]
 
 
 class ImageGenderDetector:
     """ Source: https://www.thepythoncode.com/article/gender-detection-using-opencv-in-python """
-    def __init__(self, confidence_threshold: float = 0.5):
-        self._face_model = self._load_model(FACE_MODEL_WEIGHTS_PATH, FACE_MODEL_PATH)
-        self._gender_model = self._load_model(GENDER_MODEL_WEIGHTS_PATH, GENDER_MODEL_PATH)
+    def __init__(self,
+                 face_model: dnn_Net,
+                 gender_model: dnn_Net,
+                 confidence_threshold: float):
+        self._face_model = face_model
+        self._gender_model = gender_model
         self._confidence_threshold = confidence_threshold
 
-    def detect_gender(self, img: ndarray, frame_width: int = 400) -> List[ArtistGender]:
-        frame = img.copy()
+    @classmethod
+    def create(cls, confidence_threshold: float) -> "ImageGenderDetector":
+        return cls(
+            face_model=cls._load_model(weights_path=FACE_MODEL_WEIGHTS_PATH, model_path=FACE_MODEL_PATH),
+            gender_model=cls._load_model(weights_path=GENDER_MODEL_WEIGHTS_PATH, model_path=GENDER_MODEL_PATH),
+            confidence_threshold=confidence_threshold
+        )
+
+    def detect_gender(self, image: ndarray, frame_width: int = 640) -> List[ArtistGender]:
+        frame = image.copy()
 
         if frame.shape[1] > frame_width:
             frame = self._resize_image(frame, width=frame_width)
