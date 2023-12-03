@@ -30,6 +30,13 @@ class ComponentFactory:
         self.sessions = sessions
         self.tools = tools
 
+    def get_spotify_playlists_artists_manager(self, spotify_session: SpotifySession) -> SpotifyPlaylistsArtistsManager:
+        pool_executor = self.tools.get_pool_executor()
+        return SpotifyPlaylistsArtistsManager(
+            spotify_client=self.tools.get_spotify_client(spotify_session),
+            artists_updater=self.updaters.get_spotify_artists_updater(pool_executor)
+        )
+
     def get_artists_images_gender_manager(self,
                                           client_session: ClientSession,
                                           spotify_session: SpotifySession,
@@ -46,7 +53,7 @@ class ComponentFactory:
             db_engine=get_database_engine(),
             artists_images_collector=images_collector,
             gender_detector=self.tools.get_image_gender_detector(gender_model_folder_id, confidence_threshold),
-            gender_updater=self.updaters.get_spotify_artists_genders_updater(pool_executor)
+            gender_updater=self.updaters.get_spotify_artists_updater(pool_executor)
         )
 
     def get_genius_missing_ids_manager(self, session: ClientSession) -> GeniusMissingIDsManager:
