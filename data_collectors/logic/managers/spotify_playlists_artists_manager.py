@@ -21,10 +21,23 @@ class SpotifyPlaylistsArtistsManager(IManager):
 
     async def run(self, playlists_ids: List[str], key_column: SpotifyArtist, value: Any) -> None:
         playlists = await self._spotify_client.playlists.collect(playlists_ids)
-        artists_ids = self._extract_playlists_artists(playlists)
+        valid_playlists = self._filter_out_invalid_playlists(playlists)
+        artists_ids = self._extract_playlists_artists(valid_playlists)
         update_requests = [ArtistUpdateRequest(artist_id=id_, values={key_column: value}) for id_ in artists_ids]
 
         await self._artists_updater.update(update_requests)
+
+    @staticmethod
+    def _filter_out_invalid_playlists(playlists: List[dict]) -> List[dict]:
+        valid_playlists = [playlist for playlist in playlists if isinstance(playlist, dict)]
+        n_playlists = len(playlists)
+        n_valid_playlists = len(valid_playlists)
+
+        if n_valid_playlists < n_playlists:
+            n_invalid_playlists = n_playlists - n_valid_playlists
+            logger.warn(f"Found {n_invalid_playlists} invalid playlists. Filtering them out")
+
+        return valid_playlists
 
     def _extract_playlists_artists(self, playlists: List[dict],) -> Set[str]:
         artists_ids = set()
