@@ -57,7 +57,9 @@ class SpotifyPlaylistsArtistsManager(IManager):
         with tqdm(total=len(playlist_tracks)) as progress_bar:
             for track in playlist_tracks:
                 inner_track = track.get(TRACK, {})
-                artist_id = extract_artist_id(inner_track)
-                progress_bar.update(1)
 
-                yield artist_id
+                if inner_track:
+                    artist_id = extract_artist_id(inner_track)
+                    progress_bar.update(1)
+
+                    yield artist_id
