@@ -1,4 +1,4 @@
-from typing import List, Generator, Set, Any
+from typing import List, Generator, Set, Any, Dict
 
 from genie_common.tools import logger
 from genie_common.utils import safe_nested_get
@@ -19,11 +19,11 @@ class SpotifyPlaylistsArtistsManager(IManager):
         self._spotify_client = spotify_client
         self._artists_updater = artists_updater
 
-    async def run(self, playlists_ids: List[str], key_column: SpotifyArtist, value: Any) -> None:
+    async def run(self, playlists_ids: List[str], values: Dict[SpotifyArtist, Any]) -> None:
         playlists = await self._spotify_client.playlists.collect(playlists_ids)
         valid_playlists = self._filter_out_invalid_playlists(playlists)
         artists_ids = self._extract_playlists_artists(valid_playlists)
-        update_requests = [ArtistUpdateRequest(artist_id=id_, values={key_column: value}) for id_ in artists_ids]
+        update_requests = [ArtistUpdateRequest(artist_id=id_, values=values) for id_ in artists_ids]
 
         await self._artists_updater.update(update_requests)
 
