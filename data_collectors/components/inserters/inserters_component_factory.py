@@ -1,6 +1,6 @@
 from genie_datastores.postgres.operations import get_database_engine
 
-from data_collectors import RadioTracksDatabaseInserter
+from data_collectors.logic.inserters.postgres import RadioTracksDatabaseInserter
 from data_collectors.components.inserters.billboard_inserters_component_factory import \
     BillboardInsertersComponentFactory
 from data_collectors.components.inserters.shazam_inserters_compoent_factory import ShazamInsertersComponentFactory

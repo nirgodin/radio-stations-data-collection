@@ -1,8 +1,7 @@
 from genie_datastores.postgres.operations import get_database_engine
 from spotipyio import SpotifyClient
 
-from data_collectors import SpotifyInsertionsManager, SpotifyArtistsDatabaseInserter, SpotifyAlbumsDatabaseInserter, \
-    SpotifyTracksDatabaseInserter, SpotifyAudioFeaturesDatabaseInserter, TrackIDMappingDatabaseInserter
+from data_collectors.logic.inserters.postgres import *
 
 
 class SpotifyInsertersComponentFactory:

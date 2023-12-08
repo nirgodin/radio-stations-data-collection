@@ -1,6 +1,6 @@
 from genie_datastores.postgres.operations import get_database_engine
 
-from data_collectors import BillboardChartsDatabaseInserter, BillboardTracksDatabaseInserter
+from data_collectors.logic.inserters.postgres import BillboardChartsDatabaseInserter, BillboardTracksDatabaseInserter
 
 
 class BillboardInsertersComponentFactory:

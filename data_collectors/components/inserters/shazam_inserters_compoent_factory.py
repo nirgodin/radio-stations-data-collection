@@ -1,6 +1,6 @@
 from genie_datastores.postgres.operations import get_database_engine
 
-from data_collectors import ShazamTopTracksDatabaseInserter, ShazamTracksDatabaseInserter, \
+from data_collectors.logic.inserters.postgres import ShazamTopTracksDatabaseInserter, ShazamTracksDatabaseInserter, \
     ShazamArtistsDatabaseInserter
 
 

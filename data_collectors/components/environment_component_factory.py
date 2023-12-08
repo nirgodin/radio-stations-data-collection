@@ -22,3 +22,8 @@ class EnvironmentComponentFactory:
     @lru_cache
     def get_gender_model_folder_id() -> str:
         return os.environ["GENDER_MODEL_FOLDER_ID"]
+
+    @staticmethod
+    @lru_cache
+    def get_milvus_uri() -> str:
+        return os.environ["MILVUS_URI"]

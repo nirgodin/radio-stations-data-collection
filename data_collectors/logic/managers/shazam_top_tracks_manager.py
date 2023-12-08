@@ -3,8 +3,7 @@ from itertools import chain
 from data_collectors.contract import IManager
 from data_collectors.consts.shazam_consts import KEY
 from data_collectors.logic.collectors import ShazamTopTracksCollector
-from data_collectors.logic.inserters import ShazamInsertionsManager
-from data_collectors.logic.inserters import ShazamTopTracksDatabaseInserter
+from data_collectors.logic.inserters.postgres import (ShazamInsertionsManager, ShazamTopTracksDatabaseInserter)
 from genie_common.tools import logger
 
 

@@ -10,7 +10,7 @@ from data_collectors.consts.billboard_consts import FIRST_BILLBOARD_CHART_DATE
 from data_collectors.contract import IManager
 from data_collectors.logic.collectors.billboard import *
 from data_collectors.logic.inserters.postgres.billboard import *
-from data_collectors.logic.inserters import SpotifyInsertionsManager
+from data_collectors.logic.inserters.postgres import SpotifyInsertionsManager
 from data_collectors.logic.updaters import BillboardTracksDatabaseUpdater
 
 

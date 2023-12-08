@@ -3,7 +3,7 @@ from typing import List
 from genie_datastores.postgres.models import SpotifyArtist, SpotifyStation
 from spotipyio.logic.spotify_client import SpotifyClient
 
-from data_collectors.logic.inserters import SpotifyInsertionsManager, RadioTracksDatabaseInserter
+from data_collectors.logic.inserters.postgres import SpotifyInsertionsManager, RadioTracksDatabaseInserter
 from data_collectors.consts.spotify_consts import ID, TRACKS, ARTISTS, ITEMS
 from data_collectors.contract import IManager
 from genie_common.tools import logger
