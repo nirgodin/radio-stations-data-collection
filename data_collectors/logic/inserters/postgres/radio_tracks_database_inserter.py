@@ -6,11 +6,11 @@ from genie_datastores.postgres.inner_utils.spotify_utils import extract_artist_i
 from sqlalchemy import tuple_, select
 
 from data_collectors.consts.spotify_consts import TRACK, ID
-from data_collectors.contract.base_database_inserter import BaseDatabaseInserter
+from data_collectors.contract.inserters.base_postgres_database_inserter import BasePostgresDatabaseInserter
 from genie_common.tools import logger
 
 
-class RadioTracksDatabaseInserter(BaseDatabaseInserter):
+class RadioTracksDatabaseInserter(BasePostgresDatabaseInserter):
     async def insert(self, playlist: dict, tracks: List[dict], artists: List[dict]) -> None:
         records = await self._to_records(playlist=playlist, tracks=tracks, artists=artists)
         non_existing_records = await self._filter_out_existing_records(records)

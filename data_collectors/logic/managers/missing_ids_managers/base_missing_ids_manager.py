@@ -7,6 +7,7 @@ from genie_datastores.postgres.operations import execute_query
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncEngine
 
+from data_collectors.consts.musixmatch_consts import ARTIST_NAME
 from data_collectors.logic.updaters import TrackIDsDatabaseUpdater
 from data_collectors.contract import IManager, BaseSearchCollector
 from data_collectors.logic.models import MissingTrack
@@ -18,7 +19,7 @@ MISSING_TRACKS_SELECT_COLUMNS = [
     SpotifyTrack.artist_id,
     SpotifyTrack.name,
     SpotifyArtist.id,
-    SpotifyArtist.name.label("artist_name")
+    SpotifyArtist.name.label(ARTIST_NAME)
 ]
 
 
