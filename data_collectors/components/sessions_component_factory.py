@@ -1,7 +1,5 @@
-from ssl import create_default_context
-
-from aiohttp import ClientSession, CookieJar, TCPConnector
-from certifi import where
+from aiohttp import ClientSession
+from genie_common.utils import create_client_session, build_authorization_headers
 from spotipyio.logic.authentication.spotify_session import SpotifySession
 
 
@@ -16,7 +14,7 @@ class SessionsComponentFactory:
             "Accept": "application/json",
             "Content-Type": "application/json"
         }
-        return SessionsComponentFactory._get_client_session(headers)
+        return create_client_session(headers)
 
     @staticmethod
     def get_genius_session(bearer_token: str) -> ClientSession:
@@ -26,21 +24,9 @@ class SessionsComponentFactory:
             "Host": "api.genius.com",
             "Authorization": f"Bearer {bearer_token}"
         }
-        return SessionsComponentFactory._get_client_session(headers)
+        return create_client_session(headers)
 
     @staticmethod
     def get_openai_session(api_key: str) -> ClientSession:
-        headers = {
-            "Content-Type": "application/json",
-            "Authorization": f"Bearer {api_key}"
-        }
-        return SessionsComponentFactory._get_client_session(headers)
-
-    @staticmethod
-    def _get_client_session(headers: dict) -> ClientSession:
-        ssl_context = create_default_context(cafile=where())
-        return ClientSession(
-            connector=TCPConnector(ssl=ssl_context),
-            cookie_jar=CookieJar(quote_cookie=False),
-            headers=headers
-        )
+        headers = build_authorization_headers(api_key)
+        return create_client_session(headers)
