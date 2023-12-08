@@ -8,7 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncEngine
 
 from data_collectors.logic.collectors import SpotifyArtistsImagesCollector
 from data_collectors.contract import IManager
-from data_collectors.logic.models import ArtistUpdateRequest
+from data_collectors.logic.models import DBUpdateRequest
 from data_collectors.logic.updaters.spotify_artists_database_updater import SpotifyArtistsDatabaseUpdater
 from data_collectors.tools import ImageGenderDetector
 
@@ -41,12 +41,12 @@ class ArtistsImagesGenderManager(IManager):
 
         return query_result.scalars().all()
 
-    def _build_update_requests(self, ids_images_mapping: Dict[str, ndarray]) -> List[ArtistUpdateRequest]:
+    def _build_update_requests(self, ids_images_mapping: Dict[str, ndarray]) -> List[DBUpdateRequest]:
         update_requests = []
 
         for artist_id, image in ids_images_mapping.items():
-            request = ArtistUpdateRequest(
-                artist_id=artist_id,
+            request = DBUpdateRequest(
+                id=artist_id,
                 values={
                     SpotifyArtist.gender: self._determine_artist_gender(image),
                     SpotifyArtist.gender_source: DataSource.SPOTIFY_IMAGES

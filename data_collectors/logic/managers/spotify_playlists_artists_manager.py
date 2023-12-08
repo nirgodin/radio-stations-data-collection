@@ -10,7 +10,7 @@ from data_collectors.consts.spotify_consts import ID, TRACKS, ITEMS, TRACK
 from data_collectors.contract import IManager
 from genie_datastores.postgres.inner_utils.spotify_utils import extract_artist_id
 
-from data_collectors.logic.models import ArtistUpdateRequest
+from data_collectors.logic.models import DBUpdateRequest
 from data_collectors.logic.updaters.spotify_artists_database_updater import SpotifyArtistsDatabaseUpdater
 
 
@@ -23,7 +23,7 @@ class SpotifyPlaylistsArtistsManager(IManager):
         playlists = await self._spotify_client.playlists.collect(playlists_ids)
         valid_playlists = self._filter_out_invalid_playlists(playlists)
         artists_ids = self._extract_playlists_artists(valid_playlists)
-        update_requests = [ArtistUpdateRequest(artist_id=id_, values=values) for id_ in artists_ids]
+        update_requests = [DBUpdateRequest(id=id_, values=values) for id_ in artists_ids]
 
         await self._artists_updater.update(update_requests)
 

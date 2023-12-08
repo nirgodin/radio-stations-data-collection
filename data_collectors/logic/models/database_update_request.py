@@ -5,6 +5,6 @@ from genie_datastores.postgres.models import BaseORMModel
 
 
 @dataclass
-class ArtistUpdateRequest:
-    artist_id: str
+class DBUpdateRequest:
+    id: str
     values: Dict[BaseORMModel, Any]
