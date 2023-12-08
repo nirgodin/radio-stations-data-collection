@@ -8,7 +8,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncEngine
 
 from data_collectors.consts.musixmatch_consts import ARTIST_NAME
-from data_collectors.logic.updaters import TrackIDsDatabaseUpdater
+from data_collectors.logic.updaters import TrackIDsMappingDatabaseUpdater
 from data_collectors.contract import IManager, BaseSearchCollector
 from data_collectors.logic.models import MissingTrack
 from genie_common.tools import logger
@@ -27,7 +27,7 @@ class BaseMissingIDsManager(IManager, ABC):
     def __init__(self,
                  db_engine: AsyncEngine,
                  search_collector: BaseSearchCollector,
-                 track_ids_updater: TrackIDsDatabaseUpdater):
+                 track_ids_updater: TrackIDsMappingDatabaseUpdater):
         self._db_engine = db_engine
         self._search_collector = search_collector
         self._track_ids_updater = track_ids_updater
