@@ -17,7 +17,7 @@ class TrackNamesEmbeddingsCollector(ICollector):
         self._openai_client = openai_client
         self._pool_executor = pool_executor
 
-    async def collect(self, missing_tracks: List[MissingTrack]) -> Dict[str, List[float]]:
+    async def collect(self, missing_tracks: List[MissingTrack]) -> Dict[MissingTrack, Optional[List[float]]]:
         logger.info(f"Starting to collect embeddings for {len(missing_tracks)} tracks")
         results = await self._pool_executor.run(
             iterable=missing_tracks,
@@ -27,9 +27,9 @@ class TrackNamesEmbeddingsCollector(ICollector):
 
         return merge_dicts(*results)
 
-    async def _get_single_name_embeddings(self, missing_track: MissingTrack) -> Dict[str, Optional[List[float]]]:
+    async def _get_single_name_embeddings(self, missing_track: MissingTrack) -> Dict[MissingTrack, Optional[List[float]]]:
         embeddings = await self._openai_client.embeddings.collect(
             text=missing_track.track_name,
             model=EmbeddingsModel.ADA
         )
-        return {missing_track.spotify_id: embeddings}
+        return {missing_track: embeddings}

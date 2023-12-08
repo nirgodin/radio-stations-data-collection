@@ -1,4 +1,5 @@
 from aiohttp import ClientSession
+from genie_datastores.milvus import MilvusClient
 from genie_datastores.postgres.operations import get_database_engine
 from shazamio import Shazam
 from spotipyio.logic.authentication.spotify_session import SpotifySession
@@ -29,6 +30,22 @@ class ComponentFactory:
         self.env = env
         self.sessions = sessions
         self.tools = tools
+
+    def get_track_names_embeddings_manager(self,
+                                           client_session: ClientSession,
+                                           milvus_client: MilvusClient) -> TrackNamesEmbeddingsManager:
+        pool_executor = self.tools.get_pool_executor()
+        embeddings_collector = self.collectors.openai.get_track_names_embeddings_collector(
+            pool_executor=pool_executor,
+            session=client_session
+        )
+
+        return TrackNamesEmbeddingsManager(
+            db_engine=get_database_engine(),
+            embeddings_collector=embeddings_collector,
+            milvus_client=milvus_client,
+            spotify_tracks_updater=self.updaters.get_spotify_tracks_updater(pool_executor)
+        )
 
     def get_spotify_playlists_artists_manager(self, spotify_session: SpotifySession) -> SpotifyPlaylistsArtistsManager:
         pool_executor = self.tools.get_pool_executor()
