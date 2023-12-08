@@ -2,6 +2,7 @@ TRACK = 'track'
 ALBUM = 'album'
 ARTISTS = 'artists'
 ID = 'id'
+NAME = "name"
 ALBUMS = 'albums'
 TRACKS = "tracks"
 ITEMS = "items"
