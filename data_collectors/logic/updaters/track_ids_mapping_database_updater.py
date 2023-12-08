@@ -7,7 +7,7 @@ from data_collectors.contract import BaseDatabaseUpdater
 from genie_common.tools import logger
 
 
-class TrackIDsDatabaseUpdater(BaseDatabaseUpdater):
+class TrackIDsMappingDatabaseUpdater(BaseDatabaseUpdater):
     async def update(self, ids_mapping: Dict[str, Optional[str]], value_column: BaseORMModel) -> None:
         logger.info(f"Starting to update ids in tracks_ids_mapping table for {len(ids_mapping)} records")
         await self._update_by_mapping(
