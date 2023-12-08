@@ -4,16 +4,16 @@ from genie_datastores.postgres.models import TrackIDMapping
 from sqlalchemy.ext.asyncio import AsyncEngine
 
 from data_collectors.logic.collectors.shazam import ShazamSearchCollector
-from data_collectors.logic.inserters import ShazamInsertionsManager
+from data_collectors.logic.inserters.postgres import ShazamInsertionsManager
 from data_collectors.logic.managers.missing_ids_managers.base_missing_ids_manager import BaseMissingIDsManager
-from data_collectors.logic.updaters import TrackIDsDatabaseUpdater
+from data_collectors.logic.updaters import TrackIDsMappingDatabaseUpdater
 
 
 class ShazamMissingIDsManager(BaseMissingIDsManager):
     def __init__(self,
                  db_engine: AsyncEngine,
                  search_collector: ShazamSearchCollector,
-                 track_ids_updater: TrackIDsDatabaseUpdater,
+                 track_ids_updater: TrackIDsMappingDatabaseUpdater,
                  insertions_manager: ShazamInsertionsManager):
         super().__init__(db_engine=db_engine, search_collector=search_collector, track_ids_updater=track_ids_updater)
         self._insertions_manager = insertions_manager
