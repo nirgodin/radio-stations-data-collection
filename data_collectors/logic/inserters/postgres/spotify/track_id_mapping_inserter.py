@@ -3,7 +3,7 @@ from typing import Type, List
 from genie_datastores.postgres.models import TrackIDMapping
 from genie_datastores.postgres.models.orm.spotify.base_spotify_orm_model import BaseSpotifyORMModel
 
-from data_collectors.logic.inserters.spotify.base_spotify_database_inserter import \
+from data_collectors.logic.inserters.postgres.spotify.base_spotify_database_inserter import \
     BaseSpotifyDatabaseInserter
 
 

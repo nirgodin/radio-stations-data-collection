@@ -2,7 +2,7 @@ from typing import Iterable, Type
 
 from genie_datastores.postgres.models import ShazamArtist
 
-from data_collectors.logic.inserters.base_ids_database_inserter import BaseIDsDatabaseInserter
+from data_collectors.logic.inserters.postgres.base_ids_database_inserter import BaseIDsDatabaseInserter
 
 
 class ShazamArtistsDatabaseInserter(BaseIDsDatabaseInserter):

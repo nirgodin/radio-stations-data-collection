@@ -1,7 +1,7 @@
 from typing import List, Dict
 
 from genie_datastores.postgres.models.orm.spotify.base_spotify_orm_model import BaseSpotifyORMModel
-from data_collectors.logic.inserters.spotify import *
+from data_collectors.logic.inserters.postgres.spotify import *
 
 
 class SpotifyInsertionsManager:

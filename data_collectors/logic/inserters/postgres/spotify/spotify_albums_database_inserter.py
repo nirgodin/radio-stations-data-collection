@@ -5,7 +5,7 @@ from genie_datastores.postgres.models import SpotifyAlbum
 from genie_datastores.postgres.inner_utils.spotify_utils import extract_artist_id
 
 from data_collectors.consts.spotify_consts import TRACK, ALBUM, ARTISTS, ID, ALBUMS
-from data_collectors.logic.inserters.spotify.base_spotify_database_inserter import \
+from data_collectors.logic.inserters.postgres.spotify.base_spotify_database_inserter import \
     BaseSpotifyDatabaseInserter
 
 

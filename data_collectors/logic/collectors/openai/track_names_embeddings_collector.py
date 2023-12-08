@@ -44,5 +44,4 @@ class TrackNamesEmbeddingsCollector(ICollector):
 
     async def _get_single_name_embeddings(self, row: Row) -> Dict[str, Optional[List[float]]]:
         embeddings = await self._openai_client.embeddings.collect(text=row.name, model=EmbeddingsModel.ADA)
-
         return {row.id: embeddings}
