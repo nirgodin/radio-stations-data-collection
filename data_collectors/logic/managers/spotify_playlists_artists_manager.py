@@ -20,7 +20,7 @@ class SpotifyPlaylistsArtistsManager(IManager):
         self._artists_updater = artists_updater
 
     async def run(self, playlists_ids: List[str], values: Dict[SpotifyArtist, Any]) -> None:
-        playlists = await self._spotify_client.playlists.collect(playlists_ids)
+        playlists = await self._spotify_client.playlists.info.run(playlists_ids)
         valid_playlists = self._filter_out_invalid_playlists(playlists)
         artists_ids = self._extract_playlists_artists(valid_playlists)
         update_requests = [DBUpdateRequest(id=id_, values=values) for id_ in artists_ids]

@@ -21,7 +21,7 @@ class RadioStationsSnapshotsManager(IManager):
     async def run(self, stations: List[SpotifyStation]) -> None:
         logger.info('Starting to run `RadioStationsSnapshotsCollector`')
         playlists_ids = [station.value for station in stations]
-        playlists = await self._spotify_client.playlists.collect(playlists_ids)
+        playlists = await self._spotify_client.playlists.info.run(playlists_ids)
         await self._insert_records_to_db(playlists)
         logger.info('Successfully collected and inserted playlists to DB')
 
@@ -38,7 +38,7 @@ class RadioStationsSnapshotsManager(IManager):
 
     async def _insert_radio_tracks(self, playlist: dict, tracks: List[dict], artists: List[SpotifyArtist]) -> None:
         artists_ids = [artist.id for artist in artists]
-        artists_responses = await self._spotify_client.artists.info.collect(artists_ids)
+        artists_responses = await self._spotify_client.artists.info.run(artists_ids)
 
         await self._radio_tracks_database_inserter.insert(
             playlist=playlist,

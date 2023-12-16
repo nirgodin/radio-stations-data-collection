@@ -20,7 +20,7 @@ class SpotifyArtistsImagesCollector(ICollector):
         unique_ids = list(set(ids))
         n_artists = len(unique_ids)
         logger.info(f"Starting to collect images of {n_artists} artists")
-        artists = await self._spotify_client.artists.info.collect(unique_ids)
+        artists = await self._spotify_client.artists.info.run(unique_ids)
         ids_to_images = await self._pool_executor.run(
             iterable=artists,
             func=self._collect_single_artist_image,
