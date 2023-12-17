@@ -3,7 +3,7 @@ from abc import ABC
 from shazamio import Shazam
 
 from data_collectors.contract.collector_interface import ICollector
-from data_collectors.tools import AioPoolExecutor
+from genie_common.tools import AioPoolExecutor
 
 
 class BaseShazamCollector(ICollector, ABC):

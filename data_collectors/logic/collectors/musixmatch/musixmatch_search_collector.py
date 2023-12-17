@@ -7,7 +7,7 @@ from data_collectors.logic.collectors.musixmatch.base_musixmatch_collector impor
 from data_collectors.logic.collectors.musixmatch.musixmatch_search_results_extractor import \
     MusixmatchSearchResultsExtractor
 from data_collectors.logic.models import MissingTrack
-from data_collectors.tools import AioPoolExecutor
+from genie_common.tools import AioPoolExecutor
 
 
 class MusixmatchSearchCollector(BaseSearchCollector, BaseMusixmatchCollector):

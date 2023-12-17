@@ -1,7 +1,7 @@
 from aiohttp import ClientSession
 
 from data_collectors.logic.collectors import GeniusSearchCollector
-from data_collectors.tools import AioPoolExecutor
+from genie_common.tools import AioPoolExecutor
 
 
 class GeniusCollectorsComponentFactory:

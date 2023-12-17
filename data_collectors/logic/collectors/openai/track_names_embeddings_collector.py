@@ -8,7 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncEngine
 
 from data_collectors.contract import ICollector
 from data_collectors.logic.models import MissingTrack
-from data_collectors.tools import AioPoolExecutor
+from genie_common.tools import AioPoolExecutor
 
 
 class TrackNamesEmbeddingsCollector(ICollector):

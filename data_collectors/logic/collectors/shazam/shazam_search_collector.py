@@ -9,7 +9,7 @@ from data_collectors.logic.collectors.shazam.base_shazam_collector import BaseSh
 from data_collectors.logic.models import MissingTrack
 from genie_common.utils import safe_nested_get
 from genie_common.tools import logger
-from data_collectors.tools import AioPoolExecutor
+from genie_common.tools import AioPoolExecutor
 
 
 class ShazamSearchCollector(BaseSearchCollector, BaseShazamCollector):

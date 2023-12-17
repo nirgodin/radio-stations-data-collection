@@ -4,7 +4,7 @@ from aiohttp import ClientSession
 
 from data_collectors.consts.musixmatch_consts import MUSIXMATCH_BASE_URL
 from data_collectors.contract import ICollector
-from data_collectors.tools import AioPoolExecutor
+from genie_common.tools import AioPoolExecutor
 
 
 class BaseMusixmatchCollector(ICollector, ABC):

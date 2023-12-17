@@ -12,7 +12,7 @@ from spotipyio.utils.spotify_utils import extract_first_search_result
 from data_collectors.consts.billboard_consts import BILLBOARD_DATETIME_FORMAT
 from data_collectors.consts.spotify_consts import TRACK
 from data_collectors.contract.collector_interface import ICollector
-from data_collectors.tools import AioPoolExecutor
+from genie_common.tools import AioPoolExecutor
 
 
 class BillboardTracksCollector(ICollector):

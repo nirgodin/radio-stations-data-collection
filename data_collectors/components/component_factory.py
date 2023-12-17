@@ -13,7 +13,7 @@ from data_collectors.components.updaters import UpdatersComponentFactory
 
 from data_collectors.logic.inserters.postgres import ShazamInsertionsManager
 from data_collectors.logic.managers import *
-from data_collectors.tools import AioPoolExecutor
+from genie_common.tools import AioPoolExecutor
 
 
 class ComponentFactory:

@@ -9,7 +9,7 @@ from data_collectors.contract import BaseSearchCollector
 from data_collectors.logic.collectors.genius.base_genius_collector import BaseGeniusCollector
 from data_collectors.logic.models import MissingTrack
 from genie_common.utils import safe_nested_get
-from data_collectors.tools import AioPoolExecutor
+from genie_common.tools import AioPoolExecutor
 
 
 class GeniusSearchCollector(BaseSearchCollector, BaseGeniusCollector):

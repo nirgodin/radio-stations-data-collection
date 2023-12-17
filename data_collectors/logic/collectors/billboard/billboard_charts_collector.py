@@ -8,7 +8,7 @@ from genie_datastores.postgres.models import BillboardChart
 
 from data_collectors.consts.billboard_consts import BILLBOARD_DATETIME_FORMAT, BILLBOARD_DAILY_CHARTS_URL_FORMAT
 from data_collectors.contract.collector_interface import ICollector
-from data_collectors.tools import AioPoolExecutor
+from genie_common.tools import AioPoolExecutor
 
 
 class BillboardChartsCollector(ICollector):

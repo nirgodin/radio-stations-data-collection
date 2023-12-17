@@ -1,7 +1,7 @@
 from aiohttp import ClientSession
 
 from data_collectors.logic.collectors.musixmatch import MusixmatchSearchCollector, MusixmatchLyricsCollector
-from data_collectors.tools import AioPoolExecutor
+from genie_common.tools import AioPoolExecutor
 
 
 class MusixmatchCollectorsComponentFactory:
