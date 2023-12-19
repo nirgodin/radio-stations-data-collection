@@ -1,3 +1,4 @@
+from data_collectors.logic.inserters.postgres.spotify.artists_database_inserter import ArtistsDatabaseInserter
 from data_collectors.logic.inserters.postgres.spotify.spotify_albums_database_inserter import \
     SpotifyAlbumsDatabaseInserter
 from data_collectors.logic.inserters.postgres.spotify.spotify_artists_database_inserter import \
@@ -17,5 +18,6 @@ __all__ = [
     "SpotifyAudioFeaturesDatabaseInserter",
     "SpotifyTracksDatabaseInserter",
     "TrackIDMappingDatabaseInserter",
-    "BaseSpotifyDatabaseInserter"
+    "ArtistsDatabaseInserter",
+    "BaseSpotifyDatabaseInserter",
 ]
