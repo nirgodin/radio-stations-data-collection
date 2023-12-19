@@ -1,15 +1,15 @@
 from typing import List, Optional, Dict
 
-from genie_datastores.postgres.models import SpotifyArtist, Gender, DataSource
+from genie_datastores.postgres.models import Gender, DataSource, Artist
 from genie_datastores.postgres.operations import execute_query
 from numpy import ndarray
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncEngine
 
-from data_collectors.logic.collectors import SpotifyArtistsImagesCollector
 from data_collectors.contract import IManager
+from data_collectors.logic.collectors import SpotifyArtistsImagesCollector
 from data_collectors.logic.models import DBUpdateRequest
-from data_collectors.logic.updaters.spotify_artists_database_updater import SpotifyArtistsDatabaseUpdater
+from data_collectors.logic.updaters.artists_database_updater import ArtistsDatabaseUpdater
 from data_collectors.tools import ImageGenderDetector
 
 
@@ -18,7 +18,7 @@ class ArtistsImagesGenderManager(IManager):
                  db_engine: AsyncEngine,
                  artists_images_collector: SpotifyArtistsImagesCollector,
                  gender_detector: ImageGenderDetector,
-                 gender_updater: SpotifyArtistsDatabaseUpdater):
+                 gender_updater: ArtistsDatabaseUpdater):
         self._db_engine = db_engine
         self._artists_images_collector = artists_images_collector
         self._gender_detector = gender_detector
@@ -33,8 +33,8 @@ class ArtistsImagesGenderManager(IManager):
 
     async def _query_missing_gender_artists(self, limit: Optional[int]) -> List[str]:
         query = (
-            select(SpotifyArtist.id)
-            .where(SpotifyArtist.gender.is_(None))
+            select(Artist.id)
+            .where(Artist.gender.is_(None))
             .limit(limit)
         )
         query_result = await execute_query(engine=self._db_engine, query=query)
@@ -48,8 +48,8 @@ class ArtistsImagesGenderManager(IManager):
             request = DBUpdateRequest(
                 id=artist_id,
                 values={
-                    SpotifyArtist.gender: self._determine_artist_gender(image),
-                    SpotifyArtist.gender_source: DataSource.SPOTIFY_IMAGES
+                    Artist.gender: self._determine_artist_gender(image),
+                    Artist.gender_source: DataSource.SPOTIFY_IMAGES
                 }
             )
             update_requests.append(request)

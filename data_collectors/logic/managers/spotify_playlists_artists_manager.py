@@ -2,24 +2,23 @@ from typing import List, Generator, Set, Any, Dict
 
 from genie_common.tools import logger
 from genie_common.utils import safe_nested_get
-from genie_datastores.postgres.models import SpotifyArtist
+from genie_datastores.postgres.inner_utils.spotify_utils import extract_artist_id
+from genie_datastores.postgres.models import Artist
 from spotipyio import SpotifyClient
 from tqdm import tqdm
 
 from data_collectors.consts.spotify_consts import ID, TRACKS, ITEMS, TRACK
 from data_collectors.contract import IManager
-from genie_datastores.postgres.inner_utils.spotify_utils import extract_artist_id
-
 from data_collectors.logic.models import DBUpdateRequest
-from data_collectors.logic.updaters.spotify_artists_database_updater import SpotifyArtistsDatabaseUpdater
+from data_collectors.logic.updaters.artists_database_updater import ArtistsDatabaseUpdater
 
 
 class SpotifyPlaylistsArtistsManager(IManager):
-    def __init__(self, spotify_client: SpotifyClient, artists_updater: SpotifyArtistsDatabaseUpdater):
+    def __init__(self, spotify_client: SpotifyClient, artists_updater: ArtistsDatabaseUpdater):
         self._spotify_client = spotify_client
         self._artists_updater = artists_updater
 
-    async def run(self, playlists_ids: List[str], values: Dict[SpotifyArtist, Any]) -> None:
+    async def run(self, playlists_ids: List[str], values: Dict[Artist, Any]) -> None:
         playlists = await self._spotify_client.playlists.info.run(playlists_ids)
         valid_playlists = self._filter_out_invalid_playlists(playlists)
         artists_ids = self._extract_playlists_artists(valid_playlists)
