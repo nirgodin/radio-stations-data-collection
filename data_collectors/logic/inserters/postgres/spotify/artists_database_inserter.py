@@ -10,8 +10,8 @@ from data_collectors.utils.spotify import extract_unique_artists_ids
 
 
 class ArtistsDatabaseInserter(BaseIDsDatabaseInserter):
-    async def _get_raw_records(self, tracks: List[dict]) -> List[dict]:
-        return [{ID: id_} for id_ in extract_unique_artists_ids(*tracks)]
+    async def _get_raw_records(self, tracks: List[dict]) -> List[str]:
+        return list(extract_unique_artists_ids(*tracks))
 
     @property
     def _serialization_method(self) -> str:
