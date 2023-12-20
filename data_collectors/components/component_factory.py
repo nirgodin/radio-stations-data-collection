@@ -31,6 +31,16 @@ class ComponentFactory:
         self.sessions = sessions
         self.tools = tools
 
+    def get_wikipedia_artists_age_name_manager(self) -> WikipediaArtistsAgeManager:
+        pool_executor = self.tools.get_pool_executor()
+        age_collector = self.collectors.wikipedia.get_wikipedia_age_name_collector(pool_executor)
+        artists_updater = self.updaters.get_artists_updater(pool_executor)
+
+        return WikipediaArtistsAgeManager(
+            age_collector=age_collector,
+            artists_updater=artists_updater
+        )
+
     def get_track_names_embeddings_manager(self,
                                            client_session: ClientSession,
                                            milvus_client: MilvusClient) -> TrackNamesEmbeddingsManager:

@@ -15,14 +15,14 @@ class ArtistsDatabaseUpdater(BaseDatabaseUpdater):
 
     async def update(self, update_requests: List[DBUpdateRequest]) -> None:
         n_artists = len(update_requests)
-        logger.info(f"Starting to update spotify artists genders for {n_artists} records")
+        logger.info(f"Starting to update artists records for {n_artists}")
         results = await self._pool_executor.run(  # TODO: Find a way to do it in Bulk
             iterable=update_requests,
             func=self._update_single_artist,
             expected_type=type(None)
         )
 
-        logger.info(f"Successfully updated {len(results)} artists genders out of {n_artists} using spotify images")
+        logger.info(f"Successfully updated {len(results)} artists records out of {n_artists}")
 
     async def _update_single_artist(self, update_request: DBUpdateRequest) -> None:
         await self._update_by_values(

@@ -1,4 +1,3 @@
-import asyncio
 from typing import List, Optional, Tuple
 
 from genie_common.utils import contains_any_hebrew_character

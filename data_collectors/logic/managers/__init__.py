@@ -8,6 +8,7 @@ from data_collectors.logic.managers.missing_ids_managers.shazam_missing_ids_mana
 from data_collectors.logic.managers.shazam_top_tracks_manager import ShazamTopTracksManager
 from data_collectors.logic.managers.spotify_playlists_artists_manager import SpotifyPlaylistsArtistsManager
 from data_collectors.logic.managers.track_names_embeddings_manager import TrackNamesEmbeddingsManager
+from data_collectors.logic.managers.wikipedia_artists_age_manager import WikipediaArtistsAgeManager
 
 __all__ = [
     "BillboardManager",
@@ -18,5 +19,6 @@ __all__ = [
     "GeniusMissingIDsManager",
     "ArtistsImagesGenderManager",
     "SpotifyPlaylistsArtistsManager",
-    "TrackNamesEmbeddingsManager"
+    "TrackNamesEmbeddingsManager",
+    "WikipediaArtistsAgeManager"
 ]

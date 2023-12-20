@@ -6,14 +6,14 @@ from datetime import datetime
 from functools import partial, lru_cache
 from typing import List, Dict, Tuple, Optional
 
-from genie_common.tools import AioPoolExecutor
+from genie_common.tools import AioPoolExecutor, logger
 from genie_common.utils import to_datetime, run_async, contains_any_hebrew_character, search_between_two_characters, \
     read_json
 from sqlalchemy.ext.asyncio import AsyncEngine
 from wikipediaapi import Wikipedia
 
 from data_collectors.consts.wikipedia_consts import WIKIPEDIA_DATETIME_FORMATS
-from data_collectors.logic.collectors.wikipedia.artist_wikipedia_details import ArtistWikipediaDetails
+from data_collectors.logic.models import ArtistWikipediaDetails
 
 
 class BaseWikipediaAgeCollector(ABC):
@@ -23,6 +23,7 @@ class BaseWikipediaAgeCollector(ABC):
         self._punctuation_regex = re.compile(r'[^A-Za-z0-9]+')
 
     async def collect(self, limit: Optional[int]) -> List[ArtistWikipediaDetails]:
+        logger.info(f"Starting to collect artists age details using `{self.__class__.__name__}` collector")
         artists_ids_and_details = await self._get_missing_artists_details(limit)
         return await self._pool_executor.run(
             iterable=artists_ids_and_details,
