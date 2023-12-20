@@ -763,8 +763,8 @@ tqdm = ">=4.65,<5.0"
 [package.source]
 type = "git"
 url = "https://github.com/nirgodin/genie-common.git"
-reference = "e2c651cf"
-resolved_reference = "e2c651cf17bdc6b6e76fe6d9f25cb9ddd95ce87f"
+reference = "e4a693fe"
+resolved_reference = "e4a693fe0d3764b47cc7a438110b56df0f7b7bfe"
 
 [[package]]
 name = "genie-datastores"
@@ -780,7 +780,7 @@ asyncmy = "0.2.8"
 asyncpg = "0.28.0"
 billboard-py = "^7.0.0"
 dataclasses-json = ">=0.6,<1.0"
-genie-common = {git = "https://github.com/nirgodin/genie-common.git", rev = "e2c651cf"}
+genie-common = {git = "https://github.com/nirgodin/genie-common.git", rev = "e4a693fe"}
 greenlet = "2.0.1"
 pymilvus = ">=2.3,<3.0"
 sqlalchemy = "<2.0.0"
@@ -788,8 +788,8 @@ sqlalchemy = "<2.0.0"
 [package.source]
 type = "git"
 url = "https://github.com/nirgodin/genie-datastores.git"
-reference = "e86c5cde"
-resolved_reference = "e86c5cdeb24293c007297ee61410c07ba8ac0307"
+reference = "d722eb81"
+resolved_reference = "d722eb819d4aa0fdd7d8c3db3d78b20c84847692"
 
 [[package]]
 name = "google-api-core"
@@ -2070,6 +2070,20 @@ socks = ["pysocks (>=1.5.6,!=1.5.7,<2.0)"]
 zstd = ["zstandard (>=0.18.0)"]
 
 [[package]]
+name = "wikipedia-api"
+version = "0.5.8"
+description = "Python Wrapper for Wikipedia"
+optional = false
+python-versions = "*"
+files = [
+    {file = "Wikipedia-API-0.5.8.tar.gz", hash = "sha256:065c6541e7480b95b14b9607c243fbce6aefe084e6dc58e41ffb313aec472fcd"},
+    {file = "Wikipedia_API-0.5.8-py3-none-any.whl", hash = "sha256:f124cb59fef0c635fa3818d33025f4cd3daa4a119314728653959c0ede328813"},
+]
+
+[package.dependencies]
+requests = "*"
+
+[[package]]
 name = "yarl"
 version = "1.9.4"
 description = "Yet another URL library"
@@ -2175,4 +2189,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<3.12"
-content-hash = "86e422ce032c06d4ae8bc9b1b9854ddd244e22b74cdbfbb124c31762b8582a7e"
+content-hash = "5b7a8efec2588dbb86997bf84a60233436f1c005e9e8c96a380062b48d5f0727"
