@@ -763,8 +763,8 @@ tqdm = ">=4.65,<5.0"
 [package.source]
 type = "git"
 url = "https://github.com/nirgodin/genie-common.git"
-reference = "e4a693fe"
-resolved_reference = "e4a693fe0d3764b47cc7a438110b56df0f7b7bfe"
+reference = "690ab8f9"
+resolved_reference = "690ab8f97e3f9e49d65969db339d59b5474b9e3c"
 
 [[package]]
 name = "genie-datastores"
@@ -780,7 +780,7 @@ asyncmy = "0.2.8"
 asyncpg = "0.28.0"
 billboard-py = "^7.0.0"
 dataclasses-json = ">=0.6,<1.0"
-genie-common = {git = "https://github.com/nirgodin/genie-common.git", rev = "e4a693fe"}
+genie-common = {git = "https://github.com/nirgodin/genie-common.git", rev = "690ab8f9"}
 greenlet = "2.0.1"
 pymilvus = ">=2.3,<3.0"
 sqlalchemy = "<2.0.0"
@@ -788,8 +788,8 @@ sqlalchemy = "<2.0.0"
 [package.source]
 type = "git"
 url = "https://github.com/nirgodin/genie-datastores.git"
-reference = "8edb2ec4"
-resolved_reference = "8edb2ec404520df1b9854a99e34a6b84ff77e4c2"
+reference = "def23205"
+resolved_reference = "def23205ad3390b32ffde2df1666cdbc30943ab2"
 
 [[package]]
 name = "google-api-core"
@@ -2189,4 +2189,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<3.12"
-content-hash = "f2a6c61af44bfd9e327d998a975c5dd1b7c8e87e5d81a71b6536172373e66a54"
+content-hash = "6770b39b8f5a964453249bd64d65da209961aa6edb62321d66aadb9c842365e8"
