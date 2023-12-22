@@ -27,3 +27,8 @@ class EnvironmentComponentFactory:
     @lru_cache
     def get_milvus_uri() -> str:
         return os.environ["MILVUS_URI"]
+
+    @staticmethod
+    @lru_cache
+    def get_google_geocoding_api_key() -> str:
+        return os.environ["GOOGLE_GEOCODING_API_KEY"]

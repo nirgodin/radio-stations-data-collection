@@ -30,3 +30,11 @@ class SessionsComponentFactory:
     def get_openai_session(api_key: str) -> ClientSession:
         headers = build_authorization_headers(api_key)
         return create_client_session(headers)
+
+    @staticmethod
+    def get_google_geocoding_session(api_key: str) -> ClientSession:
+        headers = {
+            "X-RapidAPI-Key": api_key,
+            "X-RapidAPI-Host": "google-maps-geocoding.p.rapidapi.com"
+        }
+        return create_client_session(headers)

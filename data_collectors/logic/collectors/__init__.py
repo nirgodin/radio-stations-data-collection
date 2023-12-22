@@ -5,3 +5,4 @@ from data_collectors.logic.collectors.genius import *
 from data_collectors.logic.collectors.openai import *
 from data_collectors.logic.collectors.spotify import *
 from data_collectors.logic.collectors.wikipedia import *
+from data_collectors.logic.collectors.google import *
