@@ -36,3 +36,10 @@ class ShazamManagerFactory(BaseManagerFactory):
             artists_inserter=self.inserters.shazam.get_artists_inserter(),
             tracks_inserter=self.inserters.shazam.get_tracks_inserter()
         )
+
+    def get_birth_date_copy_manager(self) -> ShazamBirthDateCopyManager:
+        pool_executor = self.tools.get_pool_executor()
+        return ShazamBirthDateCopyManager(
+            db_engine=get_database_engine(),
+            artists_updater=self.updaters.get_artists_updater(pool_executor)
+        )
