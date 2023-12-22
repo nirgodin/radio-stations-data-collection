@@ -9,6 +9,7 @@ class ComponentFactory:
                  billboard: BillboardManagerFactory = BillboardManagerFactory(),
                  env: EnvironmentComponentFactory = EnvironmentComponentFactory(),
                  genius: GeniusManagerFactory = GeniusManagerFactory(),
+                 google: GoogleManagerFactory = GoogleManagerFactory(),
                  misc: MiscellaneousManagerFactory = MiscellaneousManagerFactory(),
                  musixmatch: MusixmatchManagerFactory = MusixmatchManagerFactory(),
                  sessions: SessionsComponentFactory = SessionsComponentFactory(),
@@ -19,6 +20,7 @@ class ComponentFactory:
         self.billboard = billboard
         self.env = env
         self.genius = genius
+        self.google = google
         self.misc = misc
         self.musixmatch = musixmatch
         self.sessions = sessions
