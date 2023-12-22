@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import List
 
 from genie_common.tools import logger, AioPoolExecutor
@@ -25,6 +26,7 @@ class ArtistsDatabaseUpdater(BaseDatabaseUpdater):
         logger.info(f"Successfully updated {len(results)} artists records out of {n_artists}")
 
     async def _update_single_artist(self, update_request: DBUpdateRequest) -> None:
+        update_request.values[Artist.update_date] = datetime.now()
         await self._update_by_values(
             Artist,
             update_request.values,
