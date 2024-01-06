@@ -633,15 +633,14 @@ develop = false
 [package.dependencies]
 aiohttp = ">=3.6.3,<3.9.0"
 asyncio-pool = "^0.6.0"
-google-api-python-client = ">=2.8,<3.0"
 opencv-python-headless = ">=4.7,<5.0"
 tqdm = ">=4.65,<5.0"
 
 [package.source]
 type = "git"
 url = "https://github.com/nirgodin/genie-common.git"
-reference = "b9768009"
-resolved_reference = "b97680094b37d55f0e2479dee898e8a1abf4f995"
+reference = "a4ede0c5"
+resolved_reference = "a4ede0c5c9d5f86e0f6f8738dd79b8d6e6b9a4aa"
 
 [[package]]
 name = "genie-datastores"
@@ -653,20 +652,27 @@ files = []
 develop = false
 
 [package.dependencies]
-aioredis = ">=2.0.0,<2.1.0"
-asyncmy = "0.2.8"
-asyncpg = "0.28.0"
-billboard-py = "^7.0.0"
-dataclasses-json = ">=0.6,<1.0"
-genie-common = {git = "https://github.com/nirgodin/genie-common.git", rev = "b9768009"}
-greenlet = "2.0.1"
-sqlalchemy = "<2.0.0"
+aioredis = {version = ">=2.0.0,<2.1.0", extras = ["redis"]}
+asyncmy = {version = "0.2.8", extras = ["postgres"]}
+asyncpg = {version = "0.28.0", extras = ["postgres"]}
+billboard-py = {version = "^7.0.0", extras = ["postgres"]}
+dataclasses-json = {version = ">=0.6,<1.0", extras = ["milvus"]}
+genie-common = {git = "https://github.com/nirgodin/genie-common.git", rev = "a4ede0c5", extras = ["all"]}
+google-api-python-client = {version = ">=2.8,<3.0", extras = ["google-drive"]}
+greenlet = {version = "2.0.1", extras = ["postgres"]}
+sqlalchemy = {version = "<2.0.0", extras = ["postgres"]}
+
+[package.extras]
+google-drive = []
+milvus = []
+postgres = []
+redis = []
 
 [package.source]
 type = "git"
 url = "https://github.com/nirgodin/genie-datastores.git"
-reference = "6ec45bf1"
-resolved_reference = "6ec45bf122ecf9a21e8dc2a1208028d1a3b344f1"
+reference = "76cf7bc9"
+resolved_reference = "76cf7bc9b0e3385ea9745711379875b03aec083a"
 
 [[package]]
 name = "google-api-core"
@@ -1686,4 +1692,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<3.12"
-content-hash = "085c33779290bd4f5cf53df0439a90c850e2bb92368776cce42caf62280643e7"
+content-hash = "f0b900fe7c80efc456059eed9f0594b2212bddd04d8f0a2cd3f95b85fa7796cb"
