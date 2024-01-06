@@ -120,24 +120,6 @@ yarl = ">=1.0,<2.0"
 speedups = ["Brotli", "aiodns", "cchardet"]
 
 [[package]]
-name = "aioredis"
-version = "2.0.1"
-description = "asyncio (PEP 3156) Redis support"
-optional = false
-python-versions = ">=3.6"
-files = [
-    {file = "aioredis-2.0.1-py3-none-any.whl", hash = "sha256:9ac0d0b3b485d293b8ca1987e6de8658d7dafcca1cddfcd1d506cae8cdebfdd6"},
-    {file = "aioredis-2.0.1.tar.gz", hash = "sha256:eaa51aaf993f2d71f54b70527c440437ba65340588afeb786cd87c55c89cd98e"},
-]
-
-[package.dependencies]
-async-timeout = "*"
-typing-extensions = "*"
-
-[package.extras]
-hiredis = ["hiredis (>=1.0)"]
-
-[[package]]
 name = "aiosignal"
 version = "1.3.1"
 description = "aiosignal: a list of registered asynchronous callbacks"
@@ -652,27 +634,26 @@ files = []
 develop = false
 
 [package.dependencies]
-aioredis = {version = ">=2.0.0,<2.1.0", extras = ["redis"]}
-asyncmy = {version = "0.2.8", extras = ["postgres"]}
-asyncpg = {version = "0.28.0", extras = ["postgres"]}
-billboard-py = {version = "^7.0.0", extras = ["postgres"]}
-dataclasses-json = {version = ">=0.6,<1.0", extras = ["milvus"]}
-genie-common = {git = "https://github.com/nirgodin/genie-common.git", rev = "a4ede0c5", extras = ["all"]}
-google-api-python-client = {version = ">=2.8,<3.0", extras = ["google-drive"]}
-greenlet = {version = "2.0.1", extras = ["postgres"]}
-sqlalchemy = {version = "<2.0.0", extras = ["postgres"]}
+asyncmy = {version = "0.2.8", optional = true}
+asyncpg = {version = "0.28.0", optional = true}
+billboard-py = {version = "^7.0.0", optional = true}
+dataclasses-json = {version = ">=0.6,<1.0", optional = true}
+genie-common = {git = "https://github.com/nirgodin/genie-common.git", rev = "a4ede0c5"}
+google-api-python-client = {version = ">=2.8,<3.0", optional = true}
+greenlet = {version = "2.0.1", optional = true}
+sqlalchemy = {version = "<2.0.0", optional = true}
 
 [package.extras]
-google-drive = []
-milvus = []
-postgres = []
-redis = []
+google-drive = ["google-api-python-client (>=2.8,<3.0)"]
+milvus = ["dataclasses-json (>=0.6,<1.0)"]
+postgres = ["asyncmy (==0.2.8)", "asyncpg (==0.28.0)", "billboard-py (>=7.0.0,<8.0.0)", "greenlet (==2.0.1)", "sqlalchemy (<2.0.0)"]
+redis = ["aioredis (>=2.0.0,<2.1.0)"]
 
 [package.source]
 type = "git"
 url = "https://github.com/nirgodin/genie-datastores.git"
-reference = "76cf7bc9"
-resolved_reference = "76cf7bc9b0e3385ea9745711379875b03aec083a"
+reference = "0da01d5d"
+resolved_reference = "0da01d5de0066309e280a388d3993a2bc3baf394"
 
 [[package]]
 name = "google-api-core"
@@ -1692,4 +1673,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<3.12"
-content-hash = "f0b900fe7c80efc456059eed9f0594b2212bddd04d8f0a2cd3f95b85fa7796cb"
+content-hash = "29b6bc7f58c7f3388d66456187263298d78dfa0fab07953498f7cd8999064d50"
