@@ -663,8 +663,8 @@ redis = ["aioredis (>=2.0.0,<2.1.0)"]
 [package.source]
 type = "git"
 url = "https://github.com/nirgodin/genie-datastores.git"
-reference = "0da01d5d"
-resolved_reference = "0da01d5de0066309e280a388d3993a2bc3baf394"
+reference = "e549b33d"
+resolved_reference = "e549b33d73db0ef0ccbc8a555c3ab270a08a3a9a"
 
 [[package]]
 name = "google-api-core"
@@ -1698,4 +1698,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<3.12"
-content-hash = "f0a2e82a07f83c7c77d48c58582630a549e66fc5855461bf75d035c5a227da50"
+content-hash = "13830805d400b58205879ecb0b56447f5859dbc8a82c7a54d29afa5055061809"
