@@ -1,8 +1,8 @@
 import os.path
 from functools import lru_cache
 
-from genie_common.google import GoogleDriveAdapter
 from genie_common.tools import AioPoolExecutor
+from genie_datastores.google_drive.google_drive_client import GoogleDriveClient
 from shazamio import Shazam
 from spotipyio import SpotifyClient
 from spotipyio.logic.authentication.spotify_session import SpotifySession
@@ -26,14 +26,14 @@ class ToolsComponentFactory:
 
     @staticmethod
     @lru_cache
-    def get_google_drive_adapter() -> GoogleDriveAdapter:
-        return GoogleDriveAdapter.create()
+    def get_google_drive_client() -> GoogleDriveClient:
+        return GoogleDriveClient.create()
 
     @staticmethod
     def get_image_gender_detector(gender_model_folder_id: str, confidence_threshold: float) -> ImageGenderDetector:
         if not os.path.exists(GENDER_MODEL_RESOURCES_DIR):
             os.mkdir(GENDER_MODEL_RESOURCES_DIR)
-            drive_adapter = ToolsComponentFactory.get_google_drive_adapter()
+            drive_adapter = ToolsComponentFactory.get_google_drive_client()
             drive_adapter.download_all_dir_files(folder_id=gender_model_folder_id, local_dir=GENDER_MODEL_RESOURCES_DIR)
 
         return ImageGenderDetector.create(confidence_threshold)
