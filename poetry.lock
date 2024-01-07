@@ -632,8 +632,8 @@ tqdm = ">=4.65,<5.0"
 [package.source]
 type = "git"
 url = "https://github.com/nirgodin/genie-common.git"
-reference = "a4ede0c5"
-resolved_reference = "a4ede0c5c9d5f86e0f6f8738dd79b8d6e6b9a4aa"
+reference = "5838d07a"
+resolved_reference = "5838d07ae044eb07ee50660d97f97d0f3a4bcb35"
 
 [[package]]
 name = "genie-datastores"
@@ -649,7 +649,7 @@ asyncmy = {version = "0.2.8", optional = true}
 asyncpg = {version = "0.28.0", optional = true}
 billboard-py = {version = "^7.0.0", optional = true}
 dataclasses-json = {version = ">=0.6,<1.0", optional = true}
-genie-common = {git = "https://github.com/nirgodin/genie-common.git", rev = "a4ede0c5"}
+genie-common = {git = "https://github.com/nirgodin/genie-common.git", rev = "5838d07a"}
 google-api-python-client = {version = ">=2.8,<3.0", optional = true}
 greenlet = {version = "2.0.1", optional = true}
 sqlalchemy = {version = "<2.0.0", optional = true}
@@ -663,8 +663,8 @@ redis = ["aioredis (>=2.0.0,<2.1.0)"]
 [package.source]
 type = "git"
 url = "https://github.com/nirgodin/genie-datastores.git"
-reference = "e549b33d"
-resolved_reference = "e549b33d73db0ef0ccbc8a555c3ab270a08a3a9a"
+reference = "704274dd"
+resolved_reference = "704274dd7d9a2bfe0b48c9f1fe54410227c995df"
 
 [[package]]
 name = "google-api-core"
@@ -1698,4 +1698,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<3.12"
-content-hash = "13830805d400b58205879ecb0b56447f5859dbc8a82c7a54d29afa5055061809"
+content-hash = "d38344432a63c8b5bb8133322f56aacb412884366f9a7e2ff56dafbff9b8bd37"
