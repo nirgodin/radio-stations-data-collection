@@ -3,8 +3,10 @@ from genie_datastores.milvus import MilvusClient
 from genie_datastores.postgres.operations import get_database_engine
 from spotipyio.logic.authentication.spotify_session import SpotifySession
 
+from data_collectors import RadioChartsDataCollector
 from data_collectors.components.managers.base_manager_factory import BaseManagerFactory
 from data_collectors.logic.managers import *
+from data_collectors.logic.managers.radio_charts_manager import RadioChartsManager
 
 
 class MiscellaneousManagerFactory(BaseManagerFactory):
@@ -30,4 +32,14 @@ class MiscellaneousManagerFactory(BaseManagerFactory):
             spotify_client=spotify_client,
             spotify_insertions_manager=self.inserters.spotify.get_insertions_manager(spotify_client),
             radio_tracks_database_inserter=self.inserters.get_radio_tracks_inserter()
+        )
+
+    def get_radio_charts_manager(self) -> RadioChartsManager:
+        drive_client = self.tools.get_google_drive_client()
+
+        return RadioChartsManager(
+            db_engine=get_database_engine(),
+            drive_client=drive_client,
+            charts_data_collector=self.collectors.radio_charts.get_charts_collector(drive_client),
+            charts_tracks_collector=""  # TODO: Fix
         )

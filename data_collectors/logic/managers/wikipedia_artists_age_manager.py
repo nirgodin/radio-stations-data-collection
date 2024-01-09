@@ -1,10 +1,8 @@
-from typing import Optional, List
+from typing import Optional
 
-from data_collectors.logic.collectors import BaseWikipediaAgeCollector
-from data_collectors.logic.models import ArtistWikipediaDetails
-from data_collectors.logic.models import DBUpdateRequest
-from data_collectors.logic.updaters import ArtistsDatabaseUpdater
 from data_collectors.contract import IManager
+from data_collectors.logic.collectors import BaseWikipediaAgeCollector
+from data_collectors.logic.updaters import ArtistsDatabaseUpdater
 
 
 class WikipediaArtistsAgeManager(IManager):

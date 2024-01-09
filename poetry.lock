@@ -663,8 +663,8 @@ redis = ["aioredis (>=2.0.0,<2.1.0)"]
 [package.source]
 type = "git"
 url = "https://github.com/nirgodin/genie-datastores.git"
-reference = "194f130e"
-resolved_reference = "194f130eb4e242ce88969bc58b94c7921a2a15eb"
+reference = "e34dc512"
+resolved_reference = "e34dc5125b0fa2e761223ae2560046dda608a1da"
 
 [[package]]
 name = "google-api-core"
@@ -690,13 +690,13 @@ grpcio-gcp = ["grpcio-gcp (>=0.2.2,<1.0.dev0)"]
 
 [[package]]
 name = "google-api-python-client"
-version = "2.112.0"
+version = "2.113.0"
 description = "Google API Client Library for Python"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "google-api-python-client-2.112.0.tar.gz", hash = "sha256:c3bcb5fd70d57f4c94b30c0dbeade53c216febfbf1d771eeb1a2fa74bd0d6756"},
-    {file = "google_api_python_client-2.112.0-py2.py3-none-any.whl", hash = "sha256:f5e45d9812376deb7e04cda8d8ca5233aa608038bdbf1253ad8f7edcb7f6d595"},
+    {file = "google-api-python-client-2.113.0.tar.gz", hash = "sha256:bcffbc8ffbad631f699cf85aa91993f3dc03060b234ca9e6e2f9135028bd9b52"},
+    {file = "google_api_python_client-2.113.0-py2.py3-none-any.whl", hash = "sha256:25659d488df6c8a69615b2a510af0e63b4c47ab2cb87d71c1e13b28715906e27"},
 ]
 
 [package.dependencies]
@@ -1698,4 +1698,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<3.12"
-content-hash = "26823bb7d1d018e868cfdf9f55d4ed77900c01b69094859b23e827c815dea4d4"
+content-hash = "c793f2d1a04711cce076db4ab2dcff55c1e0d8cb4c3a6ad6d96aae9a80a89bc8"
