@@ -4,8 +4,7 @@ from typing import List
 from aiohttp import ClientSession
 from billboard import ChartData
 from genie_datastores.postgres.models import ChartEntryData
-from spotipyio.logic.collectors.search_collectors.search_item import SearchItem
-from spotipyio.logic.collectors.search_collectors.spotify_search_type import SpotifySearchType
+from spotipyio import SearchItem, SpotifySearchType, SearchItemFilters, SearchItemMetadata
 from spotipyio.logic.spotify_client import SpotifyClient
 from spotipyio.utils.spotify_utils import extract_first_search_result
 
@@ -34,9 +33,13 @@ class BillboardTracksCollector(ICollector):
 
     async def _collect_single(self, entry_data: ChartEntryData) -> ChartEntryData:
         search_item = SearchItem(
-            search_types=[SpotifySearchType.TRACK],
-            artist=entry_data.entry.artist,
-            track=entry_data.entry.title
+            metadata=SearchItemMetadata(
+                search_types=[SpotifySearchType.TRACK]
+            ),
+            filters=SearchItemFilters(
+                artist=entry_data.entry.artist,
+                track=entry_data.entry.title
+            )
         )
         search_result = await self._spotify_client.search.run_single(search_item)
         raw_track = extract_first_search_result(search_result)
