@@ -1,11 +1,10 @@
 import os
-from datetime import datetime
 from tempfile import TemporaryDirectory
-from time import time
-from typing import Generator, Dict, Tuple, List
+from typing import Generator, List
 
 import pandas as pd
-from genie_common.utils import to_datetime
+from genie_common.tools import logger
+from genie_common.utils import to_datetime, extract_int_from_string
 from genie_datastores.google_drive.google_drive_client import GoogleDriveClient
 from genie_datastores.google_drive.models.google_drive_download_metadata import GoogleDriveDownloadMetadata
 from pandas import DataFrame, Series
@@ -21,6 +20,7 @@ class RadioChartsDataCollector(ICollector):
         self._drive_client = drive_client
 
     async def collect(self, chart_drive_files: List[dict]) -> List[RadioChartData]:
+        logger.info(f"Starting to query {len(chart_drive_files)} charts")
         charts = []
 
         with TemporaryDirectory() as dir_path:
@@ -33,6 +33,8 @@ class RadioChartsDataCollector(ICollector):
         return charts
 
     def _generate_filtered_charts_data(self, chart_data_path: str) -> Generator[RadioChartData, None, None]:
+        logger.info("Starting to pre process chart data")
+
         with pd.ExcelFile(chart_data_path) as yearly_charts_data:
             for sheet_name in yearly_charts_data.sheet_names:
                 weekly_chart_data = yearly_charts_data.parse(sheet_name, header=1)
@@ -54,8 +56,11 @@ class RadioChartsDataCollector(ICollector):
             else:
                 break
 
-        filtered_rows = weekly_chart_data[weekly_chart_data.index <= chart_end_index]
-        return self._filter_data_columns(filtered_rows)
+        filtered_rows_data = weekly_chart_data[weekly_chart_data.index <= chart_end_index]
+        filtered_data = self._filter_data_columns(filtered_rows_data)
+        self._pre_process_position_column(filtered_data)
+
+        return filtered_data
 
     @staticmethod
     def _is_valid_row(row: Series) -> bool:
@@ -83,4 +88,12 @@ class RadioChartsDataCollector(ICollector):
         if len(columns) != 3:
             raise ValueError("Invalid number of columns")
 
-        return data[columns]
+        filtered_data = data[columns]
+        filtered_data.columns = [POSITION_COLUMN_NAME, SONG_COLUMN_NAME, ARTIST_COLUMN_NAME]
+
+        return filtered_data
+
+    @staticmethod
+    def _pre_process_position_column(data: DataFrame) -> None:
+        data[POSITION_COLUMN_NAME] = data[POSITION_COLUMN_NAME].astype(str)
+        data[POSITION_COLUMN_NAME] = data[POSITION_COLUMN_NAME].apply(extract_int_from_string)
