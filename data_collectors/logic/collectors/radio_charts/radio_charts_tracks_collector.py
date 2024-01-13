@@ -14,8 +14,7 @@ from sqlalchemy.ext.asyncio import AsyncEngine
 from data_collectors.consts.radio_charts_consts import ARTIST_COLUMN_NAME, SONG_COLUMN_NAME, POSITION_COLUMN_NAME
 from data_collectors.consts.spotify_consts import ID, TRACK
 from data_collectors.contract import ICollector
-from data_collectors.logic.models import RadioChartData
-from data_collectors.logic.models.radio_chart_entry_details import RadioChartEntryDetails
+from data_collectors.logic.models import RadioChartData, RadioChartEntryDetails
 
 
 class RadioChartsTracksCollector(ICollector):

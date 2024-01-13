@@ -12,7 +12,7 @@ from data_collectors.consts.radio_charts_consts import EXCLUDED_RADIO_CHARTS_FIL
 from data_collectors.contract import IManager
 from data_collectors.logic.collectors.radio_charts.radio_charts_tracks_collector import RadioChartsTracksCollector
 from data_collectors.logic.inserters.postgres import SpotifyInsertionsManager
-from data_collectors.logic.models.radio_chart_entry_details import RadioChartEntryDetails
+from data_collectors.logic.models import RadioChartEntryDetails
 
 
 class RadioChartsManager(IManager):
