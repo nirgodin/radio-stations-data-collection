@@ -1,4 +1,5 @@
 from datetime import datetime
+from time import sleep
 from typing import List, Dict, Optional
 from urllib.parse import unquote
 
@@ -11,12 +12,12 @@ from selenium.webdriver.chrome.webdriver import WebDriver
 from data_collectors.consts.glglz_consts import GLGLZ_WEEKLY_CHART_URL_FORMAT, GLGLZ_DATETIME_FORMAT, \
     ISRAELI_CHART_TITLE, INTERNATIONAL_CHART_TITLE, GLGLZ_CHARTS_WEB_ELEMENT, POSITION_TRACK_NAME_SEPARATOR, \
     GLGLZ_CHART_ENTRY
-from data_collectors.contract import ICollector
+from data_collectors.contract import IChartsDataCollector
 from data_collectors.tools import WebElementsExtractor
 from data_collectors.utils.selenium import driver_session
 
 
-class GlglzChartsDataCollector(ICollector):
+class GlglzChartsDataCollector(IChartsDataCollector):
     def __init__(self, web_elements_extractor: WebElementsExtractor = WebElementsExtractor()):
         self._web_elements_extractor = web_elements_extractor
 
@@ -48,6 +49,7 @@ class GlglzChartsDataCollector(ICollector):
         formatted_date = date.strftime(GLGLZ_DATETIME_FORMAT).strip()
         url = GLGLZ_WEEKLY_CHART_URL_FORMAT.format(date=formatted_date)
         driver.get(url)
+        sleep(5)
 
         return BeautifulSoup(driver.page_source, 'html.parser')
 

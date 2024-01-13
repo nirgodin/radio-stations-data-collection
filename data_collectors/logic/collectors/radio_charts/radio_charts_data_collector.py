@@ -12,10 +12,10 @@ from pandas import DataFrame, Series
 
 from data_collectors.consts.radio_charts_consts import POSITION_COLUMN_NAME, SONG_COLUMN_NAME, ARTIST_COLUMN_NAME, \
     RADIO_CHART_SHEET_NAME_DATETIME_FORMATS, CHART_RELEVANT_COLUMNS
-from data_collectors.contract import ICollector
+from data_collectors.contract import IChartsDataCollector
 
 
-class RadioChartsDataCollector(ICollector):
+class RadioChartsDataCollector(IChartsDataCollector):
     def __init__(self, drive_client: GoogleDriveClient):
         self._drive_client = drive_client
 
@@ -50,6 +50,8 @@ class RadioChartsDataCollector(ICollector):
                         position=row[POSITION_COLUMN_NAME],
                         comment=os.path.basename(chart_data_path)
                     )
+
+                break
 
     def _filter_weekly_chart_data(self, weekly_chart_data: DataFrame) -> DataFrame:
         chart_end_index = 0

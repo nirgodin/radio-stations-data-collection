@@ -12,6 +12,7 @@ class ComponentFactory:
                  google: GoogleManagerFactory = GoogleManagerFactory(),
                  misc: MiscellaneousManagerFactory = MiscellaneousManagerFactory(),
                  musixmatch: MusixmatchManagerFactory = MusixmatchManagerFactory(),
+                 radio_charts: RadioChartsManagerFactory = RadioChartsManagerFactory(),
                  sessions: SessionsComponentFactory = SessionsComponentFactory(),
                  shazam: ShazamManagerFactory = ShazamManagerFactory(),
                  spotify: SpotifyManagerFactory = SpotifyManagerFactory(),
@@ -23,6 +24,7 @@ class ComponentFactory:
         self.google = google
         self.misc = misc
         self.musixmatch = musixmatch
+        self.radio_charts = radio_charts
         self.sessions = sessions
         self.shazam = shazam
         self.spotify = spotify

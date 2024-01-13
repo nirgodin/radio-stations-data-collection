@@ -13,7 +13,7 @@ from data_collectors.contract import ICollector
 from data_collectors.logic.models.radio_chart_entry_details import RadioChartEntryDetails
 
 
-class GlglzChartsTracksCollector(ICollector):
+class RadioChartsTracksCollector(ICollector):
     def __init__(self, pool_executor: AioPoolExecutor, db_engine: AsyncEngine, spotify_client: SpotifyClient):
         self._pool_executor = pool_executor
         self._db_engine = db_engine
@@ -33,6 +33,7 @@ class GlglzChartsTracksCollector(ICollector):
         if track_id is None:
             return await self._create_non_existing_chart_entry(chart_entry)
 
+        chart_entry.track_id = track_id
         return RadioChartEntryDetails(entry=chart_entry)
 
     async def _query_existing_tracks_by_key(self, chart_entry: ChartEntry) -> Optional[str]:
