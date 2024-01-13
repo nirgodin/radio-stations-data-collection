@@ -7,10 +7,9 @@ from genie_datastores.postgres.operations import execute_query, insert_records
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncEngine
 
-from data_collectors import RadioChartsDataCollector
+from data_collectors import RadioChartsDataCollector, GlglzChartsTracksCollector
 from data_collectors.consts.radio_charts_consts import EXCLUDED_RADIO_CHARTS_FILES_IDS
 from data_collectors.contract import IManager
-from data_collectors.logic.collectors.radio_charts.radio_charts_tracks_collector import RadioChartsTracksCollector
 from data_collectors.logic.inserters.postgres import SpotifyInsertionsManager
 from data_collectors.logic.models import RadioChartEntryDetails
 
@@ -20,7 +19,7 @@ class RadioChartsManager(IManager):
                  db_engine: AsyncEngine,
                  drive_client: GoogleDriveClient,
                  charts_data_collector: RadioChartsDataCollector,
-                 charts_tracks_collector: RadioChartsTracksCollector,
+                 charts_tracks_collector: GlglzChartsTracksCollector,
                  spotify_insertions_manager: SpotifyInsertionsManager):
         self._db_engine = db_engine
         self._drive_client = drive_client
@@ -34,8 +33,8 @@ class RadioChartsManager(IManager):
         non_existing_files = self._get_non_existing_files(chart, existing_files_names, limit)
 
         if non_existing_files:
-            charts_data = await self._charts_data_collector.collect(non_existing_files)
-            charts_tracks_details = await self._charts_tracks_collector.collect(charts_data, chart)
+            charts_entries = await self._charts_data_collector.collect(non_existing_files, chart)
+            charts_tracks_details = await self._charts_tracks_collector.collect(charts_entries)
             await self._insert_records(charts_tracks_details)
         else:
             logger.info("Did not find any non existing chart. Aborting")

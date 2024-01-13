@@ -27,12 +27,16 @@ class GlglzChartsManager(IManager):
         self._spotify_insertions_manager = spotify_insertions_manager
 
     async def run(self, dates: Optional[List[datetime]], limit: Optional[int]):
-        dates = await self._retrieve_next_missing_dates(limit)
+        logger.info(f"Starting to run glglz charts manager")
+        if dates is None:
+            dates = await self._retrieve_next_missing_dates(limit)
+
         charts_entries = await self._charts_data_collector.collect(dates)
         charts_entries_details = await self._charts_tracks_collector.collect(charts_entries)
         await self._insert_records(charts_entries_details)
 
     async def _retrieve_next_missing_dates(self, limit: Optional[int]) -> List[datetime]:
+        logger.info("No date was supplied. Querying database to find next missing charts dates")
         query = (
             select(ChartEntry.date)
             .where(ChartEntry.chart.in_([Chart.GLGLZ_WEEKLY_ISRAELI, Chart.GLGLZ_WEEKLY_INTERNATIONAL]))

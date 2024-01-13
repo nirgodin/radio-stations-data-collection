@@ -20,6 +20,7 @@ class GlglzChartsTracksCollector(ICollector):
         self._spotify_client = spotify_client
 
     async def collect(self, charts_entries: List[ChartEntry]) -> Any:
+        logger.info(f"Starting to collect tracks for {len(charts_entries)} charts entries")
         return await self._pool_executor.run(
             iterable=charts_entries,
             func=self._create_single_chart_entry_details,

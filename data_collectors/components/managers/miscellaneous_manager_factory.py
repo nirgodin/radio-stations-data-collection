@@ -3,7 +3,6 @@ from genie_datastores.milvus import MilvusClient
 from genie_datastores.postgres.operations import get_database_engine
 from spotipyio.logic.authentication.spotify_session import SpotifySession
 
-from data_collectors import RadioChartsDataCollector
 from data_collectors.components.managers.base_manager_factory import BaseManagerFactory
 from data_collectors.logic.managers import *
 from data_collectors.logic.managers.glglz_charts_manager import GlglzChartsManager
@@ -53,7 +52,7 @@ class MiscellaneousManagerFactory(BaseManagerFactory):
 
     def get_glglz_charts_manager(self, spotify_session: SpotifySession) -> GlglzChartsManager:
         spotify_client = self.tools.get_spotify_client(spotify_session)
-        tracks_collector = self.collectors.radio_charts.get_glglz_tracks_collector(
+        tracks_collector = self.collectors.radio_charts.get_tracks_collector(
             pool_executor=self.tools.get_pool_executor(),
             spotify_client=spotify_client
         )

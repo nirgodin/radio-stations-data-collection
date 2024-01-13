@@ -3,6 +3,7 @@ from typing import List, Dict, Optional
 from urllib.parse import unquote
 
 from bs4 import BeautifulSoup
+from genie_common.tools import logger
 from genie_common.utils import extract_int_from_string
 from genie_datastores.postgres.models import ChartEntry, Chart
 from selenium.webdriver.chrome.webdriver import WebDriver
@@ -20,6 +21,7 @@ class GlglzChartsDataCollector(ICollector):
         self._web_elements_extractor = web_elements_extractor
 
     async def collect(self, dates: List[datetime]) -> List[ChartEntry]:
+        logger.info("Starting to run GlglzChartsDataCollector to collect raw charts entries")
         charts_entries = []
         date_html_mapping = self._collect_charts_raw_html(dates)
 
@@ -34,6 +36,8 @@ class GlglzChartsDataCollector(ICollector):
 
         with driver_session() as driver:
             for date in dates:
+                stringified_date = date.strftime("%d-%m-%Y")
+                logger.info(f"Fetching raw chart HTML for date `{stringified_date}`")
                 soup = self._collect_single_date_html(driver, date)
                 date_soup_mapping[date] = soup
 
@@ -55,6 +59,8 @@ class GlglzChartsDataCollector(ICollector):
         return unquote(url) if should_unquote else url
 
     def _generate_single_date_chart_entries(self, date: datetime, soup: BeautifulSoup) -> List[ChartEntry]:
+        stringified_date = date.strftime("%d-%m-%Y")
+        logger.info(f"Parsing raw chart HTML for date `{stringified_date}`")
         elements = self._web_elements_extractor.extract(
             soup=soup,
             web_element=GLGLZ_CHARTS_WEB_ELEMENT

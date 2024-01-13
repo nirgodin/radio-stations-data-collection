@@ -7,32 +7,32 @@ from genie_common.tools import logger
 from genie_common.utils import to_datetime, extract_int_from_string
 from genie_datastores.google_drive.google_drive_client import GoogleDriveClient
 from genie_datastores.google_drive.models.google_drive_download_metadata import GoogleDriveDownloadMetadata
+from genie_datastores.postgres.models import ChartEntry, Chart
 from pandas import DataFrame, Series
 
 from data_collectors.consts.radio_charts_consts import POSITION_COLUMN_NAME, SONG_COLUMN_NAME, ARTIST_COLUMN_NAME, \
     RADIO_CHART_SHEET_NAME_DATETIME_FORMATS, CHART_RELEVANT_COLUMNS
 from data_collectors.contract import ICollector
-from data_collectors.logic.models import RadioChartData
 
 
 class RadioChartsDataCollector(ICollector):
     def __init__(self, drive_client: GoogleDriveClient):
         self._drive_client = drive_client
 
-    async def collect(self, chart_drive_files: List[dict]) -> List[RadioChartData]:
+    async def collect(self, chart_drive_files: List[dict], chart: Chart) -> List[ChartEntry]:
         logger.info(f"Starting to query {len(chart_drive_files)} charts")
-        charts = []
+        charts_entries = []
 
         with TemporaryDirectory() as dir_path:
             for file in chart_drive_files:
                 file_path = self._download_chart_data(file, dir_path)
 
-                for chart_data in self._generate_filtered_charts_data(file_path):
-                    charts.append(chart_data)
+                for chart_entry in self._generate_charts_entries(file_path, chart):
+                    charts_entries.append(chart_entry)
 
-        return charts
+        return charts_entries
 
-    def _generate_filtered_charts_data(self, chart_data_path: str) -> Generator[RadioChartData, None, None]:
+    def _generate_charts_entries(self, chart_data_path: str, chart: Chart) -> Generator[ChartEntry, None, None]:
         logger.info("Starting to pre process chart data")
 
         with pd.ExcelFile(chart_data_path) as yearly_charts_data:
@@ -41,11 +41,15 @@ class RadioChartsDataCollector(ICollector):
                 filtered_chart_data = self._filter_weekly_chart_data(weekly_chart_data)
                 chart_date = to_datetime(sheet_name, RADIO_CHART_SHEET_NAME_DATETIME_FORMATS)
 
-                yield RadioChartData(
-                    data=filtered_chart_data,
-                    date=chart_date,
-                    original_file_name=os.path.basename(chart_data_path)
-                )
+                for _, row in filtered_chart_data.iterrows():
+                    yield ChartEntry(
+                        track_id=None,
+                        chart=chart,
+                        date=chart_date,
+                        key=f"{row[ARTIST_COLUMN_NAME]} - {row[SONG_COLUMN_NAME]}",
+                        position=row[POSITION_COLUMN_NAME],
+                        comment=os.path.basename(chart_data_path)
+                    )
 
     def _filter_weekly_chart_data(self, weekly_chart_data: DataFrame) -> DataFrame:
         chart_end_index = 0
