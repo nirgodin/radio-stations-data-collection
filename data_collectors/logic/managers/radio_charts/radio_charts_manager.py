@@ -1,4 +1,4 @@
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple, Any
 
 from genie_common.tools import logger
 from genie_datastores.google_drive.google_drive_client import GoogleDriveClient
@@ -23,7 +23,7 @@ class RadioChartsManager(BaseRadioChartsManager):
         super().__init__(charts_data_collector, charts_tracks_collector, spotify_insertions_manager, db_engine)
         self._drive_client = drive_client
 
-    async def _generate_data_collector_order_args(self, chart: Chart, limit: Optional[int]) -> Tuple[List[dict], Chart]:
+    async def _generate_data_collector_order_args(self, chart: Chart, limit: Optional[int]) -> Dict[str, Any]:
         existing_files_names = await self._query_existing_files_names(chart)
         logger.info("Starting to select non existing charts to insert")
         drive_dir = self._charts_drive_dir_mapping[chart]
@@ -36,7 +36,10 @@ class RadioChartsManager(BaseRadioChartsManager):
             if self._is_relevant_file(file, existing_files_names):
                 files.append(file)
 
-        return files, chart
+        return {
+            "chart_drive_files": files,
+            "chart": chart
+        }
 
     async def _query_existing_files_names(self, chart: Chart) -> List[str]:
         logger.info(f"Querying existing files names to prevent double insertion of same chart entries")

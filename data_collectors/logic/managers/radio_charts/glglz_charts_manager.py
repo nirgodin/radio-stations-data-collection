@@ -1,6 +1,6 @@
 from copy import deepcopy
 from datetime import datetime, timedelta
-from typing import Optional, List, Tuple
+from typing import Optional, List, Tuple, Dict, Any
 
 import requests
 from genie_common.tools import logger
@@ -16,9 +16,9 @@ from data_collectors.logic.managers.radio_charts.base_radio_charts_manager impor
 class GlglzChartsManager(BaseRadioChartsManager):
     async def _generate_data_collector_order_args(self,
                                                   dates: Optional[List[datetime]],
-                                                  limit: Optional[int]) -> Tuple[List[datetime]]:
+                                                  limit: Optional[int]) -> Dict[str, Any]:
         if dates is not None:
-            return (dates,)
+            return {"dates": dates}
 
         logger.info("No date was supplied. Querying database to find next missing charts dates")
         query = (
@@ -31,7 +31,7 @@ class GlglzChartsManager(BaseRadioChartsManager):
         last_chart_date = query_result.scalars().first()
         next_dates = self._build_next_dates(last_chart_date, limit) if last_chart_date else [FIRST_GLGLZ_CHART_DATE]
 
-        return (next_dates,)
+        return {"dates": next_dates}
 
     def _build_next_dates(self, last_chart_date: datetime, limit: Optional[int]) -> List[datetime]:
         if limit is None:

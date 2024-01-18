@@ -1,7 +1,7 @@
 from typing import Any, List, Optional
 
 from genie_common.tools import AioPoolExecutor, logger
-from genie_datastores.postgres.models import ChartEntry
+from genie_datastores.postgres.models import ChartEntry, SpotifyTrack
 from genie_datastores.postgres.operations import execute_query
 from spotipyio import SpotifyClient, SearchItem, SearchItemMetadata, SpotifySearchType
 from spotipyio.utils import extract_first_search_result
@@ -28,6 +28,12 @@ class RadioChartsTracksCollector(ICollector):
         )
 
     async def _create_single_chart_entry_details(self, chart_entry: ChartEntry) -> RadioChartEntryDetails:
+        if chart_entry.track_id is None:
+            return await self._create_chart_entry_details_by_key(chart_entry)
+
+        return await self._create_chart_entry_details_by_track_id(chart_entry)
+
+    async def _create_chart_entry_details_by_key(self, chart_entry: ChartEntry) -> RadioChartEntryDetails:
         track_id = await self._query_existing_tracks_by_key(chart_entry)
 
         if track_id is None:
@@ -59,7 +65,7 @@ class RadioChartsTracksCollector(ICollector):
         track = extract_first_search_result(search_result)
 
         if track is None:
-            self._log_track_not_found(chart_entry)
+            self._log_track_not_found(chart_entry, match_field="key")
         else:
             chart_entry.track_id = track[ID]
             return RadioChartEntryDetails(
@@ -68,6 +74,33 @@ class RadioChartsTracksCollector(ICollector):
             )
 
     @staticmethod
-    def _log_track_not_found(chart_entry: ChartEntry) -> None:
+    def _log_track_not_found(chart_entry: ChartEntry, match_field: str) -> None:
         stringified_date = chart_entry.date.strftime("%d-%m-%Y")
-        logger.info(f"Did not find any track that matches `{chart_entry.key}` from date `{stringified_date}`. Ignoring")
+        match_value = getattr(chart_entry, match_field)
+        logger.info(f"Did not find any track that matches `{match_value}` from date `{stringified_date}`. Ignoring")
+
+    async def _create_chart_entry_details_by_track_id(self, chart_entry: ChartEntry) -> RadioChartEntryDetails:
+        is_existing_track_id = await self._is_existing_track_id(chart_entry.track_id)
+        if is_existing_track_id:
+            return RadioChartEntryDetails(entry=chart_entry)
+
+        tracks = await self._spotify_client.tracks.run([chart_entry.track_id])
+
+        if tracks:
+            return RadioChartEntryDetails(
+                entry=chart_entry,
+                track={TRACK: tracks[0]}
+            )
+        else:
+            self._log_track_not_found(chart_entry, match_field="track_id")
+
+    async def _is_existing_track_id(self, track_id: str) -> bool:
+        query = (
+            select(SpotifyTrack.id)
+            .where(SpotifyTrack.id == track_id)
+            .limit(1)
+        )
+        query_result = await execute_query(engine=self._db_engine, query=query)
+        database_id = query_result.scalars().first()
+
+        return False if database_id is None else True

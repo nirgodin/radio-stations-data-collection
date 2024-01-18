@@ -6,7 +6,8 @@ from spotipyio import SpotifyClient
 from data_collectors.logic.collectors import (
     RadioChartsDataCollector,
     GlglzChartsDataCollector,
-    RadioChartsTracksCollector
+    RadioChartsTracksCollector,
+    SpotifyChartsDataCollector,
 )
 
 
@@ -18,6 +19,10 @@ class RadioChartsCollectorsComponentFactory:
     @staticmethod
     def get_glglz_charts_collector() -> GlglzChartsDataCollector:
         return GlglzChartsDataCollector()
+
+    @staticmethod
+    def get_spotify_charts_collector(spotify_client: SpotifyClient) -> SpotifyChartsDataCollector:
+        return SpotifyChartsDataCollector(spotify_client)
 
     @staticmethod
     def get_tracks_collector(pool_executor: AioPoolExecutor,

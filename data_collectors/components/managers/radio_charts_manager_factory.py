@@ -35,3 +35,17 @@ class RadioChartsManagerFactory(BaseManagerFactory):
             charts_tracks_collector=tracks_collector,
             spotify_insertions_manager=self.inserters.spotify.get_insertions_manager(spotify_client)
         )
+
+    def get_spotify_charts_manager(self, spotify_session: SpotifySession) -> SpotifyChartsManager:
+        spotify_client = self.tools.get_spotify_client(spotify_session)
+        tracks_collector = self.collectors.radio_charts.get_tracks_collector(
+            pool_executor=self.tools.get_pool_executor(),
+            spotify_client=spotify_client
+        )
+
+        return SpotifyChartsManager(
+            db_engine=get_database_engine(),
+            charts_data_collector=self.collectors.radio_charts.get_spotify_charts_collector(spotify_client),
+            charts_tracks_collector=tracks_collector,
+            spotify_insertions_manager=self.inserters.spotify.get_insertions_manager(spotify_client)
+        )
