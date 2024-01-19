@@ -6,11 +6,11 @@ from genie_datastores.postgres.operations import insert_records_ignoring_conflic
 from genie_datastores.postgres.utils import query_existing_column_values
 
 from data_collectors.consts.spotify_consts import ID
-from data_collectors.contract.inserters.base_postgres_database_inserter import BasePostgresDatabaseInserter
+from data_collectors.contract.inserters.postgres_database_inserter_interface import IPostgresDatabaseInserter
 from genie_common.tools import logger
 
 
-class BaseIDsDatabaseInserter(BasePostgresDatabaseInserter, ABC):
+class BaseIDsDatabaseInserter(IPostgresDatabaseInserter, ABC):
     async def insert(self, iterable: Iterable[Any]) -> List[BaseORMModel]:
         logger.info(f"Starting to run {self.__class__.__name__}")
         raw_records = await self._get_raw_records(iterable)

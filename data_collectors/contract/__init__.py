@@ -8,7 +8,7 @@ from data_collectors.contract.serializer_interface import ISerializer
 
 __all__ = [
     "BaseDatabaseUpdater",
-    "BasePostgresDatabaseInserter",
+    "IPostgresDatabaseInserter",
     "BaseSearchCollector",
     "IChartsDataCollector",
     "ICollector",

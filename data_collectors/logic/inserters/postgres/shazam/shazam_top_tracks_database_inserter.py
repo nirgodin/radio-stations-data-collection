@@ -4,11 +4,11 @@ from genie_datastores.postgres.models import ShazamTopTrack, ShazamLocation
 from genie_datastores.postgres.operations import insert_records
 
 from data_collectors.consts.shazam_consts import KEY
-from data_collectors.contract.inserters.base_postgres_database_inserter import BasePostgresDatabaseInserter
+from data_collectors.contract.inserters.postgres_database_inserter_interface import IPostgresDatabaseInserter
 from genie_common.tools import logger
 
 
-class ShazamTopTracksDatabaseInserter(BasePostgresDatabaseInserter):
+class ShazamTopTracksDatabaseInserter(IPostgresDatabaseInserter):
     async def insert(self, locations_tracks: Dict[ShazamLocation, List[dict]]) -> List[ShazamTopTrack]:
         logger.info("Starting to insert shazam top tracks to database")
         records = self._to_records(locations_tracks)
