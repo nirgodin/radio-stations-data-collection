@@ -51,8 +51,6 @@ class RadioChartsDataCollector(IChartsDataCollector):
                         comment=os.path.basename(chart_data_path)
                     )
 
-                break
-
     def _filter_weekly_chart_data(self, weekly_chart_data: DataFrame) -> DataFrame:
         chart_end_index = 0
 
