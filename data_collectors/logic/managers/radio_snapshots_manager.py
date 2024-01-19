@@ -1,10 +1,11 @@
 from typing import List
 
-from genie_datastores.postgres.models import SpotifyArtist, SpotifyStation
+from genie_datastores.postgres.inner_utils.spotify_utils import extract_artist_id
+from genie_datastores.postgres.models import SpotifyArtist, SpotifyStation, RadioTrack
 from spotipyio.logic.spotify_client import SpotifyClient
 
 from data_collectors.logic.inserters.postgres import SpotifyInsertionsManager, RadioTracksDatabaseInserter
-from data_collectors.consts.spotify_consts import ID, TRACKS, ARTISTS, ITEMS
+from data_collectors.consts.spotify_consts import ID, TRACKS, ARTISTS, ITEMS, TRACK
 from data_collectors.contract import IManager
 from genie_common.tools import logger
 
@@ -39,9 +40,32 @@ class RadioStationsSnapshotsManager(IManager):
     async def _insert_radio_tracks(self, playlist: dict, tracks: List[dict], artists: List[SpotifyArtist]) -> None:
         artists_ids = [artist.id for artist in artists]
         artists_responses = await self._spotify_client.artists.info.run(artists_ids)
-
-        await self._radio_tracks_database_inserter.insert(
+        records = self._to_records(
             playlist=playlist,
             tracks=tracks,
             artists=artists_responses
         )
+
+        await self._radio_tracks_database_inserter.insert(records)
+
+    def _to_records(self, playlist: dict, tracks: List[dict], artists: List[dict]) -> List[RadioTrack]:
+        records = []
+
+        for track in tracks:
+            artist = self._extract_artist_details(track, artists)
+            record = RadioTrack.from_playlist_artist_track(
+                playlist=playlist,
+                artist=artist,
+                track=track
+            )
+            records.append(record)
+
+        return records
+
+    @staticmethod
+    def _extract_artist_details(track: dict, artists: List[dict]) -> dict:
+        artist_id = extract_artist_id(track[TRACK])
+
+        for artist in artists:
+            if artist[ID] == artist_id:
+                return artist
