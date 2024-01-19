@@ -1,6 +1,6 @@
 from genie_datastores.postgres.operations import get_database_engine
 
-from data_collectors.logic.inserters.postgres import RadioTracksDatabaseInserter
+from data_collectors.logic.inserters.postgres import RadioTracksDatabaseInserter, ChartEntriesDatabaseInserter
 from data_collectors.components.inserters.billboard_inserters_component_factory import \
     BillboardInsertersComponentFactory
 from data_collectors.components.inserters.shazam_inserters_compoent_factory import ShazamInsertersComponentFactory
@@ -19,3 +19,7 @@ class InsertersComponentFactory:
     @staticmethod
     def get_radio_tracks_inserter() -> RadioTracksDatabaseInserter:
         return RadioTracksDatabaseInserter(get_database_engine())
+
+    @staticmethod
+    def get_chart_entries_inserter() -> ChartEntriesDatabaseInserter:
+        return ChartEntriesDatabaseInserter(get_database_engine())

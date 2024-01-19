@@ -1,4 +1,5 @@
 from data_collectors.logic.inserters.postgres.billboard import *
+from data_collectors.logic.inserters.postgres.chart_entries_database_inserter import ChartEntriesDatabaseInserter
 from data_collectors.logic.inserters.postgres.shazam import *
 from data_collectors.logic.inserters.postgres.spotify import *
 from data_collectors.logic.inserters.postgres.spotify_insertions_manager import SpotifyInsertionsManager
@@ -27,5 +28,6 @@ __all__ = [
     "ShazamInsertionsManager",
 
     # Other
-    "RadioTracksDatabaseInserter"
+    "RadioTracksDatabaseInserter",
+    "ChartEntriesDatabaseInserter"
 ]

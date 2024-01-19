@@ -1,13 +1,11 @@
 from abc import ABC, abstractmethod
-from typing import Any, Tuple, List, Dict
+from typing import Any, List, Dict
 
 from genie_common.tools import logger
-from genie_datastores.postgres.operations import insert_records
-from sqlalchemy.ext.asyncio import AsyncEngine
 
-from data_collectors.logic.collectors import RadioChartsTracksCollector
 from data_collectors.contract import IChartsDataCollector, IManager
-from data_collectors.logic.inserters.postgres import SpotifyInsertionsManager
+from data_collectors.logic.collectors import RadioChartsTracksCollector
+from data_collectors.logic.inserters.postgres import SpotifyInsertionsManager, ChartEntriesDatabaseInserter
 from data_collectors.logic.models import RadioChartEntryDetails
 
 
@@ -16,11 +14,11 @@ class BaseRadioChartsManager(IManager, ABC):
                  charts_data_collector: IChartsDataCollector,
                  charts_tracks_collector: RadioChartsTracksCollector,
                  spotify_insertions_manager: SpotifyInsertionsManager,
-                 db_engine: AsyncEngine):
+                 chart_entries_inserter: ChartEntriesDatabaseInserter):
         self._charts_data_collector = charts_data_collector
         self._charts_tracks_collector = charts_tracks_collector
         self._spotify_insertions_manager = spotify_insertions_manager
-        self._db_engine = db_engine
+        self._chart_entries_inserter = chart_entries_inserter
 
     async def run(self, *args, **kwargs) -> None:
         logger.info(f"Starting to run `{self.__class__.__name__}` charts manager")
@@ -43,4 +41,4 @@ class BaseRadioChartsManager(IManager, ABC):
 
         records = [detail.entry for detail in charts_entries_details if detail.entry.track_id is not None]
         logger.info("Starting to insert chart entries")
-        await insert_records(engine=self._db_engine, records=records)
+        await self._chart_entries_inserter.insert(records)
