@@ -1,20 +1,19 @@
-from datetime import datetime
 from time import sleep
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Tuple
 from urllib.parse import unquote
 
 from bs4 import BeautifulSoup
 from genie_common.tools import logger
-from genie_common.utils import extract_int_from_string
+from genie_common.utils import extract_int_from_string, compute_similarity_score
 from genie_datastores.postgres.models import ChartEntry, Chart
 from selenium.webdriver.chrome.webdriver import WebDriver
 
-from data_collectors.consts.glglz_consts import GLGLZ_WEEKLY_CHART_URL_FORMAT, GLGLZ_DATETIME_FORMAT, \
-    ISRAELI_CHART_TITLE, INTERNATIONAL_CHART_TITLE, GLGLZ_CHARTS_WEB_ELEMENT, POSITION_TRACK_NAME_SEPARATOR, \
-    GLGLZ_CHART_ENTRY
+from data_collectors.consts.glglz_consts import *
 from data_collectors.contract import IChartsDataCollector
 from data_collectors.tools import WebElementsExtractor
 from data_collectors.utils.selenium import driver_session
+
+CHART_NAME_SIMILARITY_THRESHOLD = 0.95
 
 
 class GlglzChartsDataCollector(IChartsDataCollector):
@@ -85,13 +84,14 @@ class GlglzChartsDataCollector(IChartsDataCollector):
         return charts_entries
 
     def _get_relevant_chart(self, element_text: str, existing_chart: Optional[Chart]) -> Optional[Chart]:
-        if element_text in self._names_charts_mapping.keys():
-            return self._names_charts_mapping[element_text]
+        if self._is_chart_name_element(element_text):
+            chart_name, _ = self._get_most_similar_chart_name(element_text)
+            return self._names_charts_mapping[chart_name]
 
         return existing_chart
 
     def _create_single_chart_entry(self, element_text: str, chart: Chart, date: datetime) -> Optional[ChartEntry]:
-        if not self._is_chart_entry_element(element_text):
+        if self._is_chart_name_element(element_text):
             return
 
         split_text = element_text.split(POSITION_TRACK_NAME_SEPARATOR)
@@ -107,11 +107,19 @@ class GlglzChartsDataCollector(IChartsDataCollector):
             comment=self._generate_chart_date_url(date, should_unquote=True)
         )
 
-    def _is_chart_entry_element(self, text: str) -> bool:
+    def _is_chart_name_element(self, text: str) -> bool:
         if text.strip() == "":
-            return False
+            return True
 
-        return text not in self._names_charts_mapping.keys()
+        _, similarity = self._get_most_similar_chart_name(text)
+        return similarity > CHART_NAME_SIMILARITY_THRESHOLD
+
+    def _get_most_similar_chart_name(self, text: str) -> Tuple[str, float]:
+        similarities = {chart: compute_similarity_score(text, chart) for chart in self._names_charts_mapping.keys()}
+        most_similar_chart = max(similarities, key=lambda k: similarities[k])
+        similarity = similarities[most_similar_chart]
+
+        return most_similar_chart, similarity
 
     @property
     def _names_charts_mapping(self) -> Dict[str, Chart]:

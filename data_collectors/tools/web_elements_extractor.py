@@ -19,17 +19,23 @@ class WebElementsExtractor:
 
         return [self._extract_single_detail(tag, web_element.child_element)]
 
-    def _extract_multiple_details(self, soup: BeautifulSoup, web_element: WebElement) -> List[Optional[Dict[str, str]]]:
-        tags = soup.find_all(web_element.type.value, class_=web_element.class_)
-        if web_element.child_element is not None:
+    def _extract_multiple_details(self, tag: Optional[Tag], web_element: WebElement) -> List[Optional[Dict[str, str]]]:
+        if tag is None:
+            return []
+
+        tags = tag.find_all(web_element.type.value, class_=web_element.class_)
+        if web_element.child_element is not None and tags is not None:
             tags = [self._extract_child_elements_tags(tag, web_element.child_element) for tag in tags]
 
-        if web_element.enumerate:
-            return [self._extract_single_detail(tag, web_element, i + 1) for i, tag in enumerate(tags)]
-        else:
-            return [self._extract_single_detail(tag, web_element) for tag in tags]
+        if tags is None:
+            return []
 
-    def _extract_child_elements_tags(self, father_element_tag: Tag, child_element: WebElement) -> List[Tag]:
+        if web_element.enumerate:
+            return [self._extract_single_detail(child_tag, web_element, i + 1) for i, child_tag in enumerate(tags)]
+        else:
+            return [self._extract_single_detail(child_tag, web_element) for child_tag in tags]
+
+    def _extract_child_elements_tags(self, father_element_tag: Tag, child_element: WebElement) -> Tag:
         child_tag = father_element_tag.find_next(child_element.type.value, class_=child_element.class_)
 
         if child_element.child_element is None:
