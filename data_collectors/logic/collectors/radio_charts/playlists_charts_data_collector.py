@@ -6,13 +6,14 @@ from genie_common.utils import safe_nested_get
 from genie_datastores.postgres.models import ChartEntry, Chart
 from spotipyio import SpotifyClient
 
-from data_collectors.consts.spotify_consts import ITEMS, TRACKS, ID, TRACK, NAME, ARTISTS
+from data_collectors.consts.spotify_consts import ITEMS, TRACKS, ID, TRACK
 from data_collectors.contract import IChartsDataCollector
 
 
-class SpotifyChartsDataCollector(IChartsDataCollector):
-    def __init__(self, spotify_client: SpotifyClient):
+class PlaylistsChartsDataCollector(IChartsDataCollector):
+    def __init__(self, spotify_client: SpotifyClient, playlist_id_to_chart_mapping: Dict[str, Chart]):
         self._spotify_client = spotify_client
+        self._playlist_id_to_chart_mapping = playlist_id_to_chart_mapping
 
     async def collect(self) -> List[ChartEntry]:
         logger.info("Starting to collect spotify charts playlists")
@@ -59,10 +60,3 @@ class SpotifyChartsDataCollector(IChartsDataCollector):
             chart_entries.append(track_entry)
 
         return chart_entries
-
-    @property
-    def _playlist_id_to_chart_mapping(self) -> Dict[str, Chart]:
-        return {
-            '37i9dQZEVXbJ6IpvItkve3': Chart.SPOTIFY_DAILY_ISRAELI,
-            '37i9dQZEVXbMDoHDwVN2tF': Chart.SPOTIFY_DAILY_INTERNATIONAL,
-        }

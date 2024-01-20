@@ -1,5 +1,8 @@
+from typing import Dict
+
 from genie_common.tools import AioPoolExecutor
 from genie_datastores.google_drive.google_drive_client import GoogleDriveClient
+from genie_datastores.postgres.models import Chart
 from genie_datastores.postgres.operations import get_database_engine
 from spotipyio import SpotifyClient
 
@@ -7,7 +10,7 @@ from data_collectors.logic.collectors import (
     RadioChartsDataCollector,
     GlglzChartsDataCollector,
     RadioChartsTracksCollector,
-    SpotifyChartsDataCollector,
+    PlaylistsChartsDataCollector,
 )
 
 
@@ -21,8 +24,12 @@ class RadioChartsCollectorsComponentFactory:
         return GlglzChartsDataCollector()
 
     @staticmethod
-    def get_spotify_charts_collector(spotify_client: SpotifyClient) -> SpotifyChartsDataCollector:
-        return SpotifyChartsDataCollector(spotify_client)
+    def get_playlists_charts_collector(spotify_client: SpotifyClient,
+                                       playlist_id_to_chart_mapping: Dict[str, Chart]) -> PlaylistsChartsDataCollector:
+        return PlaylistsChartsDataCollector(
+            spotify_client=spotify_client,
+            playlist_id_to_chart_mapping=playlist_id_to_chart_mapping
+        )
 
     @staticmethod
     def get_tracks_collector(pool_executor: AioPoolExecutor,
