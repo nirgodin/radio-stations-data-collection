@@ -1568,7 +1568,7 @@ develop = false
 [package.dependencies]
 aiohttp = ">=3.6.3,<3.9.0"
 asyncio-pool = ">=0.6,<1.0"
-certifi = ">=2023.11,<2024.0"
+certifi = ">=2023.7.22,<2024.0"
 dataclasses-json = ">=0.6,<1.0"
 pillow = ">=10.1,<11.0"
 tqdm = ">=4.65,<5.0"
@@ -1576,8 +1576,8 @@ tqdm = ">=4.65,<5.0"
 [package.source]
 type = "git"
 url = "https://github.com/nirgodin/spotipyio.git"
-reference = "78affb80"
-resolved_reference = "78affb8056b416474f7dc2e1782bfd58ece9d302"
+reference = "2f489fd9"
+resolved_reference = "2f489fd993179d5177fe5337627d1614a933b31a"
 
 [[package]]
 name = "sqlalchemy"
@@ -1894,4 +1894,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<3.12"
-content-hash = "c6276767a91f981a217474515f65f9c507e2ac2afda7b02b6a3120c416e235cf"
+content-hash = "5764647a6a60caf9b8b30e6d98562b1069a6da9bcf21ab3816de99407d72aa9f"
