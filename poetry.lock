@@ -699,8 +699,8 @@ tqdm = ">=4.65,<5.0"
 [package.source]
 type = "git"
 url = "https://github.com/nirgodin/genie-common.git"
-reference = "9ca99531"
-resolved_reference = "9ca99531d47f8d1c22b0753baf8899fd2484939e"
+reference = "f4186972"
+resolved_reference = "f418697211916884fa54feb8f6cef6d021204e13"
 
 [[package]]
 name = "genie-datastores"
@@ -716,7 +716,7 @@ asyncmy = {version = "0.2.8", optional = true}
 asyncpg = {version = "0.28.0", optional = true}
 billboard-py = {version = "^7.0.0", optional = true}
 dataclasses-json = {version = ">=0.6,<1.0", optional = true}
-genie-common = {git = "https://github.com/nirgodin/genie-common.git", rev = "9ca99531"}
+genie-common = {git = "https://github.com/nirgodin/genie-common.git", rev = "f4186972"}
 google-api-python-client = {version = ">=2.8,<3.0", optional = true}
 greenlet = {version = "2.0.1", optional = true}
 sqlalchemy = {version = "<2.0.0", optional = true}
@@ -730,8 +730,8 @@ redis = ["aioredis (>=2.0.0,<2.1.0)"]
 [package.source]
 type = "git"
 url = "https://github.com/nirgodin/genie-datastores.git"
-reference = "6729e2f3"
-resolved_reference = "6729e2f360b2370729d8a59634b08829c8d2a478"
+reference = "623fa26"
+resolved_reference = "623fa265542fd603dd83d987a2600c83085df489"
 
 [[package]]
 name = "google-api-core"
@@ -757,13 +757,13 @@ grpcio-gcp = ["grpcio-gcp (>=0.2.2,<1.0.dev0)"]
 
 [[package]]
 name = "google-api-python-client"
-version = "2.114.0"
+version = "2.115.0"
 description = "Google API Client Library for Python"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "google-api-python-client-2.114.0.tar.gz", hash = "sha256:e041bbbf60e682261281e9d64b4660035f04db1cccba19d1d68eebc24d1465ed"},
-    {file = "google_api_python_client-2.114.0-py2.py3-none-any.whl", hash = "sha256:690e0bb67d70ff6dea4e8a5d3738639c105a478ac35da153d3b2a384064e9e1a"},
+    {file = "google-api-python-client-2.115.0.tar.gz", hash = "sha256:96af11376535236ba600ebbe23588cfe003ec9b74e66dd6ddb53aa3ec87e1b52"},
+    {file = "google_api_python_client-2.115.0-py2.py3-none-any.whl", hash = "sha256:26178e33684763099142e2cad201057bd27d4efefd859a495aac21ab3e6129c2"},
 ]
 
 [package.dependencies]
@@ -1894,4 +1894,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<3.12"
-content-hash = "5f282bb939cb6a2d27d668809da424b43d62463a07058d8c1aaeeb3981eb403f"
+content-hash = "9eb2db079b1221e51e0b6c1da7513add520e1a0fea5f361aa8abdf256239eba3"
