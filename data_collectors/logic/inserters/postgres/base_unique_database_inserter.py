@@ -1,22 +1,33 @@
 from abc import ABC, abstractmethod
 from typing import List, Type, Tuple
 
-from genie_common.tools import logger
+from genie_common.tools import logger, ChunksGenerator
 from genie_datastores.postgres.models import BaseORMModel
 from genie_datastores.postgres.operations import execute_query, insert_records
 from sqlalchemy import tuple_, select
 from sqlalchemy.engine import Row
+from sqlalchemy.exc import IntegrityError
+from sqlalchemy.ext.asyncio import AsyncEngine
 
 from data_collectors.contract import IPostgresDatabaseInserter
 
 
 class BaseUniqueDatabaseInserter(IPostgresDatabaseInserter, ABC):
+    def __init__(self, db_engine: AsyncEngine, chunks_generator: ChunksGenerator):
+        super().__init__(db_engine)
+        self._chunks_generator = chunks_generator
+
     async def insert(self, records: List[BaseORMModel]) -> None:
         non_existing_records = await self._filter_out_existing_records(records)
 
         if non_existing_records:
             logger.info(f"Inserting {len(non_existing_records)} record to radio_tracks table")
-            await insert_records(engine=self._db_engine, records=non_existing_records)
+            await self._chunks_generator.execute_by_chunk_in_parallel(
+                lst=records,
+                func=self._insert_records_in_chunk,
+                expected_type=type(None)
+            )
+
         else:
             logger.info("Did not find any new record to insert. Skipping.")
 
@@ -60,6 +71,27 @@ class BaseUniqueDatabaseInserter(IPostgresDatabaseInserter, ABC):
             are_attributes_identical.append(are_identical)
 
         return all(are_attributes_identical)
+
+    async def _insert_records_in_chunk(self, records: List[BaseORMModel]) -> None:
+        try:
+            await insert_records(engine=self._db_engine, records=records)
+
+        except IntegrityError:
+            logger.exception("Failed to insert records in one chunk. Trying to insert one by one")
+            await self._insert_records_one_by_one(records)
+
+    async def _insert_records_one_by_one(self, records: List[BaseORMModel]) -> None:
+        success_count = 0
+
+        for record in records:
+            try:
+                await insert_records(engine=self._db_engine, records=[record])
+                success_count += 1
+
+            except IntegrityError:
+                logger.exception("Failed to insert record! skipping")
+
+        logger.info(f"Successfully inserted {success_count} out of {len(records)}")
 
     @property
     @abstractmethod

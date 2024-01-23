@@ -12,10 +12,12 @@ class RadioChartsManagerFactory(BaseManagerFactory):
     def get_radio_charts_manager(self, spotify_session: SpotifySession) -> RadioChartsManager:
         drive_client = self.tools.get_google_drive_client()
         spotify_client = self.tools.get_spotify_client(spotify_session)
+        pool_executor = self.tools.get_pool_executor()
         tracks_collector = self.collectors.radio_charts.get_tracks_collector(
-            pool_executor=self.tools.get_pool_executor(),
+            pool_executor=pool_executor,
             spotify_client=spotify_client
         )
+        chunks_generator = self.tools.get_chunks_generator(pool_executor)
 
         return RadioChartsManager(
             db_engine=get_database_engine(),
@@ -23,18 +25,20 @@ class RadioChartsManagerFactory(BaseManagerFactory):
             charts_data_collector=self.collectors.radio_charts.get_charts_collector(drive_client),
             charts_tracks_collector=tracks_collector,
             spotify_insertions_manager=self.inserters.spotify.get_insertions_manager(spotify_client),
-            chart_entries_inserter=self.inserters.get_chart_entries_inserter()
+            chart_entries_inserter=self.inserters.get_chart_entries_inserter(chunks_generator)
         )
 
     def get_glglz_charts_manager(self, spotify_session: SpotifySession) -> GlglzChartsManager:
         spotify_client = self.tools.get_spotify_client(spotify_session)
+        pool_executor = self.tools.get_pool_executor()
         tracks_collector = self.collectors.radio_charts.get_tracks_collector(
-            pool_executor=self.tools.get_pool_executor(),
+            pool_executor=pool_executor,
             spotify_client=spotify_client
         )
+        chunks_generator = self.tools.get_chunks_generator(pool_executor)
 
         return GlglzChartsManager(
-            chart_entries_inserter=self.inserters.get_chart_entries_inserter(),
+            chart_entries_inserter=self.inserters.get_chart_entries_inserter(chunks_generator),
             charts_data_collector=self.collectors.radio_charts.get_glglz_charts_collector(),
             charts_tracks_collector=tracks_collector,
             spotify_insertions_manager=self.inserters.spotify.get_insertions_manager(spotify_client),
@@ -66,17 +70,19 @@ class RadioChartsManagerFactory(BaseManagerFactory):
                                      spotify_session: SpotifySession,
                                      playlist_id_to_chart_mapping: Dict[str, Chart]) -> PlaylistsChartsManager:
         spotify_client = self.tools.get_spotify_client(spotify_session)
+        pool_executor = self.tools.get_pool_executor()
         tracks_collector = self.collectors.radio_charts.get_tracks_collector(
-            pool_executor=self.tools.get_pool_executor(),
+            pool_executor=pool_executor,
             spotify_client=spotify_client
         )
         data_collector = self.collectors.radio_charts.get_playlists_charts_collector(
             spotify_client=spotify_client,
             playlist_id_to_chart_mapping=playlist_id_to_chart_mapping
         )
+        chunks_generator = self.tools.get_chunks_generator(pool_executor)
 
         return PlaylistsChartsManager(
-            chart_entries_inserter=self.inserters.get_chart_entries_inserter(),
+            chart_entries_inserter=self.inserters.get_chart_entries_inserter(chunks_generator),
             charts_data_collector=data_collector,
             charts_tracks_collector=tracks_collector,
             spotify_insertions_manager=self.inserters.spotify.get_insertions_manager(spotify_client)

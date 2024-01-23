@@ -2,16 +2,14 @@ from copy import deepcopy
 from datetime import datetime, timedelta
 from typing import Optional, List, Dict, Any
 
-import requests
 from genie_common.tools import logger
 from genie_datastores.postgres.models import ChartEntry, Chart
 from genie_datastores.postgres.operations import execute_query
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncEngine
 
+from data_collectors.consts.glglz_consts import FIRST_GLGLZ_CHART_DATE
 from data_collectors.logic.collectors import GlglzChartsDataCollector, RadioChartsTracksCollector
-from data_collectors.consts.glglz_consts import FIRST_GLGLZ_CHART_DATE, GLGLZ_DATETIME_FORMAT, \
-    GLGLZ_WEEKLY_CHART_URL_FORMAT
 from data_collectors.logic.inserters.postgres import SpotifyInsertionsManager, ChartEntriesDatabaseInserter
 from data_collectors.logic.managers.radio_charts.base_radio_charts_manager import BaseRadioChartsManager
 
@@ -50,7 +48,8 @@ class GlglzChartsManager(BaseRadioChartsManager):
 
         return {"dates": next_dates}
 
-    def _build_next_dates(self, last_chart_date: datetime, limit: Optional[int]) -> List[datetime]:
+    @staticmethod
+    def _build_next_dates(last_chart_date: datetime, limit: Optional[int]) -> List[datetime]:
         if limit is None:
             limit = 1
 
@@ -59,15 +58,6 @@ class GlglzChartsManager(BaseRadioChartsManager):
 
         while len(dates) < limit and last_chart_date <= now:
             last_chart_date += timedelta(days=7)
-            if self._is_valid_date(last_chart_date):
-                dates.append(deepcopy(last_chart_date))
+            dates.append(deepcopy(last_chart_date))
 
         return dates
-
-    @staticmethod
-    def _is_valid_date(date: datetime) -> bool:
-        formatted_date = date.strftime(GLGLZ_DATETIME_FORMAT).strip()
-        url = GLGLZ_WEEKLY_CHART_URL_FORMAT.format(date=formatted_date)
-        response = requests.get(url)
-
-        return response.ok

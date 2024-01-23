@@ -24,9 +24,13 @@ class BaseRadioChartsManager(IManager, ABC):
         logger.info(f"Starting to run `{self.__class__.__name__}` charts manager")
         data_collector_kwargs: Dict[str, Any] = await self._generate_data_collector_order_args(*args, **kwargs)
         charts_entries = await self._charts_data_collector.collect(**data_collector_kwargs)
-        charts_entries_details = await self._charts_tracks_collector.collect(charts_entries)
 
-        await self._insert_records(charts_entries_details)
+        if charts_entries:
+            charts_entries_details = await self._charts_tracks_collector.collect(charts_entries)
+            await self._insert_records(charts_entries_details)
+
+        else:
+            logger.warn("Did not find any chart entry. Aborting")
 
     @abstractmethod
     async def _generate_data_collector_order_args(self, *args, **kwargs) -> Dict[str, Any]:

@@ -26,8 +26,10 @@ class MiscellaneousManagerFactory(BaseManagerFactory):
 
     def get_radio_snapshots_manager(self, spotify_session: SpotifySession) -> RadioStationsSnapshotsManager:
         spotify_client = self.tools.get_spotify_client(spotify_session)
+        chunks_generator = self.tools.get_chunks_generator()
+
         return RadioStationsSnapshotsManager(
             spotify_client=spotify_client,
             spotify_insertions_manager=self.inserters.spotify.get_insertions_manager(spotify_client),
-            radio_tracks_database_inserter=self.inserters.get_radio_tracks_inserter()
+            radio_tracks_database_inserter=self.inserters.get_radio_tracks_inserter(chunks_generator)
         )

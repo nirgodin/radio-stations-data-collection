@@ -1,7 +1,8 @@
 import os.path
 from functools import lru_cache
+from typing import Optional
 
-from genie_common.tools import AioPoolExecutor
+from genie_common.tools import AioPoolExecutor, ChunksGenerator
 from genie_datastores.google_drive.google_drive_client import GoogleDriveClient
 from shazamio import Shazam
 from spotipyio import SpotifyClient
@@ -37,3 +38,11 @@ class ToolsComponentFactory:
             drive_adapter.download_all_dir_files(folder_id=gender_model_folder_id, local_dir=GENDER_MODEL_RESOURCES_DIR)
 
         return ImageGenderDetector.create(confidence_threshold)
+
+    @staticmethod
+    def get_chunks_generator(pool_executor: Optional[AioPoolExecutor] = None, chunk_size: int = 50) -> ChunksGenerator:
+        executor = pool_executor or ToolsComponentFactory.get_pool_executor()
+        return ChunksGenerator(
+            pool_executor=executor,
+            chunk_size=chunk_size
+        )
