@@ -13,7 +13,7 @@ from data_collectors.contract import IChartsDataCollector
 from data_collectors.tools import WebElementsExtractor
 from data_collectors.utils.selenium import driver_session
 
-CHART_NAME_SIMILARITY_THRESHOLD = 0.95
+CHART_NAME_SIMILARITY_THRESHOLD = 0.9
 
 
 class GlglzChartsDataCollector(IChartsDataCollector):
@@ -94,7 +94,7 @@ class GlglzChartsDataCollector(IChartsDataCollector):
         if self._is_chart_name_element(element_text):
             return
 
-        split_text = element_text.split(POSITION_TRACK_NAME_SEPARATOR)
+        split_text = self._split_chart_entry_text(element_text)
         position = extract_int_from_string(split_text[0])
         entry_key = POSITION_TRACK_NAME_SEPARATOR.join(split_text[1:])
 
@@ -120,6 +120,11 @@ class GlglzChartsDataCollector(IChartsDataCollector):
         similarity = similarities[most_similar_chart]
 
         return most_similar_chart, similarity
+
+    @staticmethod
+    def _split_chart_entry_text(text: str) -> List[str]:
+        split_text = [elem.strip() for elem in text.split(POSITION_TRACK_NAME_SEPARATOR)]
+        return sorted(split_text)
 
     @property
     def _names_charts_mapping(self) -> Dict[str, Chart]:
