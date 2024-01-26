@@ -16,20 +16,20 @@ from data_collectors.components.collectors.wikipedia_collectors_component_factor
 class CollectorsComponentFactory:
     def __init__(self,
                  billboard: BillboardCollectorsComponentFactory = BillboardCollectorsComponentFactory(),
+                 charts: ChartsCollectorsComponentFactory = ChartsCollectorsComponentFactory(),
                  genius: GeniusCollectorsComponentFactory = GeniusCollectorsComponentFactory(),
                  google: GoogleCollectorsComponentFactory = GoogleCollectorsComponentFactory(),
                  musixmatch: MusixmatchCollectorsComponentFactory = MusixmatchCollectorsComponentFactory(),
                  openai: OpenAICollectorsComponentFactory = OpenAICollectorsComponentFactory(),
-                 radio_charts: ChartsCollectorsComponentFactory = ChartsCollectorsComponentFactory(),
                  shazam: ShazamCollectorsComponentFactory = ShazamCollectorsComponentFactory(),
                  spotify: SpotifyCollectorsComponentFactory = SpotifyCollectorsComponentFactory(),
                  wikipedia: WikipediaCollectorsComponentFactory = WikipediaCollectorsComponentFactory()):
         self.billboard = billboard
+        self.charts = charts
         self.genius = genius
         self.google = google
         self.musixmatch = musixmatch
         self.openai = openai
-        self.radio_charts = radio_charts
         self.shazam = shazam
         self.spotify = spotify
         self.wikipedia = wikipedia

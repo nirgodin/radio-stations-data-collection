@@ -13,7 +13,7 @@ class ChartsManagerFactory(BaseManagerFactory):
         drive_client = self.tools.get_google_drive_client()
         spotify_client = self.tools.get_spotify_client(spotify_session)
         pool_executor = self.tools.get_pool_executor()
-        tracks_collector = self.collectors.radio_charts.get_tracks_collector(
+        tracks_collector = self.collectors.charts.get_tracks_collector(
             pool_executor=pool_executor,
             spotify_client=spotify_client
         )
@@ -22,7 +22,7 @@ class ChartsManagerFactory(BaseManagerFactory):
         return RadioChartsManager(
             db_engine=get_database_engine(),
             drive_client=drive_client,
-            charts_data_collector=self.collectors.radio_charts.get_radio_charts_collector(drive_client),
+            charts_data_collector=self.collectors.charts.get_radio_charts_collector(drive_client),
             charts_tracks_collector=tracks_collector,
             spotify_insertions_manager=self.inserters.spotify.get_insertions_manager(spotify_client),
             chart_entries_inserter=self.inserters.get_chart_entries_inserter(chunks_generator)
@@ -31,7 +31,7 @@ class ChartsManagerFactory(BaseManagerFactory):
     def get_glglz_charts_manager(self, spotify_session: SpotifySession) -> GlglzChartsManager:
         spotify_client = self.tools.get_spotify_client(spotify_session)
         pool_executor = self.tools.get_pool_executor()
-        tracks_collector = self.collectors.radio_charts.get_tracks_collector(
+        tracks_collector = self.collectors.charts.get_tracks_collector(
             pool_executor=pool_executor,
             spotify_client=spotify_client
         )
@@ -39,7 +39,7 @@ class ChartsManagerFactory(BaseManagerFactory):
 
         return GlglzChartsManager(
             chart_entries_inserter=self.inserters.get_chart_entries_inserter(chunks_generator),
-            charts_data_collector=self.collectors.radio_charts.get_glglz_charts_collector(),
+            charts_data_collector=self.collectors.charts.get_glglz_charts_collector(),
             charts_tracks_collector=tracks_collector,
             spotify_insertions_manager=self.inserters.spotify.get_insertions_manager(spotify_client),
             db_engine=get_database_engine()
@@ -66,16 +66,23 @@ class ChartsManagerFactory(BaseManagerFactory):
             playlist_id_to_chart_mapping=playlist_id_to_chart_mapping
         )
 
+    def get_tagged_mistakes_manager(self) -> ChartsTaggedMistakesManager:
+        pool_executor = self.tools.get_pool_executor()
+        return ChartsTaggedMistakesManager(
+            sheets_client=self.tools.get_google_sheets_client(),
+            tagged_mistakes_collector=self.collectors.charts.get_charts_tagged_mistakes_collector(pool_executor)
+        )
+
     def _get_playlists_chart_manager(self,
                                      spotify_session: SpotifySession,
                                      playlist_id_to_chart_mapping: Dict[str, Chart]) -> PlaylistsChartsManager:
         spotify_client = self.tools.get_spotify_client(spotify_session)
         pool_executor = self.tools.get_pool_executor()
-        tracks_collector = self.collectors.radio_charts.get_tracks_collector(
+        tracks_collector = self.collectors.charts.get_tracks_collector(
             pool_executor=pool_executor,
             spotify_client=spotify_client
         )
-        data_collector = self.collectors.radio_charts.get_playlists_charts_collector(
+        data_collector = self.collectors.charts.get_playlists_charts_collector(
             spotify_client=spotify_client,
             playlist_id_to_chart_mapping=playlist_id_to_chart_mapping
         )

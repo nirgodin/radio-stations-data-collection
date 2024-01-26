@@ -1,6 +1,6 @@
 from typing import Any, Dict
 
-from data_collectors.logic.managers.radio_charts.base_radio_charts_manager import BaseRadioChartsManager
+from data_collectors.logic.managers.charts.base_radio_charts_manager import BaseRadioChartsManager
 
 
 class PlaylistsChartsManager(BaseRadioChartsManager):

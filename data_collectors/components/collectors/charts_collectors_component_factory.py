@@ -2,10 +2,12 @@ from typing import Dict
 
 from genie_common.tools import AioPoolExecutor
 from genie_datastores.google.drive import GoogleDriveClient
+from genie_datastores.google.sheets import GoogleSheetsClient
 from genie_datastores.postgres.models import Chart
 from genie_datastores.postgres.operations import get_database_engine
 from spotipyio import SpotifyClient
 
+from data_collectors import ChartsTaggedMistakesCollector
 from data_collectors.logic.collectors import (
     RadioChartsDataCollector,
     GlglzChartsDataCollector,
@@ -37,5 +39,12 @@ class ChartsCollectorsComponentFactory:
         return ChartsTracksCollector(
             pool_executor=pool_executor,
             spotify_client=spotify_client,
+            db_engine=get_database_engine()
+        )
+
+    @staticmethod
+    def get_charts_tagged_mistakes_collector(pool_executor: AioPoolExecutor) -> ChartsTaggedMistakesCollector:
+        return ChartsTaggedMistakesCollector(
+            pool_executor=pool_executor,
             db_engine=get_database_engine()
         )

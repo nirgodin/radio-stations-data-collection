@@ -1,12 +1,13 @@
 from data_collectors.logic.managers.artists_images_gender_manager import ArtistsImagesGenderManager
 from data_collectors.logic.managers.billboard_manager import BillboardManager
+from data_collectors.logic.managers.charts.charts_tagged_mistakes_manager import ChartsTaggedMistakesManager
 from data_collectors.logic.managers.google_artists_origin_geocoding_manager import GoogleArtistsOriginGeocodingManager
 from data_collectors.logic.managers.missing_ids_managers.genius_missing_ids_manager import GeniusMissingIDsManager
 from data_collectors.logic.managers.missing_ids_managers.musixmatch_missing_ids_manager import \
     MusixmatchMissingIDsManager
-from data_collectors.logic.managers.radio_charts.glglz_charts_manager import GlglzChartsManager
-from data_collectors.logic.managers.radio_charts.radio_charts_manager import RadioChartsManager
-from data_collectors.logic.managers.radio_charts.playlists_charts_manager import PlaylistsChartsManager
+from data_collectors.logic.managers.charts.glglz_charts_manager import GlglzChartsManager
+from data_collectors.logic.managers.charts.radio_charts_manager import RadioChartsManager
+from data_collectors.logic.managers.charts.playlists_charts_manager import PlaylistsChartsManager
 from data_collectors.logic.managers.radio_snapshots_manager import RadioStationsSnapshotsManager
 from data_collectors.logic.managers.missing_ids_managers.shazam_missing_ids_manager import ShazamMissingIDsManager
 from data_collectors.logic.managers.shazam_birth_date_copy_manager import ShazamBirthDateCopyManager
@@ -18,6 +19,7 @@ from data_collectors.logic.managers.wikipedia_artists_age_manager import Wikiped
 __all__ = [
     "ArtistsImagesGenderManager",
     "BillboardManager",
+    "ChartsTaggedMistakesManager",
     "GeniusMissingIDsManager",
     "GlglzChartsManager",
     "GoogleArtistsOriginGeocodingManager",
