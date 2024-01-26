@@ -8,26 +8,26 @@ from data_collectors.components.tools_component_factory import ToolsComponentFac
 class ComponentFactory:
     def __init__(self,
                  billboard: BillboardManagerFactory = BillboardManagerFactory(),
+                 charts: ChartsManagerFactory = ChartsManagerFactory(),
                  env: EnvironmentComponentFactory = EnvironmentComponentFactory(),
                  exporters: ExportersComponentFactory = ExportersComponentFactory(),
                  genius: GeniusManagerFactory = GeniusManagerFactory(),
                  google: GoogleManagerFactory = GoogleManagerFactory(),
                  misc: MiscellaneousManagerFactory = MiscellaneousManagerFactory(),
                  musixmatch: MusixmatchManagerFactory = MusixmatchManagerFactory(),
-                 radio_charts: RadioChartsManagerFactory = RadioChartsManagerFactory(),
                  sessions: SessionsComponentFactory = SessionsComponentFactory(),
                  shazam: ShazamManagerFactory = ShazamManagerFactory(),
                  spotify: SpotifyManagerFactory = SpotifyManagerFactory(),
                  tools: ToolsComponentFactory = ToolsComponentFactory(),
                  wikipedia: WikipediaManagerFactory = WikipediaManagerFactory()):
         self.billboard = billboard
+        self.charts = charts
         self.env = env
         self.exporters = exporters
         self.genius = genius
         self.google = google
         self.misc = misc
         self.musixmatch = musixmatch
-        self.radio_charts = radio_charts
         self.sessions = sessions
         self.shazam = shazam
         self.spotify = spotify

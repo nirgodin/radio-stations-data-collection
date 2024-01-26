@@ -13,7 +13,7 @@ from data_collectors.contract import ICollector
 from data_collectors.logic.models.radio_chart_entry_details import RadioChartEntryDetails
 
 
-class RadioChartsTracksCollector(ICollector):
+class ChartsTracksCollector(ICollector):
     def __init__(self, pool_executor: AioPoolExecutor, db_engine: AsyncEngine, spotify_client: SpotifyClient):
         self._pool_executor = pool_executor
         self._db_engine = db_engine

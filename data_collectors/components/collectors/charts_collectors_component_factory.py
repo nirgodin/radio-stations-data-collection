@@ -9,14 +9,14 @@ from spotipyio import SpotifyClient
 from data_collectors.logic.collectors import (
     RadioChartsDataCollector,
     GlglzChartsDataCollector,
-    RadioChartsTracksCollector,
+    ChartsTracksCollector,
     PlaylistsChartsDataCollector,
 )
 
 
-class RadioChartsCollectorsComponentFactory:
+class ChartsCollectorsComponentFactory:
     @staticmethod
-    def get_charts_collector(google_drive_client: GoogleDriveClient) -> RadioChartsDataCollector:
+    def get_radio_charts_collector(google_drive_client: GoogleDriveClient) -> RadioChartsDataCollector:
         return RadioChartsDataCollector(google_drive_client)
 
     @staticmethod
@@ -33,8 +33,8 @@ class RadioChartsCollectorsComponentFactory:
 
     @staticmethod
     def get_tracks_collector(pool_executor: AioPoolExecutor,
-                             spotify_client: SpotifyClient) -> RadioChartsTracksCollector:
-        return RadioChartsTracksCollector(
+                             spotify_client: SpotifyClient) -> ChartsTracksCollector:
+        return ChartsTracksCollector(
             pool_executor=pool_executor,
             spotify_client=spotify_client,
             db_engine=get_database_engine()

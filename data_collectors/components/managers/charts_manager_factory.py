@@ -8,7 +8,7 @@ from data_collectors.components.managers.base_manager_factory import BaseManager
 from data_collectors.logic.managers import *
 
 
-class RadioChartsManagerFactory(BaseManagerFactory):
+class ChartsManagerFactory(BaseManagerFactory):
     def get_radio_charts_manager(self, spotify_session: SpotifySession) -> RadioChartsManager:
         drive_client = self.tools.get_google_drive_client()
         spotify_client = self.tools.get_spotify_client(spotify_session)
@@ -22,7 +22,7 @@ class RadioChartsManagerFactory(BaseManagerFactory):
         return RadioChartsManager(
             db_engine=get_database_engine(),
             drive_client=drive_client,
-            charts_data_collector=self.collectors.radio_charts.get_charts_collector(drive_client),
+            charts_data_collector=self.collectors.radio_charts.get_radio_charts_collector(drive_client),
             charts_tracks_collector=tracks_collector,
             spotify_insertions_manager=self.inserters.spotify.get_insertions_manager(spotify_client),
             chart_entries_inserter=self.inserters.get_chart_entries_inserter(chunks_generator)

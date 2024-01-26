@@ -5,8 +5,8 @@ from data_collectors.components.collectors.google_collectors_component_factory i
 from data_collectors.components.collectors.musixmatch_collectors_component_factory import \
     MusixmatchCollectorsComponentFactory
 from data_collectors.components.collectors.openai_collectors_component_factory import OpenAICollectorsComponentFactory
-from data_collectors.components.collectors.radio_charts_collectors_component_factory import \
-    RadioChartsCollectorsComponentFactory
+from data_collectors.components.collectors.charts_collectors_component_factory import \
+    ChartsCollectorsComponentFactory
 from data_collectors.components.collectors.shazam_collectors_component_factory import ShazamCollectorsComponentFactory
 from data_collectors.components.collectors.spotify_collectors_component_factory import SpotifyCollectorsComponentFactory
 from data_collectors.components.collectors.wikipedia_collectors_component_factory import \
@@ -20,7 +20,7 @@ class CollectorsComponentFactory:
                  google: GoogleCollectorsComponentFactory = GoogleCollectorsComponentFactory(),
                  musixmatch: MusixmatchCollectorsComponentFactory = MusixmatchCollectorsComponentFactory(),
                  openai: OpenAICollectorsComponentFactory = OpenAICollectorsComponentFactory(),
-                 radio_charts: RadioChartsCollectorsComponentFactory = RadioChartsCollectorsComponentFactory(),
+                 radio_charts: ChartsCollectorsComponentFactory = ChartsCollectorsComponentFactory(),
                  shazam: ShazamCollectorsComponentFactory = ShazamCollectorsComponentFactory(),
                  spotify: SpotifyCollectorsComponentFactory = SpotifyCollectorsComponentFactory(),
                  wikipedia: WikipediaCollectorsComponentFactory = WikipediaCollectorsComponentFactory()):

@@ -3,7 +3,7 @@ from data_collectors.components.managers.genius_manager_factory import GeniusMan
 from data_collectors.components.managers.google_manager_factory import GoogleManagerFactory
 from data_collectors.components.managers.miscellaneous_manager_factory import MiscellaneousManagerFactory
 from data_collectors.components.managers.musixmatch_manager_factory import MusixmatchManagerFactory
-from data_collectors.components.managers.radio_charts_manager_factory import RadioChartsManagerFactory
+from data_collectors.components.managers.charts_manager_factory import ChartsManagerFactory
 from data_collectors.components.managers.shazam_manager_factory import ShazamManagerFactory
 from data_collectors.components.managers.spotify_manager_factory import SpotifyManagerFactory
 from data_collectors.components.managers.wikipedia_manager_factory import WikipediaManagerFactory
@@ -14,7 +14,7 @@ __all__ = [
     "GoogleManagerFactory",
     "MiscellaneousManagerFactory",
     "MusixmatchManagerFactory",
-    "RadioChartsManagerFactory",
+    "ChartsManagerFactory",
     "ShazamManagerFactory",
     "SpotifyManagerFactory",
     "WikipediaManagerFactory"

@@ -4,7 +4,7 @@ from typing import Any, List, Dict
 from genie_common.tools import logger
 
 from data_collectors.contract import IChartsDataCollector, IManager
-from data_collectors.logic.collectors import RadioChartsTracksCollector
+from data_collectors.logic.collectors import ChartsTracksCollector
 from data_collectors.logic.inserters.postgres import SpotifyInsertionsManager, ChartEntriesDatabaseInserter
 from data_collectors.logic.models import RadioChartEntryDetails
 
@@ -12,7 +12,7 @@ from data_collectors.logic.models import RadioChartEntryDetails
 class BaseRadioChartsManager(IManager, ABC):
     def __init__(self,
                  charts_data_collector: IChartsDataCollector,
-                 charts_tracks_collector: RadioChartsTracksCollector,
+                 charts_tracks_collector: ChartsTracksCollector,
                  spotify_insertions_manager: SpotifyInsertionsManager,
                  chart_entries_inserter: ChartEntriesDatabaseInserter):
         self._charts_data_collector = charts_data_collector
