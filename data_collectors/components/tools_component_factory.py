@@ -1,9 +1,11 @@
 import os.path
 from functools import lru_cache
-from typing import Optional
+from typing import Optional, List
 
 from genie_common.tools import AioPoolExecutor, ChunksGenerator
+from genie_common.utils import env_var_to_list
 from genie_datastores.google.drive import GoogleDriveClient
+from genie_datastores.google.sheets import GoogleSheetsClient, GoogleSheetsUploader, ShareSettings, PermissionType, Role
 from shazamio import Shazam
 from spotipyio import SpotifyClient
 from spotipyio.logic.authentication.spotify_session import SpotifySession
@@ -31,6 +33,22 @@ class ToolsComponentFactory:
         return GoogleDriveClient.create()
 
     @staticmethod
+    @lru_cache
+    def get_google_sheets_client() -> GoogleSheetsClient:
+        return GoogleSheetsClient.create()
+
+    @staticmethod
+    def get_google_sheets_uploader() -> GoogleSheetsUploader:
+        default_settings = {
+            "share_settings": ToolsComponentFactory._get_google_default_share_settings(),
+            "folder_id": os.getenv("GOOGLE_SHEETS_DEFAULT_FOLDER_ID")
+        }
+        return GoogleSheetsUploader(
+            google_sheets_client=ToolsComponentFactory.get_google_sheets_client(),
+            default_settings=default_settings
+        )
+
+    @staticmethod
     def get_image_gender_detector(gender_model_folder_id: str, confidence_threshold: float) -> ImageGenderDetector:
         if not os.path.exists(GENDER_MODEL_RESOURCES_DIR):
             os.mkdir(GENDER_MODEL_RESOURCES_DIR)
@@ -46,3 +64,18 @@ class ToolsComponentFactory:
             pool_executor=executor,
             chunk_size=chunk_size
         )
+
+    @staticmethod
+    def _get_google_default_share_settings() -> List[ShareSettings]:
+        users = env_var_to_list("GOOGLE_SHEETS_USERS")
+        share_settings = []
+
+        for user in users:
+            user_setting = ShareSettings(
+                email=user,
+                permission_type=PermissionType.USER,
+                role=Role.WRITER
+            )
+            share_settings.append(user_setting)
+
+        return share_settings

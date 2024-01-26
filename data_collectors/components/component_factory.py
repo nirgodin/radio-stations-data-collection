@@ -1,4 +1,5 @@
 from data_collectors.components.environment_component_factory import EnvironmentComponentFactory
+from data_collectors.components.exporters.exporters_component_factory import ExportersComponentFactory
 from data_collectors.components.managers import *
 from data_collectors.components.sessions_component_factory import SessionsComponentFactory
 from data_collectors.components.tools_component_factory import ToolsComponentFactory
@@ -8,6 +9,7 @@ class ComponentFactory:
     def __init__(self,
                  billboard: BillboardManagerFactory = BillboardManagerFactory(),
                  env: EnvironmentComponentFactory = EnvironmentComponentFactory(),
+                 exporters: ExportersComponentFactory = ExportersComponentFactory(),
                  genius: GeniusManagerFactory = GeniusManagerFactory(),
                  google: GoogleManagerFactory = GoogleManagerFactory(),
                  misc: MiscellaneousManagerFactory = MiscellaneousManagerFactory(),
@@ -20,6 +22,7 @@ class ComponentFactory:
                  wikipedia: WikipediaManagerFactory = WikipediaManagerFactory()):
         self.billboard = billboard
         self.env = env
+        self.exporters = exporters
         self.genius = genius
         self.google = google
         self.misc = misc
