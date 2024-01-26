@@ -1,7 +1,7 @@
 from typing import Dict
 
 from genie_common.tools import AioPoolExecutor
-from genie_datastores.google_drive.google_drive_client import GoogleDriveClient
+from genie_datastores.google.drive import GoogleDriveClient
 from genie_datastores.postgres.models import Chart
 from genie_datastores.postgres.operations import get_database_engine
 from spotipyio import SpotifyClient

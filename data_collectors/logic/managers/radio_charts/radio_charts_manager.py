@@ -1,15 +1,15 @@
-from typing import Dict, List, Optional, Tuple, Any
+from typing import Dict, List, Optional, Any
 
 from genie_common.tools import logger
-from genie_datastores.google_drive.google_drive_client import GoogleDriveClient
+from genie_datastores.google.drive import GoogleDriveClient
 from genie_datastores.postgres.models import Chart, ChartEntry
 from genie_datastores.postgres.operations import execute_query
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncEngine
 
 from data_collectors.consts.radio_charts_consts import EXCLUDED_RADIO_CHARTS_FILES_IDS
-from data_collectors.logic.inserters.postgres import SpotifyInsertionsManager, ChartEntriesDatabaseInserter
 from data_collectors.logic.collectors import RadioChartsDataCollector, RadioChartsTracksCollector
+from data_collectors.logic.inserters.postgres import SpotifyInsertionsManager, ChartEntriesDatabaseInserter
 from data_collectors.logic.managers.radio_charts.base_radio_charts_manager import BaseRadioChartsManager
 
 

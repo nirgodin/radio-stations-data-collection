@@ -3,7 +3,7 @@ from functools import lru_cache
 from typing import Optional
 
 from genie_common.tools import AioPoolExecutor, ChunksGenerator
-from genie_datastores.google_drive.google_drive_client import GoogleDriveClient
+from genie_datastores.google.drive import GoogleDriveClient
 from shazamio import Shazam
 from spotipyio import SpotifyClient
 from spotipyio.logic.authentication.spotify_session import SpotifySession

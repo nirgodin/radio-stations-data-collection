@@ -5,8 +5,7 @@ from typing import Generator, List
 import pandas as pd
 from genie_common.tools import logger
 from genie_common.utils import to_datetime, extract_int_from_string
-from genie_datastores.google_drive.google_drive_client import GoogleDriveClient
-from genie_datastores.google_drive.models.google_drive_download_metadata import GoogleDriveDownloadMetadata
+from genie_datastores.google.drive import GoogleDriveClient, GoogleDriveDownloadMetadata
 from genie_datastores.postgres.models import ChartEntry, Chart
 from pandas import DataFrame, Series
 
