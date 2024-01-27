@@ -10,21 +10,21 @@ from data_collectors.contract import IDatabaseUpdater
 from data_collectors.logic.models import DBUpdateRequest
 
 
-class ArtistsDatabaseUpdater(IDatabaseUpdater):
+class ValuesDatabaseUpdater(IDatabaseUpdater):
     def __init__(self, db_engine: AsyncEngine, pool_executor: AioPoolExecutor):
         super().__init__(db_engine)
         self._pool_executor = pool_executor
 
     async def update(self, update_requests: List[DBUpdateRequest]) -> None:
-        n_artists = len(update_requests)
-        logger.info(f"Starting to update records for {n_artists}")
+        n_records = len(update_requests)
+        logger.info(f"Starting to update records for {n_records}")
         results = await self._pool_executor.run(  # TODO: Find a way to do it in Bulk
             iterable=update_requests,
             func=self._update_single_artist,
             expected_type=type(None)
         )
 
-        logger.info(f"Successfully updated {len(results)} records out of {n_artists}")
+        logger.info(f"Successfully updated {len(results)} records out of {n_records}")
 
     async def _update_single_artist(self, update_request: DBUpdateRequest) -> None:
         update_request.values[Artist.update_date] = datetime.now()

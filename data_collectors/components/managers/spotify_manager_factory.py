@@ -11,7 +11,7 @@ class SpotifyManagerFactory(BaseManagerFactory):
         pool_executor = self.tools.get_pool_executor()
         return SpotifyPlaylistsArtistsManager(
             spotify_client=self.tools.get_spotify_client(spotify_session),
-            artists_updater=self.updaters.get_artists_updater(pool_executor)
+            db_updater=self.updaters.get_values_updater(pool_executor)
         )
 
     def get_artists_images_gender_manager(self,
@@ -30,5 +30,5 @@ class SpotifyManagerFactory(BaseManagerFactory):
             db_engine=get_database_engine(),
             artists_images_collector=images_collector,
             gender_detector=self.tools.get_image_gender_detector(gender_model_folder_id, confidence_threshold),
-            gender_updater=self.updaters.get_artists_updater(pool_executor)
+            db_updater=self.updaters.get_values_updater(pool_executor)
         )

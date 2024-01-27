@@ -7,15 +7,15 @@ from sqlalchemy import select
 from sqlalchemy.engine import Row
 from sqlalchemy.ext.asyncio import AsyncEngine
 
-from data_collectors.logic.updaters import ArtistsDatabaseUpdater
+from data_collectors.logic.updaters import ValuesDatabaseUpdater
 from data_collectors.contract import IManager
 from data_collectors.logic.models import DBUpdateRequest
 
 
 class ShazamBirthDateCopyManager(IManager):
-    def __init__(self, db_engine: AsyncEngine, artists_updater: ArtistsDatabaseUpdater):
+    def __init__(self, db_engine: AsyncEngine, db_updater: ValuesDatabaseUpdater):
         self._db_engine = db_engine
-        self._artists_updater = artists_updater
+        self._db_updater = db_updater
 
     async def run(self, limit: Optional[int]) -> None:
         query_result = await self._query_missing_artists_birth_dates()
@@ -24,7 +24,7 @@ class ShazamBirthDateCopyManager(IManager):
             logger.info(f"Found {len(query_result)} artists. Converting rows to update requests")
             update_requests = [self._to_update_request(row) for row in query_result]
 
-            await self._artists_updater.update(update_requests)
+            await self._db_updater.update(update_requests)
 
     async def _query_missing_artists_birth_dates(self) -> List[Row]:
         logger.info("Querying `shazam_artists` table for artists birth date that are missing on `artists` table")

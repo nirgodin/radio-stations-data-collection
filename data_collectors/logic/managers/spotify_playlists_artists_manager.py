@@ -10,13 +10,13 @@ from tqdm import tqdm
 from data_collectors.consts.spotify_consts import ID, TRACKS, ITEMS, TRACK
 from data_collectors.contract import IManager
 from data_collectors.logic.models import DBUpdateRequest
-from data_collectors.logic.updaters.artists_database_updater import ArtistsDatabaseUpdater
+from data_collectors.logic.updaters.values_database_updater import ValuesDatabaseUpdater
 
 
 class SpotifyPlaylistsArtistsManager(IManager):
-    def __init__(self, spotify_client: SpotifyClient, artists_updater: ArtistsDatabaseUpdater):
+    def __init__(self, spotify_client: SpotifyClient, db_updater: ValuesDatabaseUpdater):
         self._spotify_client = spotify_client
-        self._artists_updater = artists_updater
+        self._db_updater = db_updater
 
     async def run(self, playlists_ids: List[str], values: Dict[Artist, Any]) -> None:
         playlists = await self._spotify_client.playlists.info.run(playlists_ids)
@@ -24,7 +24,7 @@ class SpotifyPlaylistsArtistsManager(IManager):
         artists_ids = self._extract_playlists_artists(valid_playlists)
         update_requests = [DBUpdateRequest(id=id_, values=values) for id_ in artists_ids]
 
-        await self._artists_updater.update(update_requests)
+        await self._db_updater.update(update_requests)
 
     @staticmethod
     def _filter_out_invalid_playlists(playlists: List[dict]) -> List[dict]:

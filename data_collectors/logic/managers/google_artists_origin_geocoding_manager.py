@@ -3,7 +3,7 @@ from typing import Optional, Dict, List
 from genie_common.tools import logger
 
 from data_collectors.logic.collectors import GoogleGeocodingCollector
-from data_collectors.logic.updaters import ArtistsDatabaseUpdater
+from data_collectors.logic.updaters import ValuesDatabaseUpdater
 from data_collectors.contract import IManager
 from data_collectors.logic.models import DBUpdateRequest
 from data_collectors.logic.serializers import GoogleGeocodingResponseSerializer
@@ -12,10 +12,10 @@ from data_collectors.logic.serializers import GoogleGeocodingResponseSerializer
 class GoogleArtistsOriginGeocodingManager(IManager):
     def __init__(self,
                  geocoding_collector: GoogleGeocodingCollector,
-                 artists_updater: ArtistsDatabaseUpdater,
+                 db_updater: ValuesDatabaseUpdater,
                  geocoding_serializer: GoogleGeocodingResponseSerializer = GoogleGeocodingResponseSerializer()):
         self._geocoding_collector = geocoding_collector
-        self._artists_updater = artists_updater
+        self._db_updater = db_updater
         self._geocoding_serializer = geocoding_serializer
 
     async def run(self, limit: Optional[int]) -> None:
@@ -23,7 +23,7 @@ class GoogleArtistsOriginGeocodingManager(IManager):
         logger.info("Starting to serialize geocoding response to DB structure")
         update_requests = self._to_update_requests(artists_geocoding)
 
-        await self._artists_updater.update(update_requests)
+        await self._db_updater.update(update_requests)
 
     def _to_update_requests(self, artists_geocoding: Dict[str, dict]) -> List[DBUpdateRequest]:
         update_requests = []
