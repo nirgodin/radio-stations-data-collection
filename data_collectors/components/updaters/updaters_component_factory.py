@@ -4,8 +4,7 @@ from genie_datastores.postgres.operations import get_database_engine
 from data_collectors.logic.updaters import (
     TrackIDsMappingDatabaseUpdater,
     BillboardTracksDatabaseUpdater,
-    ValuesDatabaseUpdater,
-    SpotifyTracksDatabaseUpdater
+    ValuesDatabaseUpdater
 )
 
 
@@ -21,7 +20,3 @@ class UpdatersComponentFactory:
     @staticmethod
     def get_values_updater(pool_executor: AioPoolExecutor) -> ValuesDatabaseUpdater:
         return ValuesDatabaseUpdater(db_engine=get_database_engine(), pool_executor=pool_executor)
-
-    @staticmethod
-    def get_spotify_tracks_updater(pool_executor: AioPoolExecutor) -> SpotifyTracksDatabaseUpdater:
-        return SpotifyTracksDatabaseUpdater(db_engine=get_database_engine(), pool_executor=pool_executor)

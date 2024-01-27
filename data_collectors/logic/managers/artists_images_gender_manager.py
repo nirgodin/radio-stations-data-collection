@@ -9,7 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncEngine
 from data_collectors.contract import IManager
 from data_collectors.logic.collectors import SpotifyArtistsImagesCollector
 from data_collectors.logic.models import DBUpdateRequest
-from data_collectors.logic.updaters.values_database_updater import ValuesDatabaseUpdater
+from data_collectors.logic.updaters import ValuesDatabaseUpdater
 from data_collectors.tools import ImageGenderDetector
 
 

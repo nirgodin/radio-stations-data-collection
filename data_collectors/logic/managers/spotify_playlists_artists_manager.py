@@ -10,7 +10,7 @@ from tqdm import tqdm
 from data_collectors.consts.spotify_consts import ID, TRACKS, ITEMS, TRACK
 from data_collectors.contract import IManager
 from data_collectors.logic.models import DBUpdateRequest
-from data_collectors.logic.updaters.values_database_updater import ValuesDatabaseUpdater
+from data_collectors.logic.updaters import ValuesDatabaseUpdater
 
 
 class SpotifyPlaylistsArtistsManager(IManager):

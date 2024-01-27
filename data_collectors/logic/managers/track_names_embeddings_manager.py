@@ -7,7 +7,7 @@ from genie_datastores.postgres.operations import execute_query
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncEngine
 
-from data_collectors.logic.updaters import SpotifyTracksDatabaseUpdater
+from data_collectors.logic.updaters import ValuesDatabaseUpdater
 from data_collectors.consts.milvus_consts import EMBEDDINGS, TRACK_NAMES_EMBEDDINGS_COLLECTION
 from data_collectors.consts.musixmatch_consts import ARTIST_NAME
 from data_collectors.consts.spotify_consts import ID, NAME
@@ -21,10 +21,10 @@ class TrackNamesEmbeddingsManager(IManager):
                  db_engine: AsyncEngine,
                  embeddings_collector: TrackNamesEmbeddingsCollector,
                  milvus_client: MilvusClient,
-                 spotify_tracks_updater: SpotifyTracksDatabaseUpdater):
+                 db_updater: ValuesDatabaseUpdater):
         self._embeddings_collector = embeddings_collector
         self._milvus_client = milvus_client
-        self._spotify_tracks_updater = spotify_tracks_updater
+        self._db_updater = db_updater
         self._db_engine = db_engine
 
     async def run(self, limit: Optional[int]) -> None:
@@ -83,4 +83,4 @@ class TrackNamesEmbeddingsManager(IManager):
             )
             update_requests.append(request)
 
-        await self._spotify_tracks_updater.update(update_requests)
+        await self._db_updater.update(update_requests)
