@@ -66,11 +66,17 @@ class ChartsManagerFactory(BaseManagerFactory):
             playlist_id_to_chart_mapping=playlist_id_to_chart_mapping
         )
 
-    def get_tagged_mistakes_manager(self) -> ChartsTaggedMistakesManager:
+    def get_tagged_mistakes_manager(self, spotify_session: SpotifySession) -> ChartsTaggedMistakesManager:
+        spotify_client = self.tools.get_spotify_client(spotify_session)
         pool_executor = self.tools.get_pool_executor()
+        tagged_mistakes_tracks_collector = self.collectors.charts.get_tagged_mistakes_tracks_collector(spotify_client)
+
         return ChartsTaggedMistakesManager(
             sheets_client=self.tools.get_google_sheets_client(),
-            tagged_mistakes_collector=self.collectors.charts.get_charts_tagged_mistakes_collector(pool_executor)
+            tagged_mistakes_collector=self.collectors.charts.get_charts_tagged_mistakes_collector(pool_executor),
+            tagged_mistakes_tracks_collector=tagged_mistakes_tracks_collector,
+            db_updater=self.updaters.get_values_updater(pool_executor),
+            spotify_insertions_manager=self.inserters.spotify.get_insertions_manager(spotify_client)
         )
 
     def _get_playlists_chart_manager(self,

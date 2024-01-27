@@ -1,10 +1,12 @@
 from datetime import datetime
-from typing import List
+from typing import List, Dict, Any, Type
 
 from genie_common.tools import logger, AioPoolExecutor
-from genie_datastores.postgres.models import Artist
+from genie_common.utils import get_dict_first_key
+from genie_datastores.postgres.models import BaseORMModel
 from genie_datastores.postgres.utils import update_by_values
 from sqlalchemy.ext.asyncio import AsyncEngine
+from sqlalchemy.orm import InstrumentedAttribute
 
 from data_collectors.contract import IDatabaseUpdater
 from data_collectors.logic.models import DBUpdateRequest
@@ -20,17 +22,24 @@ class ValuesDatabaseUpdater(IDatabaseUpdater):
         logger.info(f"Starting to update records for {n_records}")
         results = await self._pool_executor.run(  # TODO: Find a way to do it in Bulk
             iterable=update_requests,
-            func=self._update_single_artist,
+            func=self._update_single,
             expected_type=type(None)
         )
 
         logger.info(f"Successfully updated {len(results)} records out of {n_records}")
 
-    async def _update_single_artist(self, update_request: DBUpdateRequest) -> None:
-        update_request.values[Artist.update_date] = datetime.now()
+    async def _update_single(self, update_request: DBUpdateRequest) -> None:
+        orm = self._detect_orm(update_request.values)
+        update_request.values[orm.update_date] = datetime.now()
+
         await update_by_values(
             self._db_engine,
-            Artist,
+            orm,
             update_request.values,
-            Artist.id == update_request.id,
+            orm.id == update_request.id,
         )
+
+    @staticmethod
+    def _detect_orm(update_values: Dict[BaseORMModel, Any]) -> Type[BaseORMModel]:
+        column: InstrumentedAttribute = get_dict_first_key(update_values)
+        return column.class_
