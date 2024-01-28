@@ -43,10 +43,8 @@ class GlglzChartsDataCollector(IChartsDataCollector):
 
         return date_soup_mapping
 
-    @staticmethod
-    def _collect_single_date_html(driver: WebDriver, date: datetime) -> BeautifulSoup:
-        formatted_date = date.strftime(GLGLZ_DATETIME_FORMAT).strip()
-        url = GLGLZ_WEEKLY_CHART_URL_FORMAT.format(date=formatted_date)
+    def _collect_single_date_html(self, driver: WebDriver, date: datetime) -> BeautifulSoup:
+        url = self._generate_chart_date_url(date)
         driver.get(url)
         sleep(5)
 
@@ -54,7 +52,8 @@ class GlglzChartsDataCollector(IChartsDataCollector):
 
     @staticmethod
     def _generate_chart_date_url(date: datetime, should_unquote: bool = False) -> str:
-        formatted_date = date.strftime(GLGLZ_DATETIME_FORMAT).strip()
+        datetime_format = GLGLZ_LEGACY_DATETIME_FORMAT if date <= GLGLZ_LEGACY_END_DATE else GLGLZ_DATETIME_FORMAT
+        formatted_date = date.strftime(datetime_format).strip()
         url = GLGLZ_WEEKLY_CHART_URL_FORMAT.format(date=formatted_date)
 
         return unquote(url) if should_unquote else url
@@ -123,7 +122,14 @@ class GlglzChartsDataCollector(IChartsDataCollector):
 
     @staticmethod
     def _split_chart_entry_text(text: str) -> List[str]:
-        split_text = [elem.strip() for elem in text.split(POSITION_TRACK_NAME_SEPARATOR)]
+        split_text = []
+
+        for element in text.split(POSITION_TRACK_NAME_SEPARATOR):
+            stripped_element = element.strip()
+
+            if stripped_element != "":
+                split_text.append(stripped_element)
+
         return sorted(split_text)
 
     @property
