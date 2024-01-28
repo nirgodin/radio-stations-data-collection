@@ -10,10 +10,11 @@ class SpotifyInsertersComponentFactory:
         return SpotifyInsertionsManager(
             spotify_artists_inserter=SpotifyInsertersComponentFactory.get_spotify_artists_inserter(spotify_client),
             albums_inserter=SpotifyInsertersComponentFactory.get_albums_inserter(),
-            tracks_inserter=SpotifyInsertersComponentFactory.get_tracks_inserter(),
+            spotify_tracks_inserter=SpotifyInsertersComponentFactory.get_spotify_tracks_inserter(),
             audio_features_inserter=SpotifyInsertersComponentFactory.get_audio_features_inserter(spotify_client),
             track_id_mapping_inserter=SpotifyInsertersComponentFactory.get_track_id_mapping_inserter(),
-            artists_inserter=SpotifyInsertersComponentFactory.get_artists_inserter()
+            artists_inserter=SpotifyInsertersComponentFactory.get_artists_inserter(),
+            tracks_inserter=SpotifyInsertersComponentFactory.get_tracks_inserter(),
         )
 
     @staticmethod
@@ -25,7 +26,7 @@ class SpotifyInsertersComponentFactory:
         return SpotifyAlbumsDatabaseInserter(get_database_engine())
 
     @staticmethod
-    def get_tracks_inserter() -> SpotifyTracksDatabaseInserter:
+    def get_spotify_tracks_inserter() -> SpotifyTracksDatabaseInserter:
         return SpotifyTracksDatabaseInserter(get_database_engine())
 
     @staticmethod
@@ -39,3 +40,7 @@ class SpotifyInsertersComponentFactory:
     @staticmethod
     def get_artists_inserter() -> ArtistsDatabaseInserter:
         return ArtistsDatabaseInserter(get_database_engine())
+
+    @staticmethod
+    def get_tracks_inserter() -> TracksDatabaseInserter:
+        return TracksDatabaseInserter(get_database_engine())
