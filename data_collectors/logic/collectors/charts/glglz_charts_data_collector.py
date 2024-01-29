@@ -95,8 +95,12 @@ class GlglzChartsDataCollector(IChartsDataCollector):
 
         split_text = self._split_chart_entry_text(element_text)
         position = extract_int_from_string(split_text[0])
-        entry_key = POSITION_TRACK_NAME_SEPARATOR.join(split_text[1:])
 
+        if position is None:
+            logger.warn(f"Was not able to convert `{split_text[0]}` to position integer. Skipping record")
+            return
+
+        entry_key = POSITION_TRACK_NAME_SEPARATOR.join(split_text[1:])
         return ChartEntry(
             track_id=None,
             chart=chart,

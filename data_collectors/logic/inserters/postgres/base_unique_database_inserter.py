@@ -21,7 +21,7 @@ class BaseUniqueDatabaseInserter(IPostgresDatabaseInserter, ABC):
         non_existing_records = await self._filter_out_existing_records(records)
 
         if non_existing_records:
-            logger.info(f"Inserting {len(non_existing_records)} record to radio_tracks table")
+            logger.info(f"Inserting {len(non_existing_records)} records")
             await self._chunks_generator.execute_by_chunk_in_parallel(
                 lst=records,
                 func=self._insert_records_in_chunk,
