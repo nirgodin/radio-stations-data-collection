@@ -14,6 +14,13 @@ class SpotifyManagerFactory(BaseManagerFactory):
             db_updater=self.updaters.get_values_updater(pool_executor)
         )
 
+    def get_playlists_tracks_manager(self, spotify_session: SpotifySession) -> SpotifyPlaylistsTracksManager:
+        pool_executor = self.tools.get_pool_executor()
+        return SpotifyPlaylistsTracksManager(
+            spotify_client=self.tools.get_spotify_client(spotify_session),
+            db_updater=self.updaters.get_values_updater(pool_executor)
+        )
+
     def get_artists_images_gender_manager(self,
                                           client_session: ClientSession,
                                           spotify_session: SpotifySession,
