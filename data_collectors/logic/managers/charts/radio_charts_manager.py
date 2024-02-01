@@ -10,10 +10,10 @@ from sqlalchemy.ext.asyncio import AsyncEngine
 from data_collectors.consts.radio_charts_consts import EXCLUDED_RADIO_CHARTS_FILES_IDS
 from data_collectors.logic.collectors import RadioChartsDataCollector, ChartsTracksCollector
 from data_collectors.logic.inserters.postgres import SpotifyInsertionsManager, ChartEntriesDatabaseInserter
-from data_collectors.logic.managers.charts.base_radio_charts_manager import BaseRadioChartsManager
+from data_collectors.logic.managers.charts.base_charts_manager import BaseChartsManager
 
 
-class RadioChartsManager(BaseRadioChartsManager):
+class RadioChartsManager(BaseChartsManager):
     def __init__(self,
                  charts_data_collector: RadioChartsDataCollector,
                  charts_tracks_collector: ChartsTracksCollector,

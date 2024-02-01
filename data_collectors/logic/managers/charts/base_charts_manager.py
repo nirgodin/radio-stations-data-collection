@@ -9,7 +9,7 @@ from data_collectors.logic.inserters.postgres import SpotifyInsertionsManager, C
 from data_collectors.logic.models import RadioChartEntryDetails
 
 
-class BaseRadioChartsManager(IManager, ABC):
+class BaseChartsManager(IManager, ABC):
     def __init__(self,
                  charts_data_collector: IChartsDataCollector,
                  charts_tracks_collector: ChartsTracksCollector,
