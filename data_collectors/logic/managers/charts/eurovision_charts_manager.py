@@ -29,9 +29,9 @@ class EurovisionChartsManager(BaseChartsManager):
         )
         self._db_engine = db_engine
 
-    async def _generate_data_collector_order_args(self,
-                                                  years: Optional[List[int]],
-                                                  limit: Optional[int]) -> Dict[str, List[int]]:
+    async def _generate_data_collector_kwargs(self,
+                                              years: Optional[List[int]],
+                                              limit: Optional[int]) -> Dict[str, List[int]]:
         if years is not None:
             return {"years": years}
 

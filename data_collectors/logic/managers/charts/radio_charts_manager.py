@@ -25,7 +25,7 @@ class RadioChartsManager(BaseChartsManager):
         self._drive_client = drive_client
         self._db_engine = db_engine
 
-    async def _generate_data_collector_order_args(self, chart: Chart, limit: Optional[int]) -> Dict[str, Any]:
+    async def _generate_data_collector_kwargs(self, chart: Chart, limit: Optional[int]) -> Dict[str, Any]:
         existing_files_names = await self._query_existing_files_names(chart)
         logger.info("Starting to select non existing charts to insert")
         drive_dir = self._charts_drive_dir_mapping[chart]

@@ -4,5 +4,5 @@ from data_collectors.logic.managers.charts.base_charts_manager import BaseCharts
 
 
 class PlaylistsChartsManager(BaseChartsManager):
-    async def _generate_data_collector_order_args(self) -> Dict[str, Any]:
+    async def _generate_data_collector_kwargs(self) -> Dict[str, Any]:
         return {}

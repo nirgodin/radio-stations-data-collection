@@ -29,9 +29,9 @@ class GlglzChartsManager(BaseChartsManager):
         )
         self._db_engine = db_engine
 
-    async def _generate_data_collector_order_args(self,
-                                                  dates: Optional[List[datetime]],
-                                                  limit: Optional[int]) -> Dict[str, Any]:
+    async def _generate_data_collector_kwargs(self,
+                                              dates: Optional[List[datetime]],
+                                              limit: Optional[int]) -> Dict[str, Any]:
         if dates is not None:
             return {"dates": dates}
 
