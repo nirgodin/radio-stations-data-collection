@@ -1,5 +1,6 @@
 from typing import Dict
 
+from aiohttp import ClientSession
 from genie_common.tools import AioPoolExecutor
 from genie_datastores.google.drive import GoogleDriveClient
 from genie_datastores.postgres.models import Chart
@@ -12,6 +13,7 @@ from data_collectors.logic.collectors import (
     GlglzChartsDataCollector,
     ChartsTracksCollector,
     ChartsTaggedMistakesTracksCollector,
+    EurovisionChartsDataCollector,
     PlaylistsChartsDataCollector,
 )
 
@@ -20,6 +22,14 @@ class ChartsCollectorsComponentFactory:
     @staticmethod
     def get_radio_charts_collector(google_drive_client: GoogleDriveClient) -> RadioChartsDataCollector:
         return RadioChartsDataCollector(google_drive_client)
+
+    @staticmethod
+    def get_eurovision_charts_collector(session: ClientSession,
+                                        pool_executor: AioPoolExecutor) -> EurovisionChartsDataCollector:
+        return EurovisionChartsDataCollector(
+            session=session,
+            pool_executor=pool_executor
+        )
 
     @staticmethod
     def get_glglz_charts_collector() -> GlglzChartsDataCollector:

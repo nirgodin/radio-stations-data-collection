@@ -28,6 +28,27 @@ class ChartsManagerFactory(BaseManagerFactory):
             chart_entries_inserter=self.inserters.get_chart_entries_inserter(chunks_generator)
         )
 
+    def get_eurovision_charts_manager(self, spotify_session: SpotifySession) -> EurovisionChartsManager:
+        spotify_client = self.tools.get_spotify_client(spotify_session)
+        pool_executor = self.tools.get_pool_executor()
+        tracks_collector = self.collectors.charts.get_tracks_collector(
+            pool_executor=pool_executor,
+            spotify_client=spotify_client
+        )
+        chunks_generator = self.tools.get_chunks_generator(pool_executor)
+        eurovision_charts_collector = self.collectors.charts.get_eurovision_charts_collector(
+            session=self.sessions.get_client_session(),
+            pool_executor=pool_executor
+        )
+
+        return EurovisionChartsManager(
+            db_engine=get_database_engine(),
+            charts_data_collector=eurovision_charts_collector,
+            charts_tracks_collector=tracks_collector,
+            spotify_insertions_manager=self.inserters.spotify.get_insertions_manager(spotify_client),
+            chart_entries_inserter=self.inserters.get_chart_entries_inserter(chunks_generator)
+        )
+
     def get_glglz_charts_manager(self, spotify_session: SpotifySession) -> GlglzChartsManager:
         spotify_client = self.tools.get_spotify_client(spotify_session)
         pool_executor = self.tools.get_pool_executor()
