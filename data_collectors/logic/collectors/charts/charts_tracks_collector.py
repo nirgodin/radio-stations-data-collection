@@ -79,7 +79,7 @@ class ChartsTracksCollector(ICollector):
         items = safe_nested_get(search_result, [TRACKS, ITEMS], [])
 
         for candidate in items:
-            artist, track = chart_entry.key.split("-")  # TODO: Robust this logic
+            artist, track = chart_entry.key.split(" - ")  # TODO: Robust this logic
             entity = MatchingEntity(
                 track=track.strip(),
                 artist=artist.strip()
