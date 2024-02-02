@@ -1,23 +1,25 @@
 from typing import Any, List, Optional
 
 from genie_common.tools import AioPoolExecutor, logger
+from genie_common.utils import safe_nested_get
 from genie_datastores.postgres.models import ChartEntry, SpotifyTrack
 from genie_datastores.postgres.operations import execute_query
-from spotipyio import SpotifyClient, SearchItem, SearchItemMetadata, SpotifySearchType
+from spotipyio import SpotifyClient, SearchItem, SearchItemMetadata, SpotifySearchType, MatchingEntity, EntityMatcher
 from spotipyio.utils import extract_first_search_result
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncEngine
 
-from data_collectors.consts.spotify_consts import ID, TRACK
+from data_collectors.consts.spotify_consts import ID, TRACK, TRACKS, ITEMS
 from data_collectors.contract import ICollector
 from data_collectors.logic.models.radio_chart_entry_details import RadioChartEntryDetails
 
 
 class ChartsTracksCollector(ICollector):
-    def __init__(self, pool_executor: AioPoolExecutor, db_engine: AsyncEngine, spotify_client: SpotifyClient):
+    def __init__(self, pool_executor: AioPoolExecutor, db_engine: AsyncEngine, spotify_client: SpotifyClient, entity_matcher: EntityMatcher = EntityMatcher()):
         self._pool_executor = pool_executor
         self._db_engine = db_engine
         self._spotify_client = spotify_client
+        self._entity_matcher = entity_matcher
 
     async def collect(self, charts_entries: List[ChartEntry]) -> Any:
         logger.info(f"Starting to collect tracks for {len(charts_entries)} charts entries")
@@ -62,16 +64,32 @@ class ChartsTracksCollector(ICollector):
             )
         )
         search_result = await self._spotify_client.search.run_single(search_item)
-        track = extract_first_search_result(search_result)
+        track = self._extract_matching_track(chart_entry, search_result)  # extract_first_search_result(search_result)
 
-        if track is None:
-            self._log_track_not_found(chart_entry, match_field="key")
-        else:
+        if track is not None:
             chart_entry.track_id = track[ID]
-            return RadioChartEntryDetails(
-                entry=chart_entry,
-                track={TRACK: track}
+            track = {TRACK: track}
+
+        return RadioChartEntryDetails(
+            entry=chart_entry,
+            track=track
+        )
+
+    def _extract_matching_track(self, chart_entry: ChartEntry, search_result: dict) -> Optional[dict]:
+        items = safe_nested_get(search_result, [TRACKS, ITEMS], [])
+
+        for candidate in items:
+            artist, track = chart_entry.key.split("-")  # TODO: Robust this logic
+            entity = MatchingEntity(
+                track=track.strip(),
+                artist=artist.strip()
             )
+            is_matching, score = self._entity_matcher.match(entity, candidate)
+
+            if is_matching:
+                return candidate
+
+        self._log_track_not_found(chart_entry, match_field="key")
 
     @staticmethod
     def _log_track_not_found(chart_entry: ChartEntry, match_field: str) -> None:

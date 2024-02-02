@@ -43,6 +43,6 @@ class BaseChartsManager(IManager, ABC):
             logger.info("Starting to insert spotify tracks to all relevant tables")
             await self._spotify_insertions_manager.insert(spotify_tracks)
 
-        records = [detail.entry for detail in charts_entries_details if detail.entry.track_id is not None]
+        records = [detail.entry for detail in charts_entries_details]
         logger.info("Starting to insert chart entries")
         await self._chart_entries_inserter.insert(records)
