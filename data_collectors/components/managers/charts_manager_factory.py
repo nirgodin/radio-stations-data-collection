@@ -1,5 +1,6 @@
 from typing import Dict
 
+from aiohttp import ClientSession
 from genie_datastores.postgres.models import Chart
 from genie_datastores.postgres.operations import get_database_engine
 from spotipyio.logic.authentication.spotify_session import SpotifySession
@@ -28,7 +29,9 @@ class ChartsManagerFactory(BaseManagerFactory):
             chart_entries_inserter=self.inserters.get_chart_entries_inserter(chunks_generator)
         )
 
-    def get_eurovision_charts_manager(self, spotify_session: SpotifySession) -> EurovisionChartsManager:
+    def get_eurovision_charts_manager(self,
+                                      client_session: ClientSession,
+                                      spotify_session: SpotifySession) -> EurovisionChartsManager:
         spotify_client = self.tools.get_spotify_client(spotify_session)
         pool_executor = self.tools.get_pool_executor()
         tracks_collector = self.collectors.charts.get_tracks_collector(
@@ -37,7 +40,7 @@ class ChartsManagerFactory(BaseManagerFactory):
         )
         chunks_generator = self.tools.get_chunks_generator(pool_executor)
         eurovision_charts_collector = self.collectors.charts.get_eurovision_charts_collector(
-            session=self.sessions.get_client_session(),
+            session=client_session,
             pool_executor=pool_executor
         )
 
