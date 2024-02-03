@@ -2,7 +2,7 @@ from typing import Optional, List, Dict
 
 from genie_common.tools import logger
 from genie_datastores.milvus import MilvusClient
-from genie_datastores.postgres.models import SpotifyTrack, SpotifyArtist
+from genie_datastores.postgres.models import SpotifyTrack, SpotifyArtist, Track
 from genie_datastores.postgres.operations import execute_query
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncEngine
@@ -38,9 +38,10 @@ class TrackNamesEmbeddingsManager(IManager):
     async def _collect_missing_embeddings_tracks(self, limit: Optional[int]) -> List[MissingTrack]:
         logger.info("Querying tracks without name embeddings")
         query = (
-            select(SpotifyTrack.id, SpotifyTrack.name, SpotifyArtist.name.label(ARTIST_NAME))
+            select(Track.id, SpotifyTrack.id, SpotifyTrack.name, SpotifyArtist.name.label(ARTIST_NAME))
+            .where(Track.id == SpotifyTrack.id)
             .where(SpotifyTrack.artist_id == SpotifyArtist.id)
-            .where(SpotifyTrack.has_name_embeddings.is_(False))
+            .where(Track.has_name_embeddings.is_(False))
             .limit(limit)
         )
         query_result = await execute_query(engine=self._db_engine, query=query)
@@ -79,7 +80,7 @@ class TrackNamesEmbeddingsManager(IManager):
         for missing_track, embeddings in mapping.items():
             request = DBUpdateRequest(
                 id=missing_track.spotify_id,
-                values={SpotifyTrack.has_name_embeddings: True}
+                values={Track.has_name_embeddings: True}
             )
             update_requests.append(request)
 

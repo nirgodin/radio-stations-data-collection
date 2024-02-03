@@ -733,18 +733,18 @@ redis = ["aioredis (>=2.0.0,<2.1.0)"]
 [package.source]
 type = "git"
 url = "https://github.com/nirgodin/genie-datastores.git"
-reference = "b4aa16eb"
-resolved_reference = "b4aa16ebe2c741be3127908a8e286f5d5042cc38"
+reference = "1341203f"
+resolved_reference = "1341203f8712bf180e4ccc190a3b5f99ce601554"
 
 [[package]]
 name = "google-api-core"
-version = "2.16.1"
+version = "2.16.2"
 description = "Google API client core library"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "google-api-core-2.16.1.tar.gz", hash = "sha256:7f668ffa3d5b9f3c6930407e5f5d691c05a376050a5a5fd772b9dc32e70a0c30"},
-    {file = "google_api_core-2.16.1-py3-none-any.whl", hash = "sha256:257e9e152cd18da0c6701113c122ade04dca04731e179fc5c7dca48e1396ec4c"},
+    {file = "google-api-core-2.16.2.tar.gz", hash = "sha256:032d37b45d1d6bdaf68fb11ff621e2593263a239fa9246e2e94325f9c47876d2"},
+    {file = "google_api_core-2.16.2-py3-none-any.whl", hash = "sha256:449ca0e3f14c179b4165b664256066c7861610f70b6ffe54bb01a04e9b466929"},
 ]
 
 [package.dependencies]
@@ -2095,4 +2095,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<3.12"
-content-hash = "8c8a7cd479f1a4683be1db7b8c81192c9d450da3cb3fb6a3bf385c99d71d9af5"
+content-hash = "b0924ac4d632366e3dba7f857737f8cb261c4c48245529fdd284089f6779533a"
