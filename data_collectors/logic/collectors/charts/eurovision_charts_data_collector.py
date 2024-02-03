@@ -60,13 +60,20 @@ class EurovisionChartsDataCollector(IChartsDataCollector):
         else:
             return self._covert_data_to_chart_entries(data, year)
 
-    @staticmethod
-    def _extract_contest_results_data(page: str) -> Optional[DataFrame]:
+    def _extract_contest_results_data(self, page: str) -> Optional[DataFrame]:
         page_tables = pd.read_html(page)
+        relevant_tables = []
 
         for table in page_tables:
-            if all(col in table.columns for col in EUROVISION_TABLE_CONTEST_ID_COLUMNS):
-                return table
+            if self._is_relevant_table(table):
+                relevant_tables.append(table)
+
+        if relevant_tables:
+            return relevant_tables[-1]
+
+    @staticmethod
+    def _is_relevant_table(table: DataFrame) -> bool:
+        return all(col in table.columns for col in EUROVISION_TABLE_CONTEST_ID_COLUMNS)
 
     def _covert_data_to_chart_entries(self, data: DataFrame, year: int) -> List[ChartEntry]:
         chart_entries = []
