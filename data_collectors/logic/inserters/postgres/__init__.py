@@ -1,5 +1,8 @@
+from data_collectors.logic.inserters.postgres.base_ids_database_inserter import BaseIDsDatabaseInserter
+from data_collectors.logic.inserters.postgres.base_unique_database_inserter import BaseUniqueDatabaseInserter
 from data_collectors.logic.inserters.postgres.billboard import *
 from data_collectors.logic.inserters.postgres.chart_entries_database_inserter import ChartEntriesDatabaseInserter
+from data_collectors.logic.inserters.postgres.chunks_database_inserter import ChunksDatabaseInserter
 from data_collectors.logic.inserters.postgres.shazam import *
 from data_collectors.logic.inserters.postgres.spotify import *
 from data_collectors.logic.inserters.postgres.spotify.tracks_database_inserter import TracksDatabaseInserter
@@ -31,5 +34,10 @@ __all__ = [
 
     # Other
     "RadioTracksDatabaseInserter",
-    "ChartEntriesDatabaseInserter"
+    "ChartEntriesDatabaseInserter",
+
+    # Tools
+    "BaseIDsDatabaseInserter",
+    "BaseUniqueDatabaseInserter",
+    "ChunksDatabaseInserter"
 ]
