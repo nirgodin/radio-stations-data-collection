@@ -699,8 +699,8 @@ tqdm = ">=4.65,<5.0"
 [package.source]
 type = "git"
 url = "https://github.com/nirgodin/genie-common.git"
-reference = "83a3480a"
-resolved_reference = "83a3480aa9165666ba3b5b9e23d99f97316233be"
+reference = "f500e4c3"
+resolved_reference = "f500e4c35206ebaf0d6ff8287544fca7ddcbc266"
 
 [[package]]
 name = "genie-datastores"
@@ -716,7 +716,7 @@ asyncmy = {version = "0.2.8", optional = true}
 asyncpg = {version = "0.28.0", optional = true}
 billboard-py = {version = "^7.0.0", optional = true}
 dataclasses-json = {version = ">=0.6,<1.0", optional = true}
-genie-common = {git = "https://github.com/nirgodin/genie-common.git", rev = "83a3480a"}
+genie-common = {git = "https://github.com/nirgodin/genie-common.git", rev = "f500e4c3"}
 google-api-python-client = {version = ">=2.8,<3.0", optional = true}
 greenlet = {version = "2.0.1", optional = true}
 gspread = {version = ">=5.12.4,<5.13", optional = true}
@@ -733,18 +733,18 @@ redis = ["aioredis (>=2.0.0,<2.1.0)"]
 [package.source]
 type = "git"
 url = "https://github.com/nirgodin/genie-datastores.git"
-reference = "c8e2e41c"
-resolved_reference = "c8e2e41c5d18035f1fb439ee400c94f65dde51e6"
+reference = "20f89d85"
+resolved_reference = "20f89d850d6e695b25b7783761be87aa76d025e6"
 
 [[package]]
 name = "google-api-core"
-version = "2.16.2"
+version = "2.17.0"
 description = "Google API client core library"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "google-api-core-2.16.2.tar.gz", hash = "sha256:032d37b45d1d6bdaf68fb11ff621e2593263a239fa9246e2e94325f9c47876d2"},
-    {file = "google_api_core-2.16.2-py3-none-any.whl", hash = "sha256:449ca0e3f14c179b4165b664256066c7861610f70b6ffe54bb01a04e9b466929"},
+    {file = "google-api-core-2.17.0.tar.gz", hash = "sha256:de7ef0450faec7c75e0aea313f29ac870fdc44cfaec9d6499a9a17305980ef66"},
+    {file = "google_api_core-2.17.0-py3-none-any.whl", hash = "sha256:08ed79ed8e93e329de5e3e7452746b734e6bf8438d8d64dd3319d21d3164890c"},
 ]
 
 [package.dependencies]
@@ -2095,4 +2095,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<3.12"
-content-hash = "3a1c05aafb25b40736e24df43aefdc040a5e6a1ae1fe7225d55e7e706203c0ba"
+content-hash = "07fa123b31647fcda6d9903190594c1c922d389b5c5b4d5b520fecce5ebe59f0"
