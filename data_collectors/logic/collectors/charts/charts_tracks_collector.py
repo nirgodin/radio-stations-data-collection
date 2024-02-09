@@ -1,5 +1,6 @@
 from typing import Any, List, Optional, Tuple
 
+from async_lru import alru_cache
 from genie_common.tools import AioPoolExecutor, logger
 from genie_common.utils import safe_nested_get
 from genie_datastores.postgres.models import ChartEntry, SpotifyTrack
@@ -56,15 +57,8 @@ class ChartsTracksCollector(ICollector):
         return query_result.scalars().first()
 
     async def _create_non_existing_chart_entry(self, chart_entry: ChartEntry) -> Optional[RadioChartEntryDetails]:
-        search_item = SearchItem(
-            text=chart_entry.key,
-            metadata=SearchItemMetadata(
-                search_types=[SpotifySearchType.TRACK],
-                quote=False
-            )
-        )
-        search_result = await self._spotify_client.search.run_single(search_item)
-        track = self._extract_matching_track(chart_entry, search_result)  # extract_first_search_result(search_result)
+        search_result = await self._search_track(chart_entry.key)
+        track = self._extract_matching_track(chart_entry, search_result)
 
         if track is not None:
             chart_entry.track_id = track[ID]
@@ -74,6 +68,17 @@ class ChartsTracksCollector(ICollector):
             entry=chart_entry,
             track=track
         )
+
+    @alru_cache(maxsize=1000)
+    async def _search_track(self, text: str) -> dict:
+        search_item = SearchItem(
+            text=text,
+            metadata=SearchItemMetadata(
+                search_types=[SpotifySearchType.TRACK],
+                quote=False
+            )
+        )
+        return await self._spotify_client.search.run_single(search_item)
 
     def _extract_matching_track(self, chart_entry: ChartEntry, search_result: dict) -> Optional[dict]:
         items = safe_nested_get(search_result, [TRACKS, ITEMS], [])
@@ -133,4 +138,4 @@ class ChartsTracksCollector(ICollector):
         query_result = await execute_query(engine=self._db_engine, query=query)
         database_id = query_result.scalars().first()
 
-        return False if database_id is None else True
+        return database_id is not None

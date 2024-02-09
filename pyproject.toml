@@ -16,6 +16,7 @@ wikipedia-api = ">0.5,<0.6"
 openpyxl = "^3.1.2"
 selenium = ">=4.16,<4.17"
 beautifulsoup4 = ">=4.12.2,<4.13"
+async-lru = ">=2.0.4,<3.0"
 
 
 [build-system]
