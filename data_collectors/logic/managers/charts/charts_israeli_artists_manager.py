@@ -27,21 +27,28 @@ class ChartsIsraeliArtistsManager(IManager):
             logger.info(f"Successfully updated chart `{chart.value}` artists")
 
     async def _update_single_chart_artists(self, chart: Chart, is_israeli: bool) -> None:
-        artists_ids = await self._query_unique_chart_artists_ids(chart)
+        artists_ids = await self._query_unique_chart_artists_ids(chart, is_israeli)
+
+        if not artists_ids:
+            logger.info(f"Did not find any relevant artist for chart `{chart.value}`. Skipping")
+            return
+
         update_requests = self._to_update_requests(chart, artists_ids, is_israeli)
         await self._db_updater.update(update_requests)
         decision_records = self._to_decision_records(chart, artists_ids)
         await self._db_inserter.insert(decision_records)
 
-    async def _query_unique_chart_artists_ids(self, chart: Chart) -> List[str]:
+    async def _query_unique_chart_artists_ids(self, chart: Chart, is_israeli: bool) -> List[str]:
         logger.info(f"Querying chart `{chart.value}` unique tracks ids")
         query = (
-            select(SpotifyArtist.id)
-            .distinct(SpotifyArtist.id)
+            select(Artist.id)
+            .distinct(Artist.id)
             .where(ChartEntry.track_id == SpotifyTrack.id)
             .where(SpotifyTrack.artist_id == SpotifyArtist.id)
+            .where(SpotifyArtist.id == Artist.id)
             .where(ChartEntry.chart == chart)
             .where(ChartEntry.track_id.isnot(None))
+            .where(Artist.is_israeli.isnot(is_israeli))
         )
         query_result = await execute_query(engine=self._db_engine, query=query)
 
