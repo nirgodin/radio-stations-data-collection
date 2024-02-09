@@ -7,8 +7,8 @@ from genie_common.tools import AioPoolExecutor, logger
 from genie_datastores.postgres.models import ChartEntry, Chart
 from pandas import DataFrame, Series
 
-from data_collectors.consts.radio_charts_consts import EUROVISION_WIKIPEDIA_PAGE_URL_FORMAT, EUROVISION_KEY_COLUMNS, \
-    EUROVISION_TABLE_CONTEST_ID_COLUMNS, EUROVISION_PLACE_COLUMN, EUROVISION_SONG_COLUMN, EUROVISION_ARTIST_COLUMN
+from data_collectors.consts.eurovision_consts import EUROVISION_WIKIPEDIA_PAGE_URL_FORMAT, EUROVISION_ARTIST_COLUMN, \
+    EUROVISION_SONG_COLUMN, EUROVISION_PLACE_COLUMN, EUROVISION_KEY_COLUMNS, EUROVISION_TABLE_CONTEST_ID_COLUMNS
 from data_collectors.contract import IChartsDataCollector
 
 

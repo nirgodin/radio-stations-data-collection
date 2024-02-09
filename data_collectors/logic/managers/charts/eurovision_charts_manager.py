@@ -5,7 +5,7 @@ from genie_datastores.postgres.operations import execute_query
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncEngine
 
-from data_collectors.consts.radio_charts_consts import FIRST_EUROVISION_YEAR
+from data_collectors.consts.eurovision_consts import FIRST_EUROVISION_YEAR
 from data_collectors.logic.collectors import (
     EurovisionChartsDataCollector,
     ChartsTracksCollector

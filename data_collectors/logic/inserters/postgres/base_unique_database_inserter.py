@@ -9,7 +9,7 @@ from sqlalchemy.engine import Row
 from sqlalchemy.ext.asyncio import AsyncEngine
 
 from data_collectors.contract import IPostgresDatabaseInserter
-from data_collectors.logic.inserters.postgres import ChunksDatabaseInserter
+from data_collectors.logic.inserters.postgres.chunks_database_inserter import ChunksDatabaseInserter
 
 
 class BaseUniqueDatabaseInserter(IPostgresDatabaseInserter, ABC):

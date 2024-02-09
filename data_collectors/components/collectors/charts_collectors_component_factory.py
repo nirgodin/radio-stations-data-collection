@@ -7,14 +7,15 @@ from genie_datastores.postgres.models import Chart
 from genie_datastores.postgres.operations import get_database_engine
 from spotipyio import SpotifyClient
 
-from data_collectors import ChartsTaggedMistakesCollector
 from data_collectors.logic.collectors import (
-    RadioChartsDataCollector,
-    GlglzChartsDataCollector,
-    ChartsTracksCollector,
+    ChartsTaggedMistakesCollector,
     ChartsTaggedMistakesTracksCollector,
+    ChartsTracksCollector,
     EurovisionChartsDataCollector,
+    EveryHitChartsDataCollector,
+    GlglzChartsDataCollector,
     PlaylistsChartsDataCollector,
+    RadioChartsDataCollector,
 )
 
 
@@ -64,4 +65,11 @@ class ChartsCollectorsComponentFactory:
         return ChartsTaggedMistakesTracksCollector(
             db_engine=get_database_engine(),
             spotify_client=spotify_client
+        )
+
+    @staticmethod
+    def get_every_hit_collector(session: ClientSession, pool_executor: AioPoolExecutor) -> EveryHitChartsDataCollector:
+        return EveryHitChartsDataCollector(
+            session=session,
+            pool_executor=pool_executor
         )
