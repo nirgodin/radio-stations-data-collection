@@ -103,6 +103,36 @@ class ChartsManagerFactory(BaseManagerFactory):
             spotify_insertions_manager=self.inserters.spotify.get_insertions_manager(spotify_client)
         )
 
+    def get_israeli_artists_manager(self) -> ChartsIsraeliArtistsManager:
+        pool_executor = self.tools.get_pool_executor()
+        return ChartsIsraeliArtistsManager(
+            db_engine=get_database_engine(),
+            db_updater=self.updaters.get_values_updater(pool_executor)
+        )
+
+    def get_every_hit_manager(self,
+                              client_session: ClientSession,
+                              spotify_session: SpotifySession) -> EveryHitChartsManager:
+        spotify_client = self.tools.get_spotify_client(spotify_session)
+        pool_executor = self.tools.get_pool_executor()
+        tracks_collector = self.collectors.charts.get_tracks_collector(
+            pool_executor=pool_executor,
+            spotify_client=spotify_client
+        )
+        chunks_generator = self.tools.get_chunks_generator(pool_executor)
+        every_hit_charts_collector = self.collectors.charts.get_every_hit_collector(
+            session=client_session,
+            pool_executor=pool_executor
+        )
+
+        return EveryHitChartsManager(
+            db_engine=get_database_engine(),
+            charts_data_collector=every_hit_charts_collector,
+            charts_tracks_collector=tracks_collector,
+            spotify_insertions_manager=self.inserters.spotify.get_insertions_manager(spotify_client),
+            chart_entries_inserter=self.inserters.get_chart_entries_inserter(chunks_generator)
+        )
+
     def _get_playlists_chart_manager(self,
                                      spotify_session: SpotifySession,
                                      playlist_id_to_chart_mapping: Dict[str, Chart]) -> PlaylistsChartsManager:

@@ -1,0 +1,12 @@
+from datetime import datetime
+
+EVERY_HIT_RETRO_CHARTS_BASE_URL = "https://www.everyhit.com/retros/index.php"
+LAST_DATE_WITHOUT_EVERY_HIT_CHART = datetime(1952, 12, 1)
+EVERY_HIT_POSITION_COLUMN = "position"
+EVERY_HIT_ARTIST_NAME_COLUMN = "artist_name"
+EVERY_HIT_TRACK_NAME_COLUMN = "track_name"
+EVERY_HIT_ORDERED_COLUMNS = [
+    EVERY_HIT_POSITION_COLUMN,
+    EVERY_HIT_ARTIST_NAME_COLUMN,
+    EVERY_HIT_TRACK_NAME_COLUMN
+]
