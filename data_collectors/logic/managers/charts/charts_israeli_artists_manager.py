@@ -8,17 +8,19 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncEngine
 
 from data_collectors.contract import IManager
+from data_collectors.logic.inserters.postgres import ChunksDatabaseInserter
 from data_collectors.logic.models import DBUpdateRequest
 from data_collectors.logic.updaters import ValuesDatabaseUpdater
 
 
 class ChartsIsraeliArtistsManager(IManager):
-    def __init__(self, db_engine: AsyncEngine, db_updater: ValuesDatabaseUpdater):
+    def __init__(self, db_engine: AsyncEngine, db_updater: ValuesDatabaseUpdater, db_inserter: ChunksDatabaseInserter):
         self._db_engine = db_engine
         self._db_updater = db_updater
+        self._db_inserter = db_inserter
 
     async def run(self, charts_mapping: Dict[Chart, bool]) -> None:
-        logger.info("Starting to update tracks is_israeli field using charts mapping")
+        logger.info("Starting to update tracks `is_israeli` field using charts mapping")
 
         for chart, is_israeli in charts_mapping.items():
             await self._update_single_chart_artists(chart, is_israeli)
@@ -27,8 +29,9 @@ class ChartsIsraeliArtistsManager(IManager):
     async def _update_single_chart_artists(self, chart: Chart, is_israeli: bool) -> None:
         artists_ids = await self._query_unique_chart_artists_ids(chart)
         update_requests = self._to_update_requests(chart, artists_ids, is_israeli)
-        decision_entries = self._to_decision_entries(chart, artists_ids)
         await self._db_updater.update(update_requests)
+        decision_records = self._to_decision_records(chart, artists_ids)
+        await self._db_inserter.insert(decision_records)
 
     async def _query_unique_chart_artists_ids(self, chart: Chart) -> List[str]:
         logger.info(f"Querying chart `{chart.value}` unique tracks ids")
@@ -59,9 +62,9 @@ class ChartsIsraeliArtistsManager(IManager):
         return update_requests
 
     @staticmethod
-    def _to_decision_entries(chart: Chart, artists_ids: List[str]) -> List[Decision]:
+    def _to_decision_records(chart: Chart, artists_ids: List[str]) -> List[Decision]:
         logger.info(f"Transforming chart `{chart.value}` to decision entries")
-        decisions = []
+        records = []
 
         for artist_id in artists_ids:
             decision = Decision(
@@ -70,6 +73,6 @@ class ChartsIsraeliArtistsManager(IManager):
                 table=Table.ARTISTS,
                 table_id=artist_id
             )
-            decisions.append(decision)
+            records.append(decision)
 
-        return decisions
+        return records

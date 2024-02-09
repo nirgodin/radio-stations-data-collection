@@ -105,9 +105,12 @@ class ChartsManagerFactory(BaseManagerFactory):
 
     def get_israeli_artists_manager(self) -> ChartsIsraeliArtistsManager:
         pool_executor = self.tools.get_pool_executor()
+        chunks_generator = self.tools.get_chunks_generator(pool_executor)
+
         return ChartsIsraeliArtistsManager(
             db_engine=get_database_engine(),
-            db_updater=self.updaters.get_values_updater(pool_executor)
+            db_updater=self.updaters.get_values_updater(pool_executor),
+            db_inserter=self.inserters.get_chunks_database_inserter(chunks_generator)
         )
 
     def get_every_hit_manager(self,
