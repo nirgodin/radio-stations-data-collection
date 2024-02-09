@@ -9,8 +9,8 @@ from genie_datastores.google.drive import GoogleDriveClient, GoogleDriveDownload
 from genie_datastores.postgres.models import ChartEntry, Chart
 from pandas import DataFrame, Series
 
-from data_collectors.consts.radio_charts_consts import POSITION_COLUMN_NAME, SONG_COLUMN_NAME, ARTIST_COLUMN_NAME, \
-    RADIO_CHART_SHEET_NAME_DATETIME_FORMATS, CHART_RELEVANT_COLUMNS
+from data_collectors.consts.charts_consts import POSITION_COLUMN_NAME, SONG_COLUMN_NAME, ARTIST_COLUMN_NAME, \
+    RADIO_CHART_SHEET_NAME_DATETIME_FORMATS, CHART_RELEVANT_COLUMNS, CHART_KEY_FORMAT
 from data_collectors.contract import IChartsDataCollector
 
 
@@ -45,7 +45,7 @@ class RadioChartsDataCollector(IChartsDataCollector):
                         track_id=None,
                         chart=chart,
                         date=chart_date,
-                        key=f"{row[ARTIST_COLUMN_NAME]} - {row[SONG_COLUMN_NAME]}",
+                        key=CHART_KEY_FORMAT.format(artist=row[ARTIST_COLUMN_NAME], track=row[SONG_COLUMN_NAME]),
                         position=row[POSITION_COLUMN_NAME],
                         comment=os.path.basename(chart_data_path)
                     )

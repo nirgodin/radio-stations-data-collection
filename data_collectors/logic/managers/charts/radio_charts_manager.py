@@ -7,7 +7,7 @@ from genie_datastores.postgres.operations import execute_query
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncEngine
 
-from data_collectors.consts.radio_charts_consts import EXCLUDED_RADIO_CHARTS_FILES_IDS
+from data_collectors.consts.charts_consts import EXCLUDED_RADIO_CHARTS_FILES_IDS
 from data_collectors.logic.collectors import RadioChartsDataCollector, ChartsTracksCollector
 from data_collectors.logic.inserters.postgres import SpotifyInsertionsManager, ChartEntriesDatabaseInserter
 from data_collectors.logic.managers.charts.base_charts_manager import BaseChartsManager

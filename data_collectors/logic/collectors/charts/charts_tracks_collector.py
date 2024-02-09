@@ -1,4 +1,4 @@
-from typing import Any, List, Optional
+from typing import Any, List, Optional, Tuple
 
 from genie_common.tools import AioPoolExecutor, logger
 from genie_common.utils import safe_nested_get
@@ -79,7 +79,7 @@ class ChartsTracksCollector(ICollector):
         items = safe_nested_get(search_result, [TRACKS, ITEMS], [])
 
         for candidate in items:
-            artist, track = chart_entry.key.split(" - ")  # TODO: Robust this logic
+            artist, track = self._extract_artist_and_track_from_chart_key(chart_entry.key)
             entity = MatchingEntity(
                 track=track.strip(),
                 artist=artist.strip()
@@ -90,6 +90,18 @@ class ChartsTracksCollector(ICollector):
                 return candidate
 
         self._log_track_not_found(chart_entry, match_field="key")
+
+    @staticmethod
+    def _extract_artist_and_track_from_chart_key(key: str) -> Tuple[str, str]:
+        key_components = key.split("-")
+        n_component = len(key_components)
+
+        if n_component < 2:
+            return key, ""
+        if n_component == 2:
+            return key_components[0].strip(), key_components[1].strip()
+
+        return key_components[0].strip(), "-".join(key_components[1:]).strip()
 
     @staticmethod
     def _log_track_not_found(chart_entry: ChartEntry, match_field: str) -> None:

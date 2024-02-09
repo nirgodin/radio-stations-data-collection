@@ -15,3 +15,4 @@ EXCLUDED_RADIO_CHARTS_FILES_IDS = [
     '1zJsTgxYkuW6c0TAqVaRI_RMToTTH7gn-',
     '1z8Ys_yQDg3cjhj3uWUaKFVLIk8xB-qmi'
 ]
+CHART_KEY_FORMAT = "{artist} - {track}"

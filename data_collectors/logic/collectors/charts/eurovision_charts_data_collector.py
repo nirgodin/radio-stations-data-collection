@@ -7,6 +7,7 @@ from genie_common.tools import AioPoolExecutor, logger
 from genie_datastores.postgres.models import ChartEntry, Chart
 from pandas import DataFrame, Series
 
+from data_collectors.consts.charts_consts import CHART_KEY_FORMAT
 from data_collectors.consts.eurovision_consts import EUROVISION_WIKIPEDIA_PAGE_URL_FORMAT, EUROVISION_ARTIST_COLUMN, \
     EUROVISION_SONG_COLUMN, EUROVISION_PLACE_COLUMN, EUROVISION_KEY_COLUMNS, EUROVISION_TABLE_CONTEST_ID_COLUMNS
 from data_collectors.contract import IChartsDataCollector
@@ -92,7 +93,7 @@ class EurovisionChartsDataCollector(IChartsDataCollector):
 
     @staticmethod
     def _build_chart_key(row: Series) -> str:
-        song = row[EUROVISION_SONG_COLUMN].strip('"')
+        track = row[EUROVISION_SONG_COLUMN].strip('"')
         artist = row[EUROVISION_ARTIST_COLUMN]
 
-        return f"{artist} - {song}"
+        return CHART_KEY_FORMAT.format(artist=artist, track=track)

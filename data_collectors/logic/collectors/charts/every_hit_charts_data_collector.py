@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import List, Dict, Union, Optional
+from typing import List, Dict, Optional
 
 import pandas as pd
 from aiohttp import ClientSession
@@ -8,6 +8,7 @@ from genie_common.utils import chain_lists, from_datetime
 from genie_datastores.postgres.models import ChartEntry, Chart
 from pandas import DataFrame
 
+from data_collectors.consts.charts_consts import CHART_KEY_FORMAT
 from data_collectors.consts.every_hit_consts import EVERY_HIT_RETRO_CHARTS_BASE_URL, EVERY_HIT_POSITION_COLUMN, \
     EVERY_HIT_ARTIST_NAME_COLUMN, EVERY_HIT_TRACK_NAME_COLUMN, EVERY_HIT_ORDERED_COLUMNS
 from data_collectors.contract import IChartsDataCollector
@@ -55,7 +56,7 @@ class EveryHitChartsDataCollector(IChartsDataCollector):
             logger.warn(f"Was not able to extract charts data from page between {start_date} to {end_date}")
 
     @staticmethod
-    def _build_request_params(date_range: DateRange) -> Dict[str, Union[str, str]]:
+    def _build_request_params(date_range: DateRange) -> Dict[str, str]:
         return {
             "page": "rchart",
             "sent": 1,
@@ -82,11 +83,15 @@ class EveryHitChartsDataCollector(IChartsDataCollector):
         entries = []
 
         for _, row in data.iterrows():
+            key = CHART_KEY_FORMAT.format(
+                artist=row[EVERY_HIT_ARTIST_NAME_COLUMN],
+                track=row[EVERY_HIT_TRACK_NAME_COLUMN]
+            )
             row_entry = ChartEntry(
                 chart=Chart.UK_EVERY_HIT,
                 date=start_date,
                 position=row[EVERY_HIT_POSITION_COLUMN],
-                key=f"{row[EVERY_HIT_ARTIST_NAME_COLUMN]} - {row[EVERY_HIT_TRACK_NAME_COLUMN]}"
+                key=key
             )
             entries.append(row_entry)
 
