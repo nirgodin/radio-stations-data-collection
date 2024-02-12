@@ -12,6 +12,7 @@ from data_collectors.logic.managers.missing_ids_managers.genius_missing_ids_mana
 from data_collectors.logic.managers.missing_ids_managers.musixmatch_missing_ids_manager import \
     MusixmatchMissingIDsManager
 from data_collectors.logic.managers.missing_ids_managers.shazam_missing_ids_manager import ShazamMissingIDsManager
+from data_collectors.logic.managers.primary_genre_manager import PrimaryGenreManager
 from data_collectors.logic.managers.radio_snapshots_manager import RadioStationsSnapshotsManager
 from data_collectors.logic.managers.shazam_birth_date_copy_manager import ShazamBirthDateCopyManager
 from data_collectors.logic.managers.shazam_top_tracks_manager import ShazamTopTracksManager
@@ -39,6 +40,7 @@ __all__ = [
     "ShazamMissingIDsManager",
     "ShazamBirthDateCopyManager",
     "PlaylistsChartsManager",
+    "PrimaryGenreManager",
     "SpotifyPlaylistsArtistsManager",
     "SpotifyPlaylistsTracksManager",
     "TrackNamesEmbeddingsManager",
