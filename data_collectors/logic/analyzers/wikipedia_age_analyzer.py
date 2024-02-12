@@ -9,7 +9,7 @@ from genie_common.tools import SyncPoolExecutor, logger
 from genie_common.utils import search_between_two_characters, contains_any_hebrew_character, to_datetime, read_json
 
 from data_collectors.consts.wikipedia_consts import WIKIPEDIA_DATETIME_FORMATS
-from data_collectors.contract.analyzer_interface import IAnalyzer
+from data_collectors.contract import IAnalyzer
 from data_collectors.logic.models import ArtistWikipediaDetails
 
 

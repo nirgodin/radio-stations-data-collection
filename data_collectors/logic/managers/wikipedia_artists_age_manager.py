@@ -1,7 +1,7 @@
 from typing import Optional
 
 from data_collectors.contract import IManager
-from data_collectors.logic.analyzers.wikipedia_age_analyzer import WikipediaAgeAnalyzer
+from data_collectors.logic.analyzers import WikipediaAgeAnalyzer
 from data_collectors.logic.collectors import BaseWikipediaAgeCollector
 from data_collectors.logic.updaters import ValuesDatabaseUpdater
 
