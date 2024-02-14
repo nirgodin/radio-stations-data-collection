@@ -11,10 +11,10 @@ from data_collectors.logic.analyzers.genre_mapper_analyzer import GenreMapperAna
 
 class PrimaryGenreAnalyzer(IAnalyzer):
     def __init__(self,
-                 pool_executor: SyncPoolExecutor = SyncPoolExecutor(),
-                 genre_mapper: GenreMapperAnalyzer = GenreMapperAnalyzer()):
-        self._pool_executor = pool_executor
+                 genre_mapper: GenreMapperAnalyzer,
+                 pool_executor: SyncPoolExecutor = SyncPoolExecutor()):
         self._genre_mapper = genre_mapper
+        self._pool_executor = pool_executor
 
     def analyze(self, rows: List[Row]) -> Any:
         track_to_primary_genre_mapping = self._pool_executor.run(

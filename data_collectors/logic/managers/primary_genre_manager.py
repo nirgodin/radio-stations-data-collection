@@ -1,7 +1,8 @@
-from typing import Optional, List
+from typing import Optional, List, Dict
 
 from genie_common.tools import logger
-from genie_datastores.postgres.models import Track, SpotifyArtist, ShazamTrack, SpotifyTrack, TrackIDMapping
+from genie_datastores.postgres.models import Track, SpotifyArtist, ShazamTrack, SpotifyTrack, TrackIDMapping, \
+    PrimaryGenre
 from genie_datastores.postgres.operations import execute_query
 from sqlalchemy import select
 from sqlalchemy.engine import Row
@@ -41,5 +42,15 @@ class PrimaryGenreManager(IManager):
 
         return query_result.all()
 
-    def _to_update_requests(self) -> List[DBUpdateRequest]:
-        pass
+    @staticmethod
+    def _to_update_requests(tracks_primary_genres: Dict[str, PrimaryGenre]) -> List[DBUpdateRequest]:
+        update_requests = []
+
+        for track_id, primary_genre in tracks_primary_genres.items():
+            request = DBUpdateRequest(
+                id=track_id,
+                values={Track.primary_genre: primary_genre}
+            )
+            update_requests.append(request)
+
+        return update_requests

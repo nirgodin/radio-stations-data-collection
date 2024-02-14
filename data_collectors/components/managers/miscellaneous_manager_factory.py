@@ -34,11 +34,13 @@ class MiscellaneousManagerFactory(BaseManagerFactory):
             radio_tracks_database_inserter=self.inserters.get_radio_tracks_inserter(chunks_generator)
         )
 
-    def get_primary_genre_manager(self) -> PrimaryGenreManager:
+    async def get_primary_genre_manager(self) -> PrimaryGenreManager:
         pool_executor = self.tools.get_pool_executor()
+        genre_analyzer = await self.analyzers.get_primary_genre_analyzer()
+
         return PrimaryGenreManager(
             db_engine=get_database_engine(),
-            genre_analyzer=self.analyzers.get_primary_genre_analyzer(),
+            genre_analyzer=genre_analyzer,
             db_updater=self.updaters.get_values_updater(pool_executor)
         )
 
