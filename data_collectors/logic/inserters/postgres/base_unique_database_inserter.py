@@ -18,6 +18,7 @@ class BaseUniqueDatabaseInserter(IPostgresDatabaseInserter, ABC):
         self._chunks_inserter = chunks_inserter
 
     async def insert(self, records: List[BaseORMModel]) -> None:
+        logger.info(f"{self.__class__.__name__} received {len(records)} records to insert")
         non_existing_records = await self._filter_out_existing_records(records)
 
         if non_existing_records:
@@ -26,6 +27,7 @@ class BaseUniqueDatabaseInserter(IPostgresDatabaseInserter, ABC):
             logger.info("Did not find any new record to insert. Skipping.")
 
     async def _filter_out_existing_records(self, records: List[BaseORMModel]) -> List[BaseORMModel]:
+        logger.info("Starting to identify and remove existing records")
         non_existing_records = []
         existing_records = await self._get_existing_records(records)
 
@@ -35,6 +37,7 @@ class BaseUniqueDatabaseInserter(IPostgresDatabaseInserter, ABC):
             else:
                 logger.debug(f"Record with the table unique identifiers already exists. Skipping")
 
+        logger.info(f"Found {len(non_existing_records)} non existing records out of {len(existing_records)} given")
         return non_existing_records
 
     async def _get_existing_records(self, records: List[BaseORMModel]) -> List[BaseORMModel]:

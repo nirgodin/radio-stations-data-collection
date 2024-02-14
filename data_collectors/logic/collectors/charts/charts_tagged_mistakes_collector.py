@@ -1,7 +1,7 @@
 from typing import List
 
 from genie_common.tools import logger, AioPoolExecutor
-from genie_common.utils import chain_lists
+from genie_common.utils import chain_lists, string_to_boolean
 from genie_datastores.postgres.models import ChartEntry, Chart
 from genie_datastores.postgres.operations import execute_query
 from pandas import Series, DataFrame
@@ -57,5 +57,5 @@ class ChartsTaggedMistakesCollector(ICollector):
     @staticmethod
     def _pre_process_data(data: DataFrame) -> None:
         data["chart"] = data["chart"].str.lower()
-        data["done"] = data["done"].apply(lambda x: True if x.lower() == "true" else False)
+        data["done"] = data["done"].apply(string_to_boolean)
         data["correct_track_id"] = data["correct_track_id"].replace("", None)
