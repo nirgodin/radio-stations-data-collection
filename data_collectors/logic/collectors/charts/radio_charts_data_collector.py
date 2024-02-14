@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 from tempfile import TemporaryDirectory
 from typing import Generator, List
 
@@ -38,7 +39,7 @@ class RadioChartsDataCollector(IChartsDataCollector):
             for sheet_name in yearly_charts_data.sheet_names:
                 weekly_chart_data = yearly_charts_data.parse(sheet_name, header=1)
                 filtered_chart_data = self._filter_weekly_chart_data(weekly_chart_data)
-                chart_date = to_datetime(sheet_name, RADIO_CHART_SHEET_NAME_DATETIME_FORMATS)
+                chart_date = self._get_chart_date(sheet_name)
 
                 for _, row in filtered_chart_data.iterrows():
                     yield ChartEntry(
@@ -64,6 +65,13 @@ class RadioChartsDataCollector(IChartsDataCollector):
         self._pre_process_position_column(filtered_data)
 
         return filtered_data
+
+    @staticmethod
+    def _get_chart_date(sheet_name: str) -> datetime:
+        if "–" in sheet_name:
+            sheet_name = sheet_name.split("–")[1]
+
+        return to_datetime(sheet_name, RADIO_CHART_SHEET_NAME_DATETIME_FORMATS)
 
     @staticmethod
     def _is_valid_row(row: Series) -> bool:
