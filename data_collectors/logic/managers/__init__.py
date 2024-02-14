@@ -7,6 +7,7 @@ from data_collectors.logic.managers.charts.every_hit_charts_manager import Every
 from data_collectors.logic.managers.charts.glglz_charts_manager import GlglzChartsManager
 from data_collectors.logic.managers.charts.playlists_charts_manager import PlaylistsChartsManager
 from data_collectors.logic.managers.charts.radio_charts_manager import RadioChartsManager
+from data_collectors.logic.managers.genres_mapping_manager import GenresMappingManager
 from data_collectors.logic.managers.google_artists_origin_geocoding_manager import GoogleArtistsOriginGeocodingManager
 from data_collectors.logic.managers.missing_ids_managers.genius_missing_ids_manager import GeniusMissingIDsManager
 from data_collectors.logic.managers.missing_ids_managers.musixmatch_missing_ids_manager import \
@@ -31,6 +32,7 @@ __all__ = [
     "EurovisionChartsManager",
     "EveryHitChartsManager",
     "GeniusMissingIDsManager",
+    "GenresMappingManager",
     "GlglzChartsManager",
     "GoogleArtistsOriginGeocodingManager",
     "MusixmatchMissingIDsManager",

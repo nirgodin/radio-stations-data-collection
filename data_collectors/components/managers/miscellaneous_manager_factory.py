@@ -41,3 +41,10 @@ class MiscellaneousManagerFactory(BaseManagerFactory):
             genre_analyzer=self.analyzers.get_primary_genre_analyzer(),
             db_updater=self.updaters.get_values_updater(pool_executor)
         )
+
+    def get_genres_mapping_manager(self) -> GenresMappingManager:
+        chunks_generator = self.tools.get_chunks_generator()
+        return GenresMappingManager(
+            sheets_client=self.tools.get_google_sheets_client(),
+            genres_inserter=self.inserters.get_genres_inserter(chunks_generator)
+        )

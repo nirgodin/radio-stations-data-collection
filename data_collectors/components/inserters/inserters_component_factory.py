@@ -2,7 +2,7 @@ from genie_common.tools import ChunksGenerator
 from genie_datastores.postgres.operations import get_database_engine
 
 from data_collectors.logic.inserters.postgres import RadioTracksDatabaseInserter, ChartEntriesDatabaseInserter, \
-    ChunksDatabaseInserter
+    ChunksDatabaseInserter, GenresDatabaseInserter
 from data_collectors.components.inserters.billboard_inserters_component_factory import \
     BillboardInsertersComponentFactory
 from data_collectors.components.inserters.shazam_inserters_compoent_factory import ShazamInsertersComponentFactory
@@ -35,3 +35,10 @@ class InsertersComponentFactory:
     @staticmethod
     def get_chunks_database_inserter(chunks_generator: ChunksGenerator) -> ChunksDatabaseInserter:
         return ChunksDatabaseInserter(db_engine=get_database_engine(), chunks_generator=chunks_generator)
+
+    @staticmethod
+    def get_genres_inserter(chunks_generator: ChunksGenerator) -> GenresDatabaseInserter:
+        return GenresDatabaseInserter(
+            db_engine=get_database_engine(),
+            chunks_inserter=InsertersComponentFactory.get_chunks_database_inserter(chunks_generator)
+        )
