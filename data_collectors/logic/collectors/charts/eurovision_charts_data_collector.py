@@ -100,7 +100,7 @@ class EurovisionChartsDataCollector(IChartsDataCollector):
             entry = ChartEntry(
                 chart=Chart.EUROVISION,
                 date=datetime(year, 1, 1),
-                position=extract_int_from_string(row[EUROVISION_PLACE_COLUMN]),
+                position=extract_int_from_string(str(row[EUROVISION_PLACE_COLUMN])),
                 key=self._build_chart_key(row),
                 entry_metadata={key: row[key] for key in row.index.tolist() if key not in EUROVISION_KEY_COLUMNS}
             )
