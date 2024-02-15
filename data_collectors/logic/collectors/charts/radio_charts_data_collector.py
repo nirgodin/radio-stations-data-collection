@@ -1,11 +1,11 @@
 import os
 from datetime import datetime
 from tempfile import TemporaryDirectory
-from typing import Generator, List
+from typing import Generator, List, Optional
 
 import pandas as pd
 from genie_common.tools import logger
-from genie_common.utils import to_datetime, extract_int_from_string
+from genie_common.utils import to_datetime, extract_int_from_string, sub_all_chars_before
 from genie_datastores.google.drive import GoogleDriveClient, GoogleDriveDownloadMetadata
 from genie_datastores.postgres.models import ChartEntry, Chart
 from pandas import DataFrame, Series
@@ -67,11 +67,9 @@ class RadioChartsDataCollector(IChartsDataCollector):
         return filtered_data
 
     @staticmethod
-    def _get_chart_date(sheet_name: str) -> datetime:
-        if "–" in sheet_name:
-            sheet_name = sheet_name.split("–")[1]
-
-        return to_datetime(sheet_name, RADIO_CHART_SHEET_NAME_DATETIME_FORMATS)
+    def _get_chart_date(sheet_name: str) -> Optional[datetime]:
+        formatted_sheet_name = sub_all_chars_before(chars=["-", "–"], text=sheet_name)
+        return to_datetime(formatted_sheet_name, RADIO_CHART_SHEET_NAME_DATETIME_FORMATS)
 
     @staticmethod
     def _is_valid_row(row: Series) -> bool:
