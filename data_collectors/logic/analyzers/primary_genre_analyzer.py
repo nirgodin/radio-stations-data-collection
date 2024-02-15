@@ -1,7 +1,7 @@
-from collections import Counter
 from typing import Any, List, Tuple, Optional
 
 from genie_common.tools import SyncPoolExecutor
+from genie_common.utils import find_most_common_element
 from genie_datastores.postgres.models import PrimaryGenre
 from sqlalchemy.engine import Row
 
@@ -51,14 +51,6 @@ class PrimaryGenreAnalyzer(IAnalyzer):
         non_other_main_genres = [genre for genre in mapped_genres if genre != PrimaryGenre.OTHER]
 
         if non_other_main_genres:
-            return self._extract_most_common_main_genre(non_other_main_genres)
+            return find_most_common_element(non_other_main_genres)
 
         return PrimaryGenre.OTHER
-
-    @staticmethod
-    def _extract_most_common_main_genre(main_genres: List[PrimaryGenre]) -> PrimaryGenre:
-        main_genres_count = Counter(main_genres)
-        most_common_main_genre = main_genres_count.most_common(1)
-        genre_name, genre_count = most_common_main_genre[0]
-
-        return genre_name
