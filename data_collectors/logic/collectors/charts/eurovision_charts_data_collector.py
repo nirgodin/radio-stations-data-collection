@@ -1,9 +1,11 @@
+from copy import deepcopy
 from datetime import datetime
 from typing import List, Tuple, Optional
 
 import pandas as pd
 from aiohttp import ClientSession
 from genie_common.tools import AioPoolExecutor, logger
+from genie_common.utils import sub_between_two_characters, extract_int_from_string
 from genie_datastores.postgres.models import ChartEntry, Chart
 from pandas import DataFrame, Series
 
@@ -20,6 +22,7 @@ class EurovisionChartsDataCollector(IChartsDataCollector):
 
     async def collect(self, years: List[int]) -> List[ChartEntry]:
         if not years:
+            logger.warn("EurovisionChartsDataCollector did not receive any valid Eurovision year to collect. Aborting")
             return []
 
         logger.info(f"Starting to collect eurovision data for {len(years)} years")
@@ -77,6 +80,17 @@ class EurovisionChartsDataCollector(IChartsDataCollector):
 
     @staticmethod
     def _is_relevant_table(table: DataFrame) -> bool:
+        formatted_columns = []
+
+        for column in table.columns:
+            if isinstance(column, str):
+                formatted_column = sub_between_two_characters("\[", "\]", "", column)
+            else:
+                formatted_column = deepcopy(column)
+
+            formatted_columns.append(formatted_column)
+
+        table.columns = formatted_columns
         return all(col in table.columns for col in EUROVISION_TABLE_CONTEST_ID_COLUMNS)
 
     def _covert_data_to_chart_entries(self, data: DataFrame, year: int) -> List[ChartEntry]:
@@ -86,7 +100,7 @@ class EurovisionChartsDataCollector(IChartsDataCollector):
             entry = ChartEntry(
                 chart=Chart.EUROVISION,
                 date=datetime(year, 1, 1),
-                position=row[EUROVISION_PLACE_COLUMN],
+                position=extract_int_from_string(row[EUROVISION_PLACE_COLUMN]),
                 key=self._build_chart_key(row),
                 entry_metadata={key: row[key] for key in row.index.tolist() if key not in EUROVISION_KEY_COLUMNS}
             )

@@ -1,6 +1,7 @@
 from datetime import datetime
 from typing import Dict, Any, Optional, List
 
+from genie_common.tools import logger
 from genie_datastores.postgres.models import ChartEntry, Chart
 from genie_datastores.postgres.operations import execute_query
 from sqlalchemy import select
@@ -69,7 +70,9 @@ class EurovisionChartsManager(BaseChartsManager):
         if now.year - year > 1:
             return True
 
-        if now.year - year == 0:
-            return now.month > 5
+        if now.year - year <= 1:
+            if now > datetime(year, 6, 1):
+                return True
 
+        logger.warn(f"Eurovision charts entries of year `{year}` are not available yet. Skipping")
         return False
