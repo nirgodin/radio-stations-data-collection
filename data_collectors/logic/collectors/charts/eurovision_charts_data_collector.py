@@ -19,6 +19,9 @@ class EurovisionChartsDataCollector(IChartsDataCollector):
         self._pool_executor = pool_executor
 
     async def collect(self, years: List[int]) -> List[ChartEntry]:
+        if not years:
+            return []
+
         logger.info(f"Starting to collect eurovision data for {len(years)} years")
         years_to_wiki_pages = await self._query_eurovision_wikipedia_pages(years)
 

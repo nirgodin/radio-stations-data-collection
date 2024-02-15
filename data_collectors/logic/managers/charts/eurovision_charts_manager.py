@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Dict, Any, Optional, List
 
 from genie_datastores.postgres.models import ChartEntry, Chart
@@ -38,8 +39,10 @@ class EurovisionChartsManager(BaseChartsManager):
         last_chart_year = await self._query_last_db_eurovision_year()
         next_chart_year = self._get_next_chart_year(last_chart_year)
         years = range(next_chart_year, next_chart_year + limit)
+        now = datetime.now()
+        valid_years = [year for year in years if self._is_relevant_year(year, now)]
 
-        return {"years": list(years)}
+        return {"years": valid_years}
 
     async def _query_last_db_eurovision_year(self) -> Optional[int]:
         query = (
@@ -60,3 +63,13 @@ class EurovisionChartsManager(BaseChartsManager):
             return FIRST_EUROVISION_YEAR
 
         return last_chart_year + 1
+
+    @staticmethod
+    def _is_relevant_year(year: int, now: datetime) -> bool:
+        if now.year - year > 1:
+            return True
+
+        if now.year - year == 0:
+            return now.month > 5
+
+        return False
