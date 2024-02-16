@@ -6,7 +6,8 @@ from data_collectors.logic.models import WebElement, HTMLElement
 
 
 class WebElementsExtractor:
-    def extract(self, soup: BeautifulSoup, web_element: WebElement) -> List[Optional[Dict[str, str]]]:
+    def extract(self, html: str, web_element: WebElement) -> List[Optional[Dict[str, str]]]:
+        soup = BeautifulSoup(html, "html.parser")
         if web_element.multiple:
             return self._extract_multiple_details(soup, web_element)
 

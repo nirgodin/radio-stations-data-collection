@@ -35,7 +35,7 @@ class GlglzChartsHTMLAnalyzer(IAnalyzer):
     def _generate_single_date_chart_entries(self, chart_details: GlglzChartDetails) -> List[ChartEntry]:
         logger.info(f"Parsing raw chart HTML for date `{from_datetime(chart_details.date)}`")
         elements = self._web_elements_extractor.extract(
-            soup=chart_details.soup,
+            html=chart_details.html,
             web_element=GLGLZ_CHARTS_WEB_ELEMENT
         )
         chart = None

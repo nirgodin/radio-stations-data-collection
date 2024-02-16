@@ -7,5 +7,5 @@ from bs4 import BeautifulSoup
 @dataclass
 class GlglzChartDetails:
     date: datetime
-    soup: BeautifulSoup
+    html: str
     datetime_format: str

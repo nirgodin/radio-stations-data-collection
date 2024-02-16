@@ -50,7 +50,7 @@ class GlglzChartsDataCollector(IChartsDataCollector):
                 return GlglzChartDetails(
                     date=date,
                     datetime_format=datetime_format,
-                    soup=BeautifulSoup(driver.page_source, 'html.parser')
+                    html=driver.page_source
                 )
 
         logger.warn(f"Did not find chart page for date `{from_datetime(date)}`. Skipping")
