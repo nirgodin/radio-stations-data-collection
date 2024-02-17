@@ -1,4 +1,4 @@
-from typing import List, Optional, Dict
+from typing import List, Optional, Dict, Union
 
 from bs4 import BeautifulSoup, Tag
 
@@ -47,13 +47,26 @@ class WebElementsExtractor:
                 child_element=child_element.child_element
             )
 
-    @staticmethod
-    def _extract_single_detail(tag: Tag, web_element: WebElement, number: Optional[int] = None) -> Optional[Dict[str, str]]:
+    def _extract_single_detail(self, tag: Tag, web_element: WebElement, number: Optional[int] = None) -> Optional[Dict[str, str]]:
         if tag is None:
             return
-        elif web_element.type == HTMLElement.A:
-            return {tag.text: tag["href"]}
-        elif number is None:
-            return {web_element.name: tag.text}
-        else:
-            return {f"{web_element.name}{number}": tag.text}
+
+        tag_value = self._extract_tag_value(tag, web_element)
+
+        if web_element.type == HTMLElement.A:
+            return {tag_value: tag["href"]}
+
+        if number is None:
+            return {web_element.name: tag_value}
+
+        return {f"{web_element.name}{number}": tag_value}
+
+    @staticmethod
+    def _extract_tag_value(tag: Tag, web_element: WebElement) -> Union[str, List[str]]:
+        if web_element.expected_type == str:
+            return tag.text
+
+        if web_element.expected_type == list:
+            return list(tag.stripped_strings)
+
+        raise ValueError(f"Got unexpected return type for web element `{web_element.name}`")

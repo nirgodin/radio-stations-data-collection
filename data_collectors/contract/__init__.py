@@ -11,6 +11,7 @@ __all__ = [
     "BaseSearchCollector",
     "IAnalyzer",
     "IChartsDataCollector",
+    "ILyricsCollector",
     "ICollector",
     "IDatabaseInserter",
     "IDatabaseUpdater",
