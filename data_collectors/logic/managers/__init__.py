@@ -22,6 +22,7 @@ from data_collectors.logic.managers.spotify_playlists.spotify_playlists_artists_
 from data_collectors.logic.managers.spotify_playlists.spotify_playlists_tracks_manager import \
     SpotifyPlaylistsTracksManager
 from data_collectors.logic.managers.track_names_embeddings_manager import TrackNamesEmbeddingsManager
+from data_collectors.logic.managers.tracks_lyrics_manager import TracksLyricsManager
 from data_collectors.logic.managers.wikipedia_artists_age_manager import WikipediaArtistsAgeManager
 
 __all__ = [
@@ -46,5 +47,6 @@ __all__ = [
     "SpotifyPlaylistsArtistsManager",
     "SpotifyPlaylistsTracksManager",
     "TrackNamesEmbeddingsManager",
+    "TracksLyricsManager",
     "WikipediaArtistsAgeManager"
 ]

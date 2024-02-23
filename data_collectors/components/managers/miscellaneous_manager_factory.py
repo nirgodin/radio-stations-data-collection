@@ -1,10 +1,12 @@
 from aiohttp import ClientSession
 from genie_datastores.milvus import MilvusClient
+from genie_datastores.postgres.models import TrackIDMapping, DataSource
 from genie_datastores.postgres.operations import get_database_engine
 from spotipyio.logic.authentication.spotify_session import SpotifySession
 
 from data_collectors.components.managers.base_manager_factory import BaseManagerFactory
 from data_collectors.logic.managers import *
+from data_collectors.logic.models import LyricsSourceDetails
 
 
 class MiscellaneousManagerFactory(BaseManagerFactory):
@@ -49,4 +51,34 @@ class MiscellaneousManagerFactory(BaseManagerFactory):
         return GenresMappingManager(
             sheets_client=self.tools.get_google_sheets_client(),
             genres_inserter=self.inserters.get_genres_inserter(chunks_generator)
+        )
+
+    def get_tracks_lyrics_manager(self, session: ClientSession) -> TracksLyricsManager:
+        pool_executor = self.tools.get_pool_executor()
+        musixmatch_collector = self.collectors.musixmatch.get_lyrics_collector(
+            session=session,
+            pool_executor=pool_executor,
+            api_key=self.env.get_musixmatch_api_key()
+        )
+        prioritized_sources = [
+            LyricsSourceDetails(
+                column=TrackIDMapping.genius_id,
+                collector=self.collectors.genius.get_lyrics_collector(session, pool_executor),
+                data_source=DataSource.GENIUS
+            ),
+            LyricsSourceDetails(
+                column=TrackIDMapping.shazam_id,
+                collector=self.collectors.shazam.get_lyrics_collector(pool_executor),
+                data_source=DataSource.SHAZAM
+            ),
+            LyricsSourceDetails(
+                column=TrackIDMapping.musixmatch_id,
+                collector=musixmatch_collector,  # TODO: Convert musixmatch lyrics collector to lyrics collector interface
+                data_source=DataSource.MUSIXMATCH
+            )
+        ]
+
+        return TracksLyricsManager(
+            db_engine=get_database_engine(),
+            prioritized_sources=prioritized_sources
         )

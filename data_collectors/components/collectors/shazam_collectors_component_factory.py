@@ -1,3 +1,4 @@
+from aiohttp import ClientSession
 from shazamio import Shazam
 
 from data_collectors.logic.collectors.shazam import *
@@ -20,3 +21,7 @@ class ShazamCollectorsComponentFactory:
     @staticmethod
     def get_tracks_collector(shazam: Shazam, pool_executor: AioPoolExecutor) -> ShazamTracksCollector:
         return ShazamTracksCollector(shazam, pool_executor)
+
+    @staticmethod
+    def get_lyrics_collector(pool_executor: AioPoolExecutor) -> ShazamLyricsCollector:
+        return ShazamLyricsCollector(pool_executor)
