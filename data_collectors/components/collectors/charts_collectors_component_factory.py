@@ -33,8 +33,8 @@ class ChartsCollectorsComponentFactory:
         )
 
     @staticmethod
-    def get_glglz_charts_collector() -> GlglzChartsDataCollector:
-        return GlglzChartsDataCollector()
+    def get_glglz_charts_collector(pool_executor: AioPoolExecutor) -> GlglzChartsDataCollector:
+        return GlglzChartsDataCollector(pool_executor)
 
     @staticmethod
     def get_playlists_charts_collector(spotify_client: SpotifyClient,
