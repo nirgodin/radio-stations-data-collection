@@ -13,6 +13,8 @@ RADIO_CHART_SHEET_NAME_DATETIME_FORMATS = [
 ]
 EXCLUDED_RADIO_CHARTS_FILES_IDS = [
     '1zJsTgxYkuW6c0TAqVaRI_RMToTTH7gn-',
-    '1z8Ys_yQDg3cjhj3uWUaKFVLIk8xB-qmi'
+    '1z8Ys_yQDg3cjhj3uWUaKFVLIk8xB-qmi',
+    '1jsAon5Fl_Tp7KoH_Bu0WAnudXe2FMcPp',
+    '1shGMCB6uhQeNpqepPVBdPJWFG0IVAbPr'
 ]
 CHART_KEY_FORMAT = "{artist} - {track}"
