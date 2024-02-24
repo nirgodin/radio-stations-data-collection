@@ -36,7 +36,11 @@ class TracksLyricsManager(IManager):
             TrackIDMapping.shazam_id.isnot(None),
             TrackIDMapping.musixmatch_id.isnot(None),
         )
-        track_lyrics_subquery = select(TrackLyrics.id).subquery("tracks_lyrics_ids")
+        track_lyrics_subquery = (
+            select(TrackLyrics.id)
+            .where(TrackLyrics.lyrics.isnot(None))
+            .order_by(TrackLyrics.update_date.asc())
+        )
         query = (
             select(TrackIDMapping.id, TrackIDMapping.genius_id, TrackIDMapping.musixmatch_id, TrackIDMapping.shazam_id)
             .where(TrackIDMapping.id.notin_(track_lyrics_subquery))
