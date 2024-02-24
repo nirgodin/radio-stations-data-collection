@@ -12,6 +12,7 @@ class ComponentFactory:
                  env: EnvironmentComponentFactory = EnvironmentComponentFactory(),
                  exporters: ExportersComponentFactory = ExportersComponentFactory(),
                  genius: GeniusManagerFactory = GeniusManagerFactory(),
+                 genres: GenresManagerFactory = GenresManagerFactory(),
                  google: GoogleManagerFactory = GoogleManagerFactory(),
                  misc: MiscellaneousManagerFactory = MiscellaneousManagerFactory(),
                  musixmatch: MusixmatchManagerFactory = MusixmatchManagerFactory(),
@@ -25,6 +26,7 @@ class ComponentFactory:
         self.env = env
         self.exporters = exporters
         self.genius = genius
+        self.genres = genres
         self.google = google
         self.misc = misc
         self.musixmatch = musixmatch
