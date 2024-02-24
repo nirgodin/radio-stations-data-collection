@@ -30,10 +30,11 @@ class MusixmatchLyricsCollector(BaseMusixmatchCollector, ILyricsCollector):
         lyrics = []
 
         for row in raw_lyrics.split("\n"):
-            if row.strip().lower() == MUSIXMATCH_LYRICS_END_SIGN:
+            formatted_row = row.strip()
+
+            if formatted_row == MUSIXMATCH_LYRICS_END_SIGN:
                 break
 
-            formatted_row = row.strip()
             if formatted_row != "":
                 lyrics.append(formatted_row)
 
