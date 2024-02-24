@@ -1,24 +1,43 @@
-from typing import List
+from typing import List, Dict, Tuple, Optional
 
 from genie_common.utils import safe_nested_get
 
+from data_collectors.contract import ILyricsCollector
 from data_collectors.logic.collectors.musixmatch.base_musixmatch_collector import BaseMusixmatchCollector
 
+MUSIXMATCH_LYRICS_END_SIGN = "..."
 
-class MusixmatchLyricsCollector(BaseMusixmatchCollector):
-    async def collect(self, ids: List[str]) -> List[dict]:
-        return await self._pool_executor.run(
+
+class MusixmatchLyricsCollector(BaseMusixmatchCollector, ILyricsCollector):
+    async def collect(self, ids: List[str]) -> Dict[str, List[str]]:
+        results = await self._pool_executor.run(
             iterable=ids,
             func=self._collect_single_track_lyrics,
-            expected_type=dict
+            expected_type=tuple
         )
+        return dict(results)
 
-    async def _collect_single_track_lyrics(self, track_id: str) -> dict:
-        return await self._get(params={"track_id": track_id})
+    async def _collect_single_track_lyrics(self, track_id: str) -> Tuple[str, List[str]]:
+        response = await self._get(params={"track_id": track_id})
+        lyrics = safe_nested_get(response, ["message", "body", "lyrics", "lyrics_body"])
+
+        if lyrics is not None:
+            serialized_lyrics = self._serialize_lyrics(lyrics)
+            return track_id, serialized_lyrics
 
     @staticmethod
-    def _extract_lyrics(response: dict):
-        return safe_nested_get(response, ["message", "body", "lyrics", "lyrics_body"])
+    def _serialize_lyrics(raw_lyrics: str) -> List[str]:
+        lyrics = []
+
+        for row in raw_lyrics.split("\n"):
+            if row.strip().lower() == MUSIXMATCH_LYRICS_END_SIGN:
+                break
+
+            formatted_row = row.strip()
+            if formatted_row != "":
+                lyrics.append(formatted_row)
+
+        return lyrics
 
     @property
     def _route(self) -> str:
