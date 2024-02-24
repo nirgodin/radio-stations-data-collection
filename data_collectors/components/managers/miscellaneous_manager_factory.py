@@ -73,7 +73,7 @@ class MiscellaneousManagerFactory(BaseManagerFactory):
             ),
             LyricsSourceDetails(
                 column=TrackIDMapping.musixmatch_id,
-                collector=musixmatch_collector,  # TODO: Convert musixmatch lyrics collector to lyrics collector interface
+                collector=musixmatch_collector,
                 data_source=DataSource.MUSIXMATCH
             )
         ]
@@ -81,4 +81,11 @@ class MiscellaneousManagerFactory(BaseManagerFactory):
         return TracksLyricsManager(
             db_engine=get_database_engine(),
             prioritized_sources=prioritized_sources
+        )
+
+    def get_lyrics_missing_ids_manager(self) -> TracksLyricsMissingIDsManager:
+        chunks_generator = self.tools.get_chunks_generator()
+        return TracksLyricsMissingIDsManager(
+            db_engine=get_database_engine(),
+            chunks_inserter=self.inserters.get_chunks_database_inserter(chunks_generator)
         )
