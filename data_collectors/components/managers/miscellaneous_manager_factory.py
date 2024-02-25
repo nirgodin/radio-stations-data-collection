@@ -63,7 +63,8 @@ class MiscellaneousManagerFactory(BaseManagerFactory):
 
         return TracksLyricsManager(
             db_engine=get_database_engine(),
-            prioritized_sources=prioritized_sources
+            prioritized_sources=prioritized_sources,
+            records_serializer=self.serializers.get_tracks_lyrics_serializer()
         )
 
     def get_lyrics_missing_ids_manager(self) -> TracksLyricsMissingIDsManager:

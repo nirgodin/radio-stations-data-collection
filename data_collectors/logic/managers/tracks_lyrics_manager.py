@@ -16,7 +16,7 @@ class TracksLyricsManager(IManager):
     def __init__(self,
                  db_engine: AsyncEngine,
                  prioritized_sources: List[LyricsSourceDetails],
-                 records_serializer: TracksLyricsSerializer = TracksLyricsSerializer()):
+                 records_serializer: TracksLyricsSerializer):
         self._db_engine = db_engine
         self._prioritized_sources = prioritized_sources
         self._records_serializer = records_serializer

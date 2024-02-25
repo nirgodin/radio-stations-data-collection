@@ -6,6 +6,7 @@ from genie_common.tools import AioPoolExecutor, ChunksGenerator
 from genie_common.utils import env_var_to_list
 from genie_datastores.google.drive import GoogleDriveClient
 from genie_datastores.google.sheets import GoogleSheetsClient, GoogleSheetsUploader, ShareSettings, PermissionType, Role
+from langid.langid import LanguageIdentifier, model
 from shazamio import Shazam
 from spotipyio import SpotifyClient
 from spotipyio.logic.authentication.spotify_session import SpotifySession
@@ -64,6 +65,10 @@ class ToolsComponentFactory:
             pool_executor=executor,
             chunk_size=chunk_size
         )
+
+    @staticmethod
+    def get_language_identifier() -> LanguageIdentifier:
+        return LanguageIdentifier.from_modelstring(model, norm_probs=True)
 
     @staticmethod
     def _get_google_default_share_settings() -> List[ShareSettings]:

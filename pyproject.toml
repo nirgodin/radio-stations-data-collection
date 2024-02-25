@@ -18,9 +18,7 @@ beautifulsoup4 = ">=4.12.2,<4.13"
 async-lru = ">=2.0.4,<3.0"
 nltk = ">=3.8.1,<4.0"
 pytest-playwright = ">=0.4.4,<1.0"
-spacy = "3.7.4"
-spacy-langdetect = "0.1.2"
-en-core-web-sm = {url = "https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.7.1/en_core_web_sm-3.7.1-py3-none-any.whl"}
+langid = ">=1.1.6,<1.2"
 
 
 [build-system]
