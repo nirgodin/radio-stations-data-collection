@@ -8,17 +8,15 @@ from data_collectors.logic.managers import *
 
 class SpotifyManagerFactory(BaseManagerFactory):
     def get_playlists_artists_manager(self, spotify_session: SpotifySession) -> SpotifyPlaylistsArtistsManager:
-        pool_executor = self.tools.get_pool_executor()
         return SpotifyPlaylistsArtistsManager(
             spotify_client=self.tools.get_spotify_client(spotify_session),
-            db_updater=self.updaters.get_values_updater(pool_executor)
+            db_updater=self.updaters.get_values_updater()
         )
 
     def get_playlists_tracks_manager(self, spotify_session: SpotifySession) -> SpotifyPlaylistsTracksManager:
-        pool_executor = self.tools.get_pool_executor()
         return SpotifyPlaylistsTracksManager(
             spotify_client=self.tools.get_spotify_client(spotify_session),
-            db_updater=self.updaters.get_values_updater(pool_executor)
+            db_updater=self.updaters.get_values_updater()
         )
 
     def get_artists_images_gender_manager(self,
@@ -37,5 +35,5 @@ class SpotifyManagerFactory(BaseManagerFactory):
             db_engine=get_database_engine(),
             artists_images_collector=images_collector,
             gender_detector=self.tools.get_image_gender_detector(gender_model_folder_id, confidence_threshold),
-            db_updater=self.updaters.get_values_updater(pool_executor)
+            db_updater=self.updaters.get_values_updater()
         )

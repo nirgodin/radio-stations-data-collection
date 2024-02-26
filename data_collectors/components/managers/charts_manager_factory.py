@@ -99,7 +99,7 @@ class ChartsManagerFactory(BaseManagerFactory):
             sheets_client=self.tools.get_google_sheets_client(),
             tagged_mistakes_collector=self.collectors.charts.get_charts_tagged_mistakes_collector(pool_executor),
             tagged_mistakes_tracks_collector=tagged_mistakes_tracks_collector,
-            db_updater=self.updaters.get_values_updater(pool_executor),
+            db_updater=self.updaters.get_values_updater(),
             spotify_insertions_manager=self.inserters.spotify.get_insertions_manager(spotify_client)
         )
 
@@ -109,7 +109,7 @@ class ChartsManagerFactory(BaseManagerFactory):
 
         return ChartsIsraeliArtistsManager(
             db_engine=get_database_engine(),
-            db_updater=self.updaters.get_values_updater(pool_executor),
+            db_updater=self.updaters.get_values_updater(),
             db_inserter=self.inserters.get_chunks_database_inserter(chunks_generator)
         )
 

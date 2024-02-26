@@ -38,8 +38,7 @@ class ShazamManagerFactory(BaseManagerFactory):
         )
 
     def get_birth_date_copy_manager(self) -> ShazamBirthDateCopyManager:
-        pool_executor = self.tools.get_pool_executor()
         return ShazamBirthDateCopyManager(
             db_engine=get_database_engine(),
-            db_updater=self.updaters.get_values_updater(pool_executor)
+            db_updater=self.updaters.get_values_updater()
         )

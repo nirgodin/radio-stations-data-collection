@@ -6,13 +6,12 @@ from data_collectors.components.managers.base_manager_factory import BaseManager
 
 class GenresManagerFactory(BaseManagerFactory):
     async def get_primary_genre_manager(self) -> PrimaryGenreManager:
-        pool_executor = self.tools.get_pool_executor()
         genre_analyzer = await self.analyzers.get_primary_genre_analyzer()
 
         return PrimaryGenreManager(
             db_engine=get_database_engine(),
             genre_analyzer=genre_analyzer,
-            db_updater=self.updaters.get_values_updater(pool_executor)
+            db_updater=self.updaters.get_values_updater()
         )
 
     def get_genres_mapping_manager(self) -> GenresMappingManager:
@@ -28,6 +27,6 @@ class GenresManagerFactory(BaseManagerFactory):
 
         return GenresArtistsOriginManager(
             db_engine=get_database_engine(),
-            db_updater=self.updaters.get_values_updater(pool_executor),
+            db_updater=self.updaters.get_values_updater(),
             db_inserter=self.inserters.get_chunks_database_inserter(chunk_generator)
         )

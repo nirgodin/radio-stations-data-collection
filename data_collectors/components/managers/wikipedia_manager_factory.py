@@ -10,7 +10,7 @@ class WikipediaManagerFactory(BaseManagerFactory):
         return WikipediaArtistsAgeManager(
             age_collector=age_collector,
             age_analyzer=self.analyzers.get_wikipedia_age_analyzer(),
-            db_updater=self.updaters.get_values_updater(pool_executor)
+            db_updater=self.updaters.get_values_updater()
         )
 
     def get_artists_age_link_manager(self) -> WikipediaArtistsAgeManager:
@@ -20,5 +20,5 @@ class WikipediaManagerFactory(BaseManagerFactory):
         return WikipediaArtistsAgeManager(
             age_collector=age_collector,
             age_analyzer=self.analyzers.get_wikipedia_age_analyzer(),
-            db_updater=self.updaters.get_values_updater(pool_executor)
+            db_updater=self.updaters.get_values_updater()
         )

@@ -23,7 +23,7 @@ class MiscellaneousManagerFactory(BaseManagerFactory):
             db_engine=get_database_engine(),
             embeddings_collector=embeddings_collector,
             milvus_client=milvus_client,
-            db_updater=self.updaters.get_values_updater(pool_executor)
+            db_updater=self.updaters.get_values_updater()
         )
 
     def get_radio_snapshots_manager(self, spotify_session: SpotifySession) -> RadioStationsSnapshotsManager:

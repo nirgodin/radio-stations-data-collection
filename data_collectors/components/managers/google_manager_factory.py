@@ -14,5 +14,5 @@ class GoogleManagerFactory(BaseManagerFactory):
 
         return GoogleArtistsOriginGeocodingManager(
             geocoding_collector=geocoding_collector,
-            db_updater=self.updaters.get_values_updater(pool_executor)
+            db_updater=self.updaters.get_values_updater()
         )
