@@ -10,7 +10,7 @@ from data_collectors.logic.updaters import (
 
 
 class UpdatersComponentFactory:
-    def __init__(self, tools: ToolsComponentFactory):
+    def __init__(self, tools: ToolsComponentFactory = ToolsComponentFactory()):
         self.tools = tools
 
     @staticmethod
