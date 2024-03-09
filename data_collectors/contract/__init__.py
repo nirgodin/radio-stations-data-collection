@@ -6,7 +6,7 @@ from data_collectors.contract.database_updater_interface import IDatabaseUpdater
 from data_collectors.contract.inserters import *
 from data_collectors.contract.manager_interface import IManager
 from data_collectors.contract.serializer_interface import ISerializer
-from data_collectors.contract.serializers.glglz_charts_serializer_interface import IGlglgzChartsSerializer
+from data_collectors.contract.serializers.glglz_charts_serializer_interface import IGlglzChartsSerializer
 
 __all__ = [
     "BaseSearchCollector",
@@ -15,7 +15,7 @@ __all__ = [
     "ICollector",
     "IDatabaseInserter",
     "IDatabaseUpdater",
-    "IGlglgzChartsSerializer",
+    "IGlglzChartsSerializer",
     "ILyricsCollector",
     "IManager",
     "IPostgresDatabaseInserter",

@@ -8,4 +8,5 @@ class HTMLElement(Enum):
     H4 = 'h4'
     LI = "li"
     P = 'p'
-    NG_COMPONENT = "ng-component"
+    NG_COMPONENT = 'ng-component'
+    SPAN = 'span'

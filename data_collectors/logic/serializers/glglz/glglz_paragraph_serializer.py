@@ -11,12 +11,12 @@ from data_collectors.consts.glglz_consts import (
     GLGLZ_CHART_ENTRY,
     CHART_NAME_SIMILARITY_THRESHOLD
 )
-from data_collectors.contract import IGlglgzChartsSerializer
-from data_collectors.logic.models import GlglzChartDetails
+from data_collectors.contract import IGlglzChartsSerializer
+from data_collectors.logic.models import GlglzChartDetails, HTMLElement
 from data_collectors.utils.glglz import generate_chart_date_url
 
 
-class GlglzChartsParagraphSerializer(IGlglgzChartsSerializer):
+class GlglzChartsParagraphSerializer(IGlglzChartsSerializer):
     def serialize(self, chart_details: GlglzChartDetails, elements: List[Dict[str, str]]) -> List[ChartEntry]:
         logger.info("Serializing charts entries using paragraph serializer")
         chart = None
@@ -106,3 +106,6 @@ class GlglzChartsParagraphSerializer(IGlglgzChartsSerializer):
             INTERNATIONAL_CHART_TITLE: Chart.GLGLZ_WEEKLY_INTERNATIONAL
         }
 
+    @property
+    def element(self) -> HTMLElement:
+        return HTMLElement.P

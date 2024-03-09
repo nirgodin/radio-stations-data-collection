@@ -4,12 +4,12 @@ from genie_common.tools import logger
 from genie_datastores.postgres.models import ChartEntry, Chart
 
 from data_collectors.consts.glglz_consts import GLGLZ_CHART_ENTRY
-from data_collectors.contract import IGlglgzChartsSerializer
-from data_collectors.logic.models import GlglzChartDetails
+from data_collectors.contract import IGlglzChartsSerializer
+from data_collectors.logic.models import GlglzChartDetails, HTMLElement
 from data_collectors.utils.glglz import generate_chart_date_url
 
 
-class GlglzChartsListItemsSerializer(IGlglgzChartsSerializer):
+class GlglzChartsListItemsSerializer(IGlglzChartsSerializer):
     def serialize(self, chart_details: GlglzChartDetails, elements: List[Dict[str, str]]) -> List[ChartEntry]:
         logger.info("Serializing charts entries using list items serializer")
         charts_entries = []
@@ -61,3 +61,7 @@ class GlglzChartsListItemsSerializer(IGlglgzChartsSerializer):
             return index + 1
 
         return index - 9
+
+    @property
+    def element(self) -> HTMLElement:
+        return HTMLElement.LI
