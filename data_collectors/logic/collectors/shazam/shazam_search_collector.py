@@ -3,7 +3,7 @@ from typing import Dict, Optional, List
 from shazamio import Shazam
 from spotipyio import EntityMatcher
 
-from data_collectors.consts.shazam_consts import HITS, KEY
+from data_collectors.consts.shazam_consts import HITS, KEY, HEADING, TITLE, SUBTITLE
 from data_collectors.consts.spotify_consts import TRACKS, NAME, ARTISTS
 from data_collectors.contract import BaseSearchCollector
 from data_collectors.logic.collectors.shazam.base_shazam_collector import BaseShazamCollector
@@ -53,8 +53,8 @@ class ShazamSearchCollector(BaseSearchCollector, BaseShazamCollector):
 
     @staticmethod
     def _to_spotify_format(hit: Dict[str, list]) -> Dict[str, dict]:
-        track_name = safe_nested_get(hit, ["heading", "title"])
-        artist_name = safe_nested_get(hit, ["heading", "subtitle"])
+        track_name = safe_nested_get(hit, [HEADING, TITLE])
+        artist_name = safe_nested_get(hit, [HEADING, SUBTITLE])
 
         return {
             NAME: track_name,
