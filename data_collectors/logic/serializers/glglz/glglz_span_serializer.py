@@ -1,6 +1,7 @@
 from typing import List, Dict
 
 from genie_common.tools import logger
+from genie_common.utils import contains_any_alpha_character, contains_any_substring
 from genie_datastores.postgres.models import ChartEntry, Chart
 
 from data_collectors.consts.glglz_consts import GLGLZ_CHART_ENTRY
@@ -73,12 +74,8 @@ class GlglzChartsSpanSerializer(IGlglzChartsSerializer):
 
     @staticmethod
     def _is_valid_element(element: Dict[str, str]) -> bool:
-        element_content = element[GLGLZ_CHART_ENTRY]
-
-        if any(letter.isalpha() for letter in element_content):
-            return element_content.__contains__("-") or element_content.__contains__('–')
-
-        return False
+        content = element[GLGLZ_CHART_ENTRY]
+        return contains_any_alpha_character(content) and contains_any_substring(content, ["-", '–'])
 
     @staticmethod
     def _is_new_entry(contender_entry: ChartEntry, existing_entries: List[ChartEntry]) -> bool:
