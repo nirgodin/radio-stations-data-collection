@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 
+from spotipyio import MatchingEntity
 from sqlalchemy.engine import Row
 
 
@@ -15,4 +16,10 @@ class MissingTrack:
             spotify_id=row.id,
             artist_name=row.artist_name,
             track_name=row.name
+        )
+
+    def to_matching_entity(self) -> MatchingEntity:
+        return MatchingEntity(
+            track=self.track_name,
+            artist=self.artist_name
         )
