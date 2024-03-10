@@ -1,14 +1,25 @@
-from aiohttp import ClientSession
+from genie_common.tools import AioPoolExecutor
 from shazamio import Shazam
+from spotipyio import EntityMatcher
 
 from data_collectors.logic.collectors.shazam import *
-from genie_common.tools import AioPoolExecutor
+from data_collectors.tools import ShazamTrackEntityExtractor, ShazamArtistEntityExtractor
 
 
 class ShazamCollectorsComponentFactory:
     @staticmethod
     def get_search_collector(shazam: Shazam, pool_executor: AioPoolExecutor) -> ShazamSearchCollector:
-        return ShazamSearchCollector(shazam, pool_executor)
+        entity_matcher = EntityMatcher(
+            {
+                ShazamTrackEntityExtractor(): 0.7,
+                ShazamArtistEntityExtractor(): 0.3,
+            }
+        )
+        return ShazamSearchCollector(
+            shazam=shazam,
+            pool_executor=pool_executor,
+            entity_matcher=entity_matcher
+        )
 
     @staticmethod
     def get_top_tracks_collector(shazam: Shazam, pool_executor: AioPoolExecutor) -> ShazamTopTracksCollector:

@@ -14,7 +14,7 @@ from genie_common.tools import AioPoolExecutor
 
 
 class ShazamSearchCollector(BaseSearchCollector, BaseShazamCollector):
-    def __init__(self, shazam: Shazam, pool_executor: AioPoolExecutor, entity_matcher: EntityMatcher = EntityMatcher()):
+    def __init__(self, shazam: Shazam, pool_executor: AioPoolExecutor, entity_matcher: EntityMatcher):
         super(BaseShazamCollector, self).__init__()
         super(BaseSearchCollector, self).__init__(shazam, pool_executor)
         self._entity_matcher = entity_matcher
@@ -42,25 +42,10 @@ class ShazamSearchCollector(BaseSearchCollector, BaseShazamCollector):
 
     def _match_hits(self, hits: List[Dict[str, list]], missing_track: MissingTrack) -> Optional[str]:
         for hit in hits:
-            candidate = self._to_spotify_format(hit)
             entity = missing_track.to_matching_entity()
-            is_matching, score = self._entity_matcher.match(entity, candidate)
+            is_matching, score = self._entity_matcher.match(entity, hit)
 
             if is_matching:
                 return hit.get(KEY)
 
         logger.info("Search request returned hits, but failed to match any of them. Skipping")
-
-    @staticmethod
-    def _to_spotify_format(hit: Dict[str, list]) -> Dict[str, dict]:
-        track_name = safe_nested_get(hit, [HEADING, TITLE])
-        artist_name = safe_nested_get(hit, [HEADING, SUBTITLE])
-
-        return {
-            NAME: track_name,
-            ARTISTS: [
-                {
-                    NAME: artist_name
-                }
-            ]
-        }
