@@ -7,6 +7,7 @@ META = 'meta'
 STATUS = 'status'
 RESPONSE = 'response'
 RESULT = 'result'
+PRIMARY_ARTIST = "primary_artist"
 GENIUS_LYRICS_URL_FORMAT = 'https://genius.com/{id}'
 GENIUS_LYRICS_ELEMENT_NAME = "genius_lyrics_line"
 GENIUS_LYRICS_WEB_ELEMENT = WebElement(

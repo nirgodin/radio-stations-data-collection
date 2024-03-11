@@ -3,7 +3,7 @@ from shazamio import Shazam
 from spotipyio import EntityMatcher
 
 from data_collectors.logic.collectors.shazam import *
-from data_collectors.tools import ShazamTrackEntityExtractor, ShazamArtistEntityExtractor
+from data_collectors.tools import ShazamTrackEntityExtractor, ShazamArtistEntityExtractor, MultiEntityMatcher
 
 
 class ShazamCollectorsComponentFactory:
@@ -18,7 +18,7 @@ class ShazamCollectorsComponentFactory:
         return ShazamSearchCollector(
             shazam=shazam,
             pool_executor=pool_executor,
-            entity_matcher=entity_matcher
+            entity_matcher=MultiEntityMatcher(entity_matcher)
         )
 
     @staticmethod
