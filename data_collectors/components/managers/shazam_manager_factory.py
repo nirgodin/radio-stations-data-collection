@@ -42,3 +42,11 @@ class ShazamManagerFactory(BaseManagerFactory):
             db_engine=get_database_engine(),
             db_updater=self.updaters.get_values_updater()
         )
+
+    def get_origin_copy_manager(self) -> ShazamOriginCopyManager:
+        chunks_generator = self.tools.get_chunks_generator()
+        return ShazamOriginCopyManager(
+            db_engine=get_database_engine(),
+            db_updater=self.updaters.get_values_updater(),
+            db_inserter=self.inserters.get_chunks_database_inserter(chunks_generator)
+        )
