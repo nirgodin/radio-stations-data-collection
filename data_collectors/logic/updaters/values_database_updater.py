@@ -19,7 +19,7 @@ class ValuesDatabaseUpdater(IDatabaseUpdater):
 
     async def update(self, update_requests: List[DBUpdateRequest]) -> None:
         n_records = len(update_requests)
-        logger.info(f"Starting to update records for {n_records}")
+        logger.info(f"Starting to update {n_records} records")
         results = await self._pool_executor.run(  # TODO: Find a way to do it in Bulk
             iterable=update_requests,
             func=self._update_single,
