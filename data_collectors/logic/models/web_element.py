@@ -14,3 +14,4 @@ class WebElement:
     multiple: bool = False
     enumerate: bool = True
     expected_type: Type = str
+    split_breaks: bool = False

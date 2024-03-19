@@ -10,3 +10,4 @@ class HTMLElement(Enum):
     P = 'p'
     NG_COMPONENT = 'ng-component'
     SPAN = 'span'
+    BR = "br"

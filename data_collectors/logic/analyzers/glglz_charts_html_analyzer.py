@@ -58,7 +58,8 @@ class GlglzChartsHTMLAnalyzer(IAnalyzer):
                 name=GLGLZ_CHART_ENTRY,
                 type=element_type,
                 multiple=True,
-                enumerate=False
+                enumerate=False,
+                split_breaks=True
             ),
             multiple=False,
             enumerate=False
