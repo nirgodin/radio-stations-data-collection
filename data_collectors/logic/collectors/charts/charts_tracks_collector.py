@@ -82,23 +82,36 @@ class ChartsTracksCollector(ICollector):
 
     def _extract_matching_track(self, chart_entry: ChartEntry, search_result: dict) -> Optional[dict]:
         items = safe_nested_get(search_result, [TRACKS, ITEMS], [])
+        matching_entities = self._get_matching_entities_options(chart_entry.key)
 
         for candidate in items:
-            artist, track = self._extract_artist_and_track_from_chart_key(chart_entry.key)
-            entity = MatchingEntity(
-                track=track.strip(),
-                artist=artist.strip()
-            )
-            is_matching, score = self._entity_matcher.match(entity, candidate)
+            for entity in matching_entities:
+                is_matching, score = self._entity_matcher.match(entity, candidate)
 
-            if is_matching:
-                return candidate
+                if is_matching:
+                    return candidate
 
         self._log_track_not_found(chart_entry, match_field="key")
+
+    def _get_matching_entities_options(self, key: str) -> List[MatchingEntity]:
+        token_a, token_b = self._extract_artist_and_track_from_chart_key(key)
+        entity = MatchingEntity(
+            track=token_a.strip(),
+            artist=token_b.strip()
+        )
+        reversed_entity = MatchingEntity(
+            track=token_b.strip(),
+            artist=token_a.strip()
+        )
+
+        return [entity, reversed_entity]
 
     @staticmethod
     def _extract_artist_and_track_from_chart_key(key: str) -> Tuple[str, str]:
         key_components = key.split("-")
+        if len(key_components) == 1:
+            key_components = key.split("–")
+
         n_component = len(key_components)
 
         if n_component < 2:
