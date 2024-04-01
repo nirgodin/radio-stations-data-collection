@@ -1,13 +1,13 @@
 from genie_datastores.postgres.operations import get_database_engine
 
 from data_collectors.logic.inserters.postgres import ShazamTopTracksDatabaseInserter, ShazamTracksDatabaseInserter, \
-    ShazamArtistsDatabaseInserter
+    ShazamArtistsDatabaseInserter, ChunksDatabaseInserter
 
 
 class ShazamInsertersComponentFactory:
     @staticmethod
-    def get_top_tracks_inserter() -> ShazamTopTracksDatabaseInserter:
-        return ShazamTopTracksDatabaseInserter(get_database_engine())
+    def get_top_tracks_inserter(chunks_inserter: ChunksDatabaseInserter) -> ShazamTopTracksDatabaseInserter:
+        return ShazamTopTracksDatabaseInserter(chunks_inserter)
 
     @staticmethod
     def get_tracks_inserter() -> ShazamTracksDatabaseInserter:

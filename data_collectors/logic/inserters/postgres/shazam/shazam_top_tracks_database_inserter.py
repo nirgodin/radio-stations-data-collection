@@ -1,18 +1,21 @@
-from typing import List, Dict
 from datetime import date
+from typing import List, Dict
+
+from genie_common.tools import logger
 from genie_datastores.postgres.models import ShazamTopTrack, ShazamLocation
-from genie_datastores.postgres.operations import insert_records
 
 from data_collectors.consts.shazam_consts import KEY
-from data_collectors.contract.inserters.postgres_database_inserter_interface import IPostgresDatabaseInserter
-from genie_common.tools import logger
+from data_collectors.logic.inserters.postgres import ChunksDatabaseInserter
 
 
-class ShazamTopTracksDatabaseInserter(IPostgresDatabaseInserter):
+class ShazamTopTracksDatabaseInserter:
+    def __init__(self, chunks_inserter: ChunksDatabaseInserter):
+        self._chunks_inserter = chunks_inserter
+
     async def insert(self, locations_tracks: Dict[ShazamLocation, List[dict]]) -> List[ShazamTopTrack]:
         logger.info("Starting to insert shazam top tracks to database")
         records = self._to_records(locations_tracks)
-        await insert_records(engine=self._db_engine, records=records)  # TODO: Add base class that handles UniqueConstraint existing records
+        await self._chunks_inserter.insert(records)
         logger.info("Successfully inserted shazam top tracks to database")
 
         return records

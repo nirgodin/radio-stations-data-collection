@@ -11,11 +11,13 @@ class ShazamManagerFactory(BaseManagerFactory):
     def get_top_tracks_manager(self) -> ShazamTopTracksManager:
         shazam = self.tools.get_shazam()
         pool_executor = self.tools.get_pool_executor()
+        chunks_generator = self.tools.get_chunks_generator(pool_executor)
+        chunks_inserter = self.inserters.get_chunks_database_inserter(chunks_generator)
 
         return ShazamTopTracksManager(
             top_tracks_collector=self.collectors.shazam.get_top_tracks_collector(shazam, pool_executor),
             insertions_manager=self.get_insertions_manager(shazam, pool_executor),
-            top_tracks_inserter=self.inserters.shazam.get_top_tracks_inserter()
+            top_tracks_inserter=self.inserters.shazam.get_top_tracks_inserter(chunks_inserter)
         )
 
     def get_missing_ids_manager(self) -> ShazamMissingIDsManager:
