@@ -17,6 +17,6 @@ class BillboardManagerFactory(BaseManagerFactory):
             tracks_collector=self.collectors.billboard.get_tracks_collector(client_session, spotify_client),
             spotify_insertions_manager=self.inserters.spotify.get_insertions_manager(spotify_client),
             tracks_inserter=self.inserters.billboard.get_tracks_inserter(),
-            charts_inserter=self.inserters.billboard.get_charts_inserter(),
+            charts_inserter=self.inserters.billboard.get_charts_inserter(chunks_inserter),
             tracks_updater=self.updaters.get_billboard_tracks_updater()
         )

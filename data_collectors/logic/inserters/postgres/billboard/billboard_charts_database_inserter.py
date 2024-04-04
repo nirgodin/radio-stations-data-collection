@@ -1,12 +1,9 @@
 from typing import List
 
-from genie_datastores.postgres.models import BillboardChartEntry, ChartEntryData
-from genie_datastores.postgres.operations import insert_records
-
-from data_collectors.contract.inserters.postgres_database_inserter_interface import IPostgresDatabaseInserter
 from genie_common.tools import logger
+from genie_datastores.postgres.models import BillboardChartEntry, ChartEntryData
 
-from data_collectors.logic.inserters.postgres import ChunksDatabaseInserter
+from data_collectors.logic.inserters.postgres.chunks_database_inserter import ChunksDatabaseInserter
 
 
 class BillboardChartsDatabaseInserter:
