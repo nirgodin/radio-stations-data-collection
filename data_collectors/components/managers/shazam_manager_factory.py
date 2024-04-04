@@ -11,8 +11,7 @@ class ShazamManagerFactory(BaseManagerFactory):
     def get_top_tracks_manager(self) -> ShazamTopTracksManager:
         shazam = self.tools.get_shazam()
         pool_executor = self.tools.get_pool_executor()
-        chunks_generator = self.tools.get_chunks_generator(pool_executor)
-        chunks_inserter = self.inserters.get_chunks_database_inserter(chunks_generator)
+        chunks_inserter = self.inserters.get_chunks_database_inserter()
 
         return ShazamTopTracksManager(
             top_tracks_collector=self.collectors.shazam.get_top_tracks_collector(shazam, pool_executor),
@@ -46,9 +45,8 @@ class ShazamManagerFactory(BaseManagerFactory):
         )
 
     def get_origin_copy_manager(self) -> ShazamOriginCopyManager:
-        chunks_generator = self.tools.get_chunks_generator()
         return ShazamOriginCopyManager(
             db_engine=get_database_engine(),
             db_updater=self.updaters.get_values_updater(),
-            db_inserter=self.inserters.get_chunks_database_inserter(chunks_generator)
+            db_inserter=self.inserters.get_chunks_database_inserter()
         )

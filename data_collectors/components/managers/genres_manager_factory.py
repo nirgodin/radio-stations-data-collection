@@ -15,18 +15,14 @@ class GenresManagerFactory(BaseManagerFactory):
         )
 
     def get_genres_mapping_manager(self) -> GenresMappingManager:
-        chunks_generator = self.tools.get_chunks_generator()
         return GenresMappingManager(
             sheets_client=self.tools.get_google_sheets_client(),
-            genres_inserter=self.inserters.get_genres_inserter(chunks_generator)
+            genres_inserter=self.inserters.get_genres_inserter()
         )
 
     def get_genres_artists_origin_manager(self) -> GenresArtistsOriginManager:
-        pool_executor = self.tools.get_pool_executor()
-        chunk_generator = self.tools.get_chunks_generator(pool_executor)
-
         return GenresArtistsOriginManager(
             db_engine=get_database_engine(),
             db_updater=self.updaters.get_values_updater(),
-            db_inserter=self.inserters.get_chunks_database_inserter(chunk_generator)
+            db_inserter=self.inserters.get_chunks_database_inserter()
         )

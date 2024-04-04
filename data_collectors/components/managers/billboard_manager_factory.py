@@ -9,6 +9,8 @@ from data_collectors.logic.managers import *
 class BillboardManagerFactory(BaseManagerFactory):
     def get_billboard_manager(self, spotify_session: SpotifySession, client_session: ClientSession) -> BillboardManager:
         spotify_client = self.tools.get_spotify_client(spotify_session)
+        chunks_inserter = self.inserters.get_chunks_database_inserter()
+
         return BillboardManager(
             db_engine=get_database_engine(),
             charts_collector=self.collectors.billboard.get_charts_collector(client_session),
