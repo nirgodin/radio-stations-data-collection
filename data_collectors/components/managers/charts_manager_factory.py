@@ -18,7 +18,6 @@ class ChartsManagerFactory(BaseManagerFactory):
             pool_executor=pool_executor,
             spotify_client=spotify_client
         )
-        chunks_generator = self.tools.get_chunks_generator(pool_executor)
 
         return RadioChartsManager(
             db_engine=get_database_engine(),
@@ -26,7 +25,7 @@ class ChartsManagerFactory(BaseManagerFactory):
             charts_data_collector=self.collectors.charts.get_radio_charts_collector(drive_client),
             charts_tracks_collector=tracks_collector,
             spotify_insertions_manager=self.inserters.spotify.get_insertions_manager(spotify_client),
-            chart_entries_inserter=self.inserters.get_chart_entries_inserter(chunks_generator)
+            chart_entries_inserter=self.inserters.get_chart_entries_inserter()
         )
 
     def get_eurovision_charts_manager(self,
@@ -38,7 +37,6 @@ class ChartsManagerFactory(BaseManagerFactory):
             pool_executor=pool_executor,
             spotify_client=spotify_client
         )
-        chunks_generator = self.tools.get_chunks_generator(pool_executor)
         eurovision_charts_collector = self.collectors.charts.get_eurovision_charts_collector(
             session=client_session,
             pool_executor=pool_executor
@@ -49,7 +47,7 @@ class ChartsManagerFactory(BaseManagerFactory):
             charts_data_collector=eurovision_charts_collector,
             charts_tracks_collector=tracks_collector,
             spotify_insertions_manager=self.inserters.spotify.get_insertions_manager(spotify_client),
-            chart_entries_inserter=self.inserters.get_chart_entries_inserter(chunks_generator)
+            chart_entries_inserter=self.inserters.get_chart_entries_inserter()
         )
 
     def get_glglz_charts_manager(self, spotify_session: SpotifySession) -> GlglzChartsManager:
@@ -59,10 +57,9 @@ class ChartsManagerFactory(BaseManagerFactory):
             pool_executor=pool_executor,
             spotify_client=spotify_client
         )
-        chunks_generator = self.tools.get_chunks_generator(pool_executor)
 
         return GlglzChartsManager(
-            chart_entries_inserter=self.inserters.get_chart_entries_inserter(chunks_generator),
+            chart_entries_inserter=self.inserters.get_chart_entries_inserter(),
             charts_data_collector=self.collectors.charts.get_glglz_charts_collector(pool_executor),
             charts_tracks_collector=tracks_collector,
             spotify_insertions_manager=self.inserters.spotify.get_insertions_manager(spotify_client),
@@ -121,7 +118,6 @@ class ChartsManagerFactory(BaseManagerFactory):
             pool_executor=pool_executor,
             spotify_client=spotify_client
         )
-        chunks_generator = self.tools.get_chunks_generator(pool_executor)
         every_hit_charts_collector = self.collectors.charts.get_every_hit_collector(
             session=client_session,
             pool_executor=pool_executor
@@ -132,7 +128,7 @@ class ChartsManagerFactory(BaseManagerFactory):
             charts_data_collector=every_hit_charts_collector,
             charts_tracks_collector=tracks_collector,
             spotify_insertions_manager=self.inserters.spotify.get_insertions_manager(spotify_client),
-            chart_entries_inserter=self.inserters.get_chart_entries_inserter(chunks_generator)
+            chart_entries_inserter=self.inserters.get_chart_entries_inserter()
         )
 
     def _get_playlists_chart_manager(self,
@@ -148,10 +144,9 @@ class ChartsManagerFactory(BaseManagerFactory):
             spotify_client=spotify_client,
             playlist_id_to_chart_mapping=playlist_id_to_chart_mapping
         )
-        chunks_generator = self.tools.get_chunks_generator(pool_executor)
 
         return PlaylistsChartsManager(
-            chart_entries_inserter=self.inserters.get_chart_entries_inserter(chunks_generator),
+            chart_entries_inserter=self.inserters.get_chart_entries_inserter(),
             charts_data_collector=data_collector,
             charts_tracks_collector=tracks_collector,
             spotify_insertions_manager=self.inserters.spotify.get_insertions_manager(spotify_client)
