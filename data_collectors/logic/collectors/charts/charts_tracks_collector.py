@@ -13,6 +13,7 @@ from sqlalchemy.ext.asyncio import AsyncEngine
 from data_collectors.consts.spotify_consts import ID, TRACK, TRACKS, ITEMS
 from data_collectors.contract import ICollector
 from data_collectors.logic.models.radio_chart_entry_details import RadioChartEntryDetails
+from data_collectors.utils.charts import extract_artist_and_track_from_chart_key
 
 
 class ChartsTracksCollector(ICollector):
@@ -93,8 +94,9 @@ class ChartsTracksCollector(ICollector):
 
         self._log_track_not_found(chart_entry, match_field="key")
 
-    def _get_matching_entities_options(self, key: str) -> List[MatchingEntity]:
-        token_a, token_b = self._extract_artist_and_track_from_chart_key(key)
+    @staticmethod
+    def _get_matching_entities_options(key: str) -> List[MatchingEntity]:
+        token_a, token_b = extract_artist_and_track_from_chart_key(key)
         entity = MatchingEntity(
             track=token_a.strip(),
             artist=token_b.strip()
@@ -105,21 +107,6 @@ class ChartsTracksCollector(ICollector):
         )
 
         return [entity, reversed_entity]
-
-    @staticmethod
-    def _extract_artist_and_track_from_chart_key(key: str) -> Tuple[str, str]:
-        key_components = key.split("-")
-        if len(key_components) == 1:
-            key_components = key.split("–")
-
-        n_component = len(key_components)
-
-        if n_component < 2:
-            return key, ""
-        if n_component == 2:
-            return key_components[0].strip(), key_components[1].strip()
-
-        return key_components[0].strip(), "-".join(key_components[1:]).strip()
 
     @staticmethod
     def _log_track_not_found(chart_entry: ChartEntry, match_field: str) -> None:
