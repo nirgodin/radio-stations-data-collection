@@ -50,8 +50,17 @@ class EurovisionMissingTracksCollector(ICollector):
 
         return year_playlist_mapping
 
-    def _match_single_track_id(self, years_playlists: Dict[int, dict], record: EurovisionRecord) -> Tuple[int, dict]:
-        playlist = years_playlists[record.date.year]
+    def _match_single_track_id(self,
+                               years_playlists: Dict[int, dict],
+                               record: EurovisionRecord) -> Optional[Tuple[int, dict]]:
+        playlist = years_playlists.get(record.date.year)
+
+        if playlist is not None:
+            return self._match_entity_to_playlist_items(playlist, record)
+
+        logger.warning(f"Did not find mapped playlists for year {record.date.year}. Skipping record `{record.key}`")
+
+    def _match_entity_to_playlist_items(self, playlist: dict, record: EurovisionRecord) -> Optional[Tuple[int, dict]]:
         items = safe_nested_get(playlist, [TRACKS, ITEMS], [])
         artist, track = extract_artist_and_track_from_chart_key(record.key)
         entity = MatchingEntity(
