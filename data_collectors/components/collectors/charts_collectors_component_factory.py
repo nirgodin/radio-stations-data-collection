@@ -7,6 +7,7 @@ from genie_datastores.postgres.models import Chart
 from genie_datastores.postgres.operations import get_database_engine
 from spotipyio import SpotifyClient
 
+from data_collectors.components.tools_component_factory import ToolsComponentFactory
 from data_collectors.logic.collectors import (
     ChartsTaggedMistakesCollector,
     ChartsTaggedMistakesTracksCollector,
@@ -16,25 +17,26 @@ from data_collectors.logic.collectors import (
     GlglzChartsDataCollector,
     PlaylistsChartsDataCollector,
     RadioChartsDataCollector,
+    EurovisionMissingTracksCollector
 )
 
 
 class ChartsCollectorsComponentFactory:
+    def __init__(self, tools: ToolsComponentFactory = ToolsComponentFactory()):
+        self._tools = tools
+
     @staticmethod
     def get_radio_charts_collector(google_drive_client: GoogleDriveClient) -> RadioChartsDataCollector:
         return RadioChartsDataCollector(google_drive_client)
 
-    @staticmethod
-    def get_eurovision_charts_collector(session: ClientSession,
-                                        pool_executor: AioPoolExecutor) -> EurovisionChartsDataCollector:
+    def get_eurovision_charts_collector(self, session: ClientSession) -> EurovisionChartsDataCollector:
         return EurovisionChartsDataCollector(
             session=session,
-            pool_executor=pool_executor
+            pool_executor=self._tools.get_pool_executor()
         )
 
-    @staticmethod
-    def get_glglz_charts_collector(pool_executor: AioPoolExecutor) -> GlglzChartsDataCollector:
-        return GlglzChartsDataCollector(pool_executor)
+    def get_glglz_charts_collector(self) -> GlglzChartsDataCollector:
+        return GlglzChartsDataCollector(self._tools.get_pool_executor())
 
     @staticmethod
     def get_playlists_charts_collector(spotify_client: SpotifyClient,
@@ -44,19 +46,16 @@ class ChartsCollectorsComponentFactory:
             playlist_id_to_chart_mapping=playlist_id_to_chart_mapping
         )
 
-    @staticmethod
-    def get_tracks_collector(pool_executor: AioPoolExecutor,
-                             spotify_client: SpotifyClient) -> ChartsTracksCollector:
+    def get_tracks_collector(self, spotify_client: SpotifyClient) -> ChartsTracksCollector:
         return ChartsTracksCollector(
-            pool_executor=pool_executor,
+            pool_executor=self._tools.get_pool_executor(),
             spotify_client=spotify_client,
             db_engine=get_database_engine()
         )
 
-    @staticmethod
-    def get_charts_tagged_mistakes_collector(pool_executor: AioPoolExecutor) -> ChartsTaggedMistakesCollector:
+    def get_charts_tagged_mistakes_collector(self) -> ChartsTaggedMistakesCollector:
         return ChartsTaggedMistakesCollector(
-            pool_executor=pool_executor,
+            pool_executor=self._tools.get_pool_executor(),
             db_engine=get_database_engine()
         )
 
@@ -67,9 +66,12 @@ class ChartsCollectorsComponentFactory:
             spotify_client=spotify_client
         )
 
-    @staticmethod
-    def get_every_hit_collector(session: ClientSession, pool_executor: AioPoolExecutor) -> EveryHitChartsDataCollector:
+    def get_every_hit_collector(self, session: ClientSession) -> EveryHitChartsDataCollector:
         return EveryHitChartsDataCollector(
             session=session,
-            pool_executor=pool_executor
+            pool_executor=self._tools.get_pool_executor()
         )
+
+    @staticmethod
+    def get_eurovision_missing_tracks_collector(spotify_client: SpotifyClient) -> EurovisionMissingTracksCollector:
+        return EurovisionMissingTracksCollector(spotify_client)
