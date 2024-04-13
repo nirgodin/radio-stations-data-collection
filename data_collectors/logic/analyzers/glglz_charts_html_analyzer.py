@@ -68,7 +68,7 @@ class GlglzChartsHTMLAnalyzer(IAnalyzer):
     @property
     def _prioritized_serializers(self) -> List[IGlglzChartsSerializer]:
         return [
+            GlglzChartsParagraphSerializer(),
             GlglzChartsListItemsSerializer(),
             GlglzChartsSpanSerializer(),
-            GlglzChartsParagraphSerializer(),
         ]
