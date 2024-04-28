@@ -1,3 +1,4 @@
+from data_collectors.components.deleters.deleters_component_factory import DeletersComponentFactory
 from data_collectors.components.environment_component_factory import EnvironmentComponentFactory
 from data_collectors.components.exporters.exporters_component_factory import ExportersComponentFactory
 from data_collectors.components.managers import *
@@ -9,6 +10,7 @@ class ComponentFactory:
     def __init__(self,
                  billboard: BillboardManagerFactory = BillboardManagerFactory(),
                  charts: ChartsManagerFactory = ChartsManagerFactory(),
+                 deleters: DeletersComponentFactory = DeletersComponentFactory(),
                  env: EnvironmentComponentFactory = EnvironmentComponentFactory(),
                  exporters: ExportersComponentFactory = ExportersComponentFactory(),
                  genius: GeniusManagerFactory = GeniusManagerFactory(),
@@ -23,6 +25,7 @@ class ComponentFactory:
                  wikipedia: WikipediaManagerFactory = WikipediaManagerFactory()):
         self.billboard = billboard
         self.charts = charts
+        self.deleters = deleters
         self.env = env
         self.exporters = exporters
         self.genius = genius
