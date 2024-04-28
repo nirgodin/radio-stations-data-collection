@@ -2,7 +2,8 @@ from typing import List, Dict, Optional
 
 from aiohttp import ClientSession
 from genie_common.tools import AioPoolExecutor, logger
-from genie_common.utils import merge_dicts, fetch_image, decode_image
+from genie_common.utils import merge_dicts, decode_image
+from genie_common.clients.utils import fetch_image
 from numpy import ndarray
 from spotipyio import SpotifyClient
 
