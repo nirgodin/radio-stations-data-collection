@@ -3,7 +3,7 @@ from typing import Optional, List
 from aiohttp import ClientSession
 from async_lru import alru_cache
 from genie_common.tools import AioPoolExecutor, logger
-from genie_common.utils import jsonify_response
+from genie_common.clients.utils import jsonify_response
 from genie_datastores.postgres.models import Artist
 from genie_datastores.postgres.operations import execute_query
 from sqlalchemy import select

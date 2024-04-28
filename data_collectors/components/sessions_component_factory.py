@@ -1,5 +1,5 @@
 from aiohttp import ClientSession
-from genie_common.utils import create_client_session, build_authorization_headers
+from genie_common.clients.utils import create_client_session, build_authorization_headers
 from spotipyio.logic.authentication.spotify_session import SpotifySession
 
 
