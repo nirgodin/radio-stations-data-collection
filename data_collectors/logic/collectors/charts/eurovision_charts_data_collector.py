@@ -9,6 +9,7 @@ from genie_common.utils import sub_between_two_characters, extract_int_from_stri
 from genie_datastores.postgres.models import ChartEntry, Chart
 from pandas import DataFrame, Series
 
+from data_collectors.logic.serializers import EurovisionChartsSerializer
 from data_collectors.consts.charts_consts import CHART_KEY_FORMAT
 from data_collectors.consts.eurovision_consts import EUROVISION_WIKIPEDIA_PAGE_URL_FORMAT, EUROVISION_ARTIST_COLUMN, \
     EUROVISION_SONG_COLUMN, EUROVISION_PLACE_COLUMN, EUROVISION_KEY_COLUMNS, EUROVISION_TABLE_CONTEST_ID_COLUMNS
@@ -16,9 +17,13 @@ from data_collectors.contract import IChartsDataCollector
 
 
 class EurovisionChartsDataCollector(IChartsDataCollector):
-    def __init__(self, session: ClientSession, pool_executor: AioPoolExecutor):
+    def __init__(self,
+                 session: ClientSession,
+                 pool_executor: AioPoolExecutor,
+                 charts_serializer: EurovisionChartsSerializer = EurovisionChartsSerializer()):
         self._session = session
         self._pool_executor = pool_executor
+        self._charts_serializer = charts_serializer
 
     async def collect(self, years: List[int]) -> List[ChartEntry]:
         if not years:
@@ -76,7 +81,7 @@ class EurovisionChartsDataCollector(IChartsDataCollector):
                 relevant_tables.append(table)
 
         if relevant_tables:
-            return relevant_tables[-1]
+            return self._charts_serializer.serialize(relevant_tables)
 
     @staticmethod
     def _is_relevant_table(table: DataFrame) -> bool:

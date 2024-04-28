@@ -8,7 +8,7 @@ from data_collectors.logic.inserters.postgres.base_unique_database_inserter impo
 class ChartEntriesDatabaseInserter(BaseUniqueDatabaseInserter):
     @property
     def _unique_attributes(self) -> List[str]:
-        return ["track_id", "chart", "date"]
+        return ["key", "chart", "date"]
 
     @property
     def _orm(self) -> Type[ChartEntry]:
