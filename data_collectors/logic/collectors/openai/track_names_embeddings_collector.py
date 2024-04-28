@@ -1,7 +1,7 @@
 from typing import List, Dict, Optional
 
 from genie_common.models.openai import EmbeddingsModel
-from genie_common.openai import OpenAIClient
+from genie_common.clients.openai import OpenAIClient
 from genie_common.tools import logger
 from genie_common.utils import merge_dicts
 from sqlalchemy.ext.asyncio import AsyncEngine
