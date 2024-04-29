@@ -1,7 +1,11 @@
+import os.path
+import pickle
 from functools import partial
+from tempfile import TemporaryDirectory
 from typing import List
 
 from genie_common.tools import logger, SyncPoolExecutor
+from genie_datastores.google.drive import GoogleDriveClient, GoogleDriveUploadMetadata
 from pandas import DataFrame
 from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer
@@ -20,9 +24,13 @@ class TracksVectorizerManager(IManager):
     def __init__(self,
                  train_data_collector: TracksVectorizerTrainDataCollector,
                  milvus_inserter: MilvusChunksDatabaseInserter,
+                 google_drive_client: GoogleDriveClient,
+                 drive_folder_id: str,
                  pool_executor: SyncPoolExecutor = SyncPoolExecutor()):
         self._train_data_collector = train_data_collector
         self._milvus_inserter = milvus_inserter
+        self._google_drive_client = google_drive_client
+        self._drive_folder_id = drive_folder_id
         self._pool_executor = pool_executor
 
     async def run(self) -> None:
@@ -34,7 +42,11 @@ class TracksVectorizerManager(IManager):
             training_data=training_data,
             column_transformer=column_transformer
         )
-        await self._milvus_inserter.insert(collection_name=TRACKS_FEATURES_COLLECTION, records=records)
+        await self._milvus_inserter.insert(
+            collection_name=TRACKS_FEATURES_COLLECTION,
+            records=records
+        )
+        self._upload_column_transformer(column_transformer)
 
     @staticmethod
     def _create_column_transformer(training_data: DataFrame) -> ColumnTransformer:
@@ -84,3 +96,24 @@ class TracksVectorizerManager(IManager):
             ID: data.at[index, TRACK_ID],
             FEATURES_FIELD_NAME: features.tolist()
         }
+
+    def _upload_column_transformer(self, column_transformer: ColumnTransformer) -> None:
+        logger.info("Uploading column transformer pickle to google drive")
+
+        with TemporaryDirectory() as dir_path:
+            local_path = self._save_column_transformer(dir_path, column_transformer)
+            file_metadata = GoogleDriveUploadMetadata(
+                local_path=local_path,
+                drive_folder_id=self._drive_folder_id,
+                file_name="column_transformer.pkl"
+            )
+            self._google_drive_client.upload(file_metadata)
+
+    @staticmethod
+    def _save_column_transformer(dir_path: str, column_transformer: ColumnTransformer) -> str:
+        file_path = os.path.join(dir_path, "column_transformer.pkl")
+
+        with open(file_path, "rb") as f:
+            pickle.dump(column_transformer, f)
+
+        return file_path

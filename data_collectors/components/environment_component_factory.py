@@ -25,6 +25,11 @@ class EnvironmentComponentFactory:
 
     @staticmethod
     @lru_cache
+    def get_tracks_features_column_transformer_folder_id() -> str:
+        return os.environ["TRACKS_FEATURES_COLUMN_TRANSFORMER_FOLDER_ID"]
+
+    @staticmethod
+    @lru_cache
     def get_milvus_uri() -> str:
         return os.environ["MILVUS_URI"]
 
