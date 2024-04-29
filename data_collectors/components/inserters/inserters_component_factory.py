@@ -1,7 +1,9 @@
 from genie_common.tools import ChunksGenerator
+from genie_datastores.milvus import MilvusClient
 from genie_datastores.postgres.operations import get_database_engine
 
 from data_collectors.components.tools_component_factory import ToolsComponentFactory
+from data_collectors.logic.inserters.milvus import MilvusChunksDatabaseInserter
 from data_collectors.logic.inserters.postgres import RadioTracksDatabaseInserter, ChartEntriesDatabaseInserter, \
     ChunksDatabaseInserter, GenresDatabaseInserter
 from data_collectors.components.inserters.billboard_inserters_component_factory import \
@@ -41,4 +43,11 @@ class InsertersComponentFactory:
         return GenresDatabaseInserter(
             db_engine=get_database_engine(),
             chunks_inserter=self.get_chunks_database_inserter()
+        )
+
+    def get_milvus_chunks_inserter(self, milvus_client: MilvusClient) -> MilvusChunksDatabaseInserter:
+        chunks_generator = self._tools.get_chunks_generator()
+        return MilvusChunksDatabaseInserter(
+            chunks_generator=chunks_generator,
+            milvus_client=milvus_client
         )
