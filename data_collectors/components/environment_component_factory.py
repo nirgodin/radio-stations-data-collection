@@ -1,5 +1,8 @@
 import os
 from functools import lru_cache
+from typing import List
+
+from genie_common.utils import env_var_to_list
 
 
 class EnvironmentComponentFactory:
@@ -32,6 +35,16 @@ class EnvironmentComponentFactory:
     @lru_cache
     def get_milvus_uri() -> str:
         return os.environ["MILVUS_URI"]
+
+    @staticmethod
+    @lru_cache
+    def get_google_sheets_users() -> List[str]:
+        return env_var_to_list("GOOGLE_SHEETS_USERS")
+
+    @staticmethod
+    @lru_cache
+    def get_milvus_token() -> str:
+        return os.environ["MILVUS_TOKEN"]
 
     @staticmethod
     @lru_cache

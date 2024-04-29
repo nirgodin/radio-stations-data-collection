@@ -29,11 +29,10 @@ class SpotifyManagerFactory(BaseManagerFactory):
             spotify_client=self.tools.get_spotify_client(spotify_session),
             pool_executor=pool_executor
         )
-        gender_model_folder_id = self.env.get_gender_model_folder_id()
 
         return ArtistsImagesGenderManager(
             db_engine=get_database_engine(),
             artists_images_collector=images_collector,
-            gender_detector=self.tools.get_image_gender_detector(gender_model_folder_id, confidence_threshold),
+            gender_detector=self.tools.get_image_gender_detector(confidence_threshold),
             db_updater=self.updaters.get_values_updater()
         )
