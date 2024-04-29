@@ -6,7 +6,7 @@ authors = ["nirgodin <70273595+nirgodin@users.noreply.github.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = ">=3.8,<3.12"
+python = ">=3.10,<3.12"
 genie-datastores = {git = "https://github.com/nirgodin/genie-datastores.git", rev = "e0d7b08e", extras = ["postgres", "milvus", "google_drive", "google_sheets"]}
 spotipyio = {git = "https://github.com/nirgodin/spotipyio.git", rev = "44f4ebd2"}
 shazamio = "^0.4.0.1"
@@ -19,6 +19,7 @@ async-lru = ">=2.0.4,<3.0"
 nltk = ">=3.8.1,<4.0"
 pytest-playwright = ">=0.4.4,<1.0"
 langid = ">=1.1.6,<1.2"
+scikit-learn = ">=1.4.2,<1.5"
 
 
 [build-system]
