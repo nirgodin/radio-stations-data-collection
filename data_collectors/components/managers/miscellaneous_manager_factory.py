@@ -71,3 +71,9 @@ class MiscellaneousManagerFactory(BaseManagerFactory):
             db_engine=get_database_engine(),
             chunks_inserter=self.inserters.get_chunks_database_inserter()
         )
+
+    def get_tracks_vectorizer_manager(self, milvus_client: MilvusClient) -> TracksVectorizerManager:
+        return TracksVectorizerManager(
+            train_data_collector=self.collectors.misc.get_tracks_vectorizer_train_data_collector(),
+            milvus_inserter=self.inserters.get_milvus_chunks_inserter(milvus_client)
+        )
