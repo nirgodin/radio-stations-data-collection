@@ -51,6 +51,7 @@ class TracksVectorizerTrainDataCollector(ICollector):
             RadioTrack.track_id,
             func.avg(RadioTrack.popularity).label("popularity"),
             func.avg(RadioTrack.artist_popularity).label("artist_popularity"),
+            func.avg(RadioTrack.artist_followers).label("artist_followers"),
         ]
 
     @property
@@ -67,6 +68,7 @@ class TracksVectorizerTrainDataCollector(ICollector):
             AudioFeatures.key,
             SpotifyTrack.id,
             SpotifyTrack.number.label("track_number"),
+            SpotifyTrack.explicit,
             AudioFeatures.loudness,
             AudioFeatures.tempo,
             AudioFeatures.time_signature,
