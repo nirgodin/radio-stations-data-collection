@@ -113,7 +113,7 @@ class TracksVectorizerManager(IManager):
     def _save_column_transformer(dir_path: str, column_transformer: ColumnTransformer) -> str:
         file_path = os.path.join(dir_path, "column_transformer.pkl")
 
-        with open(file_path, "rb") as f:
+        with open(file_path, "wb") as f:
             pickle.dump(column_transformer, f)
 
         return file_path
