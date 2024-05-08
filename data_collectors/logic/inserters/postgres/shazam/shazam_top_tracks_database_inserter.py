@@ -5,6 +5,7 @@ from genie_common.tools import logger
 from genie_datastores.postgres.models import ShazamTopTrack, ShazamLocation
 
 from data_collectors.consts.shazam_consts import KEY
+from data_collectors.consts.spotify_consts import ID
 from data_collectors.logic.inserters.postgres import ChunksDatabaseInserter
 
 
@@ -37,7 +38,7 @@ class ShazamTopTracksDatabaseInserter:
 
         for i, track in enumerate(tracks):
             record = ShazamTopTrack(
-                track_id=track[KEY],
+                track_id=track[ID],
                 location=location,
                 date=today,
                 position=i+1

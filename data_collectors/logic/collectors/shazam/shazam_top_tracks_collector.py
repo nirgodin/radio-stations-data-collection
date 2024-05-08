@@ -2,7 +2,7 @@ from typing import List, Dict, Coroutine, Tuple
 
 from genie_datastores.postgres.models import ShazamLocation
 
-from data_collectors.consts.shazam_consts import ISRAEL_COUNTRY_CODE
+from data_collectors.consts.shazam_consts import ISRAEL_COUNTRY_CODE, DATA
 from data_collectors.consts.spotify_consts import TRACKS
 from data_collectors.logic.collectors.shazam.base_shazam_collector import BaseShazamCollector
 from genie_common.utils import merge_dicts
@@ -27,31 +27,11 @@ class ShazamTopTracksCollector(BaseShazamCollector):
         logger.info(f"Starting to collect tracks for `{location.value}`")
         response = await request_method
 
-        return {location: response[TRACKS]}
+        return {location: response[DATA]}
 
     @property
     def _location_to_request_method_mapping(self) -> Dict[ShazamLocation, Coroutine]:
         return {
-            ShazamLocation.BEER_SHEBA: self._shazam.top_city_tracks(
-                country_code=ISRAEL_COUNTRY_CODE,
-                city_name=ShazamLocation.BEER_SHEBA.value,
-                limit=200
-            ),
-            ShazamLocation.HAIFA: self._shazam.top_city_tracks(
-                country_code=ISRAEL_COUNTRY_CODE,
-                city_name=ShazamLocation.HAIFA.value,
-                limit=200
-            ),
-            ShazamLocation.JERUSALEM: self._shazam.top_city_tracks(
-                country_code=ISRAEL_COUNTRY_CODE,
-                city_name=ShazamLocation.JERUSALEM.value,
-                limit=200
-            ),
-            ShazamLocation.NETANYA: self._shazam.top_city_tracks(
-                country_code=ISRAEL_COUNTRY_CODE,
-                city_name=ShazamLocation.NETANYA.value,
-                limit=200
-            ),
             ShazamLocation.TEL_AVIV: self._shazam.top_city_tracks(
                 country_code=ISRAEL_COUNTRY_CODE,
                 city_name=ShazamLocation.TEL_AVIV.value,

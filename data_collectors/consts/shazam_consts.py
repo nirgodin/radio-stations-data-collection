@@ -14,3 +14,4 @@ SHAZAM_LYRICS_WEB_ELEMENT = WebElement(
     type=HTMLElement.P,
     class_="lyrics",
 )
+DATA = "data"
