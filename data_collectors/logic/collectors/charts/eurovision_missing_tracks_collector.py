@@ -146,6 +146,7 @@ class EurovisionMissingTracksCollector(ICollector):
             "1HtXxHLxLvC5ePfd0hQC7U": 2015,
             "0VEtwmjx3FK77jWLlI16EV": 2016,
             "6Ey20ccpxRCd0AlaIuGJrB": 2017,
+            "6cGLwHvQ1iWb7Hl30kt2c6": 2018,
             "1LiCfqzUjGcGlFsJJLzPD0": 2019,
             "5h0sQpJnLVzgy5iOH1UNcl": 2021,
         }
