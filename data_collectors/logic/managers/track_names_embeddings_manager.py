@@ -51,7 +51,7 @@ class TrackNamesEmbeddingsManager(IManager):
     async def _insert_embeddings_records(self, mapping: Dict[MissingTrack, Optional[List[float]]]) -> None:
         records = self._convert_mapping_to_records(mapping)
         logger.info(f"Starting to insert name embeddings for {len(records)} tracks")
-        await self._milvus_client.insert(
+        await self._milvus_client.vectors.insert(
             collection_name=TRACK_NAMES_EMBEDDINGS_COLLECTION,
             records=records
         )
