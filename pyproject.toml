@@ -9,7 +9,7 @@ readme = "README.md"
 python = ">=3.8,<3.12"
 genie-datastores = {git = "https://github.com/nirgodin/genie-datastores.git", rev = "e0d7b08e", extras = ["postgres", "milvus", "google_drive", "google_sheets"]}
 spotipyio = {git = "https://github.com/nirgodin/spotipyio.git", rev = "44f4ebd2"}
-shazamio = "^0.4.0.1"
+shazamio = ">=0.6.0,<0.7"
 asyncio-pool = "^0.6.0"
 tqdm = ">=4.65.0,<5.0"
 wikipedia-api = ">0.5,<0.6"
