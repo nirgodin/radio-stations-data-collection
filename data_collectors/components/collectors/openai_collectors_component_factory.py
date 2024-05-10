@@ -1,17 +1,12 @@
-from aiohttp import ClientSession
-from genie_common.clients.openai import OpenAIClient
-from genie_datastores.postgres.operations import get_database_engine
-
+from data_collectors.components.tools_component_factory import ToolsComponentFactory
 from data_collectors.logic.collectors import TrackNamesEmbeddingsCollector
-from genie_common.tools import AioPoolExecutor
 
 
 class OpenAICollectorsComponentFactory:
-    @staticmethod
-    def get_track_names_embeddings_collector(pool_executor: AioPoolExecutor,
-                                             session: ClientSession) -> TrackNamesEmbeddingsCollector:
+    def __init__(self, tools: ToolsComponentFactory = ToolsComponentFactory()):
+        self._tools = tools
+
+    def get_track_names_embeddings_collector(self) -> TrackNamesEmbeddingsCollector:
         return TrackNamesEmbeddingsCollector(
-            db_engine=get_database_engine(),
-            pool_executor=pool_executor,
-            openai_client=OpenAIClient.create(session)
+            openai=self._tools.get_openai()
         )

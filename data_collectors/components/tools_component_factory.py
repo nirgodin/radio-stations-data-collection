@@ -3,11 +3,11 @@ from functools import lru_cache
 from typing import Optional, List
 
 from genie_common.tools import AioPoolExecutor, ChunksGenerator
-from genie_common.utils import env_var_to_list
 from genie_datastores.google.drive import GoogleDriveClient
 from genie_datastores.google.sheets import GoogleSheetsClient, GoogleSheetsUploader, ShareSettings, PermissionType, Role
 from genie_datastores.milvus import MilvusClient
 from langid.langid import LanguageIdentifier, model
+from openai import OpenAI
 from shazamio import Shazam
 from spotipyio import SpotifyClient
 from spotipyio.logic.authentication.spotify_session import SpotifySession
@@ -79,6 +79,9 @@ class ToolsComponentFactory:
         token = self.env.get_milvus_token()
 
         return MilvusClient(uri=uri, token=token)
+
+    def get_openai(self) -> OpenAI:
+        return OpenAI(api_key=self.env.get_openai_api_key())
 
     def _get_google_default_share_settings(self) -> List[ShareSettings]:
         users = self.env.get_google_sheets_users()
