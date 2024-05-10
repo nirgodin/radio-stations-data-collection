@@ -10,19 +10,12 @@ from data_collectors.logic.models import LyricsSourceDetails
 
 
 class MiscellaneousManagerFactory(BaseManagerFactory):
-    def get_track_names_embeddings_manager(self,
-                                           client_session: ClientSession,
-                                           milvus_client: MilvusClient) -> TrackNamesEmbeddingsManager:
-        pool_executor = self.tools.get_pool_executor()
-        embeddings_collector = self.collectors.openai.get_track_names_embeddings_collector(
-            pool_executor=pool_executor,
-            session=client_session
-        )
+    def get_track_names_embeddings_manager(self) -> TrackNamesEmbeddingsManager:
+        embeddings_collector = self.collectors.openai.get_track_names_embeddings_collector()
 
         return TrackNamesEmbeddingsManager(
             db_engine=get_database_engine(),
             embeddings_collector=embeddings_collector,
-            milvus_client=milvus_client,
             db_updater=self.updaters.get_values_updater()
         )
 
