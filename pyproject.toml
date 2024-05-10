@@ -7,7 +7,7 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = ">=3.10,<3.12"
-genie-datastores = {git = "https://github.com/nirgodin/genie-datastores.git", rev = "e0d7b08e", extras = ["postgres", "milvus", "google_drive", "google_sheets"]}
+genie-datastores = {git = "https://github.com/nirgodin/genie-datastores.git", rev = "92393c5e", extras = ["postgres", "milvus", "google_drive", "google_sheets"]}
 spotipyio = {git = "https://github.com/nirgodin/spotipyio.git", rev = "ef9870e2"}
 shazamio = ">=0.6.0,<0.7"
 asyncio-pool = "^0.6.0"
@@ -20,7 +20,7 @@ nltk = ">=3.8.1,<4.0"
 pytest-playwright = ">=0.4.4,<1.0"
 langid = ">=1.1.6,<1.2"
 scikit-learn = ">=1.4.2,<1.5"
-
+openai = ">=1.28.0,<1.29"
 
 [build-system]
 requires = ["poetry-core"]
