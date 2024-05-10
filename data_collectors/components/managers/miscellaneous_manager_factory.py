@@ -19,6 +19,14 @@ class MiscellaneousManagerFactory(BaseManagerFactory):
             db_updater=self.updaters.get_values_updater()
         )
 
+    def get_track_names_embeddings_retriever(self, milvus_client: MilvusClient) -> TrackNamesEmbeddingsRetrievalManager:
+        return TrackNamesEmbeddingsRetrievalManager(
+            db_engine=get_database_engine(),
+            openai=self.tools.get_openai(),
+            milvus_client=milvus_client,
+            db_updater=self.updaters.get_values_updater()
+        )
+
     def get_radio_snapshots_manager(self, spotify_session: SpotifySession) -> RadioStationsSnapshotsManager:
         spotify_client = self.tools.get_spotify_client(spotify_session)
 
