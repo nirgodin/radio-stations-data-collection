@@ -1,10 +1,10 @@
-import json
 import os.path
 from tempfile import TemporaryDirectory
 from typing import List
 
 from genie_common.models.openai import EmbeddingsModel
 from genie_common.tools import logger, SyncPoolExecutor
+from genie_common.utils import to_jsonl
 from openai import OpenAI
 from openai.types import FileObject, Batch
 
@@ -51,7 +51,7 @@ class TrackNamesEmbeddingsCollector(ICollector):
     def _generate_batch_input_file(self, requests: List[dict]) -> FileObject:
         with TemporaryDirectory() as dir_path:
             file_path = os.path.join(dir_path, "embeddings_requests.jsonl")
-            self._to_jsonl(requests, file_path)
+            to_jsonl(requests, file_path)
 
             with open(file_path, "rb") as file:
                 batch_input_file = self._openai.files.create(
@@ -60,10 +60,3 @@ class TrackNamesEmbeddingsCollector(ICollector):
                 )
 
         return batch_input_file
-
-    @staticmethod
-    def _to_jsonl(data: List[dict], file_path: str) -> None:
-        with open(file_path, "w") as file:
-            for item in data:
-                json_str = json.dumps(item)
-                file.write(json_str + "\n")
