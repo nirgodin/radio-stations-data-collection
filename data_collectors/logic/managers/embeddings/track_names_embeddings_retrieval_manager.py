@@ -1,39 +1,41 @@
-import json
 from typing import List, Dict
 
 from genie_common.tools import logger
-from genie_common.utils import safe_nested_get
 from genie_datastores.milvus import MilvusClient
 from genie_datastores.postgres.models import Track, SpotifyTrack
 from genie_datastores.postgres.operations import execute_query
-from openai import OpenAI
-from openai.types import Batch
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncEngine
 
-from data_collectors.consts.milvus_consts import TRACK_NAMES_EMBEDDINGS_COLLECTION, EMBEDDINGS
-from data_collectors.consts.spotify_consts import ID, NAME
-from data_collectors.logic.models import DBUpdateRequest
-from data_collectors.logic.updaters import ValuesDatabaseUpdater
+from data_collectors.consts.milvus_consts import TRACK_NAMES_EMBEDDINGS_COLLECTION
+from data_collectors.consts.spotify_consts import ID
 from data_collectors.contract import IManager
+from data_collectors.logic.collectors import TrackNamesEmbeddingsRetrievalCollector
+from data_collectors.logic.models import DBUpdateRequest
+from data_collectors.logic.serializers import OpenAIBatchEmbeddingsSerializer
+from data_collectors.logic.updaters import ValuesDatabaseUpdater
 
 
 class TrackNamesEmbeddingsRetrievalManager(IManager):
     def __init__(self,
                  db_engine: AsyncEngine,
-                 openai: OpenAI,
+                 embeddings_retriever: TrackNamesEmbeddingsRetrievalCollector,
                  milvus_client: MilvusClient,
-                 db_updater: ValuesDatabaseUpdater):
+                 db_updater: ValuesDatabaseUpdater,
+                 embeddings_serializer: OpenAIBatchEmbeddingsSerializer = OpenAIBatchEmbeddingsSerializer()):
         self._db_engine = db_engine
-        self._openai = openai
+        self._embeddings_retriever = embeddings_retriever
         self._milvus_client = milvus_client
         self._db_updater = db_updater
+        self._embeddings_serializer = embeddings_serializer
 
     async def run(self):
         batches_ids = await self._query_missing_batches_ids()
+        batches = await self._embeddings_retriever.collect(batches_ids)
 
-        for batch_id in batches_ids:
-            await self._handle_single_batch(batch_id)
+        for batch_id, batch_records in batches.items():
+            if batch_records:
+                await self._handle_single_batch(batch_id, batch_records)
 
     async def _query_missing_batches_ids(self) -> List[str]:
         logger.info("Querying database for unprocessed batches ids")
@@ -41,27 +43,17 @@ class TrackNamesEmbeddingsRetrievalManager(IManager):
             select(Track.batch_id)
             .distinct(Track.batch_id)
             .where(Track.has_name_embeddings.is_(False))
+            .where(Track.batch_id.isnot(None))
         )
         query_result = await execute_query(engine=self._db_engine, query=query)
 
         return query_result.scalars().all()
 
-    async def _handle_single_batch(self, batch_id: str) -> None:
-        logger.info(f"Handling batch `{batch_id}`")
-        batch = self._openai.batches.retrieve(batch_id)
-
-        if batch.status == "completed":
-            await self._upload_batch_embeddings(batch)
-        else:
-            logger.info(f"Batch status is `{batch.status}` and not completed. Skipping")
-
-    async def _upload_batch_embeddings(self, batch: Batch) -> None:
-        batch_file = self._openai.files.content(batch.output_file_id)
-        data = batch_file.content.decode(encoding="utf-8")
-        batch_records = self._to_batch_records(data)
-        track_id_name_mapping = await self._query_tracks_names(batch.id)
-        await self._insert_embeddings_records(batch_records, track_id_name_mapping)
-        await self._update_postgres_embeddings_exist(batch_records)
+    async def _handle_single_batch(self, batch_id: str, batch_records: List[dict]) -> None:
+        track_id_name_mapping = await self._query_tracks_names(batch_id)
+        embeddings_records = self._embeddings_serializer.serialize(batch_records, track_id_name_mapping)
+        await self._insert_embeddings_records(embeddings_records)
+        await self._update_postgres_embeddings_exist(embeddings_records)
 
     async def _query_tracks_names(self, batch_id: str) -> Dict[str, str]:
         query = (
@@ -74,63 +66,21 @@ class TrackNamesEmbeddingsRetrievalManager(IManager):
 
         return {track.id: track.name for track in tracks}
 
-    @staticmethod
-    def _to_batch_records(data: str) -> List[dict]:
-        records = []
-
-        for line in data.split("\n"):
-            record = None
-
-            try:
-                record = json.loads(line)
-            except:
-                logger.warning(f"Failed to decode line `{line}`")
-
-            if record is not None:
-                records.append(record)
-
-        return records
-
-    async def _insert_embeddings_records(self, batch_records: List[dict], track_id_name_mapping: Dict[str, str]) -> None:
-        records = self._to_milvus_records(batch_records, track_id_name_mapping)
+    async def _insert_embeddings_records(self, records: List[dict]) -> None:
         logger.info(f"Starting to insert name embeddings for {len(records)} tracks")
         await self._milvus_client.vectors.insert(
             collection_name=TRACK_NAMES_EMBEDDINGS_COLLECTION,
             records=records
         )
-
         logger.info(f"Successfully inserted tracks name embeddings to Milvus vector database")
 
-    def _to_milvus_records(self, batch_records: List[dict], track_id_name_mapping: Dict[str, str]) -> List[dict]:
-        logger.info("Converting batch records to embeddings data records")
-        records = []
-
-        for batch_record in batch_records:
-            track_id = batch_record["custom_id"]
-            record = {
-                ID: track_id,
-                NAME: track_id_name_mapping[track_id],
-                EMBEDDINGS: self._extract_track_embeddings(batch_record)
-            }
-            records.append(record)
-
-        return records
-
-    @staticmethod
-    def _extract_track_embeddings(record: dict) -> List[float]:
-        data = safe_nested_get(record, ["response", "body", "data"])
-
-        if data:
-            first_record = data[0]
-            return first_record["embedding"]
-
-    async def _update_postgres_embeddings_exist(self, batch_records: List[dict]) -> None:
+    async def _update_postgres_embeddings_exist(self, records: List[dict]) -> None:
         logger.info("Starting to update Postgres database of new existing embeddings")
         update_requests = []
 
-        for record in batch_records:
+        for record in records:
             request = DBUpdateRequest(
-                id=record["custom_id"],
+                id=record[ID],
                 values={Track.has_name_embeddings: True}
             )
             update_requests.append(request)

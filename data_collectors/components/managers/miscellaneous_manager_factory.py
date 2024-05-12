@@ -22,7 +22,7 @@ class MiscellaneousManagerFactory(BaseManagerFactory):
     def get_track_names_embeddings_retriever(self, milvus_client: MilvusClient) -> TrackNamesEmbeddingsRetrievalManager:
         return TrackNamesEmbeddingsRetrievalManager(
             db_engine=get_database_engine(),
-            openai=self.tools.get_openai(),
+            embeddings_retriever=self.collectors.openai.get_track_names_embeddings_retrieval_collector(),
             milvus_client=milvus_client,
             db_updater=self.updaters.get_values_updater()
         )
