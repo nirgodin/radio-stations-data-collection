@@ -8,6 +8,7 @@ from genie_common.utils import to_jsonl
 from openai import OpenAI
 from openai.types import FileObject, Batch
 
+from data_collectors.consts.openai_consts import INPUT, MODEL, CUSTOM_ID, BODY
 from data_collectors.contract import ICollector
 from data_collectors.logic.models import MissingTrack
 
@@ -38,14 +39,14 @@ class TrackNamesEmbeddingsCollector(ICollector):
     @staticmethod
     def _create_single_embeddings_request(missing_track: MissingTrack) -> dict:
         body = {
-            "input": missing_track.track_name,
-            "model": EmbeddingsModel.ADA.value
+            INPUT: missing_track.track_name,
+            MODEL: EmbeddingsModel.ADA.value
         }
         return {
-            "custom_id": missing_track.spotify_id,
+            CUSTOM_ID: missing_track.spotify_id,
             "method": "POST",
             "url": "/v1/embeddings",
-            "body": body
+            BODY: body
         }
 
     def _generate_batch_input_file(self, requests: List[dict]) -> FileObject:
