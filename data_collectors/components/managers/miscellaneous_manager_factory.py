@@ -80,3 +80,11 @@ class MiscellaneousManagerFactory(BaseManagerFactory):
             drive_folder_id=self.env.get_tracks_features_column_transformer_folder_id(),
             google_drive_client=self.tools.get_google_drive_client()
         )
+
+    def get_israeli_artists_names_translation_manager(self) -> IsraeliArtistsNamesTranslationManager:
+        return IsraeliArtistsNamesTranslationManager(
+            db_engine=get_database_engine(),
+            pool_executor=self.tools.get_pool_executor(),
+            translation_client=self.tools.get_google_translate_client(),
+            chunks_inserter=self.inserters.get_chunks_database_inserter()
+        )

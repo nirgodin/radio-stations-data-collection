@@ -14,6 +14,8 @@ from data_collectors.logic.managers.genres.genres_artists_origin_manager import 
 from data_collectors.logic.managers.genres.genres_mapping_manager import GenresMappingManager
 from data_collectors.logic.managers.genres.primary_genre_manager import PrimaryGenreManager
 from data_collectors.logic.managers.google_artists_origin_geocoding_manager import GoogleArtistsOriginGeocodingManager
+from data_collectors.logic.managers.israeli_artists_names_translation_manager import \
+    IsraeliArtistsNamesTranslationManager
 from data_collectors.logic.managers.missing_ids_managers.genius_missing_ids_manager import GeniusMissingIDsManager
 from data_collectors.logic.managers.missing_ids_managers.musixmatch_missing_ids_manager import \
     MusixmatchMissingIDsManager
@@ -45,6 +47,7 @@ __all__ = [
     "GenresMappingManager",
     "GlglzChartsManager",
     "GoogleArtistsOriginGeocodingManager",
+    "IsraeliArtistsNamesTranslationManager",
     "MusixmatchMissingIDsManager",
     "RadioChartsManager",
     "RadioStationsSnapshotsManager",

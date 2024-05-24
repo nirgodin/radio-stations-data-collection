@@ -2,6 +2,7 @@ import os.path
 from functools import lru_cache
 from typing import Optional, List
 
+from genie_common.clients.google import GoogleTranslateClient
 from genie_common.tools import AioPoolExecutor, ChunksGenerator
 from genie_datastores.google.drive import GoogleDriveClient
 from genie_datastores.google.sheets import GoogleSheetsClient, GoogleSheetsUploader, ShareSettings, PermissionType, Role
@@ -82,6 +83,10 @@ class ToolsComponentFactory:
 
     def get_openai(self) -> OpenAI:
         return OpenAI(api_key=self.env.get_openai_api_key())
+
+    @staticmethod
+    def get_google_translate_client() -> GoogleTranslateClient:
+        return GoogleTranslateClient.create()
 
     def _get_google_default_share_settings(self) -> List[ShareSettings]:
         users = self.env.get_google_sheets_users()
