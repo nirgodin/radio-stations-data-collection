@@ -17,6 +17,8 @@ from data_collectors.logic.managers.google_artists_origin_geocoding_manager impo
 from data_collectors.logic.managers.translations.base_translation_manager import BaseTranslationManager
 from data_collectors.logic.managers.translations.shazam_israeli_artists_translation_manager import \
     ShazamIsraeliArtistsTranslationManager
+from data_collectors.logic.managers.translations.shazam_israeli_tracks_translation_manager import \
+    ShazamIsraeliTracksTranslationManager
 from data_collectors.logic.managers.translations.spotify_israeli_artists_translation_manager import \
     SpotifyIsraeliArtistsTranslationManager
 from data_collectors.logic.managers.missing_ids_managers.genius_missing_ids_manager import GeniusMissingIDsManager
@@ -63,6 +65,7 @@ __all__ = [
     "PlaylistsChartsManager",
     "PrimaryGenreManager",
     "ShazamIsraeliArtistsTranslationManager",
+    "ShazamIsraeliTracksTranslationManager",
     "SpotifyIsraeliArtistsTranslationManager",
     "SpotifyIsraeliTracksTranslationManager",
     "SpotifyPlaylistsArtistsManager",
