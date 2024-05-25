@@ -14,8 +14,11 @@ from data_collectors.logic.managers.genres.genres_artists_origin_manager import 
 from data_collectors.logic.managers.genres.genres_mapping_manager import GenresMappingManager
 from data_collectors.logic.managers.genres.primary_genre_manager import PrimaryGenreManager
 from data_collectors.logic.managers.google_artists_origin_geocoding_manager import GoogleArtistsOriginGeocodingManager
-from data_collectors.logic.managers.israeli_artists_names_translation_manager import \
-    IsraeliArtistsNamesTranslationManager
+from data_collectors.logic.managers.translations.base_translation_manager import BaseTranslationManager
+from data_collectors.logic.managers.translations.shazam_israeli_artists_translation_manager import \
+    ShazamIsraeliArtistsTranslationManager
+from data_collectors.logic.managers.translations.spotify_israeli_artists_translation_manager import \
+    SpotifyIsraeliArtistsTranslationManager
 from data_collectors.logic.managers.missing_ids_managers.genius_missing_ids_manager import GeniusMissingIDsManager
 from data_collectors.logic.managers.missing_ids_managers.musixmatch_missing_ids_manager import \
     MusixmatchMissingIDsManager
@@ -32,10 +35,13 @@ from data_collectors.logic.managers.embeddings.track_names_embeddings_manager im
 from data_collectors.logic.managers.tracks_lyrics_manager import TracksLyricsManager
 from data_collectors.logic.managers.tracks_lyrics_missing_ids_manager import TracksLyricsMissingIDsManager
 from data_collectors.logic.managers.tracks_vectorizer_manager import TracksVectorizerManager
+from data_collectors.logic.managers.translations.spotify_israeli_tracks_translation_manager import \
+    SpotifyIsraeliTracksTranslationManager
 from data_collectors.logic.managers.wikipedia_artists_age_manager import WikipediaArtistsAgeManager
 
 __all__ = [
     "ArtistsImagesGenderManager",
+    "BaseTranslationManager",
     "BillboardManager",
     "ChartsTaggedMistakesManager",
     "ChartsIsraeliArtistsManager",
@@ -47,7 +53,6 @@ __all__ = [
     "GenresMappingManager",
     "GlglzChartsManager",
     "GoogleArtistsOriginGeocodingManager",
-    "IsraeliArtistsNamesTranslationManager",
     "MusixmatchMissingIDsManager",
     "RadioChartsManager",
     "RadioStationsSnapshotsManager",
@@ -57,6 +62,9 @@ __all__ = [
     "ShazamOriginCopyManager",
     "PlaylistsChartsManager",
     "PrimaryGenreManager",
+    "ShazamIsraeliArtistsTranslationManager",
+    "SpotifyIsraeliArtistsTranslationManager",
+    "SpotifyIsraeliTracksTranslationManager",
     "SpotifyPlaylistsArtistsManager",
     "SpotifyPlaylistsTracksManager",
     "TrackNamesEmbeddingsManager",

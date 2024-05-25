@@ -7,6 +7,7 @@ from data_collectors.components.managers.musixmatch_manager_factory import Musix
 from data_collectors.components.managers.charts_manager_factory import ChartsManagerFactory
 from data_collectors.components.managers.shazam_manager_factory import ShazamManagerFactory
 from data_collectors.components.managers.spotify_manager_factory import SpotifyManagerFactory
+from data_collectors.components.managers.translations_manager_factory import TranslationManagerFactory
 from data_collectors.components.managers.wikipedia_manager_factory import WikipediaManagerFactory
 
 __all__ = [
@@ -19,5 +20,6 @@ __all__ = [
     "ChartsManagerFactory",
     "ShazamManagerFactory",
     "SpotifyManagerFactory",
+    "TranslationManagerFactory",
     "WikipediaManagerFactory"
 ]

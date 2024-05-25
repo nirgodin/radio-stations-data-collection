@@ -22,6 +22,7 @@ class ComponentFactory:
                  shazam: ShazamManagerFactory = ShazamManagerFactory(),
                  spotify: SpotifyManagerFactory = SpotifyManagerFactory(),
                  tools: ToolsComponentFactory = ToolsComponentFactory(),
+                 translation: TranslationManagerFactory = TranslationManagerFactory(),
                  wikipedia: WikipediaManagerFactory = WikipediaManagerFactory()):
         self.billboard = billboard
         self.charts = charts
@@ -37,4 +38,5 @@ class ComponentFactory:
         self.shazam = shazam
         self.spotify = spotify
         self.tools = tools
+        self.translation = translation
         self.wikipedia = wikipedia
