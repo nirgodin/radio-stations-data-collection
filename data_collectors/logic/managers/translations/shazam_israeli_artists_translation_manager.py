@@ -13,10 +13,7 @@ class ShazamIsraeliArtistsTranslationManager(BaseTranslationManager):
     def _query(self) -> Select:
         return (
             select(ShazamArtist.id, ShazamArtist.name)
-            .where(ShazamArtist.id == ShazamTrack.artist_id)
-            .where(ShazamTrack.id == TrackIDMapping.shazam_id)
-            .where(TrackIDMapping.id == SpotifyTrack.id)
-            .where(SpotifyTrack.artist_id == Artist.id)
+            .where(ShazamArtist.id == Artist.shazam_id)
             .where(Artist.is_israeli.is_(True))
             .where(ShazamArtist.name.regexp_match(r'^[a-zA-Z0-9\s]+$'))
         )
