@@ -1,7 +1,6 @@
-from typing import Dict
+from typing import Dict, Optional
 
 from aiohttp import ClientSession
-from genie_common.tools import AioPoolExecutor
 from genie_datastores.google.drive import GoogleDriveClient
 from genie_datastores.postgres.models import Chart
 from genie_datastores.postgres.operations import get_database_engine
@@ -9,12 +8,14 @@ from spotipyio import SpotifyClient
 
 from data_collectors.components.tools_component_factory import ToolsComponentFactory
 from data_collectors.logic.collectors import (
+    BaseChartKeySearcher,
     ChartsTaggedMistakesCollector,
     ChartsTaggedMistakesTracksCollector,
     ChartsTracksCollector,
     EurovisionChartsDataCollector,
     EveryHitChartsDataCollector,
     GlglzChartsDataCollector,
+    IsraeliChartKeySearcher,
     PlaylistsChartsDataCollector,
     RadioChartsDataCollector,
     EurovisionMissingTracksCollector
@@ -46,11 +47,15 @@ class ChartsCollectorsComponentFactory:
             playlist_id_to_chart_mapping=playlist_id_to_chart_mapping
         )
 
-    def get_tracks_collector(self, spotify_client: SpotifyClient) -> ChartsTracksCollector:
+    def get_tracks_collector(self,
+                             spotify_client: SpotifyClient,
+                             key_searcher: Optional[BaseChartKeySearcher] = None) -> ChartsTracksCollector:
+        chart_key_searcher = key_searcher or IsraeliChartKeySearcher(spotify_client)
         return ChartsTracksCollector(
             pool_executor=self._tools.get_pool_executor(),
             spotify_client=spotify_client,
-            db_engine=get_database_engine()
+            db_engine=get_database_engine(),
+            key_searcher=chart_key_searcher
         )
 
     def get_charts_tagged_mistakes_collector(self) -> ChartsTaggedMistakesCollector:

@@ -1,3 +1,5 @@
+from data_collectors.logic.collectors.charts.charts_searchers.base_chart_key_searcher import BaseChartKeySearcher
+from data_collectors.logic.collectors.charts.charts_searchers.israeli_chart_key_searcher import IsraeliChartKeySearcher
 from data_collectors.logic.collectors.charts.charts_tagged_mistakes_collector import ChartsTaggedMistakesCollector
 from data_collectors.logic.collectors.charts.charts_tagged_mistakes_tracks_collector import \
     ChartsTaggedMistakesTracksCollector
@@ -10,6 +12,8 @@ from data_collectors.logic.collectors.charts.radio_charts_data_collector import 
 from data_collectors.logic.collectors.charts.playlists_charts_data_collector import PlaylistsChartsDataCollector
 
 __all__ = [
+    "BaseChartKeySearcher",
+    "IsraeliChartKeySearcher",
     "ChartsTaggedMistakesCollector",
     "ChartsTaggedMistakesTracksCollector",
     "ChartsTracksCollector",

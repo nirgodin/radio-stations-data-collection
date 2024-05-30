@@ -15,6 +15,8 @@ EXCLUDED_RADIO_CHARTS_FILES_IDS = [
     '1zJsTgxYkuW6c0TAqVaRI_RMToTTH7gn-',
     '1z8Ys_yQDg3cjhj3uWUaKFVLIk8xB-qmi',
     '1jsAon5Fl_Tp7KoH_Bu0WAnudXe2FMcPp',
-    '1shGMCB6uhQeNpqepPVBdPJWFG0IVAbPr'
+    '1shGMCB6uhQeNpqepPVBdPJWFG0IVAbPr',
+    '1of9J-7k3EqEzvgH8mZXqGv5N-oAIC30d',
+    '1XSReUm0scWptWpBnxeDLuLpfGRwaPNPA'
 ]
 CHART_KEY_FORMAT = "{artist} - {track}"
