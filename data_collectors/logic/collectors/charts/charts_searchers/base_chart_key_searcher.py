@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import List, Optional
 
+from async_lru import alru_cache
 from genie_common.tools import logger
 from genie_common.utils import safe_nested_get
 from genie_datastores.postgres.models import ChartEntry
@@ -16,9 +17,7 @@ class BaseChartKeySearcher(ABC):
         self._entity_matcher = entity_matcher
 
     async def search(self, chart_entry: ChartEntry) -> RadioChartEntryDetails:
-        search_item = self._build_search_item(chart_entry.key)
-        search_result = await self._spotify_client.search.run_single(search_item)
-        track = self._extract_matching_track(chart_entry, search_result)
+        track = await self._search_track_by_key(chart_entry.key)
 
         if track is not None:
             chart_entry.track_id = track[ID]
@@ -29,8 +28,15 @@ class BaseChartKeySearcher(ABC):
             track=track
         )
 
+    @alru_cache(maxsize=1000)
+    async def _search_track_by_key(self, key: str) -> Optional[dict]:
+        search_item = await self._build_search_item(key)
+        search_result = await self._spotify_client.search.run_single(search_item)
+
+        return self._extract_matching_track(search_item, search_result)
+
     @abstractmethod
-    def _build_search_item(self, key: str) -> SearchItem:
+    async def _build_search_item(self, key: str) -> SearchItem:
         raise NotImplementedError
 
     def _extract_matching_track(self, search_item: SearchItem, search_result: dict) -> Optional[dict]:

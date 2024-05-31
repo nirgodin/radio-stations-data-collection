@@ -3,26 +3,36 @@ from typing import Dict
 from aiohttp import ClientSession
 from genie_datastores.postgres.models import Chart
 from genie_datastores.postgres.operations import get_database_engine
+from spotipyio import SpotifyClient, EntityMatcher, TrackEntityExtractor, TrackSearchResultArtistEntityExtractor
 from spotipyio.logic.authentication.spotify_session import SpotifySession
 
+from data_collectors.logic.collectors import ChartsTracksCollector, ArtistTranslatorChartKeySearcher
 from data_collectors.components.managers.base_manager_factory import BaseManagerFactory
 from data_collectors.logic.managers import *
 
 
 class ChartsManagerFactory(BaseManagerFactory):
     def get_radio_charts_manager(self, spotify_session: SpotifySession) -> RadioChartsManager:
-        drive_client = self.tools.get_google_drive_client()
         spotify_client = self.tools.get_spotify_client(spotify_session)
         tracks_collector = self.collectors.charts.get_tracks_collector(spotify_client)
 
-        return RadioChartsManager(
-            db_engine=get_database_engine(),
-            drive_client=drive_client,
-            charts_data_collector=self.collectors.charts.get_radio_charts_collector(drive_client),
-            charts_tracks_collector=tracks_collector,
-            spotify_insertions_manager=self.inserters.spotify.get_insertions_manager(spotify_client),
-            chart_entries_inserter=self.inserters.get_chart_entries_inserter()
+        return self._get_radio_chart_manager(spotify_client, tracks_collector)
+
+    def get_translated_artist_radio_charts_manager(self, spotify_session: SpotifySession) -> RadioChartsManager:
+        spotify_client = self.tools.get_spotify_client(spotify_session)
+        extractors = {TrackEntityExtractor(): 0.65, TrackSearchResultArtistEntityExtractor(): 0.35}
+        entity_matcher = EntityMatcher(extractors=extractors)
+        key_searcher = ArtistTranslatorChartKeySearcher(
+            spotify_client=spotify_client,
+            translation_client=self.tools.get_google_translate_client(),
+            entity_matcher=entity_matcher
         )
+        tracks_collector = self.collectors.charts.get_tracks_collector(
+            spotify_client=spotify_client,
+            key_searcher=key_searcher
+        )
+
+        return self._get_radio_chart_manager(spotify_client, tracks_collector)
 
     def get_eurovision_charts_manager(self,
                                       client_session: ClientSession,
@@ -132,4 +142,18 @@ class ChartsManagerFactory(BaseManagerFactory):
             charts_data_collector=data_collector,
             charts_tracks_collector=tracks_collector,
             spotify_insertions_manager=self.inserters.spotify.get_insertions_manager(spotify_client)
+        )
+
+    def _get_radio_chart_manager(self,
+                                 spotify_client: SpotifyClient,
+                                 tracks_collector: ChartsTracksCollector) -> RadioChartsManager:
+        drive_client = self.tools.get_google_drive_client()
+
+        return RadioChartsManager(
+            db_engine=get_database_engine(),
+            drive_client=drive_client,
+            charts_data_collector=self.collectors.charts.get_radio_charts_collector(drive_client),
+            charts_tracks_collector=tracks_collector,
+            spotify_insertions_manager=self.inserters.spotify.get_insertions_manager(spotify_client),
+            chart_entries_inserter=self.inserters.get_chart_entries_inserter()
         )
