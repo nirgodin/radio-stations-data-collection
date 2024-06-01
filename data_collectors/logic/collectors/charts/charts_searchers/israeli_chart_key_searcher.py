@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from spotipyio import SearchItem, SearchItemMetadata, SpotifySearchType, MatchingEntity
 
@@ -7,7 +7,7 @@ from data_collectors.utils.charts import extract_artist_and_track_from_chart_key
 
 
 class IsraeliChartKeySearcher(BaseChartKeySearcher):
-    async def _build_search_item(self, key: str) -> SearchItem:
+    async def _build_search_item(self, key: str) -> Optional[SearchItem]:
         return SearchItem(
             text=key,
             metadata=SearchItemMetadata(

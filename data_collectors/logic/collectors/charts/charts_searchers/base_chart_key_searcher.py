@@ -31,12 +31,13 @@ class BaseChartKeySearcher(ABC):
     @alru_cache(maxsize=1000)
     async def _search_track_by_key(self, key: str) -> Optional[dict]:
         search_item = await self._build_search_item(key)
-        search_result = await self._spotify_client.search.run_single(search_item)
 
-        return self._extract_matching_track(search_item, search_result)
+        if search_item is not None:
+            search_result = await self._spotify_client.search.run_single(search_item)
+            return self._extract_matching_track(search_item, search_result)
 
     @abstractmethod
-    async def _build_search_item(self, key: str) -> SearchItem:
+    async def _build_search_item(self, key: str) -> Optional[SearchItem]:
         raise NotImplementedError
 
     def _extract_matching_track(self, search_item: SearchItem, search_result: dict) -> Optional[dict]:
