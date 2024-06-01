@@ -7,6 +7,7 @@ from genie_common.tools import AioPoolExecutor, ChunksGenerator
 from genie_datastores.google.drive import GoogleDriveClient
 from genie_datastores.google.sheets import GoogleSheetsClient, GoogleSheetsUploader, ShareSettings, PermissionType, Role
 from genie_datastores.milvus import MilvusClient
+from genie_datastores.postgres.operations import get_database_engine
 from langid.langid import LanguageIdentifier, model
 from openai import OpenAI
 from shazamio import Shazam
@@ -15,7 +16,7 @@ from spotipyio.logic.authentication.spotify_session import SpotifySession
 
 from data_collectors.components.environment_component_factory import EnvironmentComponentFactory
 from data_collectors.consts.image_gender_detector_consts import GENDER_MODEL_RESOURCES_DIR
-from data_collectors.tools import ImageGenderDetector
+from data_collectors.tools import ImageGenderDetector, TranslationAdapter
 
 
 class ToolsComponentFactory:
@@ -87,6 +88,12 @@ class ToolsComponentFactory:
     @staticmethod
     def get_google_translate_client() -> GoogleTranslateClient:
         return GoogleTranslateClient.create()
+
+    def get_translation_adapter(self) -> TranslationAdapter:
+        return TranslationAdapter(
+            translation_client=self.get_google_translate_client(),
+            db_engine=get_database_engine()
+        )
 
     def _get_google_default_share_settings(self) -> List[ShareSettings]:
         users = self.env.get_google_sheets_users()
