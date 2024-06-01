@@ -1,6 +1,7 @@
 from typing import Optional, Any, Dict, Type
 
 from genie_common.clients.google import GoogleTranslateClient
+from genie_common.tools import logger
 from genie_datastores.postgres.models import Translation, DataSource, EntityType
 from genie_datastores.postgres.operations import execute_query, insert_records
 from sqlalchemy import select
@@ -41,6 +42,7 @@ class TranslationAdapter:
             await self._insert_new_translation_record(
                 text=text,
                 target_language=target_language,
+                translation=translation,
                 filters=filters
             )
 
@@ -83,11 +85,17 @@ class TranslationAdapter:
     async def _insert_new_translation_record(self,
                                              text: str,
                                              target_language: str,
+                                             translation: Optional[str],
                                              filters: Dict[Type[Translation], Any]) -> None:
+        if translation is None:
+            logger.warning(f"Translation request for `{text}` failed. Ignoring")
+            return
+
         kwargs = {column.key: value for column, value in filters.items()}
         additional_kwargs = {
-            Translation.text.value: text,
-            Translation.target_language.key: target_language
+            Translation.text.key: text,
+            Translation.target_language.key: target_language,
+            Translation.translation.key: translation
         }
         kwargs.update(additional_kwargs)
         record = Translation(**kwargs)
