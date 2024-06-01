@@ -28,6 +28,5 @@ class TranslationManagerFactory(BaseManagerFactory):
         return manager(
             db_engine=get_database_engine(),
             pool_executor=self.tools.get_pool_executor(),
-            translation_client=self.tools.get_google_translate_client(),
-            chunks_inserter=self.inserters.get_chunks_database_inserter()
+            translation_adapter=self.tools.get_translation_adapter(),
         )
