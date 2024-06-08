@@ -1,4 +1,5 @@
-from typing import Optional, List, Type
+from datetime import datetime
+from typing import Optional, List, Type, Any
 
 from genie_common.tools import AioPoolExecutor, logger
 from genie_datastores.postgres.models import SpotifyArtist, ShazamArtist, Artist, Decision, Table
@@ -64,24 +65,40 @@ class GeminiArtistsAboutManager(IManager):
         return [ArtistExistingDetails.from_row(row) for row in rows]
 
     async def _update_artist_entries(self, response: ArtistDetailsExtractionResponse) -> None:
-        missing_fields = self._extract_missing_fields_names(response)
-        update_request = self._to_update_request(response, missing_fields)
-        await self._db_updater.update([update_request])
-        decisions = self._to_decisions(response, missing_fields)
-        await insert_records(engine=self._db_engine, records=decisions)
+        missing_fields = self._extract_missing_fields(response)
 
-    @staticmethod
-    def _extract_missing_fields_names(response: ArtistDetailsExtractionResponse) -> List[Type[Artist]]:
+        if missing_fields:
+            update_request = self._to_update_request(response, missing_fields)
+            await self._db_updater.update([update_request])
+            decisions = self._to_decisions(response, missing_fields)
+            await insert_records(engine=self._db_engine, records=decisions)
+
+        else:
+            update_request = DBUpdateRequest(
+                id=response.existing_details.id,
+                values={Artist.update_date: datetime.utcnow()}
+            )
+            await self._db_updater.update([update_request])
+
+    def _extract_missing_fields(self, response: ArtistDetailsExtractionResponse) -> List[Type[Artist]]:
         missing_fields = []
 
         for field in [Artist.birth_date, Artist.death_date, Artist.origin, Artist.gender]:
             existing_field = getattr(response.existing_details, field.key)
             extracted_field = getattr(response.extracted_details, field.key)
 
-            if existing_field is None and extracted_field is not None:
+            if self._is_relevant_field(existing_field, extracted_field):
                 missing_fields.append(field)
 
         return missing_fields
+
+    @staticmethod
+    def _is_relevant_field(existing_field: Optional[Any], extracted_field: Optional[BaseDecision]) -> bool:
+        if existing_field is None:
+            if extracted_field is not None:
+                return extracted_field.value is not None
+
+        return False
 
     @staticmethod
     def _to_update_request(response: ArtistDetailsExtractionResponse, missing_fields: List[Type[Artist]]) -> DBUpdateRequest:
