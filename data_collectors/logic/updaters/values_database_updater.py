@@ -22,13 +22,13 @@ class ValuesDatabaseUpdater(IDatabaseUpdater):
         logger.info(f"Starting to update {n_records} records")
         results = await self._pool_executor.run(  # TODO: Find a way to do it in Bulk
             iterable=update_requests,
-            func=self._update_single,
+            func=self.update_single,
             expected_type=type(None)
         )
 
         logger.info(f"Successfully updated {len(results)} records out of {n_records}")
 
-    async def _update_single(self, update_request: DBUpdateRequest) -> None:
+    async def update_single(self, update_request: DBUpdateRequest) -> None:
         orm = self._detect_orm(update_request.values)
         update_request.values[orm.update_date] = datetime.now()
 
@@ -40,6 +40,6 @@ class ValuesDatabaseUpdater(IDatabaseUpdater):
         )
 
     @staticmethod
-    def _detect_orm(update_values: Dict[BaseORMModel, Any]) -> Type[BaseORMModel]:
+    def _detect_orm(update_values: Dict[Type[BaseORMModel], Any]) -> Type[BaseORMModel]:
         column: InstrumentedAttribute = get_dict_first_key(update_values)
         return column.class_

@@ -53,7 +53,7 @@ class GeminiArtistsAboutManager(IManager):
 
         if missing_fields:
             update_request = self._to_update_request(response, missing_fields)
-            await self._db_updater.update([update_request])
+            await self._db_updater.update_single(update_request)
             decisions = self._to_decisions(response, missing_fields)
             await insert_records(engine=self._db_engine, records=decisions)
 
@@ -62,7 +62,7 @@ class GeminiArtistsAboutManager(IManager):
                 id=response.existing_details.id,
                 values={Artist.update_date: datetime.utcnow()}
             )
-            await self._db_updater.update([update_request])
+            await self._db_updater.update_single(update_request)
 
     def _extract_missing_fields(self, response: ArtistDetailsExtractionResponse) -> List[Type[Artist]]:
         missing_fields = []
