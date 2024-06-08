@@ -64,14 +64,11 @@ class GeminiArtistsAboutManager(IManager):
         return [ArtistExistingDetails.from_row(row) for row in rows]
 
     async def _update_artist_entries(self, response: ArtistDetailsExtractionResponse) -> None:
-        try:
-            missing_fields = self._extract_missing_fields_names(response)
-            update_request = self._to_update_request(response, missing_fields)
-            await self._db_updater.update([update_request])
-            decisions = self._to_decisions(response, missing_fields)
-            await insert_records(engine=self._db_engine, records=decisions)
-        except Exception as e:
-            print(e)
+        missing_fields = self._extract_missing_fields_names(response)
+        update_request = self._to_update_request(response, missing_fields)
+        await self._db_updater.update([update_request])
+        decisions = self._to_decisions(response, missing_fields)
+        await insert_records(engine=self._db_engine, records=decisions)
 
     @staticmethod
     def _extract_missing_fields_names(response: ArtistDetailsExtractionResponse) -> List[Type[Artist]]:
