@@ -1,4 +1,7 @@
 from data_collectors.logic.models.address_component_setting import AddressComponentSetting
+from data_collectors.logic.models.artist_about.artist_extracted_details import ArtistExtractedDetails, BaseDecision
+from data_collectors.logic.models.artist_about.artist_details_extraction_response import ArtistDetailsExtractionResponse
+from data_collectors.logic.models.artist_about.artist_existing_details import ArtistExistingDetails
 from data_collectors.logic.models.artist_gender import ArtistGender
 from data_collectors.logic.models.artist_wikipedia_details import ArtistWikipediaDetails
 from data_collectors.logic.models.database_update_request import DBUpdateRequest
@@ -13,8 +16,12 @@ from data_collectors.logic.models.web_element import WebElement
 
 __all__ = [
     "AddressComponentSetting",
+    "ArtistExtractedDetails",
+    "ArtistExistingDetails",
+    "ArtistDetailsExtractionResponse",
     "ArtistGender",
     "ArtistWikipediaDetails",
+    "BaseDecision",
     "DateRange",
     "DBUpdateRequest",
     "EurovisionRecord",

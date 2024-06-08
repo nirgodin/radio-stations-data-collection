@@ -13,7 +13,6 @@ from data_collectors.logic.managers.embeddings.track_names_embeddings_retrieval_
 from data_collectors.logic.managers.genres.genres_artists_origin_manager import GenresArtistsOriginManager
 from data_collectors.logic.managers.genres.genres_mapping_manager import GenresMappingManager
 from data_collectors.logic.managers.genres.primary_genre_manager import PrimaryGenreManager
-from data_collectors.logic.managers.google_artists_origin_geocoding_manager import GoogleArtistsOriginGeocodingManager
 from data_collectors.logic.managers.translations.base_translation_manager import BaseTranslationManager
 from data_collectors.logic.managers.translations.shazam_israeli_artists_translation_manager import \
     ShazamIsraeliArtistsTranslationManager
@@ -40,6 +39,7 @@ from data_collectors.logic.managers.tracks_vectorizer_manager import TracksVecto
 from data_collectors.logic.managers.translations.spotify_israeli_tracks_translation_manager import \
     SpotifyIsraeliTracksTranslationManager
 from data_collectors.logic.managers.wikipedia_artists_age_manager import WikipediaArtistsAgeManager
+from data_collectors.logic.managers.google import *
 
 __all__ = [
     "ArtistsImagesGenderManager",
@@ -55,6 +55,7 @@ __all__ = [
     "GenresMappingManager",
     "GlglzChartsManager",
     "GoogleArtistsOriginGeocodingManager",
+    "GeminiArtistsAboutManager",
     "MusixmatchMissingIDsManager",
     "RadioChartsManager",
     "RadioStationsSnapshotsManager",

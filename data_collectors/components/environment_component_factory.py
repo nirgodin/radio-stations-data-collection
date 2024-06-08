@@ -50,3 +50,8 @@ class EnvironmentComponentFactory:
     @lru_cache
     def get_google_geocoding_api_key() -> str:
         return os.environ["GOOGLE_GEOCODING_API_KEY"]
+
+    @staticmethod
+    @lru_cache
+    def get_gemini_api_key() -> str:
+        return os.environ["GEMINI_API_KEY"]
