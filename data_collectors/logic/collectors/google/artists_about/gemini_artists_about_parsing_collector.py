@@ -1,3 +1,4 @@
+from functools import partial
 from textwrap import dedent
 from textwrap import dedent
 from typing import Any, List
@@ -10,20 +11,24 @@ from data_collectors.contract import ICollector
 from data_collectors.logic.models import ArtistExtractedDetails, ArtistExistingDetails, ArtistDetailsExtractionResponse
 
 
-class GeminiArtistsAboutCollector(ICollector):
+class GeminiArtistsAboutParsingCollector(ICollector):
     def __init__(self, pool_executor: AioPoolExecutor, model: GenerativeModel):
         self._pool_executor = pool_executor
         self._model = model
 
-    async def collect(self, artists_existing_details: List[ArtistExistingDetails]) -> List[ArtistDetailsExtractionResponse]:
-        logger.info(f"Sending {len(artists_existing_details)} extraction requests to Gemini")
+    async def collect(self,
+                      existing_details: List[ArtistExistingDetails],
+                      data_source: DataSource) -> List[ArtistDetailsExtractionResponse]:
+        logger.info(f"Sending {len(existing_details)} extraction requests to Gemini")
         return await self._pool_executor.run(
-            iterable=artists_existing_details,
-            func=self._extract_single_artist_details,
+            iterable=existing_details,
+            func=partial(self._extract_artist_details, data_source),
             expected_type=ArtistDetailsExtractionResponse
         )
 
-    async def _extract_single_artist_details(self, existing_details: ArtistExistingDetails) -> ArtistDetailsExtractionResponse:
+    async def _extract_artist_details(self,
+                                      data_source: DataSource,
+                                      existing_details: ArtistExistingDetails) -> ArtistDetailsExtractionResponse:
         prompt = """\
             Please return JSON describing the birth date, death date, and origin of music artists from this about \
             paragraph using the following schema:
@@ -52,15 +57,9 @@ class GeminiArtistsAboutCollector(ICollector):
         
             Here is the about paragraph:
         """
-        if existing_details.spotify_about is not None:
-            artist_about = existing_details.spotify_about
-            data_source = DataSource.SPOTIFY
-        else:
-            artist_about = existing_details.shazam_about
-            data_source = DataSource.SHAZAM
 
         response = await self._model.generate_content_async(
-            contents=dedent(prompt) + artist_about,
+            contents=dedent(prompt) + existing_details.about,
             generation_config={'response_mime_type': 'application/json'}
         )
         extracted_details = ArtistExtractedDetails.parse_raw(response.text)

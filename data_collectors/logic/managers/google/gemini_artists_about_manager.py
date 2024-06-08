@@ -2,67 +2,51 @@ from datetime import datetime
 from typing import Optional, List, Type, Any
 
 from genie_common.tools import AioPoolExecutor, logger
-from genie_datastores.postgres.models import SpotifyArtist, ShazamArtist, Artist, Decision, Table
-from genie_datastores.postgres.operations import execute_query, insert_records
-from sqlalchemy import select, or_
+from genie_datastores.postgres.models import Artist, Decision, Table
+from genie_datastores.postgres.operations import insert_records
 from sqlalchemy.ext.asyncio import AsyncEngine
 
 from data_collectors.contract import IManager
-from data_collectors.logic.collectors import GeminiArtistsAboutCollector
-from data_collectors.logic.models import DBUpdateRequest, ArtistExistingDetails, \
-    ArtistDetailsExtractionResponse, BaseDecision
+from data_collectors.logic.collectors import BaseArtistsExistingDetailsCollector
+from data_collectors.logic.collectors import GeminiArtistsAboutParsingCollector
+from data_collectors.logic.models import DBUpdateRequest, ArtistDetailsExtractionResponse, BaseDecision, \
+    ArtistExistingDetails
 from data_collectors.logic.updaters import ValuesDatabaseUpdater
-
-ARTIST_ABOUT_COLUMNS = [
-    SpotifyArtist.id,
-    SpotifyArtist.about.label("spotify_about"),
-    ShazamArtist.about.label("shazam_about"),
-    Artist.origin,
-    Artist.birth_date,
-    Artist.death_date,
-    Artist.gender
-]
 
 
 class GeminiArtistsAboutManager(IManager):
     def __init__(self,
-                 db_engine: AsyncEngine,
-                 artists_about_extractor: GeminiArtistsAboutCollector,
+                 existing_details_collector: BaseArtistsExistingDetailsCollector,
+                 parsing_collector: GeminiArtistsAboutParsingCollector,
                  pool_executor: AioPoolExecutor,
+                 db_engine: AsyncEngine,
                  db_updater: ValuesDatabaseUpdater):
+        self._existing_details_collector = existing_details_collector
         self._db_engine = db_engine
-        self._artists_about_extractor = artists_about_extractor
+        self._parsing_collector = parsing_collector
         self._pool_executor = pool_executor
         self._db_updater = db_updater
 
     async def run(self, limit: Optional[int]) -> None:
         logger.info(f"Starting to run artists about manager for {limit} artists")
-        artists_existing_details = await self._query_artists_about(limit)
+        artists_existing_details = await self._existing_details_collector.collect(limit)
 
         if artists_existing_details:
-            responses = await self._artists_about_extractor.collect(artists_existing_details)
-            logger.info(f"Received {len(responses)} valid extraction responses. Updating artists database entries")
-            await self._pool_executor.run(
-                iterable=responses,
-                func=self._update_artist_entries,
-                expected_type=type(None)
-            )
+            await self._parse_artists_about(artists_existing_details)
+        else:
+            logger.info(f"Did not find any relevant artist about to parse. Aborting")
 
-    async def _query_artists_about(self, limit: Optional[int]) -> List[ArtistExistingDetails]:
-        logger.info(f"Querying {limit} artists about")
-        query = (
-            select(ARTIST_ABOUT_COLUMNS)
-            .where(SpotifyArtist.id == Artist.id)
-            .where(Artist.shazam_id == ShazamArtist.id)
-            .where(SpotifyArtist.id.isnot(None))
-            .where(or_(SpotifyArtist.about.isnot(None), ShazamArtist.about.isnot(None)))
-            .order_by(Artist.update_date.asc())
-            .limit(limit)
+    async def _parse_artists_about(self, artists_existing_details: List[ArtistExistingDetails]) -> None:
+        responses = await self._parsing_collector.collect(
+            existing_details=artists_existing_details,
+            data_source=self._existing_details_collector.data_source
         )
-        query_result = await execute_query(engine=self._db_engine, query=query)
-        rows = query_result.all()
-
-        return [ArtistExistingDetails.from_row(row) for row in rows]
+        logger.info(f"Received {len(responses)} valid extraction responses. Updating artists database entries")
+        await self._pool_executor.run(
+            iterable=responses,
+            func=self._update_artist_entries,
+            expected_type=type(None)
+        )
 
     async def _update_artist_entries(self, response: ArtistDetailsExtractionResponse) -> None:
         missing_fields = self._extract_missing_fields(response)
