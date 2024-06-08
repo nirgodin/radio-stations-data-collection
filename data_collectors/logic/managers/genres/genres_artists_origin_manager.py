@@ -13,7 +13,9 @@ from data_collectors.logic.models import DBUpdateRequest
 from data_collectors.logic.updaters import ValuesDatabaseUpdater
 
 GENRES_MAPPING = {
-    "atl hip hop": "Atlanta, USA"
+    "atl hip hop": "Atlanta, USA",
+    "chicago rap": "Chicago, Illinois, USA",
+    "chicago soul": "Chicago, Illinois, USA"
 }
 
 
