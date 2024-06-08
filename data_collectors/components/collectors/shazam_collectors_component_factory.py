@@ -1,7 +1,9 @@
 from genie_common.tools import AioPoolExecutor
+from genie_datastores.postgres.operations import get_database_engine
 from shazamio import Shazam
 from spotipyio import EntityMatcher
 
+from data_collectors.logic.collectors import ShazamArtistsExistingDetailsCollector
 from data_collectors.logic.collectors.shazam import *
 from data_collectors.tools import ShazamTrackEntityExtractor, ShazamArtistEntityExtractor, MultiEntityMatcher
 
@@ -36,3 +38,7 @@ class ShazamCollectorsComponentFactory:
     @staticmethod
     def get_lyrics_collector(pool_executor: AioPoolExecutor) -> ShazamLyricsCollector:
         return ShazamLyricsCollector(pool_executor)
+
+    @staticmethod
+    def get_artist_existing_details_collector() -> ShazamArtistsExistingDetailsCollector:
+        return ShazamArtistsExistingDetailsCollector(get_database_engine())
