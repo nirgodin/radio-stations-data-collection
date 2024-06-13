@@ -21,7 +21,7 @@ class ChartsManagerFactory(BaseManagerFactory):
     def get_translated_artist_radio_charts_manager(self, spotify_session: SpotifySession) -> RadioChartsManager:
         spotify_client = self.tools.get_spotify_client(spotify_session)
         extractors = {TrackEntityExtractor(): 0.5, TrackSearchResultArtistEntityExtractor(): 0.5}
-        entity_matcher = EntityMatcher(extractors=extractors)
+        entity_matcher = EntityMatcher(extractors=extractors, threshold=0.75)
         key_searcher = ArtistTranslatorChartKeySearcher(
             spotify_client=spotify_client,
             translation_adapter=self.tools.get_translation_adapter(),
