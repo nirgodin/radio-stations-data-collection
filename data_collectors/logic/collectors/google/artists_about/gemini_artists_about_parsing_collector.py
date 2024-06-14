@@ -62,7 +62,19 @@ class GeminiArtistsAboutParsingCollector(ICollector):
             contents=dedent(prompt) + existing_details.about,
             generation_config={'response_mime_type': 'application/json'}
         )
-        extracted_details = ArtistExtractedDetails.parse_raw(response.text)
+
+        if response.parts:
+            extracted_details = ArtistExtractedDetails.parse_raw(response.text)
+        else:
+            logger.warning(
+                f"Did not receive valid response parts for artist id `{existing_details.id}`. Returning empty details"
+            )
+            extracted_details = ArtistExtractedDetails(
+                birth_date=None,
+                death_date=None,
+                origin=None,
+                gender=None
+            )
 
         return ArtistDetailsExtractionResponse(
             existing_details=existing_details,
