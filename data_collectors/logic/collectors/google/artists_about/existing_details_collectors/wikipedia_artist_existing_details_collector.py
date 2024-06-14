@@ -52,7 +52,7 @@ class WikipediaArtistsExistingDetailsCollector(BaseArtistsExistingDetailsCollect
         )
 
     async def _collect_single_artist_summary(self, row: Row) -> ArtistExistingDetails:
-        about = self._wikipedia_summary_collector.collect(
+        about = await self._wikipedia_summary_collector.collect(
             name=row.wikipedia_name,
             language=row.wikipedia_language
         )
