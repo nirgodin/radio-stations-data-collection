@@ -1,17 +1,22 @@
 from abc import abstractmethod, ABC
-from functools import partial, lru_cache
+from functools import lru_cache
 from typing import List, Dict, Tuple, Optional
 
 from genie_common.tools import AioPoolExecutor, logger
-from genie_common.utils import run_async
 from sqlalchemy.ext.asyncio import AsyncEngine
 from wikipediaapi import Wikipedia
 
+from data_collectors.logic.collectors.wikipedia.wikipedia_page_summary_collector import WikipediaPageSummaryCollector
+
 
 class BaseWikipediaAgeCollector(ABC):
-    def __init__(self, db_engine: AsyncEngine, pool_executor: AioPoolExecutor):
+    def __init__(self,
+                 db_engine: AsyncEngine,
+                 pool_executor: AioPoolExecutor,
+                 page_summary_collector: WikipediaPageSummaryCollector = WikipediaPageSummaryCollector()):
         self._db_engine = db_engine
         self._pool_executor = pool_executor
+        self._page_summary_collector = page_summary_collector
 
     async def collect(self, limit: Optional[int]) -> Dict[str, str]:
         logger.info(f"Starting to collect artists age details using `{self.__class__.__name__}` collector")
@@ -40,11 +45,9 @@ class BaseWikipediaAgeCollector(ABC):
         artist_id, artist_detail = artist_id_and_detail
         artist_page_name = self._get_artist_wikipedia_name(artist_detail)
         wikipedia_abbreviation = self._get_wikipedia_abbreviation(artist_detail)
-        wikipedia = self._get_wikipedia(wikipedia_abbreviation)
-        func = partial(wikipedia.page, artist_page_name)
-        page = await run_async(func)
+        summary = await self._page_summary_collector.collect(artist_page_name, wikipedia_abbreviation)
 
-        return artist_id, page.summary
+        return artist_id, summary
 
     @lru_cache
     def _get_wikipedia(self, language: str) -> Wikipedia:
