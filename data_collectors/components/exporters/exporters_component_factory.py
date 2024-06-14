@@ -1,4 +1,5 @@
 from genie_datastores.postgres.operations import get_database_engine
+from spotipyio.logic.authentication.spotify_session import SpotifySession
 
 from data_collectors.components.environment_component_factory import EnvironmentComponentFactory
 from data_collectors.components.sessions_component_factory import SessionsComponentFactory
@@ -25,4 +26,11 @@ class ExportersComponentFactory:
         return ShazamMatchesExporter(
             db_engine=get_database_engine(),
             sheets_uploader=self.tools.get_google_sheets_uploader()
+        )
+
+    def get_users_playlists_exporter(self, spotify_session: SpotifySession) -> UsersPlaylistsExporter:
+        spotify_client = self.tools.get_spotify_client(spotify_session)
+        return UsersPlaylistsExporter(
+            spotify_client=spotify_client,
+            google_sheets_uploader=self.tools.get_google_sheets_uploader()
         )

@@ -13,7 +13,7 @@ from data_collectors.consts.general_consts import SIMILARITY
 from data_collectors.consts.musixmatch_consts import ARTIST_NAME
 from data_collectors.consts.shazam_consts import KEY
 from data_collectors.consts.spotify_consts import NAME
-from data_collectors.contract.exporter_interface import IExporter
+from data_collectors.contract import IExporter
 
 ACTUAL_KEY = "actual_key"
 

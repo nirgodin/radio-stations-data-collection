@@ -13,7 +13,7 @@ from data_collectors.consts.general_consts import SIMILARITY
 from data_collectors.consts.shazam_matches_exporter_consts import QUERY_COLUMNS, SPOTIFY_KEY_COLUMN, \
     SPOTIFY_TRACK_NAME_COLUMN, SPOTIFY_ARTIST_NAME_COLUMN, SHAZAM_KEY_COLUMN, SHAZAM_ARTIST_NAME_COLUMN, \
     SHAZAM_TRACK_NAME_COLUMN
-from data_collectors.contract.exporter_interface import IExporter
+from data_collectors.contract import IExporter
 
 
 class ShazamMatchesExporter(IExporter):
