@@ -6,6 +6,7 @@ from typing import Any, List
 from genie_common.tools import AioPoolExecutor, logger
 from genie_datastores.postgres.models import DataSource
 from google.generativeai import GenerativeModel
+from pydantic import ValidationError
 
 from data_collectors.contract import ICollector
 from data_collectors.logic.models import ArtistExtractedDetails, ArtistExistingDetails, ArtistDetailsExtractionResponse
@@ -64,7 +65,7 @@ class GeminiArtistsAboutParsingCollector(ICollector):
         )
 
         if response.parts:
-            extracted_details = ArtistExtractedDetails.parse_raw(response.text)
+            extracted_details = self._serialize_response(response.text)
         else:
             logger.warning(
                 f"Did not receive valid response parts for artist id `{existing_details.id}`. Returning empty details"
@@ -81,3 +82,17 @@ class GeminiArtistsAboutParsingCollector(ICollector):
             extracted_details=extracted_details,
             data_source=data_source
         )
+
+    @staticmethod
+    def _serialize_response(response_text: str) -> ArtistExtractedDetails:
+        try:
+            return ArtistExtractedDetails.parse_raw(response_text)
+
+        except ValidationError:
+            logger.exception("Failed serializing response text. Returning empty details")
+            return ArtistExtractedDetails(
+                birth_date=None,
+                death_date=None,
+                origin=None,
+                gender=None
+            )
