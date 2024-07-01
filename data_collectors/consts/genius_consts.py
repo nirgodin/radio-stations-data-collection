@@ -3,6 +3,7 @@ import re
 from data_collectors.logic.models import WebElement, HTMLElement
 
 GENIUS_BASE_URL = 'https://api.genius.com'
+GENIUS_SEARCH_URL = f"{GENIUS_BASE_URL}/search"
 META = 'meta'
 STATUS = 'status'
 RESPONSE = 'response'
