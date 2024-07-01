@@ -7,6 +7,7 @@ from data_collectors.logic.models.artist_wikipedia_details import ArtistWikipedi
 from data_collectors.logic.models.database_update_request import DBUpdateRequest
 from data_collectors.logic.models.date_range import DateRange
 from data_collectors.logic.models.eurovision_record import EurovisionRecord
+from data_collectors.logic.models.genius_text_format import GeniusTextFormat
 from data_collectors.logic.models.glglz_chart_details import GlglzChartDetails
 from data_collectors.logic.models.html_element import HTMLElement
 from data_collectors.logic.models.lyrics_source_details import LyricsSourceDetails
@@ -26,6 +27,7 @@ __all__ = [
     "DBUpdateRequest",
     "EurovisionRecord",
     "HTMLElement",
+    "GeniusTextFormat",
     "GlglzChartDetails",
     "LyricsSourceDetails",
     "MissingTrack",

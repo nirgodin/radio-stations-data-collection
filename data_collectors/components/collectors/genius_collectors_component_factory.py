@@ -1,15 +1,18 @@
 from aiohttp import ClientSession
 from spotipyio import EntityMatcher
 
-from data_collectors.logic.collectors import GeniusSearchCollector, GeniusLyricsCollector
+from data_collectors.components.tools_component_factory import ToolsComponentFactory
+from data_collectors.logic.collectors import GeniusSearchCollector, GeniusLyricsCollector, GeniusTracksCollector
 from genie_common.tools import AioPoolExecutor
 
 from data_collectors.tools import MultiEntityMatcher, GeniusTrackEntityExtractor, GeniusArtistEntityExtractor
 
 
 class GeniusCollectorsComponentFactory:
-    @staticmethod
-    def get_search_collector(session: ClientSession, pool_executor: AioPoolExecutor) -> GeniusSearchCollector:
+    def __init__(self, tools: ToolsComponentFactory = ToolsComponentFactory()):
+        self._tools = tools
+
+    def get_search_collector(self, session: ClientSession) -> GeniusSearchCollector:
         entity_matcher = EntityMatcher(
             {
                 GeniusTrackEntityExtractor(): 0.7,
@@ -18,10 +21,18 @@ class GeniusCollectorsComponentFactory:
         )
         return GeniusSearchCollector(
             session=session,
-            pool_executor=pool_executor,
+            pool_executor=self._tools.get_pool_executor(),
             entity_matcher=MultiEntityMatcher(entity_matcher)
         )
 
-    @staticmethod
-    def get_lyrics_collector(session: ClientSession, pool_executor: AioPoolExecutor) -> GeniusLyricsCollector:
-        return GeniusLyricsCollector(session=session, pool_executor=pool_executor)
+    def get_lyrics_collector(self, session: ClientSession) -> GeniusLyricsCollector:
+        return GeniusLyricsCollector(
+            session=session,
+            pool_executor=self._tools.get_pool_executor()
+        )
+
+    def get_tracks_collector(self, session: ClientSession) -> GeniusTracksCollector:
+        return GeniusTracksCollector(
+            session=session,
+            pool_executor=self._tools.get_pool_executor()
+        )

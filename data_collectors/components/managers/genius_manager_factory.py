@@ -7,9 +7,14 @@ from data_collectors.logic.managers import *
 
 class GeniusManagerFactory(BaseManagerFactory):
     def get_missing_ids_manager(self, session: ClientSession) -> GeniusMissingIDsManager:
-        pool_executor = self.tools.get_pool_executor()
         return GeniusMissingIDsManager(
             db_engine=get_database_engine(),
-            search_collector=self.collectors.genius.get_search_collector(session, pool_executor),
+            search_collector=self.collectors.genius.get_search_collector(session),
             track_ids_updater=self.updaters.get_track_ids_updater()
+        )
+
+    def get_artists_ids_manager(self, session: ClientSession) -> GeniusArtistsIDsManager:
+        return GeniusArtistsIDsManager(
+            db_engine=get_database_engine(),
+            tracks_collector=self.collectors.genius.get_tracks_collector(session)
         )

@@ -46,7 +46,7 @@ class MiscellaneousManagerFactory(BaseManagerFactory):
         prioritized_sources = [
             LyricsSourceDetails(
                 column=TrackIDMapping.genius_id,
-                collector=self.collectors.genius.get_lyrics_collector(session, pool_executor),
+                collector=self.collectors.genius.get_lyrics_collector(session),
                 data_source=DataSource.GENIUS
             ),
             LyricsSourceDetails(
