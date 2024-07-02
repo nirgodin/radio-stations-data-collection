@@ -2,7 +2,7 @@ from functools import partial
 from typing import Optional, Dict, List, Literal
 
 from aiohttp import ClientSession
-from genie_common.tools import AioPoolExecutor
+from genie_common.tools import AioPoolExecutor, logger
 from genie_common.utils import safe_nested_get
 
 from data_collectors.consts.genius_consts import GENIUS_TRACK_URL_FORMAT, TEXT_FORMAT, RESPONSE, SONG
@@ -17,6 +17,7 @@ class GeniusTracksCollector(ICollector):
         self._session = session
 
     async def collect(self, ids: List[str], text_format: GeniusTextFormat) -> List[dict]:
+        logger.info(f"Searching genius for {len(ids)} tracks with format `{text_format.value}`")
         return await self._pool_executor.run(
             iterable=ids,
             func=partial(self._collect_single, text_format),
