@@ -35,10 +35,11 @@ class GeniusArtistsIDsManager(IManager):
     async def _query_genius_id_to_artist_id_map(self, limit: Optional[int]) -> Dict[str, str]:
         logger.info("Querying db for genius tracks ids and spotify artists ids")
         query = (
-            select(TrackIDMapping.genius_id, SpotifyArtist.id)
+            select(TrackIDMapping.genius_id, Artist.id)
             .where(TrackIDMapping.id == SpotifyTrack.id)
-            .where(SpotifyTrack.artist_id == SpotifyArtist.id)
+            .where(SpotifyTrack.artist_id == Artist.id)
             .where(TrackIDMapping.genius_id.isnot(None))
+            .where(Artist.genius_id.is_(None))
             .limit(limit)
         )
         cursor = await execute_query(engine=self._db_engine, query=query)
