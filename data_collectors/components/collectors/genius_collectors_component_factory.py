@@ -2,9 +2,12 @@ from aiohttp import ClientSession
 from spotipyio import EntityMatcher
 
 from data_collectors.components.tools_component_factory import ToolsComponentFactory
-from data_collectors.logic.collectors import GeniusSearchCollector, GeniusLyricsCollector, GeniusTracksCollector
-from genie_common.tools import AioPoolExecutor
-
+from data_collectors.logic.collectors import (
+    GeniusSearchCollector,
+    GeniusLyricsCollector,
+    GeniusTracksCollector,
+    GeniusArtistsCollector
+)
 from data_collectors.tools import MultiEntityMatcher, GeniusTrackEntityExtractor, GeniusArtistEntityExtractor
 
 
@@ -33,6 +36,12 @@ class GeniusCollectorsComponentFactory:
 
     def get_tracks_collector(self, session: ClientSession) -> GeniusTracksCollector:
         return GeniusTracksCollector(
+            session=session,
+            pool_executor=self._tools.get_pool_executor()
+        )
+
+    def get_artists_collector(self, session: ClientSession) -> GeniusArtistsCollector:
+        return GeniusArtistsCollector(
             session=session,
             pool_executor=self._tools.get_pool_executor()
         )

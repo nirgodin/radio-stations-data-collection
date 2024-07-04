@@ -11,6 +11,7 @@ from data_collectors.logic.managers.charts.radio_charts_manager import RadioChar
 from data_collectors.logic.managers.embeddings.track_names_embeddings_retrieval_manager import \
     TrackNamesEmbeddingsRetrievalManager
 from data_collectors.logic.managers.genius.genius_artists_ids_manager import GeniusArtistsIDsManager
+from data_collectors.logic.managers.genius.genius_artists_manager import GeniusArtistsManager
 from data_collectors.logic.managers.genres.genres_artists_origin_manager import GenresArtistsOriginManager
 from data_collectors.logic.managers.genres.genres_mapping_manager import GenresMappingManager
 from data_collectors.logic.managers.genres.primary_genre_manager import PrimaryGenreManager
@@ -52,6 +53,7 @@ __all__ = [
     "EurovisionMissingTracksManager",
     "EveryHitChartsManager",
     "GeniusArtistsIDsManager",
+    "GeniusArtistsManager",
     "GeniusMissingIDsManager",
     "GenresArtistsOriginManager",
     "GenresMappingManager",

@@ -2,17 +2,17 @@ from typing import Optional, Dict, List
 
 from genie_common.tools import logger
 from genie_common.utils import safe_nested_get
-from genie_datastores.postgres.models import TrackIDMapping, SpotifyArtist, SpotifyTrack, Artist
+from genie_datastores.postgres.models import TrackIDMapping, SpotifyTrack, Artist
 from genie_datastores.postgres.operations import execute_query
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncEngine
 
-from data_collectors.logic.updaters import ValuesDatabaseUpdater
 from data_collectors.consts.genius_consts import PRIMARY_ARTIST
 from data_collectors.consts.spotify_consts import ID
-from data_collectors.logic.collectors import GeniusTracksCollector
 from data_collectors.contract import IManager
+from data_collectors.logic.collectors import GeniusTracksCollector
 from data_collectors.logic.models import GeniusTextFormat, DBUpdateRequest
+from data_collectors.logic.updaters import ValuesDatabaseUpdater
 
 
 class GeniusArtistsIDsManager(IManager):
@@ -27,10 +27,12 @@ class GeniusArtistsIDsManager(IManager):
     async def run(self, limit: Optional[int]) -> None:
         logger.info(f"Starting to search for {limit} artists ids")
         genius_id_artist_id_mapping = await self._query_genius_id_to_artist_id_map(limit)
-        track_ids = list(genius_id_artist_id_mapping.keys())
-        tracks = await self._tracks_collector.collect(track_ids, GeniusTextFormat.PLAIN)
-        artists_ids_map = self._map_spotify_and_genius_artists_ids(tracks, genius_id_artist_id_mapping)
-        await self._update_artists_genius_ids(artists_ids_map)
+
+        if not genius_id_artist_id_mapping:
+            logger.info("Did not find any missing genius ids. Aborting")
+            return
+
+        await self._collect_and_update_artists_ids()
 
     async def _query_genius_id_to_artist_id_map(self, limit: Optional[int]) -> Dict[str, str]:
         logger.info("Querying db for genius tracks ids and spotify artists ids")
@@ -60,6 +62,12 @@ class GeniusArtistsIDsManager(IManager):
                 spotify_genius_artists_ids_map.update(ids_map)
 
         return spotify_genius_artists_ids_map
+
+    async def _collect_and_update_artists_ids(self, genius_id_artist_id_mapping: Dict[str, str]):
+        track_ids = list(genius_id_artist_id_mapping.keys())
+        tracks = await self._tracks_collector.collect(track_ids, GeniusTextFormat.PLAIN)
+        artists_ids_map = self._map_spotify_and_genius_artists_ids(tracks, genius_id_artist_id_mapping)
+        await self._update_artists_genius_ids(artists_ids_map)
 
     def _map_single_track_ids(self, track: dict, spotify_genius_artists_ids_map: Dict[str, str]) -> Optional[Dict[str, str]]:
         track_id = self._extract_genius_id(track, paths=[ID])
