@@ -3,6 +3,7 @@ from genie_datastores.postgres.operations import get_database_engine
 
 from data_collectors.components.managers.base_manager_factory import BaseManagerFactory
 from data_collectors.logic.managers import *
+from data_collectors.logic.models import GeniusTextFormat
 
 
 class GeniusManagerFactory(BaseManagerFactory):
@@ -24,5 +25,6 @@ class GeniusManagerFactory(BaseManagerFactory):
         return GeniusArtistsManager(
             db_engine=get_database_engine(),
             artists_collector=self.collectors.genius.get_artists_collector(session),
-            chunks_inserter=self.inserters.get_chunks_database_inserter()
+            chunks_inserter=self.inserters.get_chunks_database_inserter(),
+            text_format=GeniusTextFormat.PLAIN
         )
