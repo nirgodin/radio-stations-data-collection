@@ -1,10 +1,9 @@
 from functools import partial
 from textwrap import dedent
-from textwrap import dedent
-from typing import Any, List
+from typing import List
 
 from genie_common.tools import AioPoolExecutor, logger
-from genie_datastores.postgres.models import DataSource
+from genie_datastores.models import DataSource
 from google.generativeai import GenerativeModel
 from pydantic import ValidationError
 

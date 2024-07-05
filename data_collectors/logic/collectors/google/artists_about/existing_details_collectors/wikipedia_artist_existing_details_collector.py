@@ -1,7 +1,8 @@
 from typing import Optional, List
 
 from genie_common.tools import logger, AioPoolExecutor
-from genie_datastores.postgres.models import Artist, DataSource, SpotifyArtist
+from genie_datastores.postgres.models import Artist, SpotifyArtist
+from genie_datastores.models import DataSource
 from genie_datastores.postgres.operations import execute_query
 from sqlalchemy import select
 from sqlalchemy.engine import Row

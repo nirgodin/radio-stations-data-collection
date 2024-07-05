@@ -1,7 +1,8 @@
 from typing import Optional, List
 
 from genie_common.tools import logger
-from genie_datastores.postgres.models import Artist, ShazamArtist, Gender, DataSource
+from genie_datastores.postgres.models import Artist, ShazamArtist, Gender
+from genie_datastores.models import DataSource
 from genie_datastores.postgres.operations import execute_query
 from sqlalchemy import select
 from sqlalchemy.engine import Row

@@ -7,10 +7,12 @@ from genie_common.tools import AioPoolExecutor, ChunksGenerator
 from genie_datastores.google.drive import GoogleDriveClient
 from genie_datastores.google.sheets import GoogleSheetsClient, GoogleSheetsUploader, ShareSettings, PermissionType, Role
 from genie_datastores.milvus import MilvusClient
+from genie_datastores.mongo.operations import get_motor_client
 from genie_datastores.postgres.operations import get_database_engine
 from google import generativeai
 from google.generativeai import GenerativeModel
 from langid.langid import LanguageIdentifier, model
+from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorCollection, AsyncIOMotorDatabase
 from openai import OpenAI
 from shazamio import Shazam
 from spotipyio import SpotifyClient
@@ -100,6 +102,15 @@ class ToolsComponentFactory:
     def get_gemini_model(self, model_name: str = 'models/gemini-1.5-pro-latest') -> GenerativeModel:
         generativeai.configure(api_key=self.env.get_gemini_api_key())
         return GenerativeModel(model_name=model_name)
+
+    def get_about_collection(self) -> AsyncIOMotorCollection:
+        db = self.get_mongo_db()
+        return db["abouts"]
+
+    @staticmethod
+    def get_mongo_db() -> AsyncIOMotorDatabase:
+        motor_client = get_motor_client()
+        return motor_client["genie"]
 
     def _get_google_default_share_settings(self) -> List[ShareSettings]:
         users = self.env.get_google_sheets_users()

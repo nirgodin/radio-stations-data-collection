@@ -1,4 +1,4 @@
-from genie_datastores.postgres.models import DataSource
+from genie_datastores.models import DataSource
 from pydantic import BaseModel
 
 from data_collectors.logic.models.artist_about.artist_extracted_details import ArtistExtractedDetails

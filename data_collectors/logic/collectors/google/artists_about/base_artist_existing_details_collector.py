@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Optional, List
 
-from genie_datastores.postgres.models import DataSource
+from genie_datastores.models import DataSource
 from sqlalchemy.ext.asyncio import AsyncEngine
 
 from data_collectors.contract import ICollector

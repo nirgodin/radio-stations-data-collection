@@ -1,7 +1,7 @@
 from typing import Type
 
-from genie_datastores.postgres.models import SpotifyArtist, Artist, DataSource, EntityType, ShazamArtist, ShazamTrack, \
-    TrackIDMapping, SpotifyTrack
+from genie_datastores.postgres.models import Artist, ShazamArtist
+from genie_datastores.models import DataSource, EntityType
 from sqlalchemy import select
 from sqlalchemy.sql import Select
 

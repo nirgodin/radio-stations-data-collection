@@ -1,6 +1,7 @@
 from aiohttp import ClientSession
 from genie_datastores.milvus import MilvusClient
-from genie_datastores.postgres.models import TrackIDMapping, DataSource
+from genie_datastores.postgres.models import TrackIDMapping
+from genie_datastores.models import DataSource
 from genie_datastores.postgres.operations import get_database_engine
 from spotipyio.logic.authentication.spotify_session import SpotifySession
 

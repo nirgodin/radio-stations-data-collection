@@ -2,7 +2,8 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Optional
 
-from genie_datastores.postgres.models import Artist, DataSource
+from genie_datastores.postgres.models import Artist
+from genie_datastores.models import DataSource
 
 from data_collectors.logic.models.database_update_request import DBUpdateRequest
 

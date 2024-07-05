@@ -3,7 +3,8 @@ from typing import Optional, Dict, Tuple, Type
 
 from database.orm_models.base_orm_model import BaseORMModel
 from genie_common.tools import AioPoolExecutor, logger
-from genie_datastores.postgres.models import Translation, DataSource, EntityType
+from genie_datastores.postgres.models import Translation
+from genie_datastores.models import DataSource, EntityType
 from genie_datastores.postgres.operations import execute_query
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncEngine

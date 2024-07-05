@@ -1,8 +1,9 @@
 from typing import Dict, List
 
 from genie_common.tools import logger
-from genie_datastores.postgres.models import Chart, ChartEntry, Decision, DataSource, Table, Artist, \
+from genie_datastores.postgres.models import Chart, ChartEntry, Decision, Table, Artist, \
     SpotifyArtist, SpotifyTrack
+from genie_datastores.models import DataSource
 from genie_datastores.postgres.operations import execute_query
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncEngine

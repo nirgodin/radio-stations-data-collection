@@ -1,8 +1,7 @@
 from typing import Optional, List
 
-from genie_common.clients.google import GoogleTranslateClient
 from genie_common.utils import contains_any_hebrew_character
-from genie_datastores.postgres.models import EntityType
+from genie_datastores.models import EntityType
 from spotipyio import SpotifyClient, EntityMatcher, SearchItem, SearchItemFilters, SearchItemMetadata, \
     SpotifySearchType, MatchingEntity
 
