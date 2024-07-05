@@ -2,16 +2,23 @@ from typing import Optional, List
 
 from genie_common.tools import logger
 from genie_common.utils import safe_nested_get
+from genie_datastores.models import DataSource, EntityType
+from genie_datastores.mongo.models import AboutDocument
 from genie_datastores.postgres.models import GeniusArtist, Artist
 from genie_datastores.postgres.operations import execute_query
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncEngine
 
-from data_collectors.consts.genius_consts import ALTERNATE_NAMES, FACEBOOK_NAME, INSTAGRAM_NAME, TWITTER_NAME, \
+from data_collectors.consts.genius_consts import (
+    ALTERNATE_NAMES,
+    FACEBOOK_NAME,
+    INSTAGRAM_NAME,
+    TWITTER_NAME,
     DESCRIPTION
+)
 from data_collectors.consts.spotify_consts import ID, NAME
-from data_collectors.logic.collectors import GeniusArtistsCollector
 from data_collectors.contract import IManager
+from data_collectors.logic.collectors import GeniusArtistsCollector
 from data_collectors.logic.inserters.postgres import ChunksDatabaseInserter
 from data_collectors.logic.models import GeniusTextFormat
 
@@ -61,7 +68,7 @@ class GeniusArtistsManager(IManager):
 
         for artist in artists:
             record = GeniusArtist(
-                id=artist[ID],
+                id=str(artist[ID]),
                 name=artist[NAME],
                 alternate_names=artist.get(ALTERNATE_NAMES),
                 facebook_name=artist.get(FACEBOOK_NAME),
@@ -74,25 +81,32 @@ class GeniusArtistsManager(IManager):
 
     async def _insert_artists_about_documents(self, artists: List[dict]) -> None:
         logger.info(f"Extracting artists description documents")
-        descriptions = self._extract_artists_descriptions(artists)
+        documents = self._create_about_documents(artists)
 
-        if not descriptions:
+        if not documents:
             logger.info("Did not find any valid description. Aborting documents insertion")
             return
 
-        logger.info(f"Inserting {len(descriptions)} artists description documents")
-        raise
+        logger.info(f"Inserting {len(documents)} artists description documents")
+        await AboutDocument.insert_many(documents)
 
-    def _extract_artists_descriptions(self, artists: List[dict]) -> List[str]:
-        descriptions = []
+    def _create_about_documents(self, artists: List[dict]) -> List[AboutDocument]:
+        documents = []
 
         for artist in artists:
             description = self._extract_single_document_description(artist)
 
             if description is not None:
-                descriptions.append(description)
+                document = AboutDocument(
+                    about=description,
+                    entity_type=EntityType.ARTIST,
+                    entity_id=str(artist[ID]),
+                    name=artist[NAME],
+                    source=DataSource.GENIUS
+                )
+                documents.append(document)
 
-        return descriptions
+        return documents
 
     def _extract_single_document_description(self, artist: dict) -> Optional[str]:
         description = safe_nested_get(artist, [DESCRIPTION, self._text_format.value])

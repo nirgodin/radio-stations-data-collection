@@ -1,4 +1,3 @@
-from data_collectors.logic.models.about_document import AboutDocument
 from data_collectors.logic.models.address_component_setting import AddressComponentSetting
 from data_collectors.logic.models.artist_about.artist_extracted_details import ArtistExtractedDetails, BaseDecision
 from data_collectors.logic.models.artist_about.artist_details_extraction_response import ArtistDetailsExtractionResponse
@@ -17,7 +16,6 @@ from data_collectors.logic.models.radio_chart_entry_details import RadioChartEnt
 from data_collectors.logic.models.web_element import WebElement
 
 __all__ = [
-    "AboutDocument",
     "AddressComponentSetting",
     "ArtistExtractedDetails",
     "ArtistExistingDetails",

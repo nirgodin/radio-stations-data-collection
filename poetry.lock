@@ -775,8 +775,8 @@ redis = ["redis (>=5.0.3,<5.1)"]
 [package.source]
 type = "git"
 url = "https://github.com/nirgodin/genie-datastores.git"
-reference = "2c16a165"
-resolved_reference = "2c16a165ce8c7db620d284245c3650ff4a7d8e5b"
+reference = "8d217242"
+resolved_reference = "8d217242b4fdb627e53a139ddcf309146e031824"
 
 [[package]]
 name = "google-ai-generativelanguage"
@@ -2788,4 +2788,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.12"
-content-hash = "6a7a5b590159d2dc6e3139bb7faef721f13869570423d41506f7245ae825f73c"
+content-hash = "b2822878b9b9ffa845c73770ca14d926e4718259c650cf36740acafadd8f420a"

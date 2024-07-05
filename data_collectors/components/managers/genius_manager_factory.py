@@ -1,4 +1,5 @@
 from aiohttp import ClientSession
+from genie_datastores.mongo.operations import initialize_mongo
 from genie_datastores.postgres.operations import get_database_engine
 
 from data_collectors.components.managers.base_manager_factory import BaseManagerFactory
@@ -21,10 +22,11 @@ class GeniusManagerFactory(BaseManagerFactory):
             db_updater=self.updaters.get_values_updater()
         )
 
-    def get_artists_manager(self, session: ClientSession) -> GeniusArtistsManager:
+    async def get_artists_manager(self, session: ClientSession) -> GeniusArtistsManager:
+        await initialize_mongo()
         return GeniusArtistsManager(
             db_engine=get_database_engine(),
             artists_collector=self.collectors.genius.get_artists_collector(session),
             chunks_inserter=self.inserters.get_chunks_database_inserter(),
-            text_format=GeniusTextFormat.PLAIN
+            text_format=GeniusTextFormat.PLAIN,
         )
