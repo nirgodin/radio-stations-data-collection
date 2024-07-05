@@ -39,19 +39,16 @@ class RadioChartsDataCollector(IChartsDataCollector):
             for sheet_name in yearly_charts_data.sheet_names:
                 weekly_chart_data = yearly_charts_data.parse(sheet_name, header=1)
                 filtered_chart_data = self._filter_weekly_chart_data(weekly_chart_data)
-                chart_date = self._get_chart_date(sheet_name)
 
-                for _, row in filtered_chart_data.iterrows():
-                    yield ChartEntry(
-                        track_id=None,
+                if filtered_chart_data is not None:
+                    yield from self._generate_single_date_entries(
+                        sheet_name=sheet_name,
+                        filtered_chart_data=filtered_chart_data,
                         chart=chart,
-                        date=chart_date,
-                        key=CHART_KEY_FORMAT.format(artist=row[ARTIST_COLUMN_NAME], track=row[SONG_COLUMN_NAME]),
-                        position=row[POSITION_COLUMN_NAME],
-                        comment=os.path.basename(chart_data_path)
+                        chart_data_path=chart_data_path
                     )
 
-    def _filter_weekly_chart_data(self, weekly_chart_data: DataFrame) -> DataFrame:
+    def _filter_weekly_chart_data(self, weekly_chart_data: DataFrame) -> Optional[DataFrame]:
         chart_end_index = 0
 
         for i, row in weekly_chart_data.iterrows():
@@ -62,9 +59,27 @@ class RadioChartsDataCollector(IChartsDataCollector):
 
         filtered_rows_data = weekly_chart_data[weekly_chart_data.index <= chart_end_index]
         filtered_data = self._filter_data_columns(filtered_rows_data)
-        self._pre_process_position_column(filtered_data)
 
-        return filtered_data
+        if filtered_data is not None:
+            self._pre_process_position_column(filtered_data)
+            return filtered_data
+
+    def _generate_single_date_entries(self,
+                                      sheet_name: str,
+                                      filtered_chart_data: DataFrame,
+                                      chart: Chart,
+                                      chart_data_path: str) -> Generator[ChartEntry, None, None]:
+        chart_date = self._get_chart_date(sheet_name)
+
+        for _, row in filtered_chart_data.iterrows():
+            yield ChartEntry(
+                track_id=None,
+                chart=chart,
+                date=chart_date,
+                key=CHART_KEY_FORMAT.format(artist=row[ARTIST_COLUMN_NAME], track=row[SONG_COLUMN_NAME]),
+                position=row[POSITION_COLUMN_NAME],
+                comment=os.path.basename(chart_data_path)
+            )
 
     @staticmethod
     def _get_chart_date(sheet_name: str) -> Optional[datetime]:
@@ -91,11 +106,12 @@ class RadioChartsDataCollector(IChartsDataCollector):
         return os.path.join(dir_path, drive_file["name"])
 
     @staticmethod
-    def _filter_data_columns(data: DataFrame) -> DataFrame:
+    def _filter_data_columns(data: DataFrame) -> Optional[DataFrame]:
         columns = [column for column in CHART_RELEVANT_COLUMNS if column in data.columns]
 
         if len(columns) != 3:
-            raise ValueError("Invalid number of columns")
+            logger.warning("Invalid columns number. Ignoring current date data")
+            return
 
         filtered_data = data[columns]
         filtered_data.columns = [POSITION_COLUMN_NAME, SONG_COLUMN_NAME, ARTIST_COLUMN_NAME]

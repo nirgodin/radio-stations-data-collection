@@ -59,8 +59,9 @@ class GeniusArtistsManager(IManager):
 
     async def _query_and_insert_artists_data(self, artists_ids: List[str]) -> None:
         artists = await self._artists_collector.collect(ids=artists_ids, text_format=self._text_format)
-        await self._insert_artists_about_documents(artists)
-        await self._insert_genius_artists_records(artists)
+        valid_artists = [artist for artist in artists if not artist[NAME].lower() in ["genius", "spotify"]]
+        await self._insert_artists_about_documents(valid_artists)
+        await self._insert_genius_artists_records(valid_artists)
 
     async def _insert_genius_artists_records(self, artists: List[dict]) -> None:
         logger.info(f"Inserting {len(artists)} GeniusArtist records")
