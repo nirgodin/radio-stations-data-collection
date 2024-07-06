@@ -29,17 +29,29 @@ class GeminiArtistsAboutParsingCollector(ICollector):
     async def _extract_artist_details(self,
                                       data_source: DataSource,
                                       existing_details: ArtistExistingDetails) -> ArtistDetailsExtractionResponse:
+        if existing_details.about is None:
+            extracted_details = self._build_invalid_extracted_details_response()
+        else:
+            extracted_details = await self._fetch_model_response(existing_details)
+
+        return ArtistDetailsExtractionResponse(
+            existing_details=existing_details,
+            extracted_details=extracted_details,
+            data_source=data_source
+        )
+
+    async def _fetch_model_response(self, existing_details: ArtistExistingDetails) -> ArtistExtractedDetails:
         prompt = """\
             Please return JSON describing the birth date, death date, and origin of music artists from this about \
             paragraph using the following schema:
-        
+
             {
                 "birth_date": Optional[DateDecision],
                 "death_date": Optional[DateDecision],
                 "origin": Optional[StringDecision],
                 "gender": Optional[GenderDecision]
             }
-            
+
             DateDecision = {"value": Optional[datetime], "evidence": Optional[str], "confidence": Optional[float]}
             StringDecision = {"value": Optional[str], "evidence": Optional[str], "confidence": Optional[float]}
             GenderDecision = {"value": Optional[Gender], "evidence": Optional[str], "confidence": Optional[float]}
@@ -52,9 +64,9 @@ class GeminiArtistsAboutParsingCollector(ICollector):
             The `origin fields` should contain as much of the following details: country, state, county, city.
             In case the paragraph is discussing a band, treat the `birth_date` and `death_date` as if they were \
             describing formation date and disbandment date, respectively.
-        
+
             Important: Only return a single piece of valid JSON text.
-        
+
             Here is the about paragraph:
         """
 
@@ -64,22 +76,20 @@ class GeminiArtistsAboutParsingCollector(ICollector):
         )
 
         if response.parts:
-            extracted_details = self._serialize_response(response.text)
-        else:
-            logger.warning(
-                f"Did not receive valid response parts for artist id `{existing_details.id}`. Returning empty details"
-            )
-            extracted_details = ArtistExtractedDetails(
-                birth_date=None,
-                death_date=None,
-                origin=None,
-                gender=None
-            )
+            return self._serialize_response(response.text)
 
-        return ArtistDetailsExtractionResponse(
-            existing_details=existing_details,
-            extracted_details=extracted_details,
-            data_source=data_source
+        logger.warning(
+            f"Did not receive valid response parts for artist id `{existing_details.id}`. Returning empty details"
+        )
+        return self._build_invalid_extracted_details_response()
+
+    @staticmethod
+    def _build_invalid_extracted_details_response() -> ArtistExtractedDetails:
+        return ArtistExtractedDetails(
+            birth_date=None,
+            death_date=None,
+            origin=None,
+            gender=None
         )
 
     @staticmethod

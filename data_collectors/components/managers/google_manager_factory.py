@@ -24,6 +24,10 @@ class GoogleManagerFactory(BaseManagerFactory):
     def get_wikipedia_artists_about_manager(self) -> GeminiArtistsAboutManager:
         return self._get_artists_about_manager(self.collectors.wikipedia.get_wikipedia_existing_details_collector())
 
+    async def get_genius_artists_about_manager(self) -> GeminiArtistsAboutManager:
+        existing_details_collector = await self.collectors.genius.get_artists_existing_details_collector()
+        return self._get_artists_about_manager(existing_details_collector)
+
     def _get_artists_about_manager(self, existing_details_collector: BaseArtistsExistingDetailsCollector) -> GeminiArtistsAboutManager:
         return GeminiArtistsAboutManager(
             existing_details_collector=existing_details_collector,

@@ -1,4 +1,6 @@
 from aiohttp import ClientSession
+from genie_datastores.mongo.operations import initialize_mongo
+from genie_datastores.postgres.operations import get_database_engine
 from spotipyio import EntityMatcher
 
 from data_collectors.components.tools_component_factory import ToolsComponentFactory
@@ -6,7 +8,8 @@ from data_collectors.logic.collectors import (
     GeniusSearchCollector,
     GeniusLyricsCollector,
     GeniusTracksCollector,
-    GeniusArtistsCollector
+    GeniusArtistsCollector,
+    GeniusArtistsExistingDetailsCollector
 )
 from data_collectors.tools import MultiEntityMatcher, GeniusTrackEntityExtractor, GeniusArtistEntityExtractor
 
@@ -43,5 +46,12 @@ class GeniusCollectorsComponentFactory:
     def get_artists_collector(self, session: ClientSession) -> GeniusArtistsCollector:
         return GeniusArtistsCollector(
             session=session,
+            pool_executor=self._tools.get_pool_executor()
+        )
+
+    async def get_artists_existing_details_collector(self) -> GeniusArtistsExistingDetailsCollector:
+        await initialize_mongo()
+        return GeniusArtistsExistingDetailsCollector(
+            db_engine=get_database_engine(),
             pool_executor=self._tools.get_pool_executor()
         )
