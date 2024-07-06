@@ -32,7 +32,7 @@ class GeniusArtistsIDsManager(IManager):
             logger.info("Did not find any missing genius ids. Aborting")
             return
 
-        await self._collect_and_update_artists_ids()
+        await self._collect_and_update_artists_ids(genius_id_artist_id_mapping)
 
     async def _query_genius_id_to_artist_id_map(self, limit: Optional[int]) -> Dict[str, str]:
         logger.info("Querying db for genius tracks ids and spotify artists ids")
