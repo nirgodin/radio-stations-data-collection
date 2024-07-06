@@ -30,6 +30,7 @@ class GeminiArtistsAboutParsingCollector(ICollector):
                                       data_source: DataSource,
                                       existing_details: ArtistExistingDetails) -> ArtistDetailsExtractionResponse:
         if existing_details.about is None:
+            logger.info("Artists details are missing an about field. Returning empty details by default")
             extracted_details = self._build_invalid_extracted_details_response()
         else:
             extracted_details = await self._fetch_model_response(existing_details)
