@@ -63,9 +63,14 @@ class GeniusArtistsIDsManager(IManager):
 
         return spotify_genius_artists_ids_map
 
-    async def _collect_and_update_artists_ids(self, genius_id_artist_id_mapping: Dict[str, str]):
+    async def _collect_and_update_artists_ids(self, genius_id_artist_id_mapping: Dict[str, str]) -> None:
         track_ids = list(genius_id_artist_id_mapping.keys())
         tracks = await self._tracks_collector.collect(track_ids, GeniusTextFormat.PLAIN)
+
+        if not tracks:
+            logger.warning("Did not receive any valid response from tracks collector. Aborting")
+            return
+
         artists_ids_map = self._map_spotify_and_genius_artists_ids(tracks, genius_id_artist_id_mapping)
         await self._update_artists_genius_ids(artists_ids_map)
 
