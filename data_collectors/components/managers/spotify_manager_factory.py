@@ -3,7 +3,11 @@ from genie_datastores.postgres.operations import get_database_engine
 from spotipyio.logic.authentication.spotify_session import SpotifySession
 
 from data_collectors.components.managers.base_manager_factory import BaseManagerFactory
-from data_collectors.logic.managers import *
+from data_collectors.logic.managers import (
+    SpotifyPlaylistsArtistsManager,
+    SpotifyPlaylistsTracksManager,
+    ArtistsImagesGenderManager,
+)
 
 
 class SpotifyManagerFactory(BaseManagerFactory):

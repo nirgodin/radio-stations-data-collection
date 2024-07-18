@@ -30,10 +30,6 @@ from data_collectors.logic.managers.radio_snapshots_manager import RadioStations
 from data_collectors.logic.managers.shazam.shazam_birth_date_copy_manager import ShazamBirthDateCopyManager
 from data_collectors.logic.managers.shazam.shazam_origin_copy_manager import ShazamOriginCopyManager
 from data_collectors.logic.managers.shazam.shazam_top_tracks_manager import ShazamTopTracksManager
-from data_collectors.logic.managers.spotify_playlists.spotify_playlists_artists_manager import \
-    SpotifyPlaylistsArtistsManager
-from data_collectors.logic.managers.spotify_playlists.spotify_playlists_tracks_manager import \
-    SpotifyPlaylistsTracksManager
 from data_collectors.logic.managers.embeddings.track_names_embeddings_manager import TrackNamesEmbeddingsManager
 from data_collectors.logic.managers.tracks_lyrics_manager import TracksLyricsManager
 from data_collectors.logic.managers.tracks_lyrics_missing_ids_manager import TracksLyricsMissingIDsManager
@@ -42,43 +38,4 @@ from data_collectors.logic.managers.translations.spotify_israeli_tracks_translat
     SpotifyIsraeliTracksTranslationManager
 from data_collectors.logic.managers.wikipedia_artists_age_manager import WikipediaArtistsAgeManager
 from data_collectors.logic.managers.google import *
-
-__all__ = [
-    "ArtistsImagesGenderManager",
-    "BaseTranslationManager",
-    "BillboardManager",
-    "ChartsTaggedMistakesManager",
-    "ChartsIsraeliArtistsManager",
-    "EurovisionChartsManager",
-    "EurovisionMissingTracksManager",
-    "EveryHitChartsManager",
-    "GeniusArtistsIDsManager",
-    "GeniusArtistsManager",
-    "GeniusMissingIDsManager",
-    "GenresArtistsOriginManager",
-    "GenresMappingManager",
-    "GlglzChartsManager",
-    "GoogleArtistsOriginGeocodingManager",
-    "GeminiArtistsAboutManager",
-    "MusixmatchMissingIDsManager",
-    "RadioChartsManager",
-    "RadioStationsSnapshotsManager",
-    "ShazamTopTracksManager",
-    "ShazamMissingIDsManager",
-    "ShazamBirthDateCopyManager",
-    "ShazamOriginCopyManager",
-    "PlaylistsChartsManager",
-    "PrimaryGenreManager",
-    "ShazamIsraeliArtistsTranslationManager",
-    "ShazamIsraeliTracksTranslationManager",
-    "SpotifyIsraeliArtistsTranslationManager",
-    "SpotifyIsraeliTracksTranslationManager",
-    "SpotifyPlaylistsArtistsManager",
-    "SpotifyPlaylistsTracksManager",
-    "TrackNamesEmbeddingsManager",
-    "TrackNamesEmbeddingsRetrievalManager",
-    "TracksLyricsManager",
-    "TracksLyricsMissingIDsManager",
-    "TracksVectorizerManager",
-    "WikipediaArtistsAgeManager"
-]
+from data_collectors.logic.managers.spotify import *
