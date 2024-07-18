@@ -1,8 +1,5 @@
 from data_collectors.logic.managers.artists_images_gender_manager import ArtistsImagesGenderManager
 from data_collectors.logic.managers.billboard_manager import BillboardManager
-from data_collectors.logic.managers.genres.genres_artists_origin_manager import GenresArtistsOriginManager
-from data_collectors.logic.managers.genres.genres_mapping_manager import GenresMappingManager
-from data_collectors.logic.managers.genres.primary_genre_manager import PrimaryGenreManager
 from data_collectors.logic.managers.translations.base_translation_manager import BaseTranslationManager
 from data_collectors.logic.managers.translations.shazam_israeli_artists_translation_manager import \
     ShazamIsraeliArtistsTranslationManager
@@ -28,3 +25,5 @@ from data_collectors.logic.managers.google import *
 from data_collectors.logic.managers.spotify import *
 from data_collectors.logic.managers.charts import *
 from data_collectors.logic.managers.embeddings import *
+from data_collectors.logic.managers.genius import *
+from data_collectors.logic.managers.genres import *
