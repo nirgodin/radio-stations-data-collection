@@ -1,7 +1,5 @@
 from data_collectors.logic.managers.artists_images_gender_manager import ArtistsImagesGenderManager
 from data_collectors.logic.managers.billboard_manager import BillboardManager
-from data_collectors.logic.managers.genius.genius_artists_ids_manager import GeniusArtistsIDsManager
-from data_collectors.logic.managers.genius.genius_artists_manager import GeniusArtistsManager
 from data_collectors.logic.managers.genres.genres_artists_origin_manager import GenresArtistsOriginManager
 from data_collectors.logic.managers.genres.genres_mapping_manager import GenresMappingManager
 from data_collectors.logic.managers.genres.primary_genre_manager import PrimaryGenreManager
