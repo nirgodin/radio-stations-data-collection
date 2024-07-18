@@ -7,14 +7,7 @@ from data_collectors.logic.managers.translations.shazam_israeli_tracks_translati
     ShazamIsraeliTracksTranslationManager
 from data_collectors.logic.managers.translations.spotify_israeli_artists_translation_manager import \
     SpotifyIsraeliArtistsTranslationManager
-from data_collectors.logic.managers.missing_ids_managers.genius_missing_ids_manager import GeniusMissingIDsManager
-from data_collectors.logic.managers.missing_ids_managers.musixmatch_missing_ids_manager import \
-    MusixmatchMissingIDsManager
-from data_collectors.logic.managers.missing_ids_managers.shazam_missing_ids_manager import ShazamMissingIDsManager
 from data_collectors.logic.managers.radio_snapshots_manager import RadioStationsSnapshotsManager
-from data_collectors.logic.managers.shazam.shazam_birth_date_copy_manager import ShazamBirthDateCopyManager
-from data_collectors.logic.managers.shazam.shazam_origin_copy_manager import ShazamOriginCopyManager
-from data_collectors.logic.managers.shazam.shazam_top_tracks_manager import ShazamTopTracksManager
 from data_collectors.logic.managers.tracks_lyrics_manager import TracksLyricsManager
 from data_collectors.logic.managers.tracks_lyrics_missing_ids_manager import TracksLyricsMissingIDsManager
 from data_collectors.logic.managers.tracks_vectorizer_manager import TracksVectorizerManager
@@ -27,3 +20,5 @@ from data_collectors.logic.managers.charts import *
 from data_collectors.logic.managers.embeddings import *
 from data_collectors.logic.managers.genius import *
 from data_collectors.logic.managers.genres import *
+from data_collectors.logic.managers.missing_ids_managers import *
+from data_collectors.logic.managers.shazam import *
