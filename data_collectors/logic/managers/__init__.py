@@ -1,10 +1,3 @@
-from data_collectors.logic.managers.artists_images_gender_manager import ArtistsImagesGenderManager
-from data_collectors.logic.managers.billboard_manager import BillboardManager
-from data_collectors.logic.managers.radio_snapshots_manager import RadioStationsSnapshotsManager
-from data_collectors.logic.managers.tracks_lyrics_manager import TracksLyricsManager
-from data_collectors.logic.managers.tracks_lyrics_missing_ids_manager import TracksLyricsMissingIDsManager
-from data_collectors.logic.managers.tracks_vectorizer_manager import TracksVectorizerManager
-from data_collectors.logic.managers.wikipedia_artists_age_manager import WikipediaArtistsAgeManager
 from data_collectors.logic.managers.google import *
 from data_collectors.logic.managers.spotify import *
 from data_collectors.logic.managers.charts import *
@@ -14,3 +7,4 @@ from data_collectors.logic.managers.genres import *
 from data_collectors.logic.managers.missing_ids_managers import *
 from data_collectors.logic.managers.shazam import *
 from data_collectors.logic.managers.translations import *
+from data_collectors.logic.managers.misc import *
