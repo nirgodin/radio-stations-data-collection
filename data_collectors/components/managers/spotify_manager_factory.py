@@ -23,11 +23,9 @@ class SpotifyManagerFactory(BaseManagerFactory):
                                           client_session: ClientSession,
                                           spotify_session: SpotifySession,
                                           confidence_threshold: float = 0.5) -> ArtistsImagesGenderManager:
-        pool_executor = self.tools.get_pool_executor()
         images_collector = self.collectors.spotify.get_artists_images_collector(
             client_session=client_session,
-            spotify_client=self.tools.get_spotify_client(spotify_session),
-            pool_executor=pool_executor
+            spotify_client=self.tools.get_spotify_client(spotify_session)
         )
 
         return ArtistsImagesGenderManager(

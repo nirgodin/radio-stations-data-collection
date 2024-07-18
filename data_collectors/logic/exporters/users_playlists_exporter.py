@@ -6,7 +6,7 @@ from genie_common.utils import safe_nested_get, chain_lists
 from genie_datastores.google.sheets import GoogleSheetsUploader, Sheet
 from spotipyio import SpotifyClient
 
-from data_collectors.consts.spotify_consts import ITEMS, ID, NAME, TRACKS
+from data_collectors.consts.spotify_consts import ITEMS, ID, NAME, TRACKS, SPOTIFY_OPEN_PLAYLIST_URL_FORMAT
 from data_collectors.contract import IExporter
 
 
@@ -47,7 +47,7 @@ class UsersPlaylistsExporter(IExporter):
                 "owner_id": safe_nested_get(item, ["owner", ID]),
                 "description": item["description"],
                 "total_tracks": safe_nested_get(item, [TRACKS, "total"]),
-                "url": f"https://open.spotify.com/playlist/{playlist_id}"
+                "url": SPOTIFY_OPEN_PLAYLIST_URL_FORMAT.format(id=playlist_id)
             }
             records.append(record)
 
