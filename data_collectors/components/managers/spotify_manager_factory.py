@@ -7,6 +7,7 @@ from data_collectors.logic.managers import (
     SpotifyPlaylistsArtistsManager,
     SpotifyPlaylistsTracksManager,
     ArtistsImagesGenderManager,
+    SpotifyArtistsAboutManager
 )
 
 
@@ -37,4 +38,10 @@ class SpotifyManagerFactory(BaseManagerFactory):
             artists_images_collector=images_collector,
             gender_detector=self.tools.get_image_gender_detector(confidence_threshold),
             db_updater=self.updaters.get_values_updater()
+        )
+
+    def get_artists_about_manager(self) -> SpotifyArtistsAboutManager:
+        return SpotifyArtistsAboutManager(
+            db_engine=get_database_engine(),
+            abouts_collector=self.collectors.spotify.get_spotify_artists_about_collector()
         )
