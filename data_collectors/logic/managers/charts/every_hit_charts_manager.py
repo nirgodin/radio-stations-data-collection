@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from typing import Dict, Any, List, Optional
+from typing import Dict, List, Optional
 
 from genie_common.utils import get_last_month_day
 from genie_datastores.postgres.models import ChartEntry, Chart

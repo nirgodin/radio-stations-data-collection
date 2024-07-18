@@ -1,13 +1,5 @@
 from data_collectors.logic.managers.artists_images_gender_manager import ArtistsImagesGenderManager
 from data_collectors.logic.managers.billboard_manager import BillboardManager
-from data_collectors.logic.managers.charts.charts_israeli_artists_manager import ChartsIsraeliArtistsManager
-from data_collectors.logic.managers.charts.charts_tagged_mistakes_manager import ChartsTaggedMistakesManager
-from data_collectors.logic.managers.charts.eurovision_charts_manager import EurovisionChartsManager
-from data_collectors.logic.managers.charts.eurovision_missing_tracks_manager import EurovisionMissingTracksManager
-from data_collectors.logic.managers.charts.every_hit_charts_manager import EveryHitChartsManager
-from data_collectors.logic.managers.charts.glglz_charts_manager import GlglzChartsManager
-from data_collectors.logic.managers.charts.playlists_charts_manager import PlaylistsChartsManager
-from data_collectors.logic.managers.charts.radio_charts_manager import RadioChartsManager
 from data_collectors.logic.managers.embeddings.track_names_embeddings_retrieval_manager import \
     TrackNamesEmbeddingsRetrievalManager
 from data_collectors.logic.managers.genius.genius_artists_ids_manager import GeniusArtistsIDsManager
@@ -39,3 +31,4 @@ from data_collectors.logic.managers.translations.spotify_israeli_tracks_translat
 from data_collectors.logic.managers.wikipedia_artists_age_manager import WikipediaArtistsAgeManager
 from data_collectors.logic.managers.google import *
 from data_collectors.logic.managers.spotify import *
+from data_collectors.logic.managers.charts import *
