@@ -1,7 +1,5 @@
 from data_collectors.logic.managers.artists_images_gender_manager import ArtistsImagesGenderManager
 from data_collectors.logic.managers.billboard_manager import BillboardManager
-from data_collectors.logic.managers.embeddings.track_names_embeddings_retrieval_manager import \
-    TrackNamesEmbeddingsRetrievalManager
 from data_collectors.logic.managers.genius.genius_artists_ids_manager import GeniusArtistsIDsManager
 from data_collectors.logic.managers.genius.genius_artists_manager import GeniusArtistsManager
 from data_collectors.logic.managers.genres.genres_artists_origin_manager import GenresArtistsOriginManager
@@ -22,7 +20,6 @@ from data_collectors.logic.managers.radio_snapshots_manager import RadioStations
 from data_collectors.logic.managers.shazam.shazam_birth_date_copy_manager import ShazamBirthDateCopyManager
 from data_collectors.logic.managers.shazam.shazam_origin_copy_manager import ShazamOriginCopyManager
 from data_collectors.logic.managers.shazam.shazam_top_tracks_manager import ShazamTopTracksManager
-from data_collectors.logic.managers.embeddings.track_names_embeddings_manager import TrackNamesEmbeddingsManager
 from data_collectors.logic.managers.tracks_lyrics_manager import TracksLyricsManager
 from data_collectors.logic.managers.tracks_lyrics_missing_ids_manager import TracksLyricsMissingIDsManager
 from data_collectors.logic.managers.tracks_vectorizer_manager import TracksVectorizerManager
@@ -32,3 +29,4 @@ from data_collectors.logic.managers.wikipedia_artists_age_manager import Wikiped
 from data_collectors.logic.managers.google import *
 from data_collectors.logic.managers.spotify import *
 from data_collectors.logic.managers.charts import *
+from data_collectors.logic.managers.embeddings import *
