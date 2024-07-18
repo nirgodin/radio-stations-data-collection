@@ -1,7 +1,7 @@
 from abc import abstractmethod
 from typing import Optional, Dict, Tuple, Type
 
-from database.orm_models.base_orm_model import BaseORMModel
+from genie_datastores.postgres.models import BaseORMModel
 from genie_common.tools import AioPoolExecutor, logger
 from genie_datastores.postgres.models import Translation
 from genie_datastores.models import DataSource, EntityType
