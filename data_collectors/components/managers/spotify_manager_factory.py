@@ -1,4 +1,5 @@
 from aiohttp import ClientSession
+from genie_datastores.mongo.operations import initialize_mongo
 from genie_datastores.postgres.operations import get_database_engine
 from spotipyio.logic.authentication.spotify_session import SpotifySession
 
@@ -40,8 +41,10 @@ class SpotifyManagerFactory(BaseManagerFactory):
             db_updater=self.updaters.get_values_updater()
         )
 
-    def get_artists_about_manager(self) -> SpotifyArtistsAboutManager:
+    async def get_artists_about_manager(self) -> SpotifyArtistsAboutManager:
+        await initialize_mongo()
         return SpotifyArtistsAboutManager(
             db_engine=get_database_engine(),
-            abouts_collector=self.collectors.spotify.get_spotify_artists_about_collector()
+            abouts_collector=self.collectors.spotify.get_spotify_artists_about_collector(),
+            db_updater=self.updaters.get_values_updater()
         )

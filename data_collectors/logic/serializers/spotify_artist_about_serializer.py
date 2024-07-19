@@ -7,8 +7,8 @@ from data_collectors.logic.models import SpotifyArtistAbout
 
 
 class SpotifyArtistAboutSerializer(ISerializer):
-    def serialize(self, artist_id: str, details: List[Dict[str, str]]) -> SpotifyArtistAbout:
-        artist_about = SpotifyArtistAbout(id=artist_id)
+    def serialize(self, artist_id: str, artist_name: str, details: List[Dict[str, str]]) -> SpotifyArtistAbout:
+        artist_about = SpotifyArtistAbout(id=artist_id, name=artist_name)
 
         for field_name, extraction_method in self._field_name_to_extraction_method.items():
             extracted_value = extraction_method(details)
@@ -38,7 +38,7 @@ class SpotifyArtistAboutSerializer(ISerializer):
                 paragraphs.append(paragraph)
 
         if paragraphs:
-            return "\n\n".join(paragraphs)
+            return "\n".join(paragraphs)
 
     @property
     def _field_name_to_extraction_method(self) -> Dict[str, Callable[[List[Dict[str, str]]], Optional[str]]]:

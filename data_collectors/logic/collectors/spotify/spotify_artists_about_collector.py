@@ -1,8 +1,7 @@
 from functools import partial
-from typing import Any, List, Dict
+from typing import List, Dict, Tuple
 
-from genie_common.tools import AioPoolExecutor
-from genie_common.utils import merge_dicts
+from genie_common.tools import AioPoolExecutor, logger
 from playwright.async_api import async_playwright, Browser
 
 from data_collectors.consts.spotify_consts import SPOTIFY_OPEN_ARTIST_URL_FORMAT, SPOTIFY_INFOBOX_SELECTOR
@@ -22,17 +21,25 @@ class SpotifyArtistsAboutCollector(ICollector):
         self._web_elements_extractor = web_elements_extractor
         self._artist_about_serializer = artist_about_serializer
 
-    async def collect(self, ids: List[str]) -> List[SpotifyArtistAbout]:
+    async def collect(self, id_name_map: Dict[str, str]) -> List[SpotifyArtistAbout]:
+        if not id_name_map:
+            logger.warning("Did not receive any artist id to collect. Returning empty list")
+            return []
+
+        logger.info(f"Starting to collect Spotify artists about for {len(id_name_map)} artists")
         async with async_playwright() as p:
             browser = await p.chromium.launch()
 
             return await self._pool_executor.run(
-                iterable=ids,
+                iterable=id_name_map.items(),
                 func=partial(self._collect_single_artist_details, browser),
                 expected_type=SpotifyArtistAbout
             )
 
-    async def _collect_single_artist_details(self, browser: Browser, artist_id: str) -> SpotifyArtistAbout:
+    async def _collect_single_artist_details(self,
+                                             browser: Browser,
+                                             artist_id_and_name: Tuple[str, str]) -> SpotifyArtistAbout:
+        artist_id, artist_name = artist_id_and_name
         html = await self._get_page_content(browser, artist_id)
         details = []
 
@@ -40,7 +47,7 @@ class SpotifyArtistsAboutCollector(ICollector):
             detail = self._web_elements_extractor.extract(html, element)
             details.extend(detail)
 
-        return self._artist_about_serializer.serialize(artist_id, details)
+        return self._artist_about_serializer.serialize(artist_id, artist_name, details)
 
     @staticmethod
     async def _get_page_content(browser: Browser, artist_id: str):
