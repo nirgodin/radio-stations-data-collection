@@ -23,9 +23,6 @@ class SpotifyArtistsAboutManager(IManager):
         self._db_updater = db_updater
 
     async def run(self, limit: Optional[int]) -> None:
-        # {'0289SkqAn0iOohwm0pIHv3': 'Pat Barrett', '1Yk8xJQxv9RJTKMwKrkPOz': 'Anne Vallayer',
-        #  '1bpcq3dBWR6ykfx2Sod8Fy': 'The Playmates', '3CiuXDKttPUT0tWGHicFUH': 'Tim Atlas',
-        #  '6LXtFndRkOihPIa2dWY3FH': 'Kalin Twins'}
         artists_ids_names_map = await self._query_missing_artists_ids(limit)
         abouts = await self._abouts_collector.collect(artists_ids_names_map)
         await self._update_social_media_fields(abouts)
