@@ -17,7 +17,7 @@ class SpotifyArtistAbout:
     twitter_name: Optional[str] = None
     about: Optional[str] = None
 
-    def to_update_request(self) -> DBUpdateRequest:
+    def to_social_media_update_request(self) -> DBUpdateRequest:
         return DBUpdateRequest(
             id=self.id,
             values={
@@ -25,6 +25,12 @@ class SpotifyArtistAbout:
                 SpotifyArtist.instagram_name: self.instagram_name,
                 SpotifyArtist.twitter_name: self.twitter_name,
             }
+        )
+
+    def to_existing_about_document_update_request(self) -> DBUpdateRequest:
+        return DBUpdateRequest(
+            id=self.id,
+            values={SpotifyArtist.has_about_document: True}
         )
 
     def to_about_document(self) -> AboutDocument:
