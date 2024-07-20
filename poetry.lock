@@ -737,8 +737,8 @@ clients = ["aiohttp (>=3.6.3,<3.9.0)", "google-cloud-translate (>=3.15.3,<3.16)"
 [package.source]
 type = "git"
 url = "https://github.com/nirgodin/genie-common.git"
-reference = "4cc296b74b266d66a342c4a08e0d4b91595a1d25"
-resolved_reference = "4cc296b74b266d66a342c4a08e0d4b91595a1d25"
+reference = "c65d99d137bd233f36b6142b2fd3dbdac373a62e"
+resolved_reference = "c65d99d137bd233f36b6142b2fd3dbdac373a62e"
 
 [[package]]
 name = "genie-datastores"
@@ -755,7 +755,7 @@ asyncpg = {version = "0.28.0", optional = true}
 beanie = {version = ">=1.26.0,<1.27", optional = true}
 billboard-py = {version = "^7.0.0", optional = true}
 dataclasses-json = {version = ">=0.6,<1.0", optional = true}
-genie-common = {git = "https://github.com/nirgodin/genie-common.git", rev = "4cc296b74b266d66a342c4a08e0d4b91595a1d25", extras = ["clients"]}
+genie-common = {git = "https://github.com/nirgodin/genie-common.git", rev = "c65d99d137bd233f36b6142b2fd3dbdac373a62e", extras = ["clients"]}
 google-api-python-client = {version = ">=2.8,<3.0", optional = true}
 greenlet = {version = "2.0.1", optional = true}
 gspread = {version = ">=5.12.4,<5.13", optional = true}
@@ -775,8 +775,8 @@ redis = ["redis (>=5.0.3,<5.1)"]
 [package.source]
 type = "git"
 url = "https://github.com/nirgodin/genie-datastores.git"
-reference = "9850f5dd"
-resolved_reference = "9850f5dd59f1d12c4adf7a35e7e7a50f74b4bbf7"
+reference = "8d713966"
+resolved_reference = "8d713966e9e08df493e54db55f006c83df8bf1f8"
 
 [[package]]
 name = "google-ai-generativelanguage"
@@ -2011,13 +2011,13 @@ diagrams = ["jinja2", "railroad-diagrams"]
 
 [[package]]
 name = "pytest"
-version = "8.2.2"
+version = "8.3.0"
 description = "pytest: simple powerful testing with Python"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "pytest-8.2.2-py3-none-any.whl", hash = "sha256:c434598117762e2bd304e526244f67bf66bbd7b5d6cf22138be51ff661980343"},
-    {file = "pytest-8.2.2.tar.gz", hash = "sha256:de4bb8104e201939ccdc688b27a89a7be2079b22e2bd2b07f806b6ba71117977"},
+    {file = "pytest-8.3.0-py3-none-any.whl", hash = "sha256:a1b30492f2676b476266a87f6551345fb25c0484fb6d09c86aa2eb07b5f71c2f"},
+    {file = "pytest-8.3.0.tar.gz", hash = "sha256:0fe75465746a643f2485f642edf5eb7af7918135177230471150409343f84a6b"},
 ]
 
 [package.dependencies]
@@ -2025,7 +2025,7 @@ colorama = {version = "*", markers = "sys_platform == \"win32\""}
 exceptiongroup = {version = ">=1.0.0rc8", markers = "python_version < \"3.11\""}
 iniconfig = "*"
 packaging = "*"
-pluggy = ">=1.5,<2.0"
+pluggy = ">=1.5,<2"
 tomli = {version = ">=1", markers = "python_version < \"3.11\""}
 
 [package.extras]
@@ -2788,4 +2788,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.12"
-content-hash = "82b9352c4084eccfebb76f0ebb1b1c3fbd8d0ac57d39177bb589ad2afb86e958"
+content-hash = "4de68e5742d43463586eb07ac8ce8b2d28db78094aca0204ad0b4464dd71b6d2"
