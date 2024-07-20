@@ -50,10 +50,14 @@ class SpotifyArtistsAboutManager(IManager):
     async def _insert_about_documents(self, abouts: List[SpotifyArtistAbout]) -> None:
         relevant_abouts = [record for record in abouts if record.about is not None]
         await self._update_existing_about_document(relevant_abouts)
-        logger.info("Inserting about documents")
         documents = [about.to_about_document() for about in relevant_abouts]
 
-        await AboutDocument.insert_many(documents)
+        if documents:
+            logger.info(f"Inserting {len(documents)} about documents")
+            await AboutDocument.insert_many(documents)
+
+        else:
+            logger.warning("Did not find any about document. Skipping documents insertion")
 
     async def _update_existing_about_document(self, abouts: List[SpotifyArtistAbout]) -> None:
         logger.info(f"Updating database about document exist for {len(abouts)} records")
