@@ -79,7 +79,7 @@ class SpotifyArtistsAboutCollector(ICollector):
                 child_element=WebElement(
                     name="about",
                     type=HTMLElement.P,
-                    class_="Type__TypeElement-sc-goli3j-0 kmAjkQ",
+                    class_="Type__TypeElement-sc-goli3j-0",
                     multiple=True,
                     enumerate=False
                 )
