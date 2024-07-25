@@ -3,7 +3,7 @@ from genie_datastores.postgres.operations import get_database_engine
 from shazamio import Shazam
 
 from data_collectors.components.managers.base_manager_factory import BaseManagerFactory
-from data_collectors.logic.inserters.postgres import ShazamInsertionsManager
+from data_collectors.logic.inserters import ShazamInsertionsManager
 from data_collectors.logic.managers import *
 
 

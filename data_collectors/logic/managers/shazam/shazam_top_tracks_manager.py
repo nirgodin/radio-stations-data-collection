@@ -5,7 +5,8 @@ from genie_common.tools import logger
 from data_collectors.consts.spotify_consts import ID
 from data_collectors.contract import IManager
 from data_collectors.logic.collectors import ShazamTopTracksCollector
-from data_collectors.logic.inserters.postgres import (ShazamInsertionsManager, ShazamTopTracksDatabaseInserter)
+from data_collectors.logic.inserters.postgres import ShazamTopTracksDatabaseInserter
+from data_collectors.logic.inserters import ShazamInsertionsManager
 
 
 class ShazamTopTracksManager(IManager):

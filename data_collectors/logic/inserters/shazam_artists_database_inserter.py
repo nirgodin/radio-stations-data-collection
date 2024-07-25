@@ -8,7 +8,8 @@ from genie_datastores.mongo.models import AboutDocument
 
 from data_collectors.consts.shazam_consts import ATTRIBUTES, ARTIST_BIO
 from data_collectors.consts.spotify_consts import ID, NAME
-from data_collectors.logic.inserters.postgres import ShazamArtistsPostgresDatabaseInserter
+from data_collectors.logic.inserters.postgres.shazam.shazam_artists_postgres_database_inserter import \
+    ShazamArtistsPostgresDatabaseInserter
 
 
 class ShazamArtistsDatabaseInserter(IDatabaseInserter):
@@ -18,7 +19,7 @@ class ShazamArtistsDatabaseInserter(IDatabaseInserter):
 
     async def insert(self, records: List[dict]) -> None:
         logger.info("Inserting Shazam Postgres records")
-        await self._postgres_inserter.insert(records)
+        # await self._postgres_inserter.insert(records)
         documents = self._serialize_about_documents(records)
 
         if not documents:
@@ -58,7 +59,7 @@ class ShazamArtistsDatabaseInserter(IDatabaseInserter):
             func=self._insert_single_about_document,
             expected_type=bool
         )
-        total_documents_number= len(documents)
+        total_documents_number = len(documents)
         valid_results_number = len(results)
         non_existing_documents = [result for result in results if result is False]
         non_existing_documents_number = len(non_existing_documents)
@@ -76,7 +77,9 @@ class ShazamArtistsDatabaseInserter(IDatabaseInserter):
             AboutDocument.entity_id == document.entity_id,
             AboutDocument.source == document.source
         )
-        if existing_document:
-            return True
 
-        await AboutDocument.insert_one(document)
+        if existing_document is None:
+            await AboutDocument.insert_one(document)
+            return False
+
+        return True
