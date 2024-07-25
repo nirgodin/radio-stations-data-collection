@@ -5,7 +5,7 @@ from genie_datastores.postgres.models import ShazamArtist
 from data_collectors.logic.inserters.postgres.base_ids_database_inserter import BaseIDsDatabaseInserter
 
 
-class ShazamArtistsDatabaseInserter(BaseIDsDatabaseInserter):
+class ShazamArtistsPostgresDatabaseInserter(BaseIDsDatabaseInserter):
     async def _get_raw_records(self, iterable: Iterable[dict]) -> Iterable[dict]:
         return iterable
 

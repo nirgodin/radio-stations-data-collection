@@ -29,7 +29,7 @@ __all__ = [
 
     # Shazam
     "ShazamTopTracksDatabaseInserter",
-    "ShazamArtistsDatabaseInserter",
+    "ShazamArtistsPostgresDatabaseInserter",
     "ShazamTracksDatabaseInserter",
     "ShazamInsertionsManager",
 

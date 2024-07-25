@@ -5,7 +5,7 @@ from genie_datastores.postgres.models.orm.base_orm_model import BaseORMModel
 from data_collectors.consts.shazam_consts import ADAM_ID
 from data_collectors.consts.spotify_consts import ARTISTS
 from data_collectors.logic.collectors import ShazamArtistsCollector, ShazamTracksCollector
-from data_collectors.logic.inserters.postgres.shazam.shazam_artists_database_inserter import ShazamArtistsDatabaseInserter
+from data_collectors.logic.inserters.shazam_artists_database_inserter import ShazamArtistsDatabaseInserter
 from data_collectors.logic.inserters.postgres.shazam.shazam_tracks_database_inserter import ShazamTracksDatabaseInserter
 from genie_common.tools import logger
 

@@ -15,3 +15,5 @@ SHAZAM_LYRICS_WEB_ELEMENT = WebElement(
     class_="lyrics",
 )
 DATA = "data"
+ATTRIBUTES = "attributes"
+ARTIST_BIO = "artistBio"
