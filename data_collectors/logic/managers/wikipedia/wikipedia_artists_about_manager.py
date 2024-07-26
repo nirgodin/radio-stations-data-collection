@@ -5,7 +5,7 @@ from genie_datastores.models import DataSource
 from genie_datastores.mongo.models import AboutDocument
 from genie_datastores.postgres.models import SpotifyArtist
 from genie_datastores.postgres.operations import execute_query
-from sqlalchemy import select
+from sqlalchemy import select, and_
 from sqlalchemy.ext.asyncio import AsyncEngine
 
 from data_collectors.logic.collectors import WikipediaPageSummaryCollector
@@ -38,7 +38,7 @@ class WikipediaArtistsAboutManager(IManager):
     async def _retrieve_artists_raw_details(self, limit: Optional[int]) -> List[WikipediaArtistAbout]:
         query = (
             select(SpotifyArtist.id, SpotifyArtist.name, SpotifyArtist.wikipedia_name, SpotifyArtist.wikipedia_language)
-            .where(SpotifyArtist.wikipedia_name.isnot(None))
+            .where(and_(SpotifyArtist.wikipedia_name.isnot(None), SpotifyArtist.wikipedia_language.isnot(None)))
             .order_by(SpotifyArtist.update_date.asc())
             .limit(limit)
         )
