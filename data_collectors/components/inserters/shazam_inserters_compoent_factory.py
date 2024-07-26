@@ -23,7 +23,8 @@ class ShazamInsertersComponentFactory:
         await initialize_mongo()
         return ShazamArtistsDatabaseInserter(
             postgres_inserter=self.get_artists_postgres_inserter(),
-            pool_executor=self._tools.get_pool_executor()
+            pool_executor=self._tools.get_pool_executor(),
+            db_engine=get_database_engine()
         )
 
     @staticmethod
