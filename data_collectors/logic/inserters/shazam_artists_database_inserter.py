@@ -5,6 +5,9 @@ from genie_common.utils import safe_nested_get
 from genie_datastores.contract import IDatabaseInserter
 from genie_datastores.models import EntityType, DataSource
 from genie_datastores.mongo.models import AboutDocument
+from genie_datastores.postgres.models import ShazamArtist
+from genie_datastores.postgres.utils import update_by_values
+from sqlalchemy.ext.asyncio import AsyncEngine
 
 from data_collectors.consts.shazam_consts import ATTRIBUTES, ARTIST_BIO
 from data_collectors.consts.spotify_consts import ID, NAME
@@ -13,13 +16,17 @@ from data_collectors.logic.inserters.postgres.shazam.shazam_artists_postgres_dat
 
 
 class ShazamArtistsDatabaseInserter(IDatabaseInserter):
-    def __init__(self, postgres_inserter: ShazamArtistsPostgresDatabaseInserter, pool_executor: AioPoolExecutor):
+    def __init__(self,
+                 postgres_inserter: ShazamArtistsPostgresDatabaseInserter,
+                 pool_executor: AioPoolExecutor,
+                 db_engine: AsyncEngine):
         self._postgres_inserter = postgres_inserter
         self._pool_executor = pool_executor
+        self._db_engine = db_engine
 
     async def insert(self, records: List[dict]) -> None:
         logger.info("Inserting Shazam Postgres records")
-        # await self._postgres_inserter.insert(records)
+        await self._postgres_inserter.insert(records)
         documents = self._serialize_about_documents(records)
 
         if not documents:
@@ -44,7 +51,7 @@ class ShazamArtistsDatabaseInserter(IDatabaseInserter):
     def _to_about_document(record: dict) -> Optional[AboutDocument]:
         about = safe_nested_get(record, [ATTRIBUTES, ARTIST_BIO])
 
-        if about:
+        if isinstance(about, str) and about.strip() != "":
             return AboutDocument(
                 about=about,
                 entity_type=EntityType.ARTIST,
@@ -71,8 +78,7 @@ class ShazamArtistsDatabaseInserter(IDatabaseInserter):
             f"{existing_documents_number} already exist, and {errors_number} encountered an error during insertion"
         )
 
-    @staticmethod
-    async def _insert_single_about_document(document: AboutDocument) -> bool:
+    async def _insert_single_about_document(self, document: AboutDocument) -> bool:
         existing_document = await AboutDocument.find_one(
             AboutDocument.entity_id == document.entity_id,
             AboutDocument.source == document.source
@@ -80,6 +86,13 @@ class ShazamArtistsDatabaseInserter(IDatabaseInserter):
 
         if existing_document is None:
             await AboutDocument.insert_one(document)
+            await update_by_values(
+                self._db_engine,
+                ShazamArtist,
+                {ShazamArtist.has_about_document: True},
+                ShazamArtist.id == document.entity_id,
+            )
+
             return False
 
         return True
