@@ -29,5 +29,5 @@ class WikipediaArtistAbout:
             entity_type=EntityType.ARTIST,
             entity_id=self.id,
             name=self.name,
-            source=DataSource.GENERAL_WIKIPEDIA  # TODO: Add Wikipedia as separate source
+            source=DataSource.WIKIPEDIA
         )
