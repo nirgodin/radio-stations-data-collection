@@ -8,7 +8,6 @@ from data_collectors.logic.inserters.postgres.shazam import *
 from data_collectors.logic.inserters.postgres.spotify import *
 from data_collectors.logic.inserters.postgres.spotify.tracks_database_inserter import TracksDatabaseInserter
 from data_collectors.logic.inserters.postgres.spotify_insertions_manager import SpotifyInsertionsManager
-from data_collectors.logic.inserters.postgres.shazam_insertions_manager import ShazamInsertionsManager
 from data_collectors.logic.inserters.postgres.radio_tracks_database_inserter import RadioTracksDatabaseInserter
 
 __all__ = [
@@ -31,7 +30,6 @@ __all__ = [
     "ShazamTopTracksDatabaseInserter",
     "ShazamArtistsPostgresDatabaseInserter",
     "ShazamTracksDatabaseInserter",
-    "ShazamInsertionsManager",
 
     # Other
     "GenresDatabaseInserter",
