@@ -15,10 +15,10 @@ class ArtistExistingDetails(BaseModel):
     gender: Optional[Gender]
 
     @classmethod
-    def from_row(cls, row: Row) -> "ArtistExistingDetails":
+    def from_row(cls, row: Row, about: str) -> "ArtistExistingDetails":
         return cls(
             id=row.id,
-            about=row.about,
+            about=about,
             origin=row.origin,
             birth_date=row.birth_date,
             death_date=row.death_date,

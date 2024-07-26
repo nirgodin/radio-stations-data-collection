@@ -1,14 +1,19 @@
 from genie_common.tools import AioPoolExecutor
+from genie_datastores.mongo.operations import initialize_mongo
 from genie_datastores.postgres.operations import get_database_engine
 from shazamio import Shazam
 from spotipyio import EntityMatcher
 
+from data_collectors.components.tools_component_factory import ToolsComponentFactory
 from data_collectors.logic.collectors import ShazamArtistsExistingDetailsCollector
 from data_collectors.logic.collectors.shazam import *
 from data_collectors.tools import ShazamTrackEntityExtractor, ShazamArtistEntityExtractor, MultiEntityMatcher
 
 
 class ShazamCollectorsComponentFactory:
+    def __init__(self, tools: ToolsComponentFactory = ToolsComponentFactory()):
+        self._tools = tools
+
     @staticmethod
     def get_search_collector(shazam: Shazam, pool_executor: AioPoolExecutor) -> ShazamSearchCollector:
         entity_matcher = EntityMatcher(
@@ -39,6 +44,9 @@ class ShazamCollectorsComponentFactory:
     def get_lyrics_collector(pool_executor: AioPoolExecutor) -> ShazamLyricsCollector:
         return ShazamLyricsCollector(pool_executor)
 
-    @staticmethod
-    def get_artist_existing_details_collector() -> ShazamArtistsExistingDetailsCollector:
-        return ShazamArtistsExistingDetailsCollector(get_database_engine())
+    async def get_artist_existing_details_collector(self) -> ShazamArtistsExistingDetailsCollector:
+        await initialize_mongo()
+        return ShazamArtistsExistingDetailsCollector(
+            db_engine=get_database_engine(),
+            pool_executor=self._tools.get_pool_executor()
+        )
