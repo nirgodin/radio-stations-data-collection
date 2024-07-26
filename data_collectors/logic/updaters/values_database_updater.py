@@ -30,7 +30,7 @@ class ValuesDatabaseUpdater(IDatabaseUpdater):
 
     async def update_single(self, update_request: DBUpdateRequest) -> None:
         orm = self._detect_orm(update_request.values)
-        update_request.values[orm.update_date] = datetime.now()
+        update_request.values[orm.update_date] = datetime.utcnow()
 
         await update_by_values(
             self._db_engine,

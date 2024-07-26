@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from datetime import datetime
 from typing import Optional
 
 from genie_datastores.models import EntityType, DataSource
@@ -18,7 +19,7 @@ class SpotifyArtistAbout:
     about: Optional[str] = None
 
     def to_social_media_update_request(self) -> DBUpdateRequest:
-        values = {}
+        values = {SpotifyArtist.update_date: datetime.utcnow()}
 
         for field in [SpotifyArtist.facebook_name, SpotifyArtist.instagram_name, SpotifyArtist.twitter_name]:
             field_value = getattr(self, field.key)
