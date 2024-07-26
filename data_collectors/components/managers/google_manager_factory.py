@@ -15,8 +15,9 @@ class GoogleManagerFactory(BaseManagerFactory):
             db_updater=self.updaters.get_values_updater()
         )
 
-    def get_spotify_artists_about_manager(self) -> GeminiArtistsAboutManager:
-        return self._get_artists_about_manager(self.collectors.spotify.get_artist_existing_details_collector())
+    async def get_spotify_artists_about_manager(self) -> GeminiArtistsAboutManager:
+        existing_details_collector = await self.collectors.spotify.get_artist_existing_details_collector()
+        return self._get_artists_about_manager(existing_details_collector)
 
     async def get_shazam_artists_about_manager(self) -> GeminiArtistsAboutManager:
         existing_details_collector = await self.collectors.shazam.get_artist_existing_details_collector()

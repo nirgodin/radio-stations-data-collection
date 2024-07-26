@@ -1,4 +1,5 @@
 from aiohttp import ClientSession
+from genie_datastores.mongo.operations import initialize_mongo
 from genie_datastores.postgres.operations import get_database_engine
 from spotipyio import SpotifyClient
 
@@ -20,9 +21,12 @@ class SpotifyCollectorsComponentFactory:
             pool_executor=self._tools.get_pool_executor()
         )
 
-    @staticmethod
-    def get_artist_existing_details_collector() -> SpotifyArtistsExistingDetailsCollector:
-        return SpotifyArtistsExistingDetailsCollector(get_database_engine())
+    async def get_artist_existing_details_collector(self) -> SpotifyArtistsExistingDetailsCollector:
+        await initialize_mongo()
+        return SpotifyArtistsExistingDetailsCollector(
+            db_engine=get_database_engine(),
+            pool_executor=self._tools.get_pool_executor()
+        )
 
     def get_spotify_artists_about_collector(self) -> SpotifyArtistsAboutCollector:
         return SpotifyArtistsAboutCollector(self._tools.get_pool_executor())
