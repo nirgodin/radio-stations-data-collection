@@ -32,14 +32,27 @@ class SpotifyArtistsAboutCollector(ICollector):
 
             return await self._pool_executor.run(
                 iterable=id_name_map.items(),
-                func=partial(self._collect_single_artist_details, browser),
+                func=partial(self._collect_single_artist_details_wrapper, browser),
                 expected_type=SpotifyArtistAbout
             )
 
-    async def _collect_single_artist_details(self,
-                                             browser: Browser,
-                                             artist_id_and_name: Tuple[str, str]) -> SpotifyArtistAbout:
+    async def _collect_single_artist_details_wrapper(self,
+                                                     browser: Browser,
+                                                     artist_id_and_name: Tuple[str, str]) -> SpotifyArtistAbout:
         artist_id, artist_name = artist_id_and_name
+
+        try:
+            return await self._collect_single_artist_details(
+                browser=browser,
+                artist_id=artist_id,
+                artist_name=artist_name
+            )
+
+        except:
+            logger.exception("Received exception during artist details collection. Returning empty details by default")
+            return SpotifyArtistAbout(id=artist_id, name=artist_name)
+
+    async def _collect_single_artist_details(self, browser: Browser, artist_id: str, artist_name: str):
         html = await self._get_page_content(browser, artist_id)
         details = []
 

@@ -18,13 +18,17 @@ class SpotifyArtistAbout:
     about: Optional[str] = None
 
     def to_social_media_update_request(self) -> DBUpdateRequest:
+        values = {}
+
+        for field in [SpotifyArtist.facebook_name, SpotifyArtist.instagram_name, SpotifyArtist.twitter_name]:
+            field_value = getattr(self, field.key)
+
+            if field_value is not None:
+                values[field] = field_value
+
         return DBUpdateRequest(
             id=self.id,
-            values={
-                SpotifyArtist.facebook_name: self.facebook_name,
-                SpotifyArtist.instagram_name: self.instagram_name,
-                SpotifyArtist.twitter_name: self.twitter_name,
-            }
+            values=values
         )
 
     def to_existing_about_document_update_request(self) -> DBUpdateRequest:
