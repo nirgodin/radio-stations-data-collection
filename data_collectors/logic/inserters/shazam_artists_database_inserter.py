@@ -96,3 +96,7 @@ class ShazamArtistsDatabaseInserter(IDatabaseInserter):
             return False
 
         return True
+
+    @property
+    def name(self) -> str:
+        return "shazam_artists"
