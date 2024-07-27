@@ -1,14 +1,14 @@
 from functools import partial
 from textwrap import dedent
-from typing import List
+from typing import List, Optional
 
 from genie_common.tools import AioPoolExecutor, logger
 from genie_datastores.models import DataSource
 from google.generativeai import GenerativeModel
-from pydantic import ValidationError
 
 from data_collectors.contract import ICollector
 from data_collectors.logic.models import ArtistExtractedDetails, ArtistExistingDetails, ArtistDetailsExtractionResponse
+from data_collectors.utils.gemini import serialize_generative_model_response
 
 
 class GeminiArtistsAboutParsingCollector(ICollector):
@@ -75,14 +75,15 @@ class GeminiArtistsAboutParsingCollector(ICollector):
             contents=dedent(prompt) + existing_details.about,
             generation_config={'response_mime_type': 'application/json'}
         )
-
-        if response.parts:
-            return self._serialize_response(response.text)
-
-        logger.warning(
-            f"Did not receive valid response parts for artist id `{existing_details.id}`. Returning empty details"
+        serialized_response: Optional[ArtistExtractedDetails] = serialize_generative_model_response(
+            response=response,
+            model=ArtistExtractedDetails
         )
-        return self._build_invalid_extracted_details_response()
+
+        if serialized_response is None:
+            return self._build_invalid_extracted_details_response()
+
+        return serialized_response
 
     @staticmethod
     def _build_invalid_extracted_details_response() -> ArtistExtractedDetails:
@@ -92,17 +93,3 @@ class GeminiArtistsAboutParsingCollector(ICollector):
             origin=None,
             gender=None
         )
-
-    @staticmethod
-    def _serialize_response(response_text: str) -> ArtistExtractedDetails:
-        try:
-            return ArtistExtractedDetails.parse_raw(response_text)
-
-        except ValidationError:
-            logger.exception("Failed serializing response text. Returning empty details")
-            return ArtistExtractedDetails(
-                birth_date=None,
-                death_date=None,
-                origin=None,
-                gender=None
-            )
