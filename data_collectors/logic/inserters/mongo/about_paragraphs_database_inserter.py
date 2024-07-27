@@ -57,7 +57,7 @@ class AboutParagraphsDatabaseInserter(IDatabaseInserter):
         try:
             embedding = await self._generate_paragraph_embedding(text)
             return AboutParagraphDocument(
-                about_id=about_document.id,
+                about_id=str(about_document.id),
                 embedding=embedding,
                 number=number,
                 text=text

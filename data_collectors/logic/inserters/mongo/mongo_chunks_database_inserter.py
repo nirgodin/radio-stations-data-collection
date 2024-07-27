@@ -3,6 +3,7 @@ from typing import List, Type
 from genie_common.tools import ChunksGenerator, logger
 from genie_datastores.contract import IDatabaseInserter
 from genie_datastores.mongo.models import BaseDocument
+from pymongo.results import InsertManyResult
 
 
 class MongoChunksDatabaseInserter(IDatabaseInserter):
@@ -14,5 +15,5 @@ class MongoChunksDatabaseInserter(IDatabaseInserter):
         await self._chunks_generator.execute_by_chunk_in_parallel(
             lst=records,
             func=model.insert_many,
-            expected_type=type(None)
+            expected_type=InsertManyResult
         )
