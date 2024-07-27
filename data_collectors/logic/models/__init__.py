@@ -1,4 +1,5 @@
 from data_collectors.logic.models.address_component_setting import AddressComponentSetting
+from data_collectors.logic.models.artist_about.artist_about_paragraphs import ArtistAboutParagraphs
 from data_collectors.logic.models.artist_about.artist_extracted_details import ArtistExtractedDetails, BaseDecision
 from data_collectors.logic.models.artist_about.artist_details_extraction_response import ArtistDetailsExtractionResponse
 from data_collectors.logic.models.artist_about.artist_existing_details import ArtistExistingDetails
@@ -19,6 +20,7 @@ from data_collectors.logic.models.web_element import WebElement
 
 __all__ = [
     "AddressComponentSetting",
+    "ArtistAboutParagraphs",
     "ArtistExtractedDetails",
     "ArtistExistingDetails",
     "ArtistDetailsExtractionResponse",
