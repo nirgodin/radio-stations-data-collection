@@ -5,7 +5,7 @@ from genie_datastores.contract import IDatabaseInserter
 from genie_datastores.mongo.models import BaseDocument
 
 
-class MongoChunksInserter(IDatabaseInserter):
+class MongoChunksDatabaseInserter(IDatabaseInserter):
     def __init__(self, chunks_generator: ChunksGenerator):
         self._chunks_generator = chunks_generator
 

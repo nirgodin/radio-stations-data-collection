@@ -1,9 +1,12 @@
 from genie_common.tools import ChunksGenerator
 from genie_datastores.milvus import MilvusClient
+from genie_datastores.mongo.operations import initialize_mongo
 from genie_datastores.postgres.operations import get_database_engine
 
+from data_collectors.components.serializers.serializers_component_factory import SerializersComponentFactory
 from data_collectors.components.tools_component_factory import ToolsComponentFactory
 from data_collectors.logic.inserters.milvus import MilvusChunksDatabaseInserter
+from data_collectors.logic.inserters.mongo import MongoChunksDatabaseInserter, AboutParagraphsDatabaseInserter
 from data_collectors.logic.inserters.postgres import RadioTracksDatabaseInserter, ChartEntriesDatabaseInserter, \
     ChunksDatabaseInserter, GenresDatabaseInserter
 from data_collectors.components.inserters.billboard_inserters_component_factory import \
@@ -17,10 +20,12 @@ class InsertersComponentFactory:
                  billboard: BillboardInsertersComponentFactory = BillboardInsertersComponentFactory(),
                  spotify: SpotifyInsertersComponentFactory = SpotifyInsertersComponentFactory(),
                  shazam: ShazamInsertersComponentFactory = ShazamInsertersComponentFactory(),
+                 serializers: SerializersComponentFactory = SerializersComponentFactory(),
                  tools: ToolsComponentFactory = ToolsComponentFactory()):
         self.billboard = billboard
         self.spotify = spotify
         self.shazam = shazam
+        self._serializers = serializers
         self._tools = tools
 
     def get_radio_tracks_inserter(self) -> RadioTracksDatabaseInserter:
@@ -50,4 +55,16 @@ class InsertersComponentFactory:
         return MilvusChunksDatabaseInserter(
             chunks_generator=chunks_generator,
             milvus_client=milvus_client
+        )
+
+    async def get_mongo_chunks_inserter(self) -> MongoChunksDatabaseInserter:
+        await initialize_mongo()
+        return MongoChunksDatabaseInserter(self._tools.get_chunks_generator())
+
+    async def get_about_paragraphs_inserter(self) -> AboutParagraphsDatabaseInserter:
+        chunks_inserter = await self.get_mongo_chunks_inserter()
+        return AboutParagraphsDatabaseInserter(
+            pool_executor=self._tools.get_pool_executor(),
+            paragraphs_serializer=self._serializers.get_artists_about_paragraphs_serializer(),
+            chunks_inserter=chunks_inserter,
         )

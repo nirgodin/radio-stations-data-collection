@@ -6,15 +6,15 @@ from genie_datastores.contract import IDatabaseInserter
 from genie_datastores.mongo.models import AboutDocument, AboutParagraphDocument
 from google.generativeai import embed_content_async
 
-from data_collectors.logic.inserters.mongo.mongo_chunks_inserter import MongoChunksInserter
+from data_collectors.logic.inserters.mongo.mongo_chunks_database_inserter import MongoChunksDatabaseInserter
 from data_collectors.logic.serializers import ArtistsAboutParagraphsSerializer
 
 
-class AboutParagraphsInserter(IDatabaseInserter):
+class AboutParagraphsDatabaseInserter(IDatabaseInserter):
     def __init__(self,
                  pool_executor: AioPoolExecutor,
                  paragraphs_serializer: ArtistsAboutParagraphsSerializer,
-                 chunks_inserter: MongoChunksInserter,
+                 chunks_inserter: MongoChunksDatabaseInserter,
                  embeddings_model: str = "models/embedding-001",
                  embeddings_task_type: str = "semantic_similarity"):
         self._pool_executor = pool_executor
