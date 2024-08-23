@@ -41,7 +41,7 @@ class BillboardTracksCollector(ICollector):
                 track=entry_data.entry.title
             )
         )
-        search_result = await self._spotify_client.search.run_single(search_item)
+        search_result = await self._spotify_client.search.search_item.run_single(search_item)
         raw_track = extract_first_search_result(search_result)
         entry_data.track = {TRACK: raw_track} if raw_track else None
 

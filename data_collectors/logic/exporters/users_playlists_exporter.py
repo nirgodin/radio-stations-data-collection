@@ -1,3 +1,4 @@
+import math
 from typing import Any, List
 
 import pandas as pd
@@ -23,7 +24,7 @@ class UsersPlaylistsExporter(IExporter):
         logger.info("Fetching users playlists from spotify with pagination")
         users_playlists = await self._spotify_client.users.playlists.run(
             ids=users_ids,
-            paginate=True
+            max_pages=math.inf
         )
         logger.info("Extracting relevant data from spotify responses")
         records: List[List[dict]] = self._pool_executor.run(

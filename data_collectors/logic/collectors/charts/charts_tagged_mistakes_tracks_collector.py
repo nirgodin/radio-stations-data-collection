@@ -23,7 +23,7 @@ class ChartsTaggedMistakesTracksCollector(ICollector):
 
         if non_existing_ids:
             logger.info("Found non existing tracks ids. Querying Spotify for equivalent tracks records")
-            raw_tracks = await self._spotify_client.tracks.run(non_existing_ids)
+            raw_tracks = await self._spotify_client.tracks.info.run(non_existing_ids)
             return [{TRACK: track} for track in raw_tracks]
 
         logger.info("Did not find any non existing track id. Returning empty list")

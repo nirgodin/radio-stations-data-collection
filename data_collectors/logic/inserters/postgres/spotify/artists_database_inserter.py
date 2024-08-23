@@ -1,10 +1,7 @@
 from typing import List, Type
 
 from genie_datastores.postgres.models import Artist
-from spotipyio.logic.spotify_client import SpotifyClient
-from sqlalchemy.ext.asyncio import AsyncEngine
 
-from data_collectors.consts.spotify_consts import ID
 from data_collectors.logic.inserters.postgres.base_ids_database_inserter import BaseIDsDatabaseInserter
 from data_collectors.utils.spotify import extract_unique_artists_ids
 

@@ -63,7 +63,7 @@ class ChartsTracksCollector(ICollector):
         if is_existing_track_id:
             return RadioChartEntryDetails(entry=chart_entry)
 
-        tracks = await self._spotify_client.tracks.run([chart_entry.track_id])
+        tracks = await self._spotify_client.tracks.info.run([chart_entry.track_id])
 
         if tracks:
             return RadioChartEntryDetails(

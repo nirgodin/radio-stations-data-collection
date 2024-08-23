@@ -33,7 +33,7 @@ class BaseChartKeySearcher(ABC):
         search_item = await self._build_search_item(key)
 
         if search_item is not None:
-            search_result = await self._spotify_client.search.run_single(search_item)
+            search_result = await self._spotify_client.search.search_item.run_single(search_item)
             return self._extract_matching_track(search_item, search_result)
 
     @abstractmethod
