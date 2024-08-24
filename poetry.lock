@@ -737,8 +737,8 @@ clients = ["aiohttp (>=3.6.3,<3.9.0)", "google-cloud-translate (>=3.15.3,<3.16)"
 [package.source]
 type = "git"
 url = "https://github.com/nirgodin/genie-common.git"
-reference = "c65d99d137bd233f36b6142b2fd3dbdac373a62e"
-resolved_reference = "c65d99d137bd233f36b6142b2fd3dbdac373a62e"
+reference = "0f8f5b96d36ab95a00cb2fec1d8455d19bdfe801"
+resolved_reference = "0f8f5b96d36ab95a00cb2fec1d8455d19bdfe801"
 
 [[package]]
 name = "genie-datastores"
@@ -755,7 +755,7 @@ asyncpg = {version = "0.28.0", optional = true}
 beanie = {version = ">=1.26.0,<1.27", optional = true}
 billboard-py = {version = "^7.0.0", optional = true}
 dataclasses-json = {version = ">=0.6,<1.0", optional = true}
-genie-common = {git = "https://github.com/nirgodin/genie-common.git", rev = "c65d99d137bd233f36b6142b2fd3dbdac373a62e", extras = ["clients"]}
+genie-common = {git = "https://github.com/nirgodin/genie-common.git", rev = "0f8f5b96d36ab95a00cb2fec1d8455d19bdfe801", extras = ["clients"]}
 google-api-python-client = {version = ">=2.8,<3.0", optional = true}
 greenlet = {version = "2.0.1", optional = true}
 gspread = {version = ">=5.12.4,<5.13", optional = true}
@@ -775,8 +775,8 @@ redis = ["redis (>=5.0.3,<5.1)"]
 [package.source]
 type = "git"
 url = "https://github.com/nirgodin/genie-datastores.git"
-reference = "0d4c5715"
-resolved_reference = "0d4c5715e3f9936a5ec1ea3c22e293a00915f4c8"
+reference = "30a93b3a"
+resolved_reference = "30a93b3a6c499cd64ceeabd320e0cae71ae907be"
 
 [[package]]
 name = "google-ai-generativelanguage"
@@ -1210,13 +1210,13 @@ socks = ["socksio (==1.*)"]
 
 [[package]]
 name = "idna"
-version = "3.7"
+version = "3.8"
 description = "Internationalized Domain Names in Applications (IDNA)"
 optional = false
-python-versions = ">=3.5"
+python-versions = ">=3.6"
 files = [
-    {file = "idna-3.7-py3-none-any.whl", hash = "sha256:82fee1fc78add43492d3a1898bfa6d8a904cc97d8427f683ed8e798d07761aa0"},
-    {file = "idna-3.7.tar.gz", hash = "sha256:028ff3aadf0609c1fd278d8ea3089299412a7a8b9bd005dd08b9f8285bcb5cfc"},
+    {file = "idna-3.8-py3-none-any.whl", hash = "sha256:050b4e5baadcd44d760cedbd2b8e639f2ff89bbc7a5730fcc662954303377aac"},
+    {file = "idna-3.8.tar.gz", hash = "sha256:d838c2c0ed6fced7693d5e8ab8e734d5f8fda53a039c0164afb0b82e771e3603"},
 ]
 
 [[package]]
@@ -2488,8 +2488,8 @@ testing = ["pytest-httpserver (>=1.0.12,<1.1)"]
 [package.source]
 type = "git"
 url = "https://github.com/nirgodin/spotipyio.git"
-reference = "08fde9be"
-resolved_reference = "08fde9bea27cde3d6d0b9ceb524a56fee84a460b"
+reference = "f4b0dba2"
+resolved_reference = "f4b0dba20d974bad8f541173af0db3ba5605da67"
 
 [[package]]
 name = "sqlalchemy"
@@ -2817,4 +2817,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.12"
-content-hash = "a96a904ecf3ee532d82140cdc99568898f7a04965a463aeb2c92f4d9d46cbd77"
+content-hash = "df9109f31849bea488a0f2b404fdce401cb6eb97ad9bb823c039770d5a25e7fd"
