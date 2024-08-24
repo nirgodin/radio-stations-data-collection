@@ -55,3 +55,8 @@ class EnvironmentComponentFactory:
     @lru_cache
     def get_gemini_api_key() -> str:
         return os.environ["GEMINI_API_KEY"]
+
+    @staticmethod
+    @lru_cache
+    def get_release_radar_playlist_id() -> str:
+        return os.environ["RELEASE_RADAR_PLAYLIST_ID"]

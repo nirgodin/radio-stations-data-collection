@@ -3,6 +3,7 @@ from genie_datastores.milvus import MilvusClient
 from genie_datastores.postgres.models import TrackIDMapping
 from genie_datastores.models import DataSource
 from genie_datastores.postgres.operations import get_database_engine
+from spotipyio import SpotifyClient
 from spotipyio.logic.authentication.spotify_session import SpotifySession
 
 from data_collectors.components.managers.base_manager_factory import BaseManagerFactory
@@ -80,4 +81,11 @@ class MiscellaneousManagerFactory(BaseManagerFactory):
             milvus_inserter=self.inserters.get_milvus_chunks_inserter(milvus_client),
             drive_folder_id=self.env.get_tracks_features_column_transformer_folder_id(),
             google_drive_client=self.tools.get_google_drive_client()
+        )
+
+    def get_release_radar_manager(self, spotify_authorized_session: SpotifySession) -> ReleaseRadarManager:
+        return ReleaseRadarManager(
+            db_engine=get_database_engine(),
+            spotify_client=self.tools.get_spotify_client(spotify_authorized_session),
+            playlist_id=self.env.get_release_radar_playlist_id()
         )

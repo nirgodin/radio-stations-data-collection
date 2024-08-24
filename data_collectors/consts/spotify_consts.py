@@ -9,6 +9,8 @@ TRACKS = "tracks"
 ITEMS = "items"
 IMAGES = "images"
 URL = "url"
+URI = "uri"
+SNAPSHOT_ID = "snapshot_id"
 
 # Open
 SPOTIFY_OPEN_BASE_URL = "https://open.spotify.com"
