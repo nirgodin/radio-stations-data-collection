@@ -7,8 +7,8 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = ">=3.10,<3.12"
-genie-datastores = {git = "https://github.com/nirgodin/genie-datastores.git", rev = "b39973bb", extras = ["postgres", "milvus", "google_drive", "google_sheets", "mongo"]}
-spotipyio = {git = "https://github.com/nirgodin/spotipyio.git", rev = "f4b0dba2", extras = ["redis"]}
+genie-datastores = { git = "https://github.com/nirgodin/genie-datastores.git", rev = "16573b0a", extras = ["postgres", "milvus", "google_drive", "google_sheets", "mongo"] }
+spotipyio = { version = ">=1,<2", extras = ["redis"] }
 shazamio = ">=0.6.0,<0.7"
 asyncio-pool = "^0.6.0"
 tqdm = ">=4.65.0,<5.0"
