@@ -2,7 +2,7 @@ from typing import List
 
 from genie_datastores.postgres.inner_utils.spotify_utils import extract_artist_id
 from genie_datastores.postgres.models import SpotifyArtist, SpotifyStation, RadioTrack
-from spotipyio.logic.spotify_client import SpotifyClient
+from spotipyio import SpotifyClient
 
 from data_collectors.logic.inserters.postgres import SpotifyInsertionsManager, RadioTracksDatabaseInserter
 from data_collectors.consts.spotify_consts import ID, TRACKS, ARTISTS, ITEMS, TRACK

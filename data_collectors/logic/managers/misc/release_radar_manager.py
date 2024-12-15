@@ -7,8 +7,8 @@ from genie_common.utils import safe_nested_get
 from genie_datastores.postgres.models import SpotifyTrack
 from genie_datastores.postgres.operations import execute_query
 from spotipyio import SpotifyClient
+from spotipyio.logic.utils import to_uri
 from spotipyio.models import EntityType as SpotifyEntityType
-from spotipyio.utils import to_uri
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncEngine
 

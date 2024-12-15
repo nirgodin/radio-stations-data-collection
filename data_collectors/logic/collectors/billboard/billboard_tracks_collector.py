@@ -4,9 +4,8 @@ from typing import List
 from aiohttp import ClientSession
 from billboard import ChartData
 from genie_datastores.postgres.models import ChartEntryData
-from spotipyio import SearchItem, SpotifySearchType, SearchItemFilters, SearchItemMetadata
-from spotipyio.logic.spotify_client import SpotifyClient
-from spotipyio.utils.spotify_utils import extract_first_search_result
+from spotipyio.models import SearchItem, SpotifySearchType, SearchItemFilters, SearchItemMetadata
+from spotipyio import SpotifyClient
 
 from data_collectors.consts.billboard_consts import BILLBOARD_DATETIME_FORMAT
 from data_collectors.consts.spotify_consts import TRACK

@@ -1,5 +1,5 @@
 from aiohttp import ClientSession
-from spotipyio import EntityMatcher
+from spotipyio.tools.matching import EntityMatcher
 
 from data_collectors.logic.collectors.musixmatch import MusixmatchSearchCollector, MusixmatchLyricsCollector
 from genie_common.tools import AioPoolExecutor

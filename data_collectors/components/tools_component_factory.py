@@ -14,7 +14,7 @@ from langid.langid import LanguageIdentifier, model
 from openai import OpenAI
 from shazamio import Shazam
 from spotipyio import SpotifyClient
-from spotipyio.logic.authentication.spotify_session import SpotifySession
+from spotipyio.auth import SpotifySession
 
 from data_collectors.components.environment_component_factory import EnvironmentComponentFactory
 from data_collectors.consts.image_gender_detector_consts import GENDER_MODEL_RESOURCES_DIR

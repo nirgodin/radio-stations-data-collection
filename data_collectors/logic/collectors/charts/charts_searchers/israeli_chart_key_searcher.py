@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from spotipyio import SearchItem, SearchItemMetadata, SpotifySearchType, MatchingEntity
+from spotipyio.models import SearchItem, SearchItemMetadata, SpotifySearchType, MatchingEntity
 
 from data_collectors.logic.collectors.charts.charts_searchers.base_chart_key_searcher import BaseChartKeySearcher
 from data_collectors.utils.charts import extract_artist_and_track_from_chart_key

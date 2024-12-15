@@ -1,7 +1,7 @@
 from aiohttp import ClientSession
 from genie_datastores.mongo.operations import initialize_mongo
 from genie_datastores.postgres.operations import get_database_engine
-from spotipyio.logic.authentication.spotify_session import SpotifySession
+from spotipyio.auth import SpotifySession
 
 from data_collectors.components.managers.base_manager_factory import BaseManagerFactory
 from data_collectors.logic.managers import (

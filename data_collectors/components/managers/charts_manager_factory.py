@@ -3,8 +3,9 @@ from typing import Dict
 from aiohttp import ClientSession
 from genie_datastores.postgres.models import Chart
 from genie_datastores.postgres.operations import get_database_engine
-from spotipyio import SpotifyClient, EntityMatcher, TrackEntityExtractor, TrackSearchResultArtistEntityExtractor
-from spotipyio.logic.authentication.spotify_session import SpotifySession
+from spotipyio.tools.matching import EntityMatcher
+from spotipyio.tools.extractors import TrackEntityExtractor, PrimaryArtistEntityExtractor
+from spotipyio.auth import SpotifySession
 
 from data_collectors.logic.collectors import ChartsTracksCollector, ArtistTranslatorChartKeySearcher
 from data_collectors.components.managers.base_manager_factory import BaseManagerFactory
@@ -20,7 +21,7 @@ class ChartsManagerFactory(BaseManagerFactory):
 
     def get_translated_artist_radio_charts_manager(self, spotify_session: SpotifySession) -> RadioChartsManager:
         spotify_client = self.tools.get_spotify_client(spotify_session)
-        extractors = {TrackEntityExtractor(): 0.5, TrackSearchResultArtistEntityExtractor(): 0.5}
+        extractors = {TrackEntityExtractor(): 0.5, PrimaryArtistEntityExtractor(): 0.5}
         entity_matcher = EntityMatcher(extractors=extractors, threshold=0.75)
         key_searcher = ArtistTranslatorChartKeySearcher(
             spotify_client=spotify_client,

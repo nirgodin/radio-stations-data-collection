@@ -1,7 +1,8 @@
 from typing import Any, List, Optional, Callable
 
 from genie_common.tools import logger
-from spotipyio import EntityMatcher, MatchingEntity
+from spotipyio.models import MatchingEntity
+from spotipyio.tools.matching import EntityMatcher
 
 
 class MultiEntityMatcher:

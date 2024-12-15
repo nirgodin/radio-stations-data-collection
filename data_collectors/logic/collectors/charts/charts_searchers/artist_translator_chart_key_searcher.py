@@ -2,8 +2,9 @@ from typing import Optional, List
 
 from genie_common.utils import contains_any_hebrew_character
 from genie_datastores.models import EntityType
-from spotipyio import SpotifyClient, EntityMatcher, SearchItem, SearchItemFilters, SearchItemMetadata, \
-    SpotifySearchType, MatchingEntity
+from spotipyio import SpotifyClient
+from spotipyio.models import SearchItem, SearchItemFilters, SearchItemMetadata, SpotifySearchType, MatchingEntity
+from spotipyio.tools.matching import EntityMatcher
 
 from data_collectors.logic.collectors.charts.charts_searchers.base_chart_key_searcher import BaseChartKeySearcher
 from data_collectors.tools import TranslationAdapter

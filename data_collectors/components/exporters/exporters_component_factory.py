@@ -1,5 +1,5 @@
 from genie_datastores.postgres.operations import get_database_engine
-from spotipyio.logic.authentication.spotify_session import SpotifySession
+from spotipyio.auth import SpotifySession
 
 from data_collectors.components.environment_component_factory import EnvironmentComponentFactory
 from data_collectors.components.sessions_component_factory import SessionsComponentFactory

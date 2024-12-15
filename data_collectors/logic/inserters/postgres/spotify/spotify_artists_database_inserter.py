@@ -2,7 +2,7 @@ from typing import List, Type
 
 from genie_datastores.postgres.models import SpotifyArtist
 from genie_datastores.postgres.models.orm.spotify.base_spotify_orm_model import BaseSpotifyORMModel
-from spotipyio.logic.spotify_client import SpotifyClient
+from spotipyio import SpotifyClient
 from sqlalchemy.ext.asyncio import AsyncEngine
 
 from data_collectors.consts.spotify_consts import ARTISTS

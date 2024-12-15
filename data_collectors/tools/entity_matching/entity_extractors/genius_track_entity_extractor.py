@@ -1,7 +1,7 @@
 from typing import Optional, Dict
 
 from genie_common.utils import safe_nested_get
-from spotipyio.contract import IEntityExtractor
+from spotipyio.tools.extractors import IEntityExtractor
 
 from data_collectors.consts.genius_consts import RESULT
 from data_collectors.consts.shazam_consts import TITLE

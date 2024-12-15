@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from spotipyio import MatchingEntity
+from spotipyio.models import MatchingEntity
 from sqlalchemy.engine import Row
 
 

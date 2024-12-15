@@ -1,12 +1,8 @@
-import os
-
 from aiohttp import ClientSession
 from genie_common.clients.utils import create_client_session, build_authorization_headers
 from genie_datastores.redis.operations import get_redis
-from redis import Redis
-from spotipyio import SpotifyGrantType
+from spotipyio.auth import SpotifyGrantType, SpotifySession, ClientCredentials
 from spotipyio.extras.redis import RedisSessionCacheHandler
-from spotipyio.logic.authentication.spotify_session import SpotifySession
 
 
 class SessionsComponentFactory:
@@ -20,9 +16,11 @@ class SessionsComponentFactory:
             key="genie_radio_auth_v2",
             redis=get_redis()
         )
+        credentials = ClientCredentials(grant_type=SpotifyGrantType.AUTHORIZATION_CODE)
+
         return SpotifySession(
             session_cache_handler=cache_handler,
-            grant_type=SpotifyGrantType.AUTHORIZATION_CODE
+            credentials=credentials
         )
 
     @staticmethod

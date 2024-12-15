@@ -4,7 +4,9 @@ from typing import Any, Tuple, List, Dict, Optional
 
 from genie_common.tools import SyncPoolExecutor, logger
 from genie_common.utils import safe_nested_get
-from spotipyio import SpotifyClient, EntityMatcher, MatchingEntity
+from spotipyio import SpotifyClient
+from spotipyio.models import MatchingEntity
+from spotipyio.tools.matching import EntityMatcher
 
 from data_collectors.consts.spotify_consts import ID, ITEMS, TRACKS, TRACK
 from data_collectors.contract import ICollector

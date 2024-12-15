@@ -5,7 +5,9 @@ from async_lru import alru_cache
 from genie_common.tools import logger
 from genie_common.utils import safe_nested_get
 from genie_datastores.postgres.models import ChartEntry
-from spotipyio import SpotifyClient, EntityMatcher, SearchItem, MatchingEntity
+from spotipyio import SpotifyClient
+from spotipyio.models import SearchItem, MatchingEntity
+from spotipyio.tools.matching import EntityMatcher
 
 from data_collectors.consts.spotify_consts import TRACKS, ITEMS, ID, TRACK
 from data_collectors.logic.models import RadioChartEntryDetails
