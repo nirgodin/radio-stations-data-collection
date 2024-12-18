@@ -16,6 +16,7 @@ from data_collectors.logic.models.lyrics_source_details import LyricsSourceDetai
 from data_collectors.logic.models.missing_track import MissingTrack
 from data_collectors.logic.models.radio_chart_entry_details import RadioChartEntryDetails
 from data_collectors.logic.models.artist_about.spotify_artist_about import SpotifyArtistAbout
+from data_collectors.logic.models.scheduled_job import ScheduledJob
 from data_collectors.logic.models.web_element import WebElement
 
 __all__ = [
@@ -36,6 +37,7 @@ __all__ = [
     "LyricsSourceDetails",
     "MissingTrack",
     "RadioChartEntryDetails",
+    "ScheduledJob",
     "SpotifyArtistAbout",
     "WebElement",
     "WikipediaArtistAbout"
