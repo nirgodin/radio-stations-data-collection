@@ -3,7 +3,7 @@ from functools import lru_cache
 from typing import Optional, List
 
 from genie_common.clients.google import GoogleTranslateClient
-from genie_common.tools import AioPoolExecutor, ChunksGenerator
+from genie_common.tools import AioPoolExecutor, ChunksGenerator, EmailSender
 from genie_datastores.google.drive import GoogleDriveClient
 from genie_datastores.google.sheets import GoogleSheetsClient, GoogleSheetsUploader, ShareSettings, PermissionType, Role
 from genie_datastores.milvus import MilvusClient
@@ -24,6 +24,13 @@ from data_collectors.tools import ImageGenderDetector, TranslationAdapter
 class ToolsComponentFactory:
     def __init__(self, env: EnvironmentComponentFactory = EnvironmentComponentFactory()):
         self.env = env
+
+    @staticmethod
+    def get_email_sender() -> EmailSender:
+        return EmailSender(
+            user=os.environ["EMAIL_USER"],
+            password=os.environ["EMAIL_PASSWORD"],
+        )
 
     @staticmethod
     def get_pool_executor(pool_size: int = 5, validate_results: bool = True) -> AioPoolExecutor:
