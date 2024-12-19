@@ -22,6 +22,7 @@ langid = ">=1.1.6,<1.2"
 scikit-learn = ">=1.4.2,<1.5"
 openai = ">=1.28.0,<1.29"
 google-generativeai = ">=0.6,<1"
+apscheduler = ">=3.11.0,<4"
 
 [tool.poetry.group.dev.dependencies]
 pytest = ">=8.0.2,<9.0"
