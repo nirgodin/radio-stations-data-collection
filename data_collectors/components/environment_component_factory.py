@@ -23,6 +23,10 @@ class EnvironmentComponentFactory:
         return self._lookup_env_var("SPOTIPY_TOKEN_REQUEST_URL")
 
     @lru_cache
+    def get_spotify_base_url(self) -> str:
+        return self._lookup_env_var("SPOTIPY_BASE_URL")
+
+    @lru_cache
     def get_database_url(self) -> str:
         return self._lookup_env_var("DATABASE_URL")
 

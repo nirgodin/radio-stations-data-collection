@@ -8,7 +8,7 @@ from data_collectors.logic.inserters.postgres import ShazamTopTracksDatabaseInse
 
 
 class ShazamInsertersComponentFactory:
-    def __init__(self, tools: ToolsComponentFactory = ToolsComponentFactory()):
+    def __init__(self, tools: ToolsComponentFactory):
         self._tools = tools
 
     @staticmethod

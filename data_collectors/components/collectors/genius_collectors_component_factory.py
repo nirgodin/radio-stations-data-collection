@@ -15,7 +15,7 @@ from data_collectors.tools import MultiEntityMatcher, GeniusTrackEntityExtractor
 
 
 class GeniusCollectorsComponentFactory:
-    def __init__(self, tools: ToolsComponentFactory = ToolsComponentFactory()):
+    def __init__(self, tools: ToolsComponentFactory):
         self._tools = tools
 
     def get_search_collector(self, session: ClientSession) -> GeniusSearchCollector:

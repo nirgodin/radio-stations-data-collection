@@ -1,5 +1,7 @@
 from abc import ABC
 
+from typing_extensions import Optional
+
 from data_collectors.components.analyzers.analyzers_component_factory import AnalyzersComponentFactory
 from data_collectors.components.collectors import CollectorsComponentFactory
 from data_collectors.components.environment_component_factory import EnvironmentComponentFactory
@@ -15,16 +17,17 @@ class BaseManagerFactory(ABC):
                  env: EnvironmentComponentFactory,
                  sessions: SessionsComponentFactory,
                  tools: ToolsComponentFactory,
-                 analyzers: AnalyzersComponentFactory = AnalyzersComponentFactory(),
-                 collectors: CollectorsComponentFactory = CollectorsComponentFactory(),
-                 inserters: InsertersComponentFactory = InsertersComponentFactory(),
-                 serializers: SerializersComponentFactory = SerializersComponentFactory(),
-                 updaters: UpdatersComponentFactory = UpdatersComponentFactory()):
-        self.analyzers = analyzers
-        self.collectors = collectors
+                 analyzers: Optional[AnalyzersComponentFactory] = None,
+                 collectors: Optional[CollectorsComponentFactory] = None,
+                 inserters: Optional[InsertersComponentFactory] = None,
+                 serializers: Optional[SerializersComponentFactory] = None,
+                 updaters: Optional[UpdatersComponentFactory] = None):
         self.env = env
-        self.inserters = inserters
-        self.serializers = serializers
         self.sessions = sessions
         self.tools = tools
-        self.updaters = updaters
+
+        self.analyzers = analyzers or AnalyzersComponentFactory()
+        self.collectors = collectors or CollectorsComponentFactory(tools)
+        self.inserters = inserters or InsertersComponentFactory(tools)
+        self.serializers = serializers or SerializersComponentFactory(tools)
+        self.updaters = updaters or UpdatersComponentFactory(tools)

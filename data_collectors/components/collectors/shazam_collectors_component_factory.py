@@ -11,7 +11,7 @@ from data_collectors.tools import ShazamTrackEntityExtractor, ShazamArtistEntity
 
 
 class ShazamCollectorsComponentFactory:
-    def __init__(self, tools: ToolsComponentFactory = ToolsComponentFactory()):
+    def __init__(self, tools: ToolsComponentFactory):
         self._tools = tools
 
     @staticmethod

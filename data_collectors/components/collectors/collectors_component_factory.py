@@ -1,3 +1,5 @@
+from typing import Optional
+
 from data_collectors.components.collectors.billboard_collectors_component_factory import \
     BillboardCollectorsComponentFactory
 from data_collectors.components.collectors.genius_collectors_component_factory import GeniusCollectorsComponentFactory
@@ -12,27 +14,29 @@ from data_collectors.components.collectors.shazam_collectors_component_factory i
 from data_collectors.components.collectors.spotify_collectors_component_factory import SpotifyCollectorsComponentFactory
 from data_collectors.components.collectors.wikipedia_collectors_component_factory import \
     WikipediaCollectorsComponentFactory
+from data_collectors.components.tools_component_factory import ToolsComponentFactory
 
 
 class CollectorsComponentFactory:
     def __init__(self,
-                 billboard: BillboardCollectorsComponentFactory = BillboardCollectorsComponentFactory(),
-                 charts: ChartsCollectorsComponentFactory = ChartsCollectorsComponentFactory(),
-                 genius: GeniusCollectorsComponentFactory = GeniusCollectorsComponentFactory(),
-                 google: GoogleCollectorsComponentFactory = GoogleCollectorsComponentFactory(),
-                 misc: MiscellaneousCollectorsFactory = MiscellaneousCollectorsFactory(),
-                 musixmatch: MusixmatchCollectorsComponentFactory = MusixmatchCollectorsComponentFactory(),
-                 openai: OpenAICollectorsComponentFactory = OpenAICollectorsComponentFactory(),
-                 shazam: ShazamCollectorsComponentFactory = ShazamCollectorsComponentFactory(),
-                 spotify: SpotifyCollectorsComponentFactory = SpotifyCollectorsComponentFactory(),
-                 wikipedia: WikipediaCollectorsComponentFactory = WikipediaCollectorsComponentFactory()):
-        self.billboard = billboard
-        self.charts = charts
-        self.genius = genius
-        self.google = google
-        self.misc = misc
-        self.musixmatch = musixmatch
-        self.openai = openai
-        self.shazam = shazam
-        self.spotify = spotify
-        self.wikipedia = wikipedia
+                 tools: ToolsComponentFactory,
+                 billboard: Optional[BillboardCollectorsComponentFactory] = None,
+                 charts: Optional[ChartsCollectorsComponentFactory] = None,
+                 genius: Optional[GeniusCollectorsComponentFactory] = None,
+                 google: Optional[GoogleCollectorsComponentFactory] = None,
+                 misc: Optional[MiscellaneousCollectorsFactory] = None,
+                 musixmatch: Optional[MusixmatchCollectorsComponentFactory] = None,
+                 openai: Optional[OpenAICollectorsComponentFactory] = None,
+                 shazam: Optional[ShazamCollectorsComponentFactory] = None,
+                 spotify: Optional[SpotifyCollectorsComponentFactory] = None,
+                 wikipedia: Optional[WikipediaCollectorsComponentFactory] = None):
+        self.billboard = billboard or BillboardCollectorsComponentFactory()
+        self.charts = charts or ChartsCollectorsComponentFactory(tools)
+        self.genius = genius or GeniusCollectorsComponentFactory(tools)
+        self.google = google or GoogleCollectorsComponentFactory(tools)
+        self.misc = misc or MiscellaneousCollectorsFactory()
+        self.musixmatch = musixmatch or MusixmatchCollectorsComponentFactory()
+        self.openai = openai or OpenAICollectorsComponentFactory(tools)
+        self.shazam = shazam or ShazamCollectorsComponentFactory(tools)
+        self.spotify = spotify or SpotifyCollectorsComponentFactory(tools)
+        self.wikipedia = wikipedia or WikipediaCollectorsComponentFactory(tools)

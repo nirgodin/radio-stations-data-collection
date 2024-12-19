@@ -3,7 +3,7 @@ from data_collectors.logic.serializers import *
 
 
 class SerializersComponentFactory:
-    def __init__(self, tools: ToolsComponentFactory = ToolsComponentFactory()):
+    def __init__(self, tools: ToolsComponentFactory):
         self._tools = tools
 
     def get_tracks_lyrics_serializer(self) -> TracksLyricsSerializer:

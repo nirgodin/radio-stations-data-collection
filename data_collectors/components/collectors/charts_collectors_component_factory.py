@@ -23,7 +23,7 @@ from data_collectors.logic.collectors import (
 
 
 class ChartsCollectorsComponentFactory:
-    def __init__(self, tools: ToolsComponentFactory = ToolsComponentFactory()):
+    def __init__(self, tools: ToolsComponentFactory):
         self._tools = tools
 
     @staticmethod

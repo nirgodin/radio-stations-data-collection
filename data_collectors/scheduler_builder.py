@@ -56,7 +56,7 @@ class SchedulerBuilder:
         email_sender = self._component_factory.tools.get_email_sender()
 
         for job in jobs:
-            next_run_time += self._random_short_delay()
+            # next_run_time += self._random_short_delay()
             func = partial(self._task_with_failure_notification, email_sender, job)
             scheduler.add_job(
                 func=func,

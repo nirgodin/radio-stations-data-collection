@@ -9,7 +9,7 @@ from data_collectors.logic.collectors import (
 
 
 class GoogleCollectorsComponentFactory:
-    def __init__(self, tools: ToolsComponentFactory = ToolsComponentFactory()):
+    def __init__(self, tools: ToolsComponentFactory):
         self._tools = tools
 
     def get_geocoding_collector(self, session: ClientSession) -> GoogleGeocodingCollector:

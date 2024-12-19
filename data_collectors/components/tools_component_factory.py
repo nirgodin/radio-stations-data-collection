@@ -44,9 +44,8 @@ class ToolsComponentFactory:
     def get_shazam(language: str = "EN") -> Shazam:
         return Shazam(language)
 
-    @staticmethod
-    def get_spotify_client(spotify_session: SpotifySession) -> SpotifyClient:
-        return SpotifyClient.create(spotify_session)
+    def get_spotify_client(self, spotify_session: SpotifySession) -> SpotifyClient:
+        return SpotifyClient.create(session=spotify_session, base_url=self._env.get_spotify_base_url())
 
     @staticmethod
     @lru_cache

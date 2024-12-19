@@ -3,7 +3,7 @@ from data_collectors.logic.collectors import TrackNamesEmbeddingsCollector, Trac
 
 
 class OpenAICollectorsComponentFactory:
-    def __init__(self, tools: ToolsComponentFactory = ToolsComponentFactory()):
+    def __init__(self, tools: ToolsComponentFactory):
         self._tools = tools
 
     def get_track_names_embeddings_collector(self) -> TrackNamesEmbeddingsCollector:

@@ -26,71 +26,71 @@ class ComponentFactory:
                  tools: Optional[ToolsComponentFactory] = None,
                  translation: Optional[TranslationManagerFactory] = None,
                  wikipedia: Optional[WikipediaManagerFactory] = None):
-        session_manager = sessions or SessionsComponentFactory(env)
-        tools_manager = tools or ToolsComponentFactory(env)
+        sessions_factory = sessions or SessionsComponentFactory(env)
+        tools_factory = tools or ToolsComponentFactory(env)
 
         self.env = env
-        self.sessions = session_manager
-        self.tools = tools
+        self.sessions = sessions_factory
+        self.tools = tools_factory
 
         self.billboard = billboard or BillboardManagerFactory(
             env=env,
-            sessions=session_manager,
-            tools=tools_manager,
+            sessions=sessions_factory,
+            tools=tools_factory,
         )
         self.charts = charts or ChartsManagerFactory(
             env=env,
-            sessions=session_manager,
-            tools=tools_manager,
+            sessions=sessions_factory,
+            tools=tools_factory,
         )
         self.deleters = deleters or DeletersComponentFactory()
         self.exporters = exporters or ExportersComponentFactory(
             env=env,
-            sessions=session_manager,
-            tools=tools_manager,
+            sessions=sessions_factory,
+            tools=tools_factory,
         )
         self.genius = genius or GeniusManagerFactory(
             env=env,
-            sessions=session_manager,
-            tools=tools_manager,
+            sessions=sessions_factory,
+            tools=tools_factory,
         )
         self.genres = genres or GenresManagerFactory(
             env=env,
-            sessions=session_manager,
-            tools=tools_manager,
+            sessions=sessions_factory,
+            tools=tools_factory,
         )
         self.google = google or GoogleManagerFactory(
             env=env,
-            sessions=session_manager,
-            tools=tools_manager,
+            sessions=sessions_factory,
+            tools=tools_factory,
         )
         self.misc = misc or MiscellaneousManagerFactory(
             env=env,
-            sessions=session_manager,
-            tools=tools_manager,
+            sessions=sessions_factory,
+            tools=tools_factory,
         )
         self.musixmatch = musixmatch or MusixmatchManagerFactory(
             env=env,
-            sessions=session_manager,
-            tools=tools_manager,
+            sessions=sessions_factory,
+            tools=tools_factory,
         )
         self.shazam = shazam or ShazamManagerFactory(
             env=env,
-            sessions=session_manager,
-            tools=tools_manager,
+            sessions=sessions_factory,
+            tools=tools_factory,
         )
         self.spotify = spotify or SpotifyManagerFactory(
             env=env,
-            sessions=session_manager,
-            tools=tools_manager,
+            sessions=sessions_factory,
+            tools=tools_factory,
         )
         self.translation = translation or TranslationManagerFactory(
             env=env,
-            sessions=session_manager,
-            tools=tools_manager,
+            sessions=sessions_factory,
+            tools=tools_factory,
         )
         self.wikipedia = wikipedia or WikipediaManagerFactory(
             env=env,
-            sessions=session_manager,
-            tools=tools_manager,
+            sessions=sessions_factory,
+            tools=tools_factory,
         )
