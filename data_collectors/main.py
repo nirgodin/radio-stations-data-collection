@@ -1,13 +1,16 @@
 from asyncio import new_event_loop
 
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from genie_common.tools import logger
 
+from data_collectors.components import ComponentFactory
 from data_collectors.scheduler_builder import SchedulerBuilder
 
 
-async def run_scheduler() -> None:
-    scheduler_builder = SchedulerBuilder()
-    scheduler = await scheduler_builder.build()
+async def run_scheduler(scheduler: AsyncIOScheduler = AsyncIOScheduler(),
+                        component_factory: ComponentFactory = ComponentFactory()) -> None:
+    scheduler_builder = SchedulerBuilder(component_factory)
+    scheduler = await scheduler_builder.build(scheduler)
 
     try:
         logger.info("Starting scheduler")
@@ -28,6 +31,7 @@ def run():
             loop.stop()
 
         loop.close()
+
 
 if __name__ == "__main__":
     run()
