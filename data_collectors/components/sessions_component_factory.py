@@ -8,7 +8,7 @@ from data_collectors.components.environment_component_factory import Environment
 
 
 class SessionsComponentFactory:
-    def __init__(self, env: EnvironmentComponentFactory = EnvironmentComponentFactory()):
+    def __init__(self, env: EnvironmentComponentFactory):
         self._env = env
 
     def get_spotify_session(self) -> SpotifySession:

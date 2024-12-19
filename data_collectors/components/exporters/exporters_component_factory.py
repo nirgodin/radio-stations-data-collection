@@ -9,9 +9,9 @@ from data_collectors.logic.exporters import *
 
 class ExportersComponentFactory:
     def __init__(self,
-                 env: EnvironmentComponentFactory = EnvironmentComponentFactory(),
-                 sessions: SessionsComponentFactory = SessionsComponentFactory(),
-                 tools: ToolsComponentFactory = ToolsComponentFactory()):
+                 env: EnvironmentComponentFactory,
+                 sessions: SessionsComponentFactory,
+                 tools: ToolsComponentFactory):
         self.env = env
         self.sessions = sessions
         self.tools = tools
