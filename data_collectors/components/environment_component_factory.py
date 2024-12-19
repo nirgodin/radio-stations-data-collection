@@ -23,6 +23,10 @@ class EnvironmentComponentFactory:
         return self._lookup_env_var("SPOTIPY_TOKEN_REQUEST_URL")
 
     @lru_cache
+    def get_database_url(self) -> str:
+        return self._lookup_env_var("DATABASE_URL")
+
+    @lru_cache
     def get_email_user(self) -> str:
         return self._lookup_env_var("EMAIL_USER")
 
