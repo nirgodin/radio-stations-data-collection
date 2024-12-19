@@ -23,13 +23,12 @@ from data_collectors.tools import ImageGenderDetector, TranslationAdapter
 
 class ToolsComponentFactory:
     def __init__(self, env: EnvironmentComponentFactory = EnvironmentComponentFactory()):
-        self.env = env
+        self._env = env
 
-    @staticmethod
-    def get_email_sender() -> EmailSender:
+    def get_email_sender(self) -> EmailSender:
         return EmailSender(
-            user=os.environ["EMAIL_USER"],
-            password=os.environ["EMAIL_PASSWORD"],
+            user=self._env.get_email_user(),
+            password=self._env.get_email_password(),
         )
 
     @staticmethod
@@ -66,7 +65,7 @@ class ToolsComponentFactory:
 
     def get_image_gender_detector(self, confidence_threshold: float) -> ImageGenderDetector:
         if not os.path.exists(GENDER_MODEL_RESOURCES_DIR):
-            gender_model_folder_id = self.env.get_gender_model_folder_id()
+            gender_model_folder_id = self._env.get_gender_model_folder_id()
             os.mkdir(GENDER_MODEL_RESOURCES_DIR)
             drive_adapter = ToolsComponentFactory.get_google_drive_client()
             drive_adapter.download_all_dir_files(folder_id=gender_model_folder_id, local_dir=GENDER_MODEL_RESOURCES_DIR)
@@ -86,13 +85,13 @@ class ToolsComponentFactory:
         return LanguageIdentifier.from_modelstring(model, norm_probs=True)
 
     def get_milvus_client(self) -> MilvusClient:
-        uri = self.env.get_milvus_uri()
-        token = self.env.get_milvus_token()
+        uri = self._env.get_milvus_uri()
+        token = self._env.get_milvus_token()
 
         return MilvusClient(uri=uri, token=token)
 
     def get_openai(self) -> OpenAI:
-        return OpenAI(api_key=self.env.get_openai_api_key())
+        return OpenAI(api_key=self._env.get_openai_api_key())
 
     @staticmethod
     def get_google_translate_client() -> GoogleTranslateClient:
@@ -105,11 +104,11 @@ class ToolsComponentFactory:
         )
 
     def get_gemini_model(self, model_name: str = 'models/gemini-1.5-pro-latest') -> GenerativeModel:
-        generativeai.configure(api_key=self.env.get_gemini_api_key())
+        generativeai.configure(api_key=self._env.get_gemini_api_key())
         return GenerativeModel(model_name=model_name)
 
     def _get_google_default_share_settings(self) -> List[ShareSettings]:
-        users = self.env.get_google_sheets_users()
+        users = self._env.get_google_sheets_users()
         share_settings = []
 
         for user in users:

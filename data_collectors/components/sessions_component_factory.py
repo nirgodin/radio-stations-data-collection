@@ -4,11 +4,18 @@ from genie_datastores.redis.operations import get_redis
 from spotipyio.auth import SpotifyGrantType, SpotifySession, ClientCredentials
 from spotipyio.extras.redis import RedisSessionCacheHandler
 
+from data_collectors.components.environment_component_factory import EnvironmentComponentFactory
+
 
 class SessionsComponentFactory:
-    @staticmethod
-    def get_spotify_session() -> SpotifySession:
-        return SpotifySession()
+    def __init__(self, env: EnvironmentComponentFactory = EnvironmentComponentFactory()):
+        self._env = env
+
+    def get_spotify_session(self) -> SpotifySession:
+        credentials = self._env.get_spotify_credentials()
+        token_request_url = self._env.get_spotify_token_request_url()
+
+        return SpotifySession(token_request_url=token_request_url, credentials=credentials)
 
     @staticmethod
     def get_authorized_spotify_session() -> SpotifySession:
