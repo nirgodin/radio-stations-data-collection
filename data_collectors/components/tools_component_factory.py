@@ -15,6 +15,7 @@ from openai import OpenAI
 from shazamio import Shazam
 from spotipyio import SpotifyClient
 from spotipyio.auth import SpotifySession
+from sqlalchemy.ext.asyncio import AsyncEngine
 
 from data_collectors.components.environment_component_factory import EnvironmentComponentFactory
 from data_collectors.consts.image_gender_detector_consts import GENDER_MODEL_RESOURCES_DIR
@@ -22,8 +23,12 @@ from data_collectors.tools import ImageGenderDetector, TranslationAdapter
 
 
 class ToolsComponentFactory:
-    def __init__(self, env: EnvironmentComponentFactory = EnvironmentComponentFactory()):
+    def __init__(self, env: EnvironmentComponentFactory):
         self._env = env
+
+    def get_database_engine(self) -> AsyncEngine:
+        url = self._env.get_database_url()
+        return get_database_engine(url)
 
     def get_email_sender(self) -> EmailSender:
         return EmailSender(

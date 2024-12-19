@@ -12,13 +12,13 @@ from data_collectors.components.updaters import UpdatersComponentFactory
 
 class BaseManagerFactory(ABC):
     def __init__(self,
+                 env: EnvironmentComponentFactory,
+                 sessions: SessionsComponentFactory,
+                 tools: ToolsComponentFactory,
                  analyzers: AnalyzersComponentFactory = AnalyzersComponentFactory(),
                  collectors: CollectorsComponentFactory = CollectorsComponentFactory(),
-                 env: EnvironmentComponentFactory = EnvironmentComponentFactory(),
                  inserters: InsertersComponentFactory = InsertersComponentFactory(),
                  serializers: SerializersComponentFactory = SerializersComponentFactory(),
-                 sessions: SessionsComponentFactory = SessionsComponentFactory(),
-                 tools: ToolsComponentFactory = ToolsComponentFactory(),
                  updaters: UpdatersComponentFactory = UpdatersComponentFactory()):
         self.analyzers = analyzers
         self.collectors = collectors
