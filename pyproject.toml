@@ -23,6 +23,9 @@ scikit-learn = ">=1.4.2,<1.5"
 openai = ">=1.28.0,<1.29"
 google-generativeai = ">=0.6,<1"
 apscheduler = ">=3.11.0,<4"
+fastapi = "0.115.6"
+starlette = "0.41.3"
+uvicorn = "0.32.1"
 
 [tool.poetry.group.dev.dependencies]
 pytest = ">=8.0.2,<9.0"
