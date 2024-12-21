@@ -6,8 +6,8 @@ from typing import Dict
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from genie_common.tools import logger, EmailSender
 
-from data_collectors.app.jobs_loader import JobsLoader
 from data_collectors.components import ComponentFactory
+from data_collectors.jobs.jobs_loader import JobsLoader
 from data_collectors.logic.models import ScheduledJob
 
 
@@ -34,8 +34,8 @@ class SchedulerBuilder:
             scheduler.add_job(
                 func=func,
                 trigger=job.interval,
-                id=job.id,
-                next_run_time=next_run_time
+                id=job.id.value,
+                # next_run_time=next_run_time
             )
 
     @staticmethod
@@ -49,4 +49,4 @@ class SchedulerBuilder:
                 await job.task()
 
         except Exception as e:
-            logger.exception(f"Failed executing job `{job.id}`")
+            logger.exception(f"Failed executing job `{job.id.value}`")

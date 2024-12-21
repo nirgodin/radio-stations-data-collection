@@ -4,7 +4,9 @@ from apscheduler.triggers.interval import IntervalTrigger
 from genie_datastores.postgres.models import SpotifyStation
 from spotipyio import SpotifyClient
 
+import data_collectors.app.jobs
 from data_collectors.jobs.base_job_builder import BaseJobBuilder
+from data_collectors.jobs.job_id import JobId
 from data_collectors.logic.models import ScheduledJob
 
 
@@ -12,7 +14,7 @@ class RadioSnapshotsJobBuilder(BaseJobBuilder):
     async def build(self) -> ScheduledJob:
         return ScheduledJob(
             task=self._task,
-            id="radio_snapshots",
+            id=JobId.RADIO_SNAPSHOTS,
             interval=IntervalTrigger(hours=5),
         )
 

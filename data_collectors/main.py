@@ -1,23 +1,13 @@
 import os
 from contextlib import asynccontextmanager
-from functools import lru_cache
-from typing import Annotated, Dict
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from fastapi import FastAPI, HTTPException
-from fastapi.params import Depends
+from fastapi import FastAPI
 from genie_common.tools import logger
-from starlette.responses import JSONResponse
 
-from data_collectors.app.jobs_loader import JobsLoader
-from data_collectors.components import ComponentFactory
-from data_collectors.logic.models import ScheduledJob
+from data_collectors.app.jobs import jobs_router
+from data_collectors.app.utils import get_component_factory
 from data_collectors.scheduler_builder import SchedulerBuilder
-
-
-@lru_cache
-def get_component_factory() -> ComponentFactory:
-    return ComponentFactory()
 
 
 @asynccontextmanager
@@ -37,23 +27,8 @@ async def lifespan(app: FastAPI) -> None:
         raise
 
 
-async def get_jobs_map() -> Dict[str, ScheduledJob]:
-    component_factory = get_component_factory()
-    return await JobsLoader.load(component_factory, "jobs")
-
-
 app = FastAPI(lifespan=lifespan)
-
-
-@app.get("/run/{job_id}")
-async def run(job_id: str, jobs_map: Annotated[Dict[str, ScheduledJob], Depends(get_jobs_map)]):
-    job = jobs_map.get(job_id)
-
-    if job is None:
-        raise HTTPException(status_code=400, detail=f"Job {job_id} not found")
-
-    await job.task()
-    return JSONResponse({"status": "ok"})
+app.include_router(jobs_router)
 
 
 if __name__ == "__main__":

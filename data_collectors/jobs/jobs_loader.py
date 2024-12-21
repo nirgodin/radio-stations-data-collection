@@ -22,7 +22,7 @@ class JobsLoader:
         for builder_class in BaseJobBuilder.__subclasses__():
             builder = builder_class(component_factory=component_factory)
             job = await builder.build()
-            jobs[job.id] = job
+            jobs[job.id.value] = job
 
         return jobs
 
