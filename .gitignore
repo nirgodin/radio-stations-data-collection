@@ -162,3 +162,4 @@ cython_debug/
 # Env
 /service_account_secrets.json
 /gender_model_resources
+/.env
