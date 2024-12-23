@@ -12,9 +12,8 @@ from data_collectors.logic.models import ScheduledJob
 
 
 class SchedulerBuilder:
-    def __init__(self, component_factory: ComponentFactory, builders_dir: str = "jobs"):
+    def __init__(self, component_factory: ComponentFactory):
         self._component_factory = component_factory
-        self._builders_dir = builders_dir
 
     async def build(self, scheduler: AsyncIOScheduler) -> AsyncIOScheduler:
         jobs = await JobsLoader.load(self._component_factory)

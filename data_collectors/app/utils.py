@@ -13,4 +13,4 @@ def get_component_factory() -> ComponentFactory:
 
 async def get_jobs_map() -> Dict[str, ScheduledJob]:
     component_factory = get_component_factory()
-    return await JobsLoader.load(component_factory, "jobs")
+    return await JobsLoader.load(component_factory)

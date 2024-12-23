@@ -1,6 +1,5 @@
 import os
 from importlib import import_module
-from importlib.util import spec_from_file_location, module_from_spec
 from typing import Dict
 
 from async_lru import alru_cache
@@ -14,9 +13,9 @@ from data_collectors.logic.models import ScheduledJob
 class JobsLoader:
     @staticmethod
     @alru_cache
-    async def load(component_factory: ComponentFactory, builders_dir: str = "jobs") -> Dict[str, ScheduledJob]:
+    async def load(component_factory: ComponentFactory) -> Dict[str, ScheduledJob]:
         logger.info("Loading all scheduled jobs dynamically")
-        JobsLoader._import_all_job_builders(builders_dir)
+        JobsLoader._import_all_job_builders()
         jobs = {}
 
         for builder_class in BaseJobBuilder.__subclasses__():
@@ -27,7 +26,9 @@ class JobsLoader:
         return jobs
 
     @staticmethod
-    def _import_all_job_builders(builders_dir: str) -> None:
+    def _import_all_job_builders() -> None:
+        builders_dir = os.path.dirname(__file__)
+
         for filename in os.listdir(builders_dir):
             logger.info(f"Loading {filename}")
 
