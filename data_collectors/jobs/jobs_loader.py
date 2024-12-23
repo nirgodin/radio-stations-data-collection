@@ -1,5 +1,6 @@
 import os
 from importlib import import_module
+from importlib.util import spec_from_file_location, module_from_spec
 from typing import Dict
 
 from async_lru import alru_cache
@@ -34,7 +35,12 @@ class JobsLoader:
 
             if JobsLoader._is_python_file(filename):
                 module_name = os.path.splitext(filename)[0]
-                import_module(f"data_collectors.{builders_dir}.{module_name}")
+                module_path = os.path.join(builders_dir, filename)
+                spec = spec_from_file_location(module_name, module_path)
+
+                if spec.loader is not None:
+                    module = module_from_spec(spec)
+                    spec.loader.exec_module(module)
 
     @staticmethod
     def _is_python_file(filename: str) -> bool:

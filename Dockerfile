@@ -18,4 +18,5 @@ RUN apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 COPY --from=requirements-stage /tmp/requirements.txt requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
-CMD exec gunicorn -k uvicorn.workers.UvicornWorker main:app
+EXPOSE 8080
+CMD exec gunicorn -k uvicorn.workers.UvicornWorker -b 0.0.0.0:8080 main:app
