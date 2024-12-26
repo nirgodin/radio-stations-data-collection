@@ -10,10 +10,6 @@ class ConstantLoggingJobBuilder(BaseJobBuilder):
     async def build(self):
         return ScheduledJob(
             id=JobId.CONSTANT_LOGGER,
-            task=self._task,
+            task=lambda: logger.info("I'm still breathing"),
             interval=IntervalTrigger(minutes=5)
         )
-
-    @staticmethod
-    async def _task() -> None:
-        logger.info("I'm still breathing")
