@@ -38,7 +38,7 @@ class RadioStationsSnapshotsManager(IManager):
             )
 
     async def _insert_radio_tracks(self, playlist: dict, tracks: List[dict], artists: List[SpotifyArtist]) -> None:
-        artists_ids = [artist.id for artist in artists]
+        artists_ids = sorted([artist.id for artist in artists])
         artists_responses = await self._spotify_client.artists.info.run(artists_ids)
         records = self._to_records(
             playlist=playlist,

@@ -18,7 +18,7 @@ class SpotifyArtistsDatabaseInserter(BaseSpotifyDatabaseInserter):
 
     async def _get_raw_records(self, tracks: List[dict]) -> List[dict]:
         artists_ids = extract_unique_artists_ids(*tracks)
-        return await self._spotify_client.artists.info.run(list(artists_ids))
+        return await self._spotify_client.artists.info.run(sorted(artists_ids))
 
     @property
     def _orm(self) -> Type[BaseSpotifyORMModel]:
