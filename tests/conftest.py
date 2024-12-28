@@ -15,6 +15,7 @@ from data_collectors.app.utils import get_component_factory
 from data_collectors.components import ComponentFactory
 from data_collectors.components.environment_component_factory import EnvironmentComponentFactory
 from main import app
+from tests.tools.spotify_insertions_verifier import SpotifyInsertionsVerifier
 
 
 @fixture(scope="session")
@@ -80,3 +81,8 @@ async def db_engine(postgres_testkit: PostgresTestkit) -> AsyncEngine:
 
     async with postgres_session(engine):
         yield engine
+
+
+@fixture(scope='function')
+def spotify_insertions_verifier(db_engine: AsyncEngine) -> SpotifyInsertionsVerifier:
+    return SpotifyInsertionsVerifier(db_engine)
