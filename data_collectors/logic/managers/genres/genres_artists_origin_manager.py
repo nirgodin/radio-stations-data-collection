@@ -22,7 +22,12 @@ GENRES_MAPPING = {
 
 
 class GenresArtistsOriginManager(IManager):
-    def __init__(self, db_engine: AsyncEngine, db_updater: ValuesDatabaseUpdater, db_inserter: ChunksDatabaseInserter):
+    def __init__(
+        self,
+        db_engine: AsyncEngine,
+        db_updater: ValuesDatabaseUpdater,
+        db_inserter: ChunksDatabaseInserter,
+    ):
         self._db_engine = db_engine
         self._db_updater = db_updater
         self._db_inserter = db_inserter
@@ -31,7 +36,9 @@ class GenresArtistsOriginManager(IManager):
         logger.info("Starting to run GenresArtistsOriginManager")
         missing_origin_artists = await self._query_missing_origin_artists(limit)
         genres_to_update_requests = self._to_update_requests(missing_origin_artists)
-        update_requests = [update_request for genre, update_request in genres_to_update_requests]
+        update_requests = [
+            update_request for genre, update_request in genres_to_update_requests
+        ]
         await self._db_updater.update(update_requests)
         decision_records = self._to_decisions(genres_to_update_requests)
         await self._db_inserter.insert(decision_records)
@@ -56,10 +63,7 @@ class GenresArtistsOriginManager(IManager):
 
         for row in rows:
             genre, artist_origin = self._determine_single_artist_origin(row)
-            request = DBUpdateRequest(
-                id=row.id,
-                values={Artist.origin: artist_origin}
-            )
+            request = DBUpdateRequest(id=row.id, values={Artist.origin: artist_origin})
             update_requests.append((genre, request))
 
         return update_requests
@@ -71,7 +75,9 @@ class GenresArtistsOriginManager(IManager):
                 return genre, origin
 
     @staticmethod
-    def _to_decisions(genres_to_update_requests: List[Tuple[str, DBUpdateRequest]]) -> List[Decision]:
+    def _to_decisions(
+        genres_to_update_requests: List[Tuple[str, DBUpdateRequest]]
+    ) -> List[Decision]:
         logger.info("Transforming update requests to decisions entries")
         decisions = []
 
@@ -81,7 +87,7 @@ class GenresArtistsOriginManager(IManager):
                 source=DataSource.SPOTIFY,
                 table=Table.ARTISTS,
                 table_id=request.id,
-                evidence=f"genre: {genre}"
+                evidence=f"genre: {genre}",
             )
             decisions.append(decision)
 

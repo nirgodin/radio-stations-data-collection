@@ -14,7 +14,7 @@ from data_collectors.consts.genius_consts import (
     FACEBOOK_NAME,
     INSTAGRAM_NAME,
     TWITTER_NAME,
-    DESCRIPTION
+    DESCRIPTION,
 )
 from data_collectors.consts.spotify_consts import ID, NAME
 from data_collectors.contract import IManager
@@ -24,11 +24,13 @@ from data_collectors.logic.models import GeniusTextFormat
 
 
 class GeniusArtistsManager(IManager):
-    def __init__(self,
-                 db_engine: AsyncEngine,
-                 artists_collector: GeniusArtistsCollector,
-                 chunks_inserter: ChunksDatabaseInserter,
-                 text_format: GeniusTextFormat):
+    def __init__(
+        self,
+        db_engine: AsyncEngine,
+        artists_collector: GeniusArtistsCollector,
+        chunks_inserter: ChunksDatabaseInserter,
+        text_format: GeniusTextFormat,
+    ):
         self._db_engine = db_engine
         self._artists_collector = artists_collector
         self._chunks_inserter = chunks_inserter
@@ -58,8 +60,14 @@ class GeniusArtistsManager(IManager):
         return cursor.scalars().all()
 
     async def _query_and_insert_artists_data(self, artists_ids: List[str]) -> None:
-        artists = await self._artists_collector.collect(ids=artists_ids, text_format=self._text_format)
-        valid_artists = [artist for artist in artists if not artist[NAME].lower() in ["genius", "spotify"]]
+        artists = await self._artists_collector.collect(
+            ids=artists_ids, text_format=self._text_format
+        )
+        valid_artists = [
+            artist
+            for artist in artists
+            if not artist[NAME].lower() in ["genius", "spotify"]
+        ]
         await self._insert_artists_about_documents(valid_artists)
         await self._insert_genius_artists_records(valid_artists)
 
@@ -74,7 +82,7 @@ class GeniusArtistsManager(IManager):
                 alternate_names=artist.get(ALTERNATE_NAMES),
                 facebook_name=artist.get(FACEBOOK_NAME),
                 instagram_name=artist.get(INSTAGRAM_NAME),
-                twitter_name=artist.get(TWITTER_NAME)
+                twitter_name=artist.get(TWITTER_NAME),
             )
             records.append(record)
 
@@ -85,7 +93,9 @@ class GeniusArtistsManager(IManager):
         documents = self._create_about_documents(artists)
 
         if not documents:
-            logger.info("Did not find any valid description. Aborting documents insertion")
+            logger.info(
+                "Did not find any valid description. Aborting documents insertion"
+            )
             return
 
         logger.info(f"Inserting {len(documents)} artists description documents")
@@ -103,7 +113,7 @@ class GeniusArtistsManager(IManager):
                     entity_type=EntityType.ARTIST,
                     entity_id=str(artist[ID]),
                     name=artist[NAME],
-                    source=DataSource.GENIUS
+                    source=DataSource.GENIUS,
                 )
                 documents.append(document)
 

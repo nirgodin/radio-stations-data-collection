@@ -27,10 +27,7 @@ class AnalyzersComponentFactory:
     async def _query_genres_mapping() -> Dict[str, PrimaryGenre]:
         logger.info("Querying database for genres to primary genres mapping")
         db_engine = get_database_engine()
-        query = (
-            select(Genre.id, Genre.primary_genre)
-            .distinct(Genre.id)
-        )
+        query = select(Genre.id, Genre.primary_genre).distinct(Genre.id)
         query_result = await execute_query(engine=db_engine, query=query)
         rows = query_result.all()
 

@@ -15,33 +15,41 @@ from data_collectors.logic.models import LyricsSourceDetails
 
 
 class TracksLyricsSerializer(ISerializer):
-    def __init__(self,
-                 language_identifier: LanguageIdentifier,
-                 pool_executor: SyncPoolExecutor = SyncPoolExecutor()):
+    def __init__(
+        self,
+        language_identifier: LanguageIdentifier,
+        pool_executor: SyncPoolExecutor = SyncPoolExecutor(),
+    ):
         self._language_identifier = language_identifier
         self._pool_executor = pool_executor
-        self._numeric_punctuation_spaces_regex = re.compile(r'[%s]' % re.escape(string.punctuation))
-
-    def serialize(self,
-                  ids_lyrics_mapping: Dict[str, List[str]],
-                  source_details: LyricsSourceDetails,
-                  track_ids_mapping: List[Row]) -> List[TrackLyrics]:
-        func = partial(self._serialize_single_track_lyrics, source_details, track_ids_mapping)
-        return self._pool_executor.run(
-            iterable=ids_lyrics_mapping.items(),
-            func=func,
-            expected_type=TrackLyrics
+        self._numeric_punctuation_spaces_regex = re.compile(
+            r"[%s]" % re.escape(string.punctuation)
         )
 
-    def _serialize_single_track_lyrics(self,
-                                       source_details: LyricsSourceDetails,
-                                       track_ids_mapping: List[Row],
-                                       source_id_and_lyrics: Tuple[str, List[str]]) -> TrackLyrics:
+    def serialize(
+        self,
+        ids_lyrics_mapping: Dict[str, List[str]],
+        source_details: LyricsSourceDetails,
+        track_ids_mapping: List[Row],
+    ) -> List[TrackLyrics]:
+        func = partial(
+            self._serialize_single_track_lyrics, source_details, track_ids_mapping
+        )
+        return self._pool_executor.run(
+            iterable=ids_lyrics_mapping.items(), func=func, expected_type=TrackLyrics
+        )
+
+    def _serialize_single_track_lyrics(
+        self,
+        source_details: LyricsSourceDetails,
+        track_ids_mapping: List[Row],
+        source_id_and_lyrics: Tuple[str, List[str]],
+    ) -> TrackLyrics:
         source_id, lyrics = source_id_and_lyrics
         spotify_id = self._find_spotify_id(
             source_id=source_id,
             column=source_details.column,
-            track_ids_mapping=track_ids_mapping
+            track_ids_mapping=track_ids_mapping,
         )
         joined_lyrics = "\n".join(lyrics)
         language, confidence = self._language_identifier.classify(joined_lyrics)
@@ -54,11 +62,13 @@ class TracksLyricsSerializer(ISerializer):
             language=language,
             language_confidence=confidence,
             number_of_words=sum(words_count.values()),
-            words_count=words_count
+            words_count=words_count,
         )
 
     @staticmethod
-    def _find_spotify_id(source_id: str, column: TrackIDMapping, track_ids_mapping: List[Row]) -> str:
+    def _find_spotify_id(
+        source_id: str, column: TrackIDMapping, track_ids_mapping: List[Row]
+    ) -> str:
         for row in track_ids_mapping:
             row_source_id = getattr(row, column.key)
 
@@ -69,8 +79,10 @@ class TracksLyricsSerializer(ISerializer):
         track_word_count = Counter()
 
         for line in lyrics:
-            clean_line = self._numeric_punctuation_spaces_regex.sub('', line)
-            tokens = [token.strip().lower() for token in clean_line.split(' ') if token != '']
+            clean_line = self._numeric_punctuation_spaces_regex.sub("", line)
+            tokens = [
+                token.strip().lower() for token in clean_line.split(" ") if token != ""
+            ]
             tokens_count = Counter(tokens)
             track_word_count += tokens_count
 

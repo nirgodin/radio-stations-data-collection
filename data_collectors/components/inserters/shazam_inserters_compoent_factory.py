@@ -3,8 +3,12 @@ from genie_datastores.postgres.operations import get_database_engine
 
 from data_collectors.components.tools_component_factory import ToolsComponentFactory
 from data_collectors.logic.inserters import ShazamArtistsDatabaseInserter
-from data_collectors.logic.inserters.postgres import ShazamTopTracksDatabaseInserter, ShazamTracksDatabaseInserter, \
-    ShazamArtistsPostgresDatabaseInserter, ChunksDatabaseInserter
+from data_collectors.logic.inserters.postgres import (
+    ShazamTopTracksDatabaseInserter,
+    ShazamTracksDatabaseInserter,
+    ShazamArtistsPostgresDatabaseInserter,
+    ChunksDatabaseInserter,
+)
 
 
 class ShazamInsertersComponentFactory:
@@ -12,7 +16,9 @@ class ShazamInsertersComponentFactory:
         self._tools = tools
 
     @staticmethod
-    def get_top_tracks_inserter(chunks_inserter: ChunksDatabaseInserter) -> ShazamTopTracksDatabaseInserter:
+    def get_top_tracks_inserter(
+        chunks_inserter: ChunksDatabaseInserter,
+    ) -> ShazamTopTracksDatabaseInserter:
         return ShazamTopTracksDatabaseInserter(chunks_inserter)
 
     @staticmethod
@@ -24,7 +30,7 @@ class ShazamInsertersComponentFactory:
         return ShazamArtistsDatabaseInserter(
             postgres_inserter=self.get_artists_postgres_inserter(),
             pool_executor=self._tools.get_pool_executor(),
-            db_engine=get_database_engine()
+            db_engine=get_database_engine(),
         )
 
     @staticmethod

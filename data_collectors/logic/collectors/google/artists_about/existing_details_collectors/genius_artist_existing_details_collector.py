@@ -9,8 +9,9 @@ from sqlalchemy import select
 from sqlalchemy.engine import Row
 from sqlalchemy.ext.asyncio import AsyncEngine
 
-from data_collectors.logic.collectors.google.artists_about.base_artist_existing_details_collector import \
-    BaseArtistsExistingDetailsCollector
+from data_collectors.logic.collectors.google.artists_about.base_artist_existing_details_collector import (
+    BaseArtistsExistingDetailsCollector,
+)
 from data_collectors.logic.models import ArtistExistingDetails
 
 
@@ -20,7 +21,7 @@ ARTIST_ABOUT_COLUMNS = [
     Artist.origin,
     Artist.birth_date,
     Artist.death_date,
-    Artist.gender
+    Artist.gender,
 ]
 
 
@@ -35,10 +36,14 @@ class GeniusArtistsExistingDetailsCollector(BaseArtistsExistingDetailsCollector)
         artists_details = await self._pool_executor.run(
             iterable=rows,
             func=self._query_about_document_and_build_artist_details,
-            expected_type=ArtistExistingDetails
+            expected_type=ArtistExistingDetails,
         )
-        artists_with_about_field = [details for details in artists_details if details.about is not None]
-        logger.info(f"Found about field for {len(artists_with_about_field)} out of {len(artists_details)} artists")
+        artists_with_about_field = [
+            details for details in artists_details if details.about is not None
+        ]
+        logger.info(
+            f"Found about field for {len(artists_with_about_field)} out of {len(artists_details)} artists"
+        )
 
         return artists_details
 
@@ -61,8 +66,12 @@ class GeniusArtistsExistingDetailsCollector(BaseArtistsExistingDetailsCollector)
         return DataSource.GENIUS
 
     @staticmethod
-    async def _query_about_document_and_build_artist_details(row: Row) -> ArtistExistingDetails:
-        document = await AboutDocument.find_one(AboutDocument.entity_id == row.genius_id)
+    async def _query_about_document_and_build_artist_details(
+        row: Row,
+    ) -> ArtistExistingDetails:
+        document = await AboutDocument.find_one(
+            AboutDocument.entity_id == row.genius_id
+        )
 
         if document is None:
             about = None
@@ -75,5 +84,5 @@ class GeniusArtistsExistingDetailsCollector(BaseArtistsExistingDetailsCollector)
             origin=row.origin,
             birth_date=row.birth_date,
             death_date=row.death_date,
-            gender=row.gender
+            gender=row.gender,
         )

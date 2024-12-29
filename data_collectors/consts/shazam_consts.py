@@ -3,7 +3,7 @@ from data_collectors.logic.models import WebElement, HTMLElement
 ISRAEL_COUNTRY_CODE = "IL"
 KEY = "key"
 ADAM_ID = "adamid"
-HITS = 'hits'
+HITS = "hits"
 HEADING = "heading"
 TITLE = "title"
 SUBTITLE = "subtitle"

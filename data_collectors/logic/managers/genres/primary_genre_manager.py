@@ -1,8 +1,14 @@
 from typing import Optional, List, Dict
 
 from genie_common.tools import logger
-from genie_datastores.postgres.models import Track, SpotifyArtist, ShazamTrack, SpotifyTrack, TrackIDMapping, \
-    PrimaryGenre
+from genie_datastores.postgres.models import (
+    Track,
+    SpotifyArtist,
+    ShazamTrack,
+    SpotifyTrack,
+    TrackIDMapping,
+    PrimaryGenre,
+)
 from genie_datastores.postgres.operations import execute_query
 from sqlalchemy import select
 from sqlalchemy.engine import Row
@@ -15,7 +21,12 @@ from data_collectors.logic.analyzers import PrimaryGenreAnalyzer
 
 
 class PrimaryGenreManager(IManager):
-    def __init__(self, db_engine: AsyncEngine, genre_analyzer: PrimaryGenreAnalyzer, db_updater: ValuesDatabaseUpdater):
+    def __init__(
+        self,
+        db_engine: AsyncEngine,
+        genre_analyzer: PrimaryGenreAnalyzer,
+        db_updater: ValuesDatabaseUpdater,
+    ):
         self._db_engine = db_engine
         self._genre_analyzer = genre_analyzer
         self._db_updater = db_updater
@@ -29,7 +40,11 @@ class PrimaryGenreManager(IManager):
     async def _retrieve_tracks_genres(self, limit: Optional[int]) -> List[Row]:
         logger.info(f"Retrieving tracks without primary genre")
         query = (
-            select(Track.id, SpotifyArtist.genres.label("spotify_genres"), ShazamTrack.primary_genre.label("shazam_genre"))
+            select(
+                Track.id,
+                SpotifyArtist.genres.label("spotify_genres"),
+                ShazamTrack.primary_genre.label("shazam_genre"),
+            )
             .where(Track.id == SpotifyTrack.id)
             .where(SpotifyTrack.artist_id == SpotifyArtist.id)
             .where(Track.id == TrackIDMapping.id)
@@ -43,13 +58,14 @@ class PrimaryGenreManager(IManager):
         return query_result.all()
 
     @staticmethod
-    def _to_update_requests(tracks_primary_genres: Dict[str, PrimaryGenre]) -> List[DBUpdateRequest]:
+    def _to_update_requests(
+        tracks_primary_genres: Dict[str, PrimaryGenre]
+    ) -> List[DBUpdateRequest]:
         update_requests = []
 
         for track_id, primary_genre in tracks_primary_genres.items():
             request = DBUpdateRequest(
-                id=track_id,
-                values={Track.primary_genre: primary_genre}
+                id=track_id, values={Track.primary_genre: primary_genre}
             )
             update_requests.append(request)
 

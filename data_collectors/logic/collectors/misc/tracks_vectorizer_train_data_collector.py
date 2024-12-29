@@ -1,7 +1,12 @@
 from typing import List
 
 from genie_common.tools import logger
-from genie_datastores.postgres.models import AudioFeatures, SpotifyTrack, RadioTrack, BaseORMModel
+from genie_datastores.postgres.models import (
+    AudioFeatures,
+    SpotifyTrack,
+    RadioTrack,
+    BaseORMModel,
+)
 from genie_datastores.postgres.operations import read_sql
 from pandas import DataFrame
 from sqlalchemy import select, func, extract
@@ -22,7 +27,7 @@ class TracksVectorizerTrainDataCollector(ICollector):
         logger.info("Merging tracks and radio tracks data")
         merged_data = radio_tracks_data.merge(
             right=tracks_data,
-            how='left',
+            how="left",
             left_on=TRACK_ID,
             right_on=ID,
         )
@@ -31,17 +36,13 @@ class TracksVectorizerTrainDataCollector(ICollector):
 
     async def _query_radio_tracks_data(self) -> DataFrame:
         logger.info("Querying radio tracks data")
-        query = (
-            select(*self._radio_tracks_query_columns)
-            .group_by(RadioTrack.track_id)
-        )
+        query = select(*self._radio_tracks_query_columns).group_by(RadioTrack.track_id)
         return await read_sql(engine=self._db_engine, query=query)
 
     async def _query_tracks_data(self) -> DataFrame:
         logger.info("Querying tracks data")
-        query = (
-            select(*self._tracks_query_columns)
-            .where(SpotifyTrack.id == AudioFeatures.id)
+        query = select(*self._tracks_query_columns).where(
+            SpotifyTrack.id == AudioFeatures.id
         )
         return await read_sql(engine=self._db_engine, query=query)
 

@@ -9,5 +9,9 @@ class SerializersComponentFactory:
     def get_tracks_lyrics_serializer(self) -> TracksLyricsSerializer:
         return TracksLyricsSerializer(self._tools.get_language_identifier())
 
-    def get_artists_about_paragraphs_serializer(self) -> ArtistsAboutParagraphsSerializer:
-        return ArtistsAboutParagraphsSerializer(generative_model=self._tools.get_gemini_model())
+    def get_artists_about_paragraphs_serializer(
+        self,
+    ) -> ArtistsAboutParagraphsSerializer:
+        return ArtistsAboutParagraphsSerializer(
+            generative_model=self._tools.get_gemini_model()
+        )

@@ -19,10 +19,12 @@ ACTUAL_KEY = "actual_key"
 
 
 class ChartsEntriesMistakesExporter(IExporter):
-    def __init__(self,
-                 db_engine: AsyncEngine,
-                 sheets_uploader: GoogleSheetsUploader,
-                 pool_executor: SyncPoolExecutor = SyncPoolExecutor()):
+    def __init__(
+        self,
+        db_engine: AsyncEngine,
+        sheets_uploader: GoogleSheetsUploader,
+        pool_executor: SyncPoolExecutor = SyncPoolExecutor(),
+    ):
         self._db_engine = db_engine
         self._sheets_uploader = sheets_uploader
         self._pool_executor = pool_executor
@@ -33,14 +35,19 @@ class ChartsEntriesMistakesExporter(IExporter):
         logger.info("Uploading resulting data to google sheet")
         spreadsheet = self._sheets_uploader.upload(
             title="Charts Entries Mistakes Candidates",
-            sheets=[Sheet(data, "candidates")]
+            sheets=[Sheet(data, "candidates")],
         )
         logger.info(f"Exported data to sheet with url {spreadsheet.url}")
 
     async def _query_data(self) -> DataFrame:
         logger.info("Querying database for unique charts keys")
         query = (
-            select(ChartEntry.key, ChartEntry.chart, SpotifyTrack.name, SpotifyArtist.name.label(ARTIST_NAME))
+            select(
+                ChartEntry.key,
+                ChartEntry.chart,
+                SpotifyTrack.name,
+                SpotifyArtist.name.label(ARTIST_NAME),
+            )
             .distinct(ChartEntry.key)
             .where(ChartEntry.key.isnot(None))
             .where(ChartEntry.track_id == SpotifyTrack.id)
@@ -56,7 +63,7 @@ class ChartsEntriesMistakesExporter(IExporter):
         similarities = self._pool_executor.run(
             iterable=[row for _, row in data.iterrows()],
             func=self._compute_keys_similarity,
-            expected_type=float
+            expected_type=float,
         )
         data[SIMILARITY] = similarities
         data.sort_values(by=SIMILARITY, ascending=True, inplace=True)

@@ -8,37 +8,43 @@ from data_collectors.logic.managers import (
     SpotifyPlaylistsArtistsManager,
     SpotifyPlaylistsTracksManager,
     ArtistsImagesGenderManager,
-    SpotifyArtistsAboutManager
+    SpotifyArtistsAboutManager,
 )
 
 
 class SpotifyManagerFactory(BaseManagerFactory):
-    def get_playlists_artists_manager(self, spotify_session: SpotifySession) -> SpotifyPlaylistsArtistsManager:
+    def get_playlists_artists_manager(
+        self, spotify_session: SpotifySession
+    ) -> SpotifyPlaylistsArtistsManager:
         return SpotifyPlaylistsArtistsManager(
             spotify_client=self.tools.get_spotify_client(spotify_session),
-            db_updater=self.updaters.get_values_updater()
+            db_updater=self.updaters.get_values_updater(),
         )
 
-    def get_playlists_tracks_manager(self, spotify_session: SpotifySession) -> SpotifyPlaylistsTracksManager:
+    def get_playlists_tracks_manager(
+        self, spotify_session: SpotifySession
+    ) -> SpotifyPlaylistsTracksManager:
         return SpotifyPlaylistsTracksManager(
             spotify_client=self.tools.get_spotify_client(spotify_session),
-            db_updater=self.updaters.get_values_updater()
+            db_updater=self.updaters.get_values_updater(),
         )
 
-    def get_artists_images_gender_manager(self,
-                                          client_session: ClientSession,
-                                          spotify_session: SpotifySession,
-                                          confidence_threshold: float = 0.5) -> ArtistsImagesGenderManager:
+    def get_artists_images_gender_manager(
+        self,
+        client_session: ClientSession,
+        spotify_session: SpotifySession,
+        confidence_threshold: float = 0.5,
+    ) -> ArtistsImagesGenderManager:
         images_collector = self.collectors.spotify.get_artists_images_collector(
             client_session=client_session,
-            spotify_client=self.tools.get_spotify_client(spotify_session)
+            spotify_client=self.tools.get_spotify_client(spotify_session),
         )
 
         return ArtistsImagesGenderManager(
             db_engine=get_database_engine(),
             artists_images_collector=images_collector,
             gender_detector=self.tools.get_image_gender_detector(confidence_threshold),
-            db_updater=self.updaters.get_values_updater()
+            db_updater=self.updaters.get_values_updater(),
         )
 
     async def get_artists_about_manager(self) -> SpotifyArtistsAboutManager:
@@ -46,5 +52,5 @@ class SpotifyManagerFactory(BaseManagerFactory):
         return SpotifyArtistsAboutManager(
             db_engine=get_database_engine(),
             abouts_collector=self.collectors.spotify.get_spotify_artists_about_collector(),
-            db_updater=self.updaters.get_values_updater()
+            db_updater=self.updaters.get_values_updater(),
         )

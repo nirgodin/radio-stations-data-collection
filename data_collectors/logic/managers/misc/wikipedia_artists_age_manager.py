@@ -7,10 +7,12 @@ from data_collectors.logic.updaters import ValuesDatabaseUpdater
 
 
 class WikipediaArtistsAgeManager(IManager):
-    def __init__(self,
-                 age_collector: BaseWikipediaAgeCollector,
-                 age_analyzer: WikipediaAgeAnalyzer,
-                 db_updater: ValuesDatabaseUpdater):
+    def __init__(
+        self,
+        age_collector: BaseWikipediaAgeCollector,
+        age_analyzer: WikipediaAgeAnalyzer,
+        db_updater: ValuesDatabaseUpdater,
+    ):
         self._age_collector = age_collector
         self._age_analyzer = age_analyzer
         self._db_updater = db_updater

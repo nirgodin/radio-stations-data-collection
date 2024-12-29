@@ -4,7 +4,12 @@ from typing import List
 from aiohttp import ClientSession
 from billboard import ChartData
 from genie_datastores.postgres.models import ChartEntryData
-from spotipyio.models import SearchItem, SpotifySearchType, SearchItemFilters, SearchItemMetadata
+from spotipyio.models import (
+    SearchItem,
+    SpotifySearchType,
+    SearchItemFilters,
+    SearchItemMetadata,
+)
 from spotipyio import SpotifyClient
 
 from data_collectors.consts.billboard_consts import BILLBOARD_DATETIME_FORMAT
@@ -14,10 +19,12 @@ from genie_common.tools import AioPoolExecutor
 
 
 class BillboardTracksCollector(ICollector):
-    def __init__(self,
-                 session: ClientSession,
-                 spotify_client: SpotifyClient,
-                 pool_executor: AioPoolExecutor = AioPoolExecutor()):
+    def __init__(
+        self,
+        session: ClientSession,
+        spotify_client: SpotifyClient,
+        pool_executor: AioPoolExecutor = AioPoolExecutor(),
+    ):
         self._session = session
         self._spotify_client = spotify_client
         self._pool_executor = pool_executor
@@ -27,20 +34,19 @@ class BillboardTracksCollector(ICollector):
         return await self._pool_executor.run(
             iterable=chart_entries,
             func=self._collect_single,
-            expected_type=ChartEntryData
+            expected_type=ChartEntryData,
         )
 
     async def _collect_single(self, entry_data: ChartEntryData) -> ChartEntryData:
         search_item = SearchItem(
-            metadata=SearchItemMetadata(
-                search_types=[SpotifySearchType.TRACK]
-            ),
+            metadata=SearchItemMetadata(search_types=[SpotifySearchType.TRACK]),
             filters=SearchItemFilters(
-                artist=entry_data.entry.artist,
-                track=entry_data.entry.title
-            )
+                artist=entry_data.entry.artist, track=entry_data.entry.title
+            ),
         )
-        search_result = await self._spotify_client.search.search_item.run_single(search_item)
+        search_result = await self._spotify_client.search.search_item.run_single(
+            search_item
+        )
         raw_track = extract_first_search_result(search_result)
         entry_data.track = {TRACK: raw_track} if raw_track else None
 
@@ -55,7 +61,7 @@ class BillboardTracksCollector(ICollector):
                 entry_data = ChartEntryData(
                     entry=entry,
                     date=datetime.strptime(chart.date, BILLBOARD_DATETIME_FORMAT),
-                    chart=chart.name
+                    chart=chart.name,
                 )
                 entries.append(entry_data)
 

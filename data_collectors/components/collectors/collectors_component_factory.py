@@ -1,35 +1,53 @@
 from typing import Optional
 
-from data_collectors.components.collectors.billboard_collectors_component_factory import \
-    BillboardCollectorsComponentFactory
-from data_collectors.components.collectors.genius_collectors_component_factory import GeniusCollectorsComponentFactory
-from data_collectors.components.collectors.google_collectors_component_factory import GoogleCollectorsComponentFactory
-from data_collectors.components.collectors.miscellaneous_collectors_factory import MiscellaneousCollectorsFactory
-from data_collectors.components.collectors.musixmatch_collectors_component_factory import \
-    MusixmatchCollectorsComponentFactory
-from data_collectors.components.collectors.openai_collectors_component_factory import OpenAICollectorsComponentFactory
-from data_collectors.components.collectors.charts_collectors_component_factory import \
-    ChartsCollectorsComponentFactory
-from data_collectors.components.collectors.shazam_collectors_component_factory import ShazamCollectorsComponentFactory
-from data_collectors.components.collectors.spotify_collectors_component_factory import SpotifyCollectorsComponentFactory
-from data_collectors.components.collectors.wikipedia_collectors_component_factory import \
-    WikipediaCollectorsComponentFactory
+from data_collectors.components.collectors.billboard_collectors_component_factory import (
+    BillboardCollectorsComponentFactory,
+)
+from data_collectors.components.collectors.genius_collectors_component_factory import (
+    GeniusCollectorsComponentFactory,
+)
+from data_collectors.components.collectors.google_collectors_component_factory import (
+    GoogleCollectorsComponentFactory,
+)
+from data_collectors.components.collectors.miscellaneous_collectors_factory import (
+    MiscellaneousCollectorsFactory,
+)
+from data_collectors.components.collectors.musixmatch_collectors_component_factory import (
+    MusixmatchCollectorsComponentFactory,
+)
+from data_collectors.components.collectors.openai_collectors_component_factory import (
+    OpenAICollectorsComponentFactory,
+)
+from data_collectors.components.collectors.charts_collectors_component_factory import (
+    ChartsCollectorsComponentFactory,
+)
+from data_collectors.components.collectors.shazam_collectors_component_factory import (
+    ShazamCollectorsComponentFactory,
+)
+from data_collectors.components.collectors.spotify_collectors_component_factory import (
+    SpotifyCollectorsComponentFactory,
+)
+from data_collectors.components.collectors.wikipedia_collectors_component_factory import (
+    WikipediaCollectorsComponentFactory,
+)
 from data_collectors.components.tools_component_factory import ToolsComponentFactory
 
 
 class CollectorsComponentFactory:
-    def __init__(self,
-                 tools: ToolsComponentFactory,
-                 billboard: Optional[BillboardCollectorsComponentFactory] = None,
-                 charts: Optional[ChartsCollectorsComponentFactory] = None,
-                 genius: Optional[GeniusCollectorsComponentFactory] = None,
-                 google: Optional[GoogleCollectorsComponentFactory] = None,
-                 misc: Optional[MiscellaneousCollectorsFactory] = None,
-                 musixmatch: Optional[MusixmatchCollectorsComponentFactory] = None,
-                 openai: Optional[OpenAICollectorsComponentFactory] = None,
-                 shazam: Optional[ShazamCollectorsComponentFactory] = None,
-                 spotify: Optional[SpotifyCollectorsComponentFactory] = None,
-                 wikipedia: Optional[WikipediaCollectorsComponentFactory] = None):
+    def __init__(
+        self,
+        tools: ToolsComponentFactory,
+        billboard: Optional[BillboardCollectorsComponentFactory] = None,
+        charts: Optional[ChartsCollectorsComponentFactory] = None,
+        genius: Optional[GeniusCollectorsComponentFactory] = None,
+        google: Optional[GoogleCollectorsComponentFactory] = None,
+        misc: Optional[MiscellaneousCollectorsFactory] = None,
+        musixmatch: Optional[MusixmatchCollectorsComponentFactory] = None,
+        openai: Optional[OpenAICollectorsComponentFactory] = None,
+        shazam: Optional[ShazamCollectorsComponentFactory] = None,
+        spotify: Optional[SpotifyCollectorsComponentFactory] = None,
+        wikipedia: Optional[WikipediaCollectorsComponentFactory] = None,
+    ):
         self.billboard = billboard or BillboardCollectorsComponentFactory()
         self.charts = charts or ChartsCollectorsComponentFactory(tools)
         self.genius = genius or GeniusCollectorsComponentFactory(tools)

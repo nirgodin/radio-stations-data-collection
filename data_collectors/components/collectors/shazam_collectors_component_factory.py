@@ -7,7 +7,11 @@ from spotipyio.tools.matching import EntityMatcher
 from data_collectors.components.tools_component_factory import ToolsComponentFactory
 from data_collectors.logic.collectors import ShazamArtistsExistingDetailsCollector
 from data_collectors.logic.collectors.shazam import *
-from data_collectors.tools import ShazamTrackEntityExtractor, ShazamArtistEntityExtractor, MultiEntityMatcher
+from data_collectors.tools import (
+    ShazamTrackEntityExtractor,
+    ShazamArtistEntityExtractor,
+    MultiEntityMatcher,
+)
 
 
 class ShazamCollectorsComponentFactory:
@@ -15,7 +19,9 @@ class ShazamCollectorsComponentFactory:
         self._tools = tools
 
     @staticmethod
-    def get_search_collector(shazam: Shazam, pool_executor: AioPoolExecutor) -> ShazamSearchCollector:
+    def get_search_collector(
+        shazam: Shazam, pool_executor: AioPoolExecutor
+    ) -> ShazamSearchCollector:
         entity_matcher = EntityMatcher(
             {
                 ShazamTrackEntityExtractor(): 0.7,
@@ -25,28 +31,36 @@ class ShazamCollectorsComponentFactory:
         return ShazamSearchCollector(
             shazam=shazam,
             pool_executor=pool_executor,
-            entity_matcher=MultiEntityMatcher(entity_matcher)
+            entity_matcher=MultiEntityMatcher(entity_matcher),
         )
 
     @staticmethod
-    def get_top_tracks_collector(shazam: Shazam, pool_executor: AioPoolExecutor) -> ShazamTopTracksCollector:
+    def get_top_tracks_collector(
+        shazam: Shazam, pool_executor: AioPoolExecutor
+    ) -> ShazamTopTracksCollector:
         return ShazamTopTracksCollector(shazam, pool_executor)
 
     @staticmethod
-    def get_artists_collector(shazam: Shazam, pool_executor: AioPoolExecutor) -> ShazamArtistsCollector:
+    def get_artists_collector(
+        shazam: Shazam, pool_executor: AioPoolExecutor
+    ) -> ShazamArtistsCollector:
         return ShazamArtistsCollector(shazam, pool_executor)
 
     @staticmethod
-    def get_tracks_collector(shazam: Shazam, pool_executor: AioPoolExecutor) -> ShazamTracksCollector:
+    def get_tracks_collector(
+        shazam: Shazam, pool_executor: AioPoolExecutor
+    ) -> ShazamTracksCollector:
         return ShazamTracksCollector(shazam, pool_executor)
 
     @staticmethod
     def get_lyrics_collector(pool_executor: AioPoolExecutor) -> ShazamLyricsCollector:
         return ShazamLyricsCollector(pool_executor)
 
-    async def get_artist_existing_details_collector(self) -> ShazamArtistsExistingDetailsCollector:
+    async def get_artist_existing_details_collector(
+        self,
+    ) -> ShazamArtistsExistingDetailsCollector:
         await initialize_mongo()
         return ShazamArtistsExistingDetailsCollector(
             db_engine=get_database_engine(),
-            pool_executor=self._tools.get_pool_executor()
+            pool_executor=self._tools.get_pool_executor(),
         )

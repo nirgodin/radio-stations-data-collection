@@ -2,7 +2,9 @@ from typing import List, Type
 
 from genie_datastores.postgres.models import Artist
 
-from data_collectors.logic.inserters.postgres.base_ids_database_inserter import BaseIDsDatabaseInserter
+from data_collectors.logic.inserters.postgres.base_ids_database_inserter import (
+    BaseIDsDatabaseInserter,
+)
 from data_collectors.utils.spotify import extract_unique_artists_ids
 
 

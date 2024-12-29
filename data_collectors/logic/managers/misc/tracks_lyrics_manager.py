@@ -13,10 +13,12 @@ from data_collectors.logic.serializers import TracksLyricsSerializer
 
 
 class TracksLyricsManager(IManager):
-    def __init__(self,
-                 db_engine: AsyncEngine,
-                 prioritized_sources: List[LyricsSourceDetails],
-                 records_serializer: TracksLyricsSerializer):
+    def __init__(
+        self,
+        db_engine: AsyncEngine,
+        prioritized_sources: List[LyricsSourceDetails],
+        records_serializer: TracksLyricsSerializer,
+    ):
         self._db_engine = db_engine
         self._prioritized_sources = prioritized_sources
         self._records_serializer = records_serializer
@@ -42,7 +44,12 @@ class TracksLyricsManager(IManager):
             .order_by(TrackLyrics.update_date.asc())
         )
         query = (
-            select(TrackIDMapping.id, TrackIDMapping.genius_id, TrackIDMapping.musixmatch_id, TrackIDMapping.shazam_id)
+            select(
+                TrackIDMapping.id,
+                TrackIDMapping.genius_id,
+                TrackIDMapping.musixmatch_id,
+                TrackIDMapping.shazam_id,
+            )
             .where(TrackIDMapping.id.notin_(track_lyrics_subquery))
             .where(non_null_condition)
             .limit(limit)
@@ -51,35 +58,47 @@ class TracksLyricsManager(IManager):
 
         return query_result.all()
 
-    async def _collect_tracks_lyrics(self, tracks_without_lyrics: List[Row]) -> List[TrackLyrics]:
+    async def _collect_tracks_lyrics(
+        self, tracks_without_lyrics: List[Row]
+    ) -> List[TrackLyrics]:
         records = []
 
         for source_details in self._prioritized_sources:
-            source_records = await self._collect_single_source_records(tracks_without_lyrics, source_details)
+            source_records = await self._collect_single_source_records(
+                tracks_without_lyrics, source_details
+            )
             records.extend(source_records)
             self._remove_found_tracks_from_missing_ids(
                 tracks_without_lyrics=tracks_without_lyrics,
-                source_records=source_records
+                source_records=source_records,
             )
 
-        missing_lyrics_records = [TrackLyrics(id=row.id) for row in tracks_without_lyrics]
+        missing_lyrics_records = [
+            TrackLyrics(id=row.id) for row in tracks_without_lyrics
+        ]
         return records + missing_lyrics_records
 
-    async def _collect_single_source_records(self,
-                                             tracks_without_lyrics: List[Row],
-                                             source_details: LyricsSourceDetails) -> List[TrackLyrics]:
-        logger.info(f"Collecting lyrics from `{source_details.data_source.value}` source")
-        non_missing_ids = self._extract_non_missing_collector_ids(tracks_without_lyrics, source_details.column)
+    async def _collect_single_source_records(
+        self, tracks_without_lyrics: List[Row], source_details: LyricsSourceDetails
+    ) -> List[TrackLyrics]:
+        logger.info(
+            f"Collecting lyrics from `{source_details.data_source.value}` source"
+        )
+        non_missing_ids = self._extract_non_missing_collector_ids(
+            tracks_without_lyrics, source_details.column
+        )
         ids_lyrics_mapping = await source_details.collector.collect(non_missing_ids)
 
         return self._records_serializer.serialize(
             ids_lyrics_mapping=ids_lyrics_mapping,
             source_details=source_details,
-            track_ids_mapping=tracks_without_lyrics
+            track_ids_mapping=tracks_without_lyrics,
         )
 
     @staticmethod
-    def _extract_non_missing_collector_ids(tracks_without_lyrics: List[Row], column: TrackIDMapping) -> List[str]:
+    def _extract_non_missing_collector_ids(
+        tracks_without_lyrics: List[Row], column: TrackIDMapping
+    ) -> List[str]:
         non_missing_ids = set()
 
         for row in tracks_without_lyrics:
@@ -91,8 +110,9 @@ class TracksLyricsManager(IManager):
         return list(non_missing_ids)
 
     @staticmethod
-    def _remove_found_tracks_from_missing_ids(tracks_without_lyrics: List[Row],
-                                              source_records: List[TrackLyrics]) -> None:
+    def _remove_found_tracks_from_missing_ids(
+        tracks_without_lyrics: List[Row], source_records: List[TrackLyrics]
+    ) -> None:
         source_ids = [record.id for record in source_records]
 
         for i, row in enumerate(tracks_without_lyrics):

@@ -15,10 +15,12 @@ from data_collectors.tools import TranslationAdapter
 
 
 class BaseTranslationManager(IManager):
-    def __init__(self,
-                 db_engine: AsyncEngine,
-                 pool_executor: AioPoolExecutor,
-                 translation_adapter: TranslationAdapter):
+    def __init__(
+        self,
+        db_engine: AsyncEngine,
+        pool_executor: AioPoolExecutor,
+        translation_adapter: TranslationAdapter,
+    ):
         self._db_engine = db_engine
         self._pool_executor = pool_executor
         self._translation_adapter = translation_adapter
@@ -35,7 +37,7 @@ class BaseTranslationManager(IManager):
         await self._pool_executor.run(
             iterable=entity_ids_names_map.items(),
             func=self._translate_single_record,
-            expected_type=type(None)
+            expected_type=type(None),
         )
 
     async def _query_relevant_entities(self, limit: Optional[int]) -> Dict[str, str]:
@@ -45,17 +47,17 @@ class BaseTranslationManager(IManager):
             .where(Translation.entity_source == self._entity_source)
             .where(Translation.entity_type == self._entity_type)
         )
-        query = (
-            self._query
-            .where(self._orm.name.notin_(translations_subquery))
-            .limit(limit)
+        query = self._query.where(self._orm.name.notin_(translations_subquery)).limit(
+            limit
         )
         raw_result = await execute_query(engine=self._db_engine, query=query)
         query_result = raw_result.all()
 
         return {entity.id: entity.name for entity in query_result}
 
-    async def _translate_single_record(self, entity_id_and_name: Tuple[str, str]) -> None:
+    async def _translate_single_record(
+        self, entity_id_and_name: Tuple[str, str]
+    ) -> None:
         entity_id, entity_name = entity_id_and_name
         await self._translation_adapter.translate(
             text=entity_name,

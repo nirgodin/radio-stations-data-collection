@@ -24,7 +24,7 @@ class ChartsTaggedMistakesCollector(ICollector):
         results = await self._pool_executor.run(
             iterable=[row for _, row in non_handled_data.iterrows()],
             func=self._to_update_requests,
-            expected_type=list
+            expected_type=list,
         )
 
         return chain_lists(results)
@@ -35,10 +35,7 @@ class ChartsTaggedMistakesCollector(ICollector):
 
         for id_ in existing_rows_ids:
             request = DBUpdateRequest(
-                id=id_,
-                values={
-                    ChartEntry.track_id: row["correct_track_id"]
-                }
+                id=id_, values={ChartEntry.track_id: row["correct_track_id"]}
             )
             update_requests.append(request)
 

@@ -15,7 +15,12 @@ from data_collectors.logic.updaters import ValuesDatabaseUpdater
 
 
 class ShazamOriginCopyManager(IManager):
-    def __init__(self, db_engine: AsyncEngine, db_updater: ValuesDatabaseUpdater, db_inserter: ChunksDatabaseInserter):
+    def __init__(
+        self,
+        db_engine: AsyncEngine,
+        db_updater: ValuesDatabaseUpdater,
+        db_inserter: ChunksDatabaseInserter,
+    ):
         self._db_engine = db_engine
         self._db_updater = db_updater
         self._db_inserter = db_inserter
@@ -31,7 +36,9 @@ class ShazamOriginCopyManager(IManager):
             logger.info("Did not find any record to update. Aborting")
 
     async def _query_missing_artists_origins(self, limit: Optional[int]) -> List[Row]:
-        logger.info("Querying `shazam_artists` table for artists origin that is missing on `artists` table")
+        logger.info(
+            "Querying `shazam_artists` table for artists origin that is missing on `artists` table"
+        )
         query = (
             select(Artist.id, ShazamArtist.id.label("shazam_id"), ShazamArtist.origin)
             .where(Artist.shazam_id == ShazamArtist.id)
@@ -44,17 +51,16 @@ class ShazamOriginCopyManager(IManager):
         return query_response.all()
 
     async def _update_artists_records(self, query_result: List[Row]) -> None:
-        logger.info(f"Found {len(query_result)} artists. Converting rows to update requests")
+        logger.info(
+            f"Found {len(query_result)} artists. Converting rows to update requests"
+        )
         update_requests = [self._to_update_request(row) for row in query_result]
 
         await self._db_updater.update(update_requests)
 
     @staticmethod
     def _to_update_request(row: Row) -> DBUpdateRequest:
-        return DBUpdateRequest(
-            id=row.id,
-            values={Artist.origin: row.origin}
-        )
+        return DBUpdateRequest(id=row.id, values={Artist.origin: row.origin})
 
     async def _insert_decisions_entries(self, query_result: List[Row]) -> None:
         logger.info("Inserting decision records")
@@ -66,7 +72,7 @@ class ShazamOriginCopyManager(IManager):
                 source=DataSource.SHAZAM,
                 table=Table.ARTISTS,
                 table_id=row.id,
-                evidence=f"shazam id: {row.shazam_id}"
+                evidence=f"shazam id: {row.shazam_id}",
             )
             records.append(decision)
 

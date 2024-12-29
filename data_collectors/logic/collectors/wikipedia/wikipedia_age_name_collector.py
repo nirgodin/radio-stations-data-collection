@@ -5,11 +5,15 @@ from genie_datastores.postgres.models import Artist, SpotifyArtist
 from genie_datastores.postgres.operations import execute_query
 from sqlalchemy import select
 
-from data_collectors.logic.collectors.wikipedia.base_wikipedia_age_collector import BaseWikipediaAgeCollector
+from data_collectors.logic.collectors.wikipedia.base_wikipedia_age_collector import (
+    BaseWikipediaAgeCollector,
+)
 
 
 class WikipediaAgeNameCollector(BaseWikipediaAgeCollector):
-    async def _get_missing_artists_details(self, limit: Optional[int]) -> List[Tuple[str, str]]:
+    async def _get_missing_artists_details(
+        self, limit: Optional[int]
+    ) -> List[Tuple[str, str]]:
         query = (
             select(Artist.id, SpotifyArtist.name)
             .where(Artist.id == SpotifyArtist.id)

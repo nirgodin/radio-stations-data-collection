@@ -1,8 +1,15 @@
 from typing import Dict, List
 
 from genie_common.tools import logger
-from genie_datastores.postgres.models import Chart, ChartEntry, Decision, Table, Artist, \
-    SpotifyArtist, SpotifyTrack
+from genie_datastores.postgres.models import (
+    Chart,
+    ChartEntry,
+    Decision,
+    Table,
+    Artist,
+    SpotifyArtist,
+    SpotifyTrack,
+)
 from genie_datastores.models import DataSource
 from genie_datastores.postgres.operations import execute_query
 from sqlalchemy import select
@@ -15,7 +22,12 @@ from data_collectors.logic.updaters import ValuesDatabaseUpdater
 
 
 class ChartsIsraeliArtistsManager(IManager):
-    def __init__(self, db_engine: AsyncEngine, db_updater: ValuesDatabaseUpdater, db_inserter: ChunksDatabaseInserter):
+    def __init__(
+        self,
+        db_engine: AsyncEngine,
+        db_updater: ValuesDatabaseUpdater,
+        db_inserter: ChunksDatabaseInserter,
+    ):
         self._db_engine = db_engine
         self._db_updater = db_updater
         self._db_inserter = db_inserter
@@ -27,11 +39,15 @@ class ChartsIsraeliArtistsManager(IManager):
             await self._update_single_chart_artists(chart, is_israeli)
             logger.info(f"Successfully updated chart `{chart.value}` artists")
 
-    async def _update_single_chart_artists(self, chart: Chart, is_israeli: bool) -> None:
+    async def _update_single_chart_artists(
+        self, chart: Chart, is_israeli: bool
+    ) -> None:
         artists_ids = await self._query_unique_chart_artists_ids(chart, is_israeli)
 
         if not artists_ids:
-            logger.info(f"Did not find any relevant artist for chart `{chart.value}`. Skipping")
+            logger.info(
+                f"Did not find any relevant artist for chart `{chart.value}`. Skipping"
+            )
             return
 
         update_requests = self._to_update_requests(chart, artists_ids, is_israeli)
@@ -39,7 +55,9 @@ class ChartsIsraeliArtistsManager(IManager):
         decision_records = self._to_decision_records(chart, artists_ids)
         await self._db_inserter.insert(decision_records)
 
-    async def _query_unique_chart_artists_ids(self, chart: Chart, is_israeli: bool) -> List[str]:
+    async def _query_unique_chart_artists_ids(
+        self, chart: Chart, is_israeli: bool
+    ) -> List[str]:
         logger.info(f"Querying chart `{chart.value}` unique tracks ids")
         query = (
             select(Artist.id)
@@ -56,14 +74,15 @@ class ChartsIsraeliArtistsManager(IManager):
         return query_result.scalars().all()
 
     @staticmethod
-    def _to_update_requests(chart: Chart, artists_ids: List[str], is_israeli: bool) -> List[DBUpdateRequest]:
+    def _to_update_requests(
+        chart: Chart, artists_ids: List[str], is_israeli: bool
+    ) -> List[DBUpdateRequest]:
         logger.info(f"Transforming chart `{chart.value}` to update requests")
         update_requests = []
 
         for artist_id in artists_ids:
             request = DBUpdateRequest(
-                id=artist_id,
-                values={Artist.is_israeli: is_israeli}
+                id=artist_id, values={Artist.is_israeli: is_israeli}
             )
             update_requests.append(request)
 
@@ -79,7 +98,7 @@ class ChartsIsraeliArtistsManager(IManager):
                 column=Artist.is_israeli.key,
                 source=DataSource.CHARTS,
                 table=Table.ARTISTS,
-                table_id=artist_id
+                table_id=artist_id,
             )
             records.append(decision)
 

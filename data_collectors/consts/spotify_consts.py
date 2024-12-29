@@ -1,10 +1,10 @@
 # API
-TRACK = 'track'
-ALBUM = 'album'
-ARTISTS = 'artists'
-ID = 'id'
+TRACK = "track"
+ALBUM = "album"
+ARTISTS = "artists"
+ID = "id"
 NAME = "name"
-ALBUMS = 'albums'
+ALBUMS = "albums"
 TRACKS = "tracks"
 ITEMS = "items"
 IMAGES = "images"
@@ -18,4 +18,4 @@ SPOTIFY_OPEN_PLAYLIST_URL_FORMAT = f"{SPOTIFY_OPEN_BASE_URL}/playlist/{{id}}"
 SPOTIFY_OPEN_ARTIST_URL_FORMAT = f"{SPOTIFY_OPEN_BASE_URL}/artist/{{id}}"
 
 # Infobox
-SPOTIFY_INFOBOX_SELECTOR = '.M0yriEHOsE9ET707IXzC'
+SPOTIFY_INFOBOX_SELECTOR = ".M0yriEHOsE9ET707IXzC"

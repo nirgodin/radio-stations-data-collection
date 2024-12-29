@@ -9,7 +9,9 @@ from data_collectors.logic.models import GlglzChartDetails, HTMLElement
 
 class IGlglzChartsSerializer(ISerializer, ABC):
     @abstractmethod
-    def serialize(self, chart_details: GlglzChartDetails, elements: List[Dict[str, str]]) -> List[ChartEntry]:
+    def serialize(
+        self, chart_details: GlglzChartDetails, elements: List[Dict[str, str]]
+    ) -> List[ChartEntry]:
         raise NotImplementedError
 
     @property
