@@ -10,7 +10,7 @@ RADIO_SNAPSHOTS_STATIONS = [
     SpotifyStation.KAN_88,
     SpotifyStation.ECO_99,
     SpotifyStation.KAN_GIMEL,
-    SpotifyStation.FM_103
+    SpotifyStation.FM_103,
 ]
 
 

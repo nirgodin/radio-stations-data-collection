@@ -5,7 +5,13 @@ from typing import Optional, List
 from genie_common.clients.google import GoogleTranslateClient
 from genie_common.tools import AioPoolExecutor, ChunksGenerator, EmailSender
 from genie_datastores.google.drive import GoogleDriveClient
-from genie_datastores.google.sheets import GoogleSheetsClient, GoogleSheetsUploader, ShareSettings, PermissionType, Role
+from genie_datastores.google.sheets import (
+    GoogleSheetsClient,
+    GoogleSheetsUploader,
+    ShareSettings,
+    PermissionType,
+    Role,
+)
 from genie_datastores.milvus import MilvusClient
 from genie_datastores.postgres.operations import get_database_engine
 from google import generativeai
@@ -17,8 +23,12 @@ from spotipyio import SpotifyClient
 from spotipyio.auth import SpotifySession
 from sqlalchemy.ext.asyncio import AsyncEngine
 
-from data_collectors.components.environment_component_factory import EnvironmentComponentFactory
-from data_collectors.consts.image_gender_detector_consts import GENDER_MODEL_RESOURCES_DIR
+from data_collectors.components.environment_component_factory import (
+    EnvironmentComponentFactory,
+)
+from data_collectors.consts.image_gender_detector_consts import (
+    GENDER_MODEL_RESOURCES_DIR,
+)
 from data_collectors.tools import ImageGenderDetector, TranslationAdapter
 
 
@@ -37,7 +47,9 @@ class ToolsComponentFactory:
         )
 
     @staticmethod
-    def get_pool_executor(pool_size: int = 5, validate_results: bool = True) -> AioPoolExecutor:
+    def get_pool_executor(
+        pool_size: int = 5, validate_results: bool = True
+    ) -> AioPoolExecutor:
         return AioPoolExecutor(pool_size, validate_results)
 
     @staticmethod
@@ -45,7 +57,9 @@ class ToolsComponentFactory:
         return Shazam(language)
 
     def get_spotify_client(self, spotify_session: SpotifySession) -> SpotifyClient:
-        return SpotifyClient.create(session=spotify_session, base_url=self._env.get_spotify_base_url())
+        return SpotifyClient.create(
+            session=spotify_session, base_url=self._env.get_spotify_base_url()
+        )
 
     @staticmethod
     @lru_cache
@@ -60,29 +74,32 @@ class ToolsComponentFactory:
     def get_google_sheets_uploader(self) -> GoogleSheetsUploader:
         default_settings = {
             "share_settings": self._get_google_default_share_settings(),
-            "folder_id": os.getenv("GOOGLE_SHEETS_DEFAULT_FOLDER_ID")
+            "folder_id": os.getenv("GOOGLE_SHEETS_DEFAULT_FOLDER_ID"),
         }
         return GoogleSheetsUploader(
             google_sheets_client=self.get_google_sheets_client(),
-            default_settings=default_settings
+            default_settings=default_settings,
         )
 
-    def get_image_gender_detector(self, confidence_threshold: float) -> ImageGenderDetector:
+    def get_image_gender_detector(
+        self, confidence_threshold: float
+    ) -> ImageGenderDetector:
         if not os.path.exists(GENDER_MODEL_RESOURCES_DIR):
             gender_model_folder_id = self._env.get_gender_model_folder_id()
             os.mkdir(GENDER_MODEL_RESOURCES_DIR)
             drive_adapter = ToolsComponentFactory.get_google_drive_client()
-            drive_adapter.download_all_dir_files(folder_id=gender_model_folder_id, local_dir=GENDER_MODEL_RESOURCES_DIR)
+            drive_adapter.download_all_dir_files(
+                folder_id=gender_model_folder_id, local_dir=GENDER_MODEL_RESOURCES_DIR
+            )
 
         return ImageGenderDetector.create(confidence_threshold)
 
     @staticmethod
-    def get_chunks_generator(pool_executor: Optional[AioPoolExecutor] = None, chunk_size: int = 50) -> ChunksGenerator:
+    def get_chunks_generator(
+        pool_executor: Optional[AioPoolExecutor] = None, chunk_size: int = 50
+    ) -> ChunksGenerator:
         executor = pool_executor or ToolsComponentFactory.get_pool_executor()
-        return ChunksGenerator(
-            pool_executor=executor,
-            chunk_size=chunk_size
-        )
+        return ChunksGenerator(pool_executor=executor, chunk_size=chunk_size)
 
     @staticmethod
     def get_language_identifier() -> LanguageIdentifier:
@@ -104,10 +121,12 @@ class ToolsComponentFactory:
     def get_translation_adapter(self) -> TranslationAdapter:
         return TranslationAdapter(
             translation_client=self.get_google_translate_client(),
-            db_engine=get_database_engine()
+            db_engine=get_database_engine(),
         )
 
-    def get_gemini_model(self, model_name: str = 'models/gemini-1.5-pro-latest') -> GenerativeModel:
+    def get_gemini_model(
+        self, model_name: str = "models/gemini-1.5-pro-latest"
+    ) -> GenerativeModel:
         generativeai.configure(api_key=self._env.get_gemini_api_key())
         return GenerativeModel(model_name=model_name)
 
@@ -117,9 +136,7 @@ class ToolsComponentFactory:
 
         for user in users:
             user_setting = ShareSettings(
-                email=user,
-                permission_type=PermissionType.USER,
-                role=Role.WRITER
+                email=user, permission_type=PermissionType.USER, role=Role.WRITER
             )
             share_settings.append(user_setting)
 

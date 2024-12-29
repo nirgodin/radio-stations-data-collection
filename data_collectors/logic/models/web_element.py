@@ -10,7 +10,7 @@ class WebElement:
     name: str
     type: HTMLElement
     class_: Optional[Union[str, Pattern]] = None
-    child_element: Optional['WebElement'] = None
+    child_element: Optional["WebElement"] = None
     multiple: bool = False
     enumerate: bool = True
     expected_type: Type = str

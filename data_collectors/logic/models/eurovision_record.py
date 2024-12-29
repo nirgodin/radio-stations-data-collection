@@ -12,8 +12,4 @@ class EurovisionRecord:
 
     @classmethod
     def from_row(cls, row: Row) -> "EurovisionRecord":
-        return cls(
-            id=row.id,
-            key=row.key,
-            date=row.date
-        )
+        return cls(id=row.id, key=row.key, date=row.date)

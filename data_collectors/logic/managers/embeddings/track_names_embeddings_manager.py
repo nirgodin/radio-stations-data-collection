@@ -14,10 +14,12 @@ from data_collectors.logic.updaters import ValuesDatabaseUpdater
 
 
 class TrackNamesEmbeddingsManager(IManager):
-    def __init__(self,
-                 db_engine: AsyncEngine,
-                 embeddings_collector: TrackNamesEmbeddingsCollector,
-                 db_updater: ValuesDatabaseUpdater):
+    def __init__(
+        self,
+        db_engine: AsyncEngine,
+        embeddings_collector: TrackNamesEmbeddingsCollector,
+        db_updater: ValuesDatabaseUpdater,
+    ):
         self._embeddings_collector = embeddings_collector
         self._db_updater = db_updater
         self._db_engine = db_engine
@@ -28,10 +30,17 @@ class TrackNamesEmbeddingsManager(IManager):
         batch_id = await self._embeddings_collector.collect(missing_tracks)
         await self._update_postgres_embeddings_exist(missing_tracks, batch_id)
 
-    async def _collect_missing_embeddings_tracks(self, limit: Optional[int]) -> List[MissingTrack]:
+    async def _collect_missing_embeddings_tracks(
+        self, limit: Optional[int]
+    ) -> List[MissingTrack]:
         logger.info("Querying tracks without name embeddings")
         query = (
-            select(Track.id, SpotifyTrack.id, SpotifyTrack.name, SpotifyArtist.name.label(ARTIST_NAME))
+            select(
+                Track.id,
+                SpotifyTrack.id,
+                SpotifyTrack.name,
+                SpotifyArtist.name.label(ARTIST_NAME),
+            )
             .where(Track.id == SpotifyTrack.id)
             .where(SpotifyTrack.artist_id == SpotifyArtist.id)
             .where(Track.has_name_embeddings.is_(False))
@@ -42,14 +51,15 @@ class TrackNamesEmbeddingsManager(IManager):
 
         return [MissingTrack.from_row(row) for row in query_result.all()]
 
-    async def _update_postgres_embeddings_exist(self, missing_tracks: List[MissingTrack], batch_id: str) -> None:
+    async def _update_postgres_embeddings_exist(
+        self, missing_tracks: List[MissingTrack], batch_id: str
+    ) -> None:
         logger.info("Starting to update Postgres database of new embeddings batch id")
         update_requests = []
 
         for missing_track in missing_tracks:
             request = DBUpdateRequest(
-                id=missing_track.spotify_id,
-                values={Track.batch_id: batch_id}
+                id=missing_track.spotify_id, values={Track.batch_id: batch_id}
             )
             update_requests.append(request)
 

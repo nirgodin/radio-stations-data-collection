@@ -11,12 +11,6 @@ class GeocodingResponse:
 
     @classmethod
     def from_row(cls, id: str, row: Row) -> "GeocodingResponse":
-        result = {
+        result = {}
 
-        }
-
-        return cls(
-            id=row.id,
-            result=result,
-            is_from_cache=True
-        )
+        return cls(id=row.id, result=result, is_from_cache=True)

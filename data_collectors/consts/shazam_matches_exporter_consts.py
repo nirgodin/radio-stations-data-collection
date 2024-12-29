@@ -1,4 +1,9 @@
-from genie_datastores.postgres.models import SpotifyTrack, SpotifyArtist, ShazamTrack, ShazamArtist
+from genie_datastores.postgres.models import (
+    SpotifyTrack,
+    SpotifyArtist,
+    ShazamTrack,
+    ShazamArtist,
+)
 
 SPOTIFY_TRACK_NAME_COLUMN = "spotify_track_name"
 SPOTIFY_ARTIST_NAME_COLUMN = "spotify_artist_name"
@@ -10,7 +15,7 @@ QUERY_COLUMNS = [
     ShazamTrack.name.label(SHAZAM_TRACK_NAME_COLUMN),
     ShazamArtist.name.label(SHAZAM_ARTIST_NAME_COLUMN),
     SpotifyTrack.id,
-    ShazamTrack.id.label("shazam_id")
+    ShazamTrack.id.label("shazam_id"),
 ]
 SPOTIFY_KEY_COLUMN = "spotify_key"
 SHAZAM_KEY_COLUMN = "shazam_key"

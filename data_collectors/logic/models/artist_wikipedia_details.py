@@ -17,13 +17,10 @@ class ArtistWikipediaDetails:
     def to_update_request(self) -> DBUpdateRequest:
         values = {
             Artist.birth_date: self.birth_date,
-            Artist.death_date: self.death_date
+            Artist.death_date: self.death_date,
         }
 
         if self.birth_date is not None or self.death_date is not None:
             values[Artist.birth_date_source] = DataSource.GENERAL_WIKIPEDIA
 
-        return DBUpdateRequest(
-            id=self.id,
-            values=values
-        )
+        return DBUpdateRequest(id=self.id, values=values)

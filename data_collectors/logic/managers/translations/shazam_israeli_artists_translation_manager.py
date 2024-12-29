@@ -5,7 +5,9 @@ from genie_datastores.models import DataSource, EntityType
 from sqlalchemy import select
 from sqlalchemy.sql import Select
 
-from data_collectors.logic.managers.translations.base_translation_manager import BaseTranslationManager
+from data_collectors.logic.managers.translations.base_translation_manager import (
+    BaseTranslationManager,
+)
 
 
 class ShazamIsraeliArtistsTranslationManager(BaseTranslationManager):
@@ -15,7 +17,7 @@ class ShazamIsraeliArtistsTranslationManager(BaseTranslationManager):
             select(ShazamArtist.id, ShazamArtist.name)
             .where(ShazamArtist.id == Artist.shazam_id)
             .where(Artist.is_israeli.is_(True))
-            .where(ShazamArtist.name.regexp_match(r'^[a-zA-Z0-9\s]+$'))
+            .where(ShazamArtist.name.regexp_match(r"^[a-zA-Z0-9\s]+$"))
         )
 
     @property

@@ -22,5 +22,5 @@ class ArtistExistingDetails(BaseModel):
             origin=row.origin,
             birth_date=row.birth_date,
             death_date=row.death_date,
-            gender=row.gender
+            gender=row.gender,
         )

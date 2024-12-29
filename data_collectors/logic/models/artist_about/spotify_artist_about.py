@@ -21,21 +21,21 @@ class SpotifyArtistAbout:
     def to_social_media_update_request(self) -> DBUpdateRequest:
         values = {SpotifyArtist.update_date: datetime.utcnow()}
 
-        for field in [SpotifyArtist.facebook_name, SpotifyArtist.instagram_name, SpotifyArtist.twitter_name]:
+        for field in [
+            SpotifyArtist.facebook_name,
+            SpotifyArtist.instagram_name,
+            SpotifyArtist.twitter_name,
+        ]:
             field_value = getattr(self, field.key)
 
             if field_value is not None:
                 values[field] = field_value
 
-        return DBUpdateRequest(
-            id=self.id,
-            values=values
-        )
+        return DBUpdateRequest(id=self.id, values=values)
 
     def to_existing_about_document_update_request(self) -> DBUpdateRequest:
         return DBUpdateRequest(
-            id=self.id,
-            values={SpotifyArtist.has_about_document: True}
+            id=self.id, values={SpotifyArtist.has_about_document: True}
         )
 
     def to_about_document(self) -> AboutDocument:
@@ -44,5 +44,5 @@ class SpotifyArtistAbout:
             entity_type=EntityType.ARTIST,
             entity_id=self.id,
             name=self.name,
-            source=DataSource.SPOTIFY
+            source=DataSource.SPOTIFY,
         )

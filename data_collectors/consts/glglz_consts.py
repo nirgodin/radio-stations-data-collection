@@ -8,10 +8,17 @@ GLGLZ_DAY_FORMATS = ["%d", "%#e"]
 GLGLZ_MONTH_FORMATS = ["%m", "%#m"]
 GLGLZ_YEAR_FORMATS = ["%Y", "%y"]
 GLGLZ_DATETIME_FORMATS = ["%Y-%#e%#m"] + [
-    f"{day}{month}{year}" for day, month, year in product(GLGLZ_DAY_FORMATS, GLGLZ_MONTH_FORMATS, GLGLZ_YEAR_FORMATS)
+    f"{day}{month}{year}"
+    for day, month, year in product(
+        GLGLZ_DAY_FORMATS, GLGLZ_MONTH_FORMATS, GLGLZ_YEAR_FORMATS
+    )
 ]
-ISRAELI_CHART_TITLE = b'\xd7\x94\xd7\x9e\xd7\xa6\xd7\xa2\xd7\x93 \xd7\x94\xd7\x99\xd7\xa9\xd7\xa8\xd7\x90\xd7\x9c\xd7\x99:'.decode("utf-8")
-INTERNATIONAL_CHART_TITLE = b'\xd7\x94\xd7\x9e\xd7\xa6\xd7\xa2\xd7\x93 \xd7\x94\xd7\x91\xd7\x99\xd7\xa0\xd7\x9c\xd7\x90\xd7\x95\xd7\x9e\xd7\x99:'.decode("utf-8")
+ISRAELI_CHART_TITLE = b"\xd7\x94\xd7\x9e\xd7\xa6\xd7\xa2\xd7\x93 \xd7\x94\xd7\x99\xd7\xa9\xd7\xa8\xd7\x90\xd7\x9c\xd7\x99:".decode(
+    "utf-8"
+)
+INTERNATIONAL_CHART_TITLE = b"\xd7\x94\xd7\x9e\xd7\xa6\xd7\xa2\xd7\x93 \xd7\x94\xd7\x91\xd7\x99\xd7\xa0\xd7\x9c\xd7\x90\xd7\x95\xd7\x9e\xd7\x99:".decode(
+    "utf-8"
+)
 GLGLZ_CHART_ENTRY = "glglz_chart_entry"
 POSITION_TRACK_NAME_SEPARATOR = "."
 FIRST_GLGLZ_CHART_DATE = datetime(2013, 1, 3)

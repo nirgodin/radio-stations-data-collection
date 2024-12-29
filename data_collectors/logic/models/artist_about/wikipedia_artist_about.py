@@ -20,7 +20,7 @@ class WikipediaArtistAbout:
             id=row.id,
             name=row.name,
             wikipedia_name=row.wikipedia_name,
-            wikipedia_language=row.wikipedia_language
+            wikipedia_language=row.wikipedia_language,
         )
 
     def to_about_document(self) -> AboutDocument:
@@ -29,5 +29,5 @@ class WikipediaArtistAbout:
             entity_type=EntityType.ARTIST,
             entity_id=self.id,
             name=self.name,
-            source=DataSource.WIKIPEDIA
+            source=DataSource.WIKIPEDIA,
         )

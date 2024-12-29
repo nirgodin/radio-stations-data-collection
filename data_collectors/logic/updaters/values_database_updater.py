@@ -21,9 +21,7 @@ class ValuesDatabaseUpdater(IDatabaseUpdater):
         n_records = len(update_requests)
         logger.info(f"Starting to update {n_records} records")
         results = await self._pool_executor.run(  # TODO: Find a way to do it in Bulk
-            iterable=update_requests,
-            func=self.update_single,
-            expected_type=type(None)
+            iterable=update_requests, func=self.update_single, expected_type=type(None)
         )
 
         logger.info(f"Successfully updated {len(results)} records out of {n_records}")

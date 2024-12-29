@@ -12,15 +12,16 @@ GENRE_COLUMN = "genre"
 
 
 class GenresMappingManager(IManager):
-    def __init__(self, sheets_client: GoogleSheetsClient, genres_inserter: GenresDatabaseInserter):
+    def __init__(
+        self, sheets_client: GoogleSheetsClient, genres_inserter: GenresDatabaseInserter
+    ):
         self._sheets_client = sheets_client
         self._genres_inserter = genres_inserter
 
     async def run(self, spreadsheet_url: str, worksheet_name: str) -> None:
         logger.info("Starting to read genres mapping from spreadsheet")
         data = self._sheets_client.read(
-            spreadsheet=spreadsheet_url,
-            worksheet_name=worksheet_name
+            spreadsheet=spreadsheet_url, worksheet_name=worksheet_name
         )
         data.drop_duplicates(subset=[GENRE_COLUMN], inplace=True)
         data = data[data[GENRE_COLUMN] != ""]
@@ -37,7 +38,7 @@ class GenresMappingManager(IManager):
             primary_genre = row["primary_genre"].lower().strip()
             record = Genre(
                 id=row[GENRE_COLUMN].lower().strip(),
-                primary_genre=PrimaryGenre(primary_genre)
+                primary_genre=PrimaryGenre(primary_genre),
             )
             records.append(record)
 

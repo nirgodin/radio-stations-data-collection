@@ -14,10 +14,12 @@ from data_collectors.logic.models import SpotifyArtistAbout
 
 
 class SpotifyArtistsAboutManager(IManager):
-    def __init__(self,
-                 db_engine: AsyncEngine,
-                 abouts_collector: SpotifyArtistsAboutCollector,
-                 db_updater: ValuesDatabaseUpdater):
+    def __init__(
+        self,
+        db_engine: AsyncEngine,
+        abouts_collector: SpotifyArtistsAboutCollector,
+        db_updater: ValuesDatabaseUpdater,
+    ):
         self._abouts_collector = abouts_collector
         self._db_engine = db_engine
         self._db_updater = db_updater
@@ -41,7 +43,9 @@ class SpotifyArtistsAboutManager(IManager):
 
         return {row.id: row.name for row in query_result}
 
-    async def _update_social_media_fields(self, abouts: List[SpotifyArtistAbout]) -> None:
+    async def _update_social_media_fields(
+        self, abouts: List[SpotifyArtistAbout]
+    ) -> None:
         logger.info("Updating spotify artists social media fields")
         update_requests = [about.to_social_media_update_request() for about in abouts]
 
@@ -57,10 +61,16 @@ class SpotifyArtistsAboutManager(IManager):
             await AboutDocument.insert_many(documents)
 
         else:
-            logger.warning("Did not find any about document. Skipping documents insertion")
+            logger.warning(
+                "Did not find any about document. Skipping documents insertion"
+            )
 
-    async def _update_existing_about_document(self, abouts: List[SpotifyArtistAbout]) -> None:
+    async def _update_existing_about_document(
+        self, abouts: List[SpotifyArtistAbout]
+    ) -> None:
         logger.info(f"Updating database about document exist for {len(abouts)} records")
-        update_requests = [about.to_existing_about_document_update_request() for about in abouts]
+        update_requests = [
+            about.to_existing_about_document_update_request() for about in abouts
+        ]
 
         await self._db_updater.update(update_requests)

@@ -5,7 +5,9 @@ from google.generativeai.types.generation_types import BaseGenerateContentRespon
 from pydantic import BaseModel, ValidationError
 
 
-def serialize_generative_model_response(response: BaseGenerateContentResponse, model: Type[BaseModel]) -> Optional[BaseModel]:
+def serialize_generative_model_response(
+    response: BaseGenerateContentResponse, model: Type[BaseModel]
+) -> Optional[BaseModel]:
     try:
         if response.parts:
             return model.parse_raw(response.text)
@@ -16,5 +18,7 @@ def serialize_generative_model_response(response: BaseGenerateContentResponse, m
         return None
 
     except ValidationError:
-        logger.exception("Was not able to serialize model response. Returning None by default")
+        logger.exception(
+            "Was not able to serialize model response. Returning None by default"
+        )
         return None

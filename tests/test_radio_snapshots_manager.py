@@ -13,14 +13,16 @@ from tests.tools.spotify_insertions_verifier import SpotifyInsertionsVerifier
 
 
 class TestRadioSnapshotsManager:
-    async def test_trigger(self,
-                           spotify_test_client: SpotifyTestClient,
-                           station_playlist_map: Dict[SpotifyStation, dict],
-                           artists: List[List[str]],
-                           tracks: List[List[str]],
-                           albums: List[str],
-                           test_client: TestClient,
-                           spotify_insertions_verifier: SpotifyInsertionsVerifier):
+    async def test_trigger(
+        self,
+        spotify_test_client: SpotifyTestClient,
+        station_playlist_map: Dict[SpotifyStation, dict],
+        artists: List[List[str]],
+        tracks: List[List[str]],
+        albums: List[str],
+        test_client: TestClient,
+        spotify_insertions_verifier: SpotifyInsertionsVerifier,
+    ):
         self._given_valid_playlists_response(spotify_test_client, station_playlist_map)
         self._given_valid_artists_responses(spotify_test_client, artists)
         self._given_valid_audio_features_responses(spotify_test_client, tracks)
@@ -36,10 +38,15 @@ class TestRadioSnapshotsManager:
 
     @fixture
     def station_playlist_map(self) -> Dict[SpotifyStation, dict]:
-        return {station: SpotifyMockFactory.playlist(id=station.value) for station in RADIO_SNAPSHOTS_STATIONS}
+        return {
+            station: SpotifyMockFactory.playlist(id=station.value)
+            for station in RADIO_SNAPSHOTS_STATIONS
+        }
 
     @fixture
-    def artists(self, station_playlist_map: Dict[SpotifyStation, dict]) -> List[List[str]]:
+    def artists(
+        self, station_playlist_map: Dict[SpotifyStation, dict]
+    ) -> List[List[str]]:
         artists_ids = []
 
         for playlist in station_playlist_map.values():
@@ -50,7 +57,9 @@ class TestRadioSnapshotsManager:
         return artists_ids
 
     @fixture
-    def tracks(self, station_playlist_map: Dict[SpotifyStation, dict]) -> List[List[str]]:
+    def tracks(
+        self, station_playlist_map: Dict[SpotifyStation, dict]
+    ) -> List[List[str]]:
         tracks_ids = []
 
         for playlist in station_playlist_map.values():
@@ -66,19 +75,25 @@ class TestRadioSnapshotsManager:
 
         for playlist in station_playlist_map.values():
             playlist_tracks = playlist["tracks"]["items"]
-            playlist_albums_ids = [track["track"]["album"]["id"] for track in playlist_tracks]
+            playlist_albums_ids = [
+                track["track"]["album"]["id"] for track in playlist_tracks
+            ]
             albums_ids.extend(playlist_albums_ids)
 
         return albums_ids
 
     @staticmethod
-    def _given_valid_playlists_response(spotify_test_client: SpotifyTestClient,
-                                        station_playlist_map: Dict[SpotifyStation, dict]) -> None:
+    def _given_valid_playlists_response(
+        spotify_test_client: SpotifyTestClient,
+        station_playlist_map: Dict[SpotifyStation, dict],
+    ) -> None:
         for station, playlist in station_playlist_map.items():
             spotify_test_client.playlists.info.expect_success(station.value, [playlist])
 
     @staticmethod
-    def _given_valid_artists_responses(spotify_test_client: SpotifyTestClient, artists: List[List[str]]) -> None:
+    def _given_valid_artists_responses(
+        spotify_test_client: SpotifyTestClient, artists: List[List[str]]
+    ) -> None:
         for playlist_artists in artists:
             sorted_artists = sorted(playlist_artists)
             # The call to artists endpoint is made twice, by the ArtistsInserter and by the RadioTracksInserter
@@ -86,6 +101,10 @@ class TestRadioSnapshotsManager:
             spotify_test_client.artists.info.expect_success(sorted_artists)
 
     @staticmethod
-    def _given_valid_audio_features_responses(spotify_test_client: SpotifyTestClient, tracks: List[List[str]]) -> None:
+    def _given_valid_audio_features_responses(
+        spotify_test_client: SpotifyTestClient, tracks: List[List[str]]
+    ) -> None:
         for station_tracks in tracks:
-            spotify_test_client.tracks.audio_features.expect_success(sorted(station_tracks))
+            spotify_test_client.tracks.audio_features.expect_success(
+                sorted(station_tracks)
+            )

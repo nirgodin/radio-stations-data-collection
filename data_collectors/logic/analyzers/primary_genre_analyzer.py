@@ -10,9 +10,11 @@ from data_collectors.logic.analyzers.genre_mapper_analyzer import GenreMapperAna
 
 
 class PrimaryGenreAnalyzer(IAnalyzer):
-    def __init__(self,
-                 genre_mapper: GenreMapperAnalyzer,
-                 pool_executor: SyncPoolExecutor = SyncPoolExecutor()):
+    def __init__(
+        self,
+        genre_mapper: GenreMapperAnalyzer,
+        pool_executor: SyncPoolExecutor = SyncPoolExecutor(),
+    ):
         self._genre_mapper = genre_mapper
         self._pool_executor = pool_executor
 
@@ -20,7 +22,7 @@ class PrimaryGenreAnalyzer(IAnalyzer):
         track_to_primary_genre_mapping = self._pool_executor.run(
             iterable=rows,
             func=self._decide_single_track_primary_genre,
-            expected_type=tuple
+            expected_type=tuple,
         )
         return dict(track_to_primary_genre_mapping)
 
@@ -48,7 +50,9 @@ class PrimaryGenreAnalyzer(IAnalyzer):
 
     def _map_raw_genres_to_primary(self, raw_genres: List[str]) -> PrimaryGenre:
         mapped_genres = [self._genre_mapper.analyze(genre) for genre in raw_genres]
-        non_other_main_genres = [genre for genre in mapped_genres if genre != PrimaryGenre.OTHER]
+        non_other_main_genres = [
+            genre for genre in mapped_genres if genre != PrimaryGenre.OTHER
+        ]
 
         if non_other_main_genres:
             return find_most_common_element(non_other_main_genres)

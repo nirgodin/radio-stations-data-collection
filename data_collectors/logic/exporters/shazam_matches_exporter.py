@@ -3,24 +3,38 @@ from typing import Optional
 from genie_common.tools import SyncPoolExecutor, logger
 from genie_common.utils import compute_similarity_score
 from genie_datastores.google.sheets import GoogleSheetsUploader, Sheet
-from genie_datastores.postgres.models import SpotifyTrack, SpotifyArtist, ShazamTrack, ShazamArtist, TrackIDMapping
+from genie_datastores.postgres.models import (
+    SpotifyTrack,
+    SpotifyArtist,
+    ShazamTrack,
+    ShazamArtist,
+    TrackIDMapping,
+)
 from genie_datastores.postgres.operations import read_sql
 from pandas import DataFrame, Series
 from sqlalchemy import select, and_
 from sqlalchemy.ext.asyncio import AsyncEngine
 
 from data_collectors.consts.general_consts import SIMILARITY
-from data_collectors.consts.shazam_matches_exporter_consts import QUERY_COLUMNS, SPOTIFY_KEY_COLUMN, \
-    SPOTIFY_TRACK_NAME_COLUMN, SPOTIFY_ARTIST_NAME_COLUMN, SHAZAM_KEY_COLUMN, SHAZAM_ARTIST_NAME_COLUMN, \
-    SHAZAM_TRACK_NAME_COLUMN
+from data_collectors.consts.shazam_matches_exporter_consts import (
+    QUERY_COLUMNS,
+    SPOTIFY_KEY_COLUMN,
+    SPOTIFY_TRACK_NAME_COLUMN,
+    SPOTIFY_ARTIST_NAME_COLUMN,
+    SHAZAM_KEY_COLUMN,
+    SHAZAM_ARTIST_NAME_COLUMN,
+    SHAZAM_TRACK_NAME_COLUMN,
+)
 from data_collectors.contract import IExporter
 
 
 class ShazamMatchesExporter(IExporter):
-    def __init__(self,
-                 db_engine: AsyncEngine,
-                 sheets_uploader: GoogleSheetsUploader,
-                 pool_executor: SyncPoolExecutor = SyncPoolExecutor()):
+    def __init__(
+        self,
+        db_engine: AsyncEngine,
+        sheets_uploader: GoogleSheetsUploader,
+        pool_executor: SyncPoolExecutor = SyncPoolExecutor(),
+    ):
         self._db_engine = db_engine
         self._sheets_uploader = sheets_uploader
         self._pool_executor = pool_executor
@@ -31,11 +45,13 @@ class ShazamMatchesExporter(IExporter):
         self._pre_process_output_data(data)
         spreadsheet = self._sheets_uploader.upload(
             title="Shazam Spotify Matches Comparison",
-            sheets=[Sheet(data, "matches comparison")]
+            sheets=[Sheet(data, "matches comparison")],
         )
         logger.info(f"Exported data to sheet with url `{spreadsheet.url}`")
 
-    async def _query_spotify_to_shazam_tracks_mapping(self, limit: Optional[int]) -> DataFrame:
+    async def _query_spotify_to_shazam_tracks_mapping(
+        self, limit: Optional[int]
+    ) -> DataFrame:
         logger.info("Querying comparison data from db")
         non_null_condition = and_(
             SpotifyTrack.name.isnot(None),
@@ -58,12 +74,16 @@ class ShazamMatchesExporter(IExporter):
 
     def _pre_process_output_data(self, data: DataFrame) -> None:
         logger.info("Pre processing data")
-        data[SPOTIFY_KEY_COLUMN] = data[SPOTIFY_ARTIST_NAME_COLUMN] + " - " + data[SPOTIFY_TRACK_NAME_COLUMN]
-        data[SHAZAM_KEY_COLUMN] = data[SHAZAM_ARTIST_NAME_COLUMN] + " - " + data[SHAZAM_TRACK_NAME_COLUMN]
+        data[SPOTIFY_KEY_COLUMN] = (
+            data[SPOTIFY_ARTIST_NAME_COLUMN] + " - " + data[SPOTIFY_TRACK_NAME_COLUMN]
+        )
+        data[SHAZAM_KEY_COLUMN] = (
+            data[SHAZAM_ARTIST_NAME_COLUMN] + " - " + data[SHAZAM_TRACK_NAME_COLUMN]
+        )
         similarities = self._pool_executor.run(
             iterable=[row for _, row in data.iterrows()],
             func=self._compute_keys_similarity,
-            expected_type=float
+            expected_type=float,
         )
         data[SIMILARITY] = similarities
         data.sort_values(by=SIMILARITY, ascending=True, inplace=True)

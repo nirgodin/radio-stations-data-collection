@@ -2,7 +2,9 @@ from typing import List, Type
 
 from genie_datastores.postgres.models import RadioTrack
 
-from data_collectors.logic.inserters.postgres.base_unique_database_inserter import BaseUniqueDatabaseInserter
+from data_collectors.logic.inserters.postgres.base_unique_database_inserter import (
+    BaseUniqueDatabaseInserter,
+)
 
 
 class RadioTracksDatabaseInserter(BaseUniqueDatabaseInserter):

@@ -11,23 +11,33 @@ from pandas import DataFrame, Series
 
 from data_collectors.logic.serializers import EurovisionChartsSerializer
 from data_collectors.consts.charts_consts import CHART_KEY_FORMAT
-from data_collectors.consts.eurovision_consts import EUROVISION_WIKIPEDIA_PAGE_URL_FORMAT, EUROVISION_ARTIST_COLUMN, \
-    EUROVISION_SONG_COLUMN, EUROVISION_PLACE_COLUMN, EUROVISION_KEY_COLUMNS, EUROVISION_TABLE_CONTEST_ID_COLUMNS
+from data_collectors.consts.eurovision_consts import (
+    EUROVISION_WIKIPEDIA_PAGE_URL_FORMAT,
+    EUROVISION_ARTIST_COLUMN,
+    EUROVISION_SONG_COLUMN,
+    EUROVISION_PLACE_COLUMN,
+    EUROVISION_KEY_COLUMNS,
+    EUROVISION_TABLE_CONTEST_ID_COLUMNS,
+)
 from data_collectors.contract import IChartsDataCollector
 
 
 class EurovisionChartsDataCollector(IChartsDataCollector):
-    def __init__(self,
-                 session: ClientSession,
-                 pool_executor: AioPoolExecutor,
-                 charts_serializer: EurovisionChartsSerializer = EurovisionChartsSerializer()):
+    def __init__(
+        self,
+        session: ClientSession,
+        pool_executor: AioPoolExecutor,
+        charts_serializer: EurovisionChartsSerializer = EurovisionChartsSerializer(),
+    ):
         self._session = session
         self._pool_executor = pool_executor
         self._charts_serializer = charts_serializer
 
     async def collect(self, years: List[int]) -> List[ChartEntry]:
         if not years:
-            logger.warn("EurovisionChartsDataCollector did not receive any valid Eurovision year to collect. Aborting")
+            logger.warn(
+                "EurovisionChartsDataCollector did not receive any valid Eurovision year to collect. Aborting"
+            )
             return []
 
         logger.info(f"Starting to collect eurovision data for {len(years)} years")
@@ -35,12 +45,14 @@ class EurovisionChartsDataCollector(IChartsDataCollector):
 
         return self._to_chart_entries(years_to_wiki_pages)
 
-    async def _query_eurovision_wikipedia_pages(self, years: List[int]) -> List[Tuple[int, str]]:
+    async def _query_eurovision_wikipedia_pages(
+        self, years: List[int]
+    ) -> List[Tuple[int, str]]:
         logger.info(f"Starting to collect eurovision data for {len(years)} years")
         return await self._pool_executor.run(
             iterable=years,
             func=self._query_single_year_wikipedia_page,
-            expected_type=tuple
+            expected_type=tuple,
         )
 
     async def _query_single_year_wikipedia_page(self, year: int) -> Tuple[int, str]:
@@ -52,7 +64,9 @@ class EurovisionChartsDataCollector(IChartsDataCollector):
 
         return year, response
 
-    def _to_chart_entries(self, years_to_wiki_pages: List[Tuple[int, str]]) -> List[ChartEntry]:
+    def _to_chart_entries(
+        self, years_to_wiki_pages: List[Tuple[int, str]]
+    ) -> List[ChartEntry]:
         charts_entries = []
 
         for year, page in years_to_wiki_pages:
@@ -63,12 +77,16 @@ class EurovisionChartsDataCollector(IChartsDataCollector):
 
         return charts_entries
 
-    def _get_single_year_char_entries(self, year: int, page: str) -> Optional[List[ChartEntry]]:
+    def _get_single_year_char_entries(
+        self, year: int, page: str
+    ) -> Optional[List[ChartEntry]]:
         logger.info(f"Converting year {year} data to charts entries")
         data = self._extract_contest_results_data(page)
 
         if data is None:
-            logger.warn(f"Could not extract eurovision charts data entries from wikipedia. Skipping year {year} data")
+            logger.warn(
+                f"Could not extract eurovision charts data entries from wikipedia. Skipping year {year} data"
+            )
         else:
             return self._covert_data_to_chart_entries(data, year)
 
@@ -98,7 +116,9 @@ class EurovisionChartsDataCollector(IChartsDataCollector):
         table.columns = formatted_columns
         return all(col in table.columns for col in EUROVISION_TABLE_CONTEST_ID_COLUMNS)
 
-    def _covert_data_to_chart_entries(self, data: DataFrame, year: int) -> List[ChartEntry]:
+    def _covert_data_to_chart_entries(
+        self, data: DataFrame, year: int
+    ) -> List[ChartEntry]:
         chart_entries = []
 
         for i, row in data.iterrows():
@@ -107,7 +127,11 @@ class EurovisionChartsDataCollector(IChartsDataCollector):
                 date=datetime(year, 1, 1),
                 position=extract_int_from_string(str(row[EUROVISION_PLACE_COLUMN])),
                 key=self._build_chart_key(row),
-                entry_metadata={key: row[key] for key in row.index.tolist() if key not in EUROVISION_KEY_COLUMNS}
+                entry_metadata={
+                    key: row[key]
+                    for key in row.index.tolist()
+                    if key not in EUROVISION_KEY_COLUMNS
+                },
             )
             chart_entries.append(entry)
 

@@ -10,10 +10,12 @@ from data_collectors.logic.inserters import ShazamInsertionsManager
 
 
 class ShazamTopTracksManager(IManager):
-    def __init__(self,
-                 top_tracks_collector: ShazamTopTracksCollector,
-                 insertions_manager: ShazamInsertionsManager,
-                 top_tracks_inserter: ShazamTopTracksDatabaseInserter):
+    def __init__(
+        self,
+        top_tracks_collector: ShazamTopTracksCollector,
+        insertions_manager: ShazamInsertionsManager,
+        top_tracks_inserter: ShazamTopTracksDatabaseInserter,
+    ):
         self._top_tracks_collector = top_tracks_collector
         self._insertions_manager = insertions_manager
         self._top_tracks_inserter = top_tracks_inserter

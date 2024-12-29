@@ -12,7 +12,12 @@ from data_collectors.contract import ICollector
 
 
 class SpotifyArtistsImagesCollector(ICollector):
-    def __init__(self, client_session: ClientSession, spotify_client: SpotifyClient, pool_executor: AioPoolExecutor):
+    def __init__(
+        self,
+        client_session: ClientSession,
+        spotify_client: SpotifyClient,
+        pool_executor: AioPoolExecutor,
+    ):
         self._client_session = client_session
         self._spotify_client = spotify_client
         self._pool_executor = pool_executor
@@ -23,21 +28,25 @@ class SpotifyArtistsImagesCollector(ICollector):
         logger.info(f"Starting to collect images of {n_artists} artists")
         artists = await self._spotify_client.artists.info.run(unique_ids)
         ids_to_images = await self._pool_executor.run(
-            iterable=artists,
-            func=self._collect_single_artist_image,
-            expected_type=dict
+            iterable=artists, func=self._collect_single_artist_image, expected_type=dict
         )
-        logger.info(f"Successfully collected {len(ids_to_images)} images out of {n_artists} requests")
+        logger.info(
+            f"Successfully collected {len(ids_to_images)} images out of {n_artists} requests"
+        )
 
         return merge_dicts(*ids_to_images)
 
-    async def _collect_single_artist_image(self, artist: dict) -> Optional[Dict[str, ndarray]]:
+    async def _collect_single_artist_image(
+        self, artist: dict
+    ) -> Optional[Dict[str, ndarray]]:
         images = artist.get(IMAGES)
         if not images:
             return
 
         first_image_url = images[0][URL]
-        image_bytes = await fetch_image(session=self._client_session, url=first_image_url, wrap_exceptions=False)
+        image_bytes = await fetch_image(
+            session=self._client_session, url=first_image_url, wrap_exceptions=False
+        )
         image = decode_image(image_bytes)
 
         return {artist[ID]: image}

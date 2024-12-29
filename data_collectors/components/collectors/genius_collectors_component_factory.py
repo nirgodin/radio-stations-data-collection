@@ -9,9 +9,13 @@ from data_collectors.logic.collectors import (
     GeniusLyricsCollector,
     GeniusTracksCollector,
     GeniusArtistsCollector,
-    GeniusArtistsExistingDetailsCollector
+    GeniusArtistsExistingDetailsCollector,
 )
-from data_collectors.tools import MultiEntityMatcher, GeniusTrackEntityExtractor, GeniusArtistEntityExtractor
+from data_collectors.tools import (
+    MultiEntityMatcher,
+    GeniusTrackEntityExtractor,
+    GeniusArtistEntityExtractor,
+)
 
 
 class GeniusCollectorsComponentFactory:
@@ -20,38 +24,34 @@ class GeniusCollectorsComponentFactory:
 
     def get_search_collector(self, session: ClientSession) -> GeniusSearchCollector:
         entity_matcher = EntityMatcher(
-            {
-                GeniusTrackEntityExtractor(): 0.7,
-                GeniusArtistEntityExtractor(): 0.3
-            }
+            {GeniusTrackEntityExtractor(): 0.7, GeniusArtistEntityExtractor(): 0.3}
         )
         return GeniusSearchCollector(
             session=session,
             pool_executor=self._tools.get_pool_executor(),
-            entity_matcher=MultiEntityMatcher(entity_matcher)
+            entity_matcher=MultiEntityMatcher(entity_matcher),
         )
 
     def get_lyrics_collector(self, session: ClientSession) -> GeniusLyricsCollector:
         return GeniusLyricsCollector(
-            session=session,
-            pool_executor=self._tools.get_pool_executor()
+            session=session, pool_executor=self._tools.get_pool_executor()
         )
 
     def get_tracks_collector(self, session: ClientSession) -> GeniusTracksCollector:
         return GeniusTracksCollector(
-            session=session,
-            pool_executor=self._tools.get_pool_executor()
+            session=session, pool_executor=self._tools.get_pool_executor()
         )
 
     def get_artists_collector(self, session: ClientSession) -> GeniusArtistsCollector:
         return GeniusArtistsCollector(
-            session=session,
-            pool_executor=self._tools.get_pool_executor()
+            session=session, pool_executor=self._tools.get_pool_executor()
         )
 
-    async def get_artists_existing_details_collector(self) -> GeniusArtistsExistingDetailsCollector:
+    async def get_artists_existing_details_collector(
+        self,
+    ) -> GeniusArtistsExistingDetailsCollector:
         await initialize_mongo()
         return GeniusArtistsExistingDetailsCollector(
             db_engine=get_database_engine(),
-            pool_executor=self._tools.get_pool_executor()
+            pool_executor=self._tools.get_pool_executor(),
         )

@@ -12,11 +12,15 @@ from data_collectors.contract import IManager
 
 
 class BaseSpotifyPlaylistsManager(IManager, ABC):
-    def __init__(self, spotify_client: SpotifyClient, db_updater: ValuesDatabaseUpdater):
+    def __init__(
+        self, spotify_client: SpotifyClient, db_updater: ValuesDatabaseUpdater
+    ):
         self._spotify_client = spotify_client
         self._db_updater = db_updater
 
-    async def run(self, playlists_ids: List[str], values: Dict[BaseORMModel, Any]) -> None:
+    async def run(
+        self, playlists_ids: List[str], values: Dict[BaseORMModel, Any]
+    ) -> None:
         playlists = await self._spotify_client.playlists.info.run(playlists_ids)
         valid_playlists = self._filter_out_invalid_playlists(playlists)
         unique_ids = self._extract_playlists_ids(valid_playlists)
@@ -26,13 +30,17 @@ class BaseSpotifyPlaylistsManager(IManager, ABC):
 
     @staticmethod
     def _filter_out_invalid_playlists(playlists: List[dict]) -> List[dict]:
-        valid_playlists = [playlist for playlist in playlists if isinstance(playlist, dict)]
+        valid_playlists = [
+            playlist for playlist in playlists if isinstance(playlist, dict)
+        ]
         n_playlists = len(playlists)
         n_valid_playlists = len(valid_playlists)
 
         if n_valid_playlists < n_playlists:
             n_invalid_playlists = n_playlists - n_valid_playlists
-            logger.warn(f"Found {n_invalid_playlists} invalid playlists. Filtering them out")
+            logger.warn(
+                f"Found {n_invalid_playlists} invalid playlists. Filtering them out"
+            )
 
         return valid_playlists
 
@@ -40,7 +48,7 @@ class BaseSpotifyPlaylistsManager(IManager, ABC):
         ids = set()
 
         for playlist in playlists:
-            logger.info(f'Starting to extract playlist `{playlist[ID]}` ids')
+            logger.info(f"Starting to extract playlist `{playlist[ID]}` ids")
 
             for id_ in self._extract_single_playlist_ids(playlist):
                 ids.add(id_)
@@ -48,5 +56,7 @@ class BaseSpotifyPlaylistsManager(IManager, ABC):
         return ids
 
     @abstractmethod
-    def _extract_single_playlist_ids(self, playlist: dict) -> Generator[str, None, None]:
+    def _extract_single_playlist_ids(
+        self, playlist: dict
+    ) -> Generator[str, None, None]:
         raise NotImplementedError

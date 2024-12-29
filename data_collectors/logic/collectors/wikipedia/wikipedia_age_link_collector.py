@@ -6,13 +6,21 @@ from sqlalchemy import select
 from sqlalchemy.engine import Row
 
 from data_collectors.consts.wikipedia_consts import WIKIPEDIA_NAME_LANGUAGE_SEPARATOR
-from data_collectors.logic.collectors.wikipedia.base_wikipedia_age_collector import BaseWikipediaAgeCollector
+from data_collectors.logic.collectors.wikipedia.base_wikipedia_age_collector import (
+    BaseWikipediaAgeCollector,
+)
 
 
 class WikipediaAgeLinkCollector(BaseWikipediaAgeCollector):
-    async def _get_missing_artists_details(self, limit: Optional[int]) -> List[Tuple[str, str]]:
+    async def _get_missing_artists_details(
+        self, limit: Optional[int]
+    ) -> List[Tuple[str, str]]:
         query = (
-            select(SpotifyArtist.id, SpotifyArtist.wikipedia_name, SpotifyArtist.wikipedia_language)
+            select(
+                SpotifyArtist.id,
+                SpotifyArtist.wikipedia_name,
+                SpotifyArtist.wikipedia_language,
+            )
             .where(Artist.id == SpotifyArtist.id)
             .where(Artist.birth_date.is_(None))
             .where(Artist.death_date.is_(None))

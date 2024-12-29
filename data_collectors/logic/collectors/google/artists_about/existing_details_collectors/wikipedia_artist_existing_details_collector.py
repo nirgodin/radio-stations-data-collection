@@ -10,7 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncEngine
 
 from data_collectors.logic.collectors.wikipedia import WikipediaPageSummaryCollector
 from data_collectors.logic.collectors.google.artists_about.base_artist_existing_details_collector import (
-    BaseArtistsExistingDetailsCollector
+    BaseArtistsExistingDetailsCollector,
 )
 from data_collectors.logic.models import ArtistExistingDetails
 
@@ -21,15 +21,17 @@ ARTIST_ABOUT_COLUMNS = [
     Artist.death_date,
     Artist.gender,
     SpotifyArtist.wikipedia_name,
-    SpotifyArtist.wikipedia_language
+    SpotifyArtist.wikipedia_language,
 ]
 
 
 class WikipediaArtistsExistingDetailsCollector(BaseArtistsExistingDetailsCollector):
-    def __init__(self,
-                 db_engine: AsyncEngine,
-                 pool_executor: AioPoolExecutor,
-                 wikipedia_summary_collector: WikipediaPageSummaryCollector = WikipediaPageSummaryCollector()):
+    def __init__(
+        self,
+        db_engine: AsyncEngine,
+        pool_executor: AioPoolExecutor,
+        wikipedia_summary_collector: WikipediaPageSummaryCollector = WikipediaPageSummaryCollector(),
+    ):
         super().__init__(db_engine)
         self._pool_executor = pool_executor
         self._wikipedia_summary_collector = wikipedia_summary_collector
@@ -49,13 +51,12 @@ class WikipediaArtistsExistingDetailsCollector(BaseArtistsExistingDetailsCollect
         return await self._pool_executor.run(
             iterable=rows,
             func=self._collect_single_artist_summary,
-            expected_type=ArtistExistingDetails
+            expected_type=ArtistExistingDetails,
         )
 
     async def _collect_single_artist_summary(self, row: Row) -> ArtistExistingDetails:
         about = await self._wikipedia_summary_collector.collect(
-            name=row.wikipedia_name,
-            language=row.wikipedia_language
+            name=row.wikipedia_name, language=row.wikipedia_language
         )
 
         return ArtistExistingDetails(
@@ -64,7 +65,7 @@ class WikipediaArtistsExistingDetailsCollector(BaseArtistsExistingDetailsCollect
             origin=row.origin,
             birth_date=row.birth_date,
             death_date=row.death_date,
-            gender=row.gender
+            gender=row.gender,
         )
 
     @property

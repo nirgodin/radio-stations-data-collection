@@ -23,7 +23,9 @@ class SchedulerBuilder:
 
         return scheduler
 
-    def _add_all_jobs(self, scheduler: AsyncIOScheduler, jobs: Dict[str, ScheduledJob]) -> None:
+    def _add_all_jobs(
+        self, scheduler: AsyncIOScheduler, jobs: Dict[str, ScheduledJob]
+    ) -> None:
         next_run_time = datetime.now()
         email_sender = self._component_factory.tools.get_email_sender()
 
@@ -42,7 +44,9 @@ class SchedulerBuilder:
         return timedelta(minutes=randint(1, 3))
 
     @staticmethod
-    async def _task_with_failure_notification(email_sender: EmailSender, job: ScheduledJob) -> None:
+    async def _task_with_failure_notification(
+        email_sender: EmailSender, job: ScheduledJob
+    ) -> None:
         try:
             with email_sender.notify_failure():
                 await job.task()

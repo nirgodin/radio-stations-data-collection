@@ -5,7 +5,7 @@ from data_collectors.components.tools_component_factory import ToolsComponentFac
 from data_collectors.logic.updaters import (
     TrackIDsMappingDatabaseUpdater,
     BillboardTracksDatabaseUpdater,
-    ValuesDatabaseUpdater
+    ValuesDatabaseUpdater,
 )
 
 
@@ -24,5 +24,5 @@ class UpdatersComponentFactory:
     def get_values_updater(self) -> ValuesDatabaseUpdater:
         return ValuesDatabaseUpdater(
             db_engine=get_database_engine(),
-            pool_executor=self.tools.get_pool_executor()
+            pool_executor=self.tools.get_pool_executor(),
         )

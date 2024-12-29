@@ -11,11 +11,13 @@ from data_collectors.logic.serializers import GoogleGeocodingResponseSerializer
 
 
 class GoogleArtistsOriginGeocodingManager(IManager):
-    def __init__(self,
-                 geocoding_collector: GoogleGeocodingCollector,
-                 db_updater: ValuesDatabaseUpdater,
-                 geocoding_serializer: GoogleGeocodingResponseSerializer = GoogleGeocodingResponseSerializer(),
-                 pool_executor: SyncPoolExecutor = SyncPoolExecutor()):
+    def __init__(
+        self,
+        geocoding_collector: GoogleGeocodingCollector,
+        db_updater: ValuesDatabaseUpdater,
+        geocoding_serializer: GoogleGeocodingResponseSerializer = GoogleGeocodingResponseSerializer(),
+        pool_executor: SyncPoolExecutor = SyncPoolExecutor(),
+    ):
         self._geocoding_collector = geocoding_collector
         self._db_updater = db_updater
         self._geocoding_serializer = geocoding_serializer
@@ -27,21 +29,22 @@ class GoogleArtistsOriginGeocodingManager(IManager):
         update_requests = self._pool_executor.run(
             iterable=artists_geocoding,
             func=self._to_update_request,
-            expected_type=DBUpdateRequest
+            expected_type=DBUpdateRequest,
         )
 
         await self._db_updater.update(update_requests)
 
     def _to_update_request(self, response: GeocodingResponse) -> DBUpdateRequest:
         if response.is_from_cache:
-            return DBUpdateRequest(
-                id=response.id,
-                values=response.result
-            )
+            return DBUpdateRequest(id=response.id, values=response.result)
 
-        serialized_request = self._geocoding_serializer.serialize(response.id, response.result)
+        serialized_request = self._geocoding_serializer.serialize(
+            response.id, response.result
+        )
 
         if serialized_request is not None:
             return serialized_request
         else:
-            logger.warn(f"Could not serialize geocoding response for artist `{response.id}`. Skipping")
+            logger.warn(
+                f"Could not serialize geocoding response for artist `{response.id}`. Skipping"
+            )

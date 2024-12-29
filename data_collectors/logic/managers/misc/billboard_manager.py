@@ -15,14 +15,16 @@ from data_collectors.logic.updaters import BillboardTracksDatabaseUpdater
 
 
 class BillboardManager(IManager):
-    def __init__(self,
-                 db_engine: AsyncEngine,
-                 charts_collector: BillboardChartsCollector,
-                 tracks_collector: BillboardTracksCollector,
-                 spotify_insertions_manager: SpotifyInsertionsManager,
-                 tracks_inserter: BillboardTracksDatabaseInserter,
-                 charts_inserter: BillboardChartsDatabaseInserter,
-                 tracks_updater: BillboardTracksDatabaseUpdater):
+    def __init__(
+        self,
+        db_engine: AsyncEngine,
+        charts_collector: BillboardChartsCollector,
+        tracks_collector: BillboardTracksCollector,
+        spotify_insertions_manager: SpotifyInsertionsManager,
+        tracks_inserter: BillboardTracksDatabaseInserter,
+        charts_inserter: BillboardChartsDatabaseInserter,
+        tracks_updater: BillboardTracksDatabaseUpdater,
+    ):
         self._db_engine = db_engine
         self._charts_collector = charts_collector
         self._tracks_collector = tracks_collector

@@ -15,9 +15,13 @@ class ShazamManagerFactory(BaseManagerFactory):
         insertions_manager = await self.get_insertions_manager(shazam, pool_executor)
 
         return ShazamTopTracksManager(
-            top_tracks_collector=self.collectors.shazam.get_top_tracks_collector(shazam, pool_executor),
+            top_tracks_collector=self.collectors.shazam.get_top_tracks_collector(
+                shazam, pool_executor
+            ),
             insertions_manager=insertions_manager,
-            top_tracks_inserter=self.inserters.shazam.get_top_tracks_inserter(chunks_inserter)
+            top_tracks_inserter=self.inserters.shazam.get_top_tracks_inserter(
+                chunks_inserter
+            ),
         )
 
     async def get_missing_ids_manager(self) -> ShazamMissingIDsManager:
@@ -27,29 +31,37 @@ class ShazamManagerFactory(BaseManagerFactory):
 
         return ShazamMissingIDsManager(
             db_engine=get_database_engine(),
-            search_collector=self.collectors.shazam.get_search_collector(shazam, pool_executor),
+            search_collector=self.collectors.shazam.get_search_collector(
+                shazam, pool_executor
+            ),
             insertions_manager=insertions_manager,
             track_ids_updater=self.updaters.get_track_ids_updater(),
         )
 
-    async def get_insertions_manager(self, shazam: Shazam, pool_executor: AioPoolExecutor) -> ShazamInsertionsManager:
+    async def get_insertions_manager(
+        self, shazam: Shazam, pool_executor: AioPoolExecutor
+    ) -> ShazamInsertionsManager:
         artists_inserter = await self.inserters.shazam.get_artists_inserter()
         return ShazamInsertionsManager(
-            artists_collector=self.collectors.shazam.get_artists_collector(shazam, pool_executor),
-            tracks_collector=self.collectors.shazam.get_tracks_collector(shazam, pool_executor),
+            artists_collector=self.collectors.shazam.get_artists_collector(
+                shazam, pool_executor
+            ),
+            tracks_collector=self.collectors.shazam.get_tracks_collector(
+                shazam, pool_executor
+            ),
             artists_inserter=artists_inserter,
-            tracks_inserter=self.inserters.shazam.get_tracks_inserter()
+            tracks_inserter=self.inserters.shazam.get_tracks_inserter(),
         )
 
     def get_birth_date_copy_manager(self) -> ShazamBirthDateCopyManager:
         return ShazamBirthDateCopyManager(
             db_engine=get_database_engine(),
-            db_updater=self.updaters.get_values_updater()
+            db_updater=self.updaters.get_values_updater(),
         )
 
     def get_origin_copy_manager(self) -> ShazamOriginCopyManager:
         return ShazamOriginCopyManager(
             db_engine=get_database_engine(),
             db_updater=self.updaters.get_values_updater(),
-            db_inserter=self.inserters.get_chunks_database_inserter()
+            db_inserter=self.inserters.get_chunks_database_inserter(),
         )

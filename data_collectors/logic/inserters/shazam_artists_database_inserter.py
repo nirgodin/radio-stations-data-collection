@@ -11,15 +11,18 @@ from sqlalchemy.ext.asyncio import AsyncEngine
 
 from data_collectors.consts.shazam_consts import ATTRIBUTES, ARTIST_BIO
 from data_collectors.consts.spotify_consts import ID, NAME
-from data_collectors.logic.inserters.postgres.shazam.shazam_artists_postgres_database_inserter import \
-    ShazamArtistsPostgresDatabaseInserter
+from data_collectors.logic.inserters.postgres.shazam.shazam_artists_postgres_database_inserter import (
+    ShazamArtistsPostgresDatabaseInserter,
+)
 
 
 class ShazamArtistsDatabaseInserter(IDatabaseInserter):
-    def __init__(self,
-                 postgres_inserter: ShazamArtistsPostgresDatabaseInserter,
-                 pool_executor: AioPoolExecutor,
-                 db_engine: AsyncEngine):
+    def __init__(
+        self,
+        postgres_inserter: ShazamArtistsPostgresDatabaseInserter,
+        pool_executor: AioPoolExecutor,
+        db_engine: AsyncEngine,
+    ):
         self._postgres_inserter = postgres_inserter
         self._pool_executor = pool_executor
         self._db_engine = db_engine
@@ -36,7 +39,9 @@ class ShazamArtistsDatabaseInserter(IDatabaseInserter):
         await self._insert_about_documents(documents)
 
     def _serialize_about_documents(self, records: List[dict]) -> List[AboutDocument]:
-        logger.info(f"Serializing {len(records)} Shazam artist records to about documents")
+        logger.info(
+            f"Serializing {len(records)} Shazam artist records to about documents"
+        )
         documents = []
 
         for record in records:
@@ -57,14 +62,14 @@ class ShazamArtistsDatabaseInserter(IDatabaseInserter):
                 entity_type=EntityType.ARTIST,
                 entity_id=record[ID],
                 name=safe_nested_get(record, [ATTRIBUTES, NAME]),
-                source=DataSource.SHAZAM
+                source=DataSource.SHAZAM,
             )
 
     async def _insert_about_documents(self, documents: List[AboutDocument]) -> None:
         results = await self._pool_executor.run(
             iterable=documents,
             func=self._insert_single_about_document,
-            expected_type=bool
+            expected_type=bool,
         )
         total_documents_number = len(documents)
         valid_results_number = len(results)
@@ -81,7 +86,7 @@ class ShazamArtistsDatabaseInserter(IDatabaseInserter):
     async def _insert_single_about_document(self, document: AboutDocument) -> bool:
         existing_document = await AboutDocument.find_one(
             AboutDocument.entity_id == document.entity_id,
-            AboutDocument.source == document.source
+            AboutDocument.source == document.source,
         )
 
         if existing_document is None:

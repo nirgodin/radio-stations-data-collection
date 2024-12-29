@@ -9,10 +9,12 @@ class MultiEntityMatcher:
     def __init__(self, entity_matcher: EntityMatcher):
         self._entity_matcher = entity_matcher
 
-    def match(self,
-              entity: MatchingEntity,
-              prioritized_candidates: List[Any],
-              extract_fn: Callable[[Any], Optional[Any]]) -> Optional[Any]:
+    def match(
+        self,
+        entity: MatchingEntity,
+        prioritized_candidates: List[Any],
+        extract_fn: Callable[[Any], Optional[Any]],
+    ) -> Optional[Any]:
         for candidate in prioritized_candidates:
             is_matching, _ = self._entity_matcher.match(entity, candidate)
 

@@ -17,11 +17,13 @@ from data_collectors.contract import IManager
 
 
 class ReleaseRadarManager(IManager):
-    def __init__(self,
-                 db_engine: AsyncEngine,
-                 spotify_client: SpotifyClient,
-                 playlist_id: str,
-                 release_range: timedelta = timedelta(weeks=1)):
+    def __init__(
+        self,
+        db_engine: AsyncEngine,
+        spotify_client: SpotifyClient,
+        playlist_id: str,
+        release_range: timedelta = timedelta(weeks=1),
+    ):
         self._db_engine = db_engine
         self._spotify_client = spotify_client
         self._playlist_id = playlist_id
@@ -36,8 +38,7 @@ class ReleaseRadarManager(IManager):
     async def _remove_existing_playlist_items(self) -> None:
         logger.info("Fetching existing release radar playlist")
         playlist = await self._spotify_client.playlists.info.run_single(
-            id_=self._playlist_id,
-            max_pages=math.inf
+            id_=self._playlist_id, max_pages=math.inf
         )
         existing_items = safe_nested_get(playlist, [TRACKS, ITEMS])
         existing_uris = [safe_nested_get(item, [TRACK, URI]) for item in existing_items]
@@ -46,7 +47,7 @@ class ReleaseRadarManager(IManager):
         await self._spotify_client.playlists.remove_items.run(
             playlist_id=self._playlist_id,
             uris=existing_uris,
-            snapshot_id=playlist[SNAPSHOT_ID]
+            snapshot_id=playlist[SNAPSHOT_ID],
         )
 
     async def _add_new_playlist_items(self, track_ids: List[str]) -> None:
@@ -56,9 +57,7 @@ class ReleaseRadarManager(IManager):
 
         uris = [to_uri(track_id, SpotifyEntityType.TRACK) for track_id in track_ids]
         await self._spotify_client.playlists.add_items.run(
-            playlist_id=self._playlist_id,
-            uris=uris,
-            position=0
+            playlist_id=self._playlist_id, uris=uris, position=0
         )
 
     async def _query_newly_released_tracks(self) -> List[str]:

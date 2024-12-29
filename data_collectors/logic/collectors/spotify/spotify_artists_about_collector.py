@@ -4,7 +4,10 @@ from typing import List, Dict, Tuple
 from genie_common.tools import AioPoolExecutor, logger
 from playwright.async_api import async_playwright, Browser
 
-from data_collectors.consts.spotify_consts import SPOTIFY_OPEN_ARTIST_URL_FORMAT, SPOTIFY_INFOBOX_SELECTOR
+from data_collectors.consts.spotify_consts import (
+    SPOTIFY_OPEN_ARTIST_URL_FORMAT,
+    SPOTIFY_INFOBOX_SELECTOR,
+)
 from data_collectors.contract import ICollector
 from data_collectors.logic.models import WebElement, HTMLElement, SpotifyArtistAbout
 from data_collectors.logic.serializers import SpotifyArtistAboutSerializer
@@ -13,46 +16,54 @@ from data_collectors.utils.playwright import get_page_content
 
 
 class SpotifyArtistsAboutCollector(ICollector):
-    def __init__(self,
-                 pool_executor: AioPoolExecutor,
-                 web_elements_extractor: WebElementsExtractor = WebElementsExtractor(),
-                 artist_about_serializer: SpotifyArtistAboutSerializer = SpotifyArtistAboutSerializer()):
+    def __init__(
+        self,
+        pool_executor: AioPoolExecutor,
+        web_elements_extractor: WebElementsExtractor = WebElementsExtractor(),
+        artist_about_serializer: SpotifyArtistAboutSerializer = SpotifyArtistAboutSerializer(),
+    ):
         self._pool_executor = pool_executor
         self._web_elements_extractor = web_elements_extractor
         self._artist_about_serializer = artist_about_serializer
 
     async def collect(self, id_name_map: Dict[str, str]) -> List[SpotifyArtistAbout]:
         if not id_name_map:
-            logger.warning("Did not receive any artist id to collect. Returning empty list")
+            logger.warning(
+                "Did not receive any artist id to collect. Returning empty list"
+            )
             return []
 
-        logger.info(f"Starting to collect Spotify artists about for {len(id_name_map)} artists")
+        logger.info(
+            f"Starting to collect Spotify artists about for {len(id_name_map)} artists"
+        )
         async with async_playwright() as p:
             browser = await p.chromium.launch()
 
             return await self._pool_executor.run(
                 iterable=id_name_map.items(),
                 func=partial(self._collect_single_artist_details_wrapper, browser),
-                expected_type=SpotifyArtistAbout
+                expected_type=SpotifyArtistAbout,
             )
 
-    async def _collect_single_artist_details_wrapper(self,
-                                                     browser: Browser,
-                                                     artist_id_and_name: Tuple[str, str]) -> SpotifyArtistAbout:
+    async def _collect_single_artist_details_wrapper(
+        self, browser: Browser, artist_id_and_name: Tuple[str, str]
+    ) -> SpotifyArtistAbout:
         artist_id, artist_name = artist_id_and_name
 
         try:
             return await self._collect_single_artist_details(
-                browser=browser,
-                artist_id=artist_id,
-                artist_name=artist_name
+                browser=browser, artist_id=artist_id, artist_name=artist_name
             )
 
         except:
-            logger.exception("Received exception during artist details collection. Returning empty details by default")
+            logger.exception(
+                "Received exception during artist details collection. Returning empty details by default"
+            )
             return SpotifyArtistAbout(id=artist_id, name=artist_name)
 
-    async def _collect_single_artist_details(self, browser: Browser, artist_id: str, artist_name: str):
+    async def _collect_single_artist_details(
+        self, browser: Browser, artist_id: str, artist_name: str
+    ):
         html = await self._get_page_content(browser, artist_id)
         details = []
 
@@ -79,22 +90,22 @@ class SpotifyArtistsAboutCollector(ICollector):
                 type=HTMLElement.DIV,
                 class_="T_AmQPlZ6wvE819I7A0D",
                 child_element=WebElement(
-                    name='social_links',
+                    name="social_links",
                     type=HTMLElement.A,
-                    class_='muHL0_3HjlqTZDoapgc9',
-                    multiple=True
-                )
+                    class_="muHL0_3HjlqTZDoapgc9",
+                    multiple=True,
+                ),
             ),
             WebElement(
-                name='artist_infobox',
+                name="artist_infobox",
                 type=HTMLElement.DIV,
-                class_='TV2j1oIRIkKH_6D1xP82',
+                class_="TV2j1oIRIkKH_6D1xP82",
                 child_element=WebElement(
                     name="about",
                     type=HTMLElement.P,
                     class_="Type__TypeElement-sc-goli3j-0",
                     multiple=True,
-                    enumerate=False
-                )
+                    enumerate=False,
+                ),
             ),
         ]

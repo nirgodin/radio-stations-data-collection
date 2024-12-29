@@ -10,7 +10,7 @@ from sqlalchemy.engine import Row
 from sqlalchemy.ext.asyncio import AsyncEngine
 
 from data_collectors.logic.collectors.google.artists_about.base_artist_existing_details_collector import (
-    BaseArtistsExistingDetailsCollector
+    BaseArtistsExistingDetailsCollector,
 )
 from data_collectors.logic.models import ArtistExistingDetails
 
@@ -20,7 +20,7 @@ ARTIST_ABOUT_COLUMNS = [
     Artist.origin,
     Artist.birth_date,
     Artist.death_date,
-    Artist.gender
+    Artist.gender,
 ]
 
 
@@ -34,10 +34,12 @@ class SpotifyArtistsExistingDetailsCollector(BaseArtistsExistingDetailsCollector
         return await self._pool_executor.run(
             iterable=rows,
             func=self._create_single_artist_existing_details,
-            expected_type=ArtistExistingDetails
+            expected_type=ArtistExistingDetails,
         )
 
-    async def _query_database_for_relevant_artists(self, limit: Optional[int]) -> List[Row]:
+    async def _query_database_for_relevant_artists(
+        self, limit: Optional[int]
+    ) -> List[Row]:
         logger.info(f"Querying {limit} artists about")
         query = (
             select(ARTIST_ABOUT_COLUMNS)
@@ -50,10 +52,11 @@ class SpotifyArtistsExistingDetailsCollector(BaseArtistsExistingDetailsCollector
 
         return query_result.all()
 
-    async def _create_single_artist_existing_details(self, row: Row) -> Optional[ArtistExistingDetails]:
+    async def _create_single_artist_existing_details(
+        self, row: Row
+    ) -> Optional[ArtistExistingDetails]:
         document = await AboutDocument.find_one(
-            AboutDocument.entity_id == row.id,
-            AboutDocument.source == self.data_source
+            AboutDocument.entity_id == row.id, AboutDocument.source == self.data_source
         )
 
         if document:

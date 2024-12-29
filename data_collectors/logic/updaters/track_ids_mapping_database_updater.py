@@ -9,13 +9,17 @@ from data_collectors.contract import IDatabaseUpdater
 
 
 class TrackIDsMappingDatabaseUpdater(IDatabaseUpdater):
-    async def update(self, ids_mapping: Dict[str, Optional[str]], value_column: BaseORMModel) -> None:
-        logger.info(f"Starting to update ids in tracks_ids_mapping table for {len(ids_mapping)} records")
+    async def update(
+        self, ids_mapping: Dict[str, Optional[str]], value_column: BaseORMModel
+    ) -> None:
+        logger.info(
+            f"Starting to update ids in tracks_ids_mapping table for {len(ids_mapping)} records"
+        )
         await update_by_mapping(
             engine=self._db_engine,
             mapping=ids_mapping,
             orm=TrackIDMapping,
             key_column=TrackIDMapping.id,
-            value_column=value_column
+            value_column=value_column,
         )
         logger.info(f"Successfully update ids mapping records with shazam ids")

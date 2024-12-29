@@ -1,31 +1,41 @@
 from typing import Optional
 
-from data_collectors.components.deleters.deleters_component_factory import DeletersComponentFactory
-from data_collectors.components.environment_component_factory import EnvironmentComponentFactory
-from data_collectors.components.exporters.exporters_component_factory import ExportersComponentFactory
+from data_collectors.components.deleters.deleters_component_factory import (
+    DeletersComponentFactory,
+)
+from data_collectors.components.environment_component_factory import (
+    EnvironmentComponentFactory,
+)
+from data_collectors.components.exporters.exporters_component_factory import (
+    ExportersComponentFactory,
+)
 from data_collectors.components.managers import *
-from data_collectors.components.sessions_component_factory import SessionsComponentFactory
+from data_collectors.components.sessions_component_factory import (
+    SessionsComponentFactory,
+)
 from data_collectors.components.tools_component_factory import ToolsComponentFactory
 
 
 class ComponentFactory:
-    def __init__(self,
-                 env: EnvironmentComponentFactory = EnvironmentComponentFactory(),
-                 billboard: Optional[BillboardManagerFactory] = None,
-                 charts: Optional[ChartsManagerFactory] = None,
-                 deleters: Optional[DeletersComponentFactory] = None,
-                 exporters: Optional[ExportersComponentFactory] = None,
-                 genius: Optional[GeniusManagerFactory] = None,
-                 genres: Optional[GenresManagerFactory] = None,
-                 google: Optional[GoogleManagerFactory] = None,
-                 misc: Optional[MiscellaneousManagerFactory] = None,
-                 musixmatch: Optional[MusixmatchManagerFactory] = None,
-                 sessions: Optional[SessionsComponentFactory] = None,
-                 shazam: Optional[ShazamManagerFactory] = None,
-                 spotify: Optional[SpotifyManagerFactory] = None,
-                 tools: Optional[ToolsComponentFactory] = None,
-                 translation: Optional[TranslationManagerFactory] = None,
-                 wikipedia: Optional[WikipediaManagerFactory] = None):
+    def __init__(
+        self,
+        env: EnvironmentComponentFactory = EnvironmentComponentFactory(),
+        billboard: Optional[BillboardManagerFactory] = None,
+        charts: Optional[ChartsManagerFactory] = None,
+        deleters: Optional[DeletersComponentFactory] = None,
+        exporters: Optional[ExportersComponentFactory] = None,
+        genius: Optional[GeniusManagerFactory] = None,
+        genres: Optional[GenresManagerFactory] = None,
+        google: Optional[GoogleManagerFactory] = None,
+        misc: Optional[MiscellaneousManagerFactory] = None,
+        musixmatch: Optional[MusixmatchManagerFactory] = None,
+        sessions: Optional[SessionsComponentFactory] = None,
+        shazam: Optional[ShazamManagerFactory] = None,
+        spotify: Optional[SpotifyManagerFactory] = None,
+        tools: Optional[ToolsComponentFactory] = None,
+        translation: Optional[TranslationManagerFactory] = None,
+        wikipedia: Optional[WikipediaManagerFactory] = None,
+    ):
         sessions_factory = sessions or SessionsComponentFactory(env)
         tools_factory = tools or ToolsComponentFactory(env)
 

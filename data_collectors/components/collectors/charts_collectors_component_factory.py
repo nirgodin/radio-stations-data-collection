@@ -18,7 +18,7 @@ from data_collectors.logic.collectors import (
     IsraeliChartKeySearcher,
     PlaylistsChartsDataCollector,
     RadioChartsDataCollector,
-    EurovisionMissingTracksCollector
+    EurovisionMissingTracksCollector,
 )
 
 
@@ -27,56 +27,66 @@ class ChartsCollectorsComponentFactory:
         self._tools = tools
 
     @staticmethod
-    def get_radio_charts_collector(google_drive_client: GoogleDriveClient) -> RadioChartsDataCollector:
+    def get_radio_charts_collector(
+        google_drive_client: GoogleDriveClient,
+    ) -> RadioChartsDataCollector:
         return RadioChartsDataCollector(google_drive_client)
 
-    def get_eurovision_charts_collector(self, session: ClientSession) -> EurovisionChartsDataCollector:
+    def get_eurovision_charts_collector(
+        self, session: ClientSession
+    ) -> EurovisionChartsDataCollector:
         return EurovisionChartsDataCollector(
-            session=session,
-            pool_executor=self._tools.get_pool_executor()
+            session=session, pool_executor=self._tools.get_pool_executor()
         )
 
     def get_glglz_charts_collector(self) -> GlglzChartsDataCollector:
         return GlglzChartsDataCollector(self._tools.get_pool_executor())
 
     @staticmethod
-    def get_playlists_charts_collector(spotify_client: SpotifyClient,
-                                       playlist_id_to_chart_mapping: Dict[str, Chart]) -> PlaylistsChartsDataCollector:
+    def get_playlists_charts_collector(
+        spotify_client: SpotifyClient, playlist_id_to_chart_mapping: Dict[str, Chart]
+    ) -> PlaylistsChartsDataCollector:
         return PlaylistsChartsDataCollector(
             spotify_client=spotify_client,
-            playlist_id_to_chart_mapping=playlist_id_to_chart_mapping
+            playlist_id_to_chart_mapping=playlist_id_to_chart_mapping,
         )
 
-    def get_tracks_collector(self,
-                             spotify_client: SpotifyClient,
-                             key_searcher: Optional[BaseChartKeySearcher] = None) -> ChartsTracksCollector:
+    def get_tracks_collector(
+        self,
+        spotify_client: SpotifyClient,
+        key_searcher: Optional[BaseChartKeySearcher] = None,
+    ) -> ChartsTracksCollector:
         chart_key_searcher = key_searcher or IsraeliChartKeySearcher(spotify_client)
         return ChartsTracksCollector(
             pool_executor=self._tools.get_pool_executor(),
             spotify_client=spotify_client,
             db_engine=get_database_engine(),
-            key_searcher=chart_key_searcher
+            key_searcher=chart_key_searcher,
         )
 
     def get_charts_tagged_mistakes_collector(self) -> ChartsTaggedMistakesCollector:
         return ChartsTaggedMistakesCollector(
             pool_executor=self._tools.get_pool_executor(),
-            db_engine=get_database_engine()
-        )
-
-    @staticmethod
-    def get_tagged_mistakes_tracks_collector(spotify_client: SpotifyClient) -> ChartsTaggedMistakesTracksCollector:
-        return ChartsTaggedMistakesTracksCollector(
             db_engine=get_database_engine(),
-            spotify_client=spotify_client
-        )
-
-    def get_every_hit_collector(self, session: ClientSession) -> EveryHitChartsDataCollector:
-        return EveryHitChartsDataCollector(
-            session=session,
-            pool_executor=self._tools.get_pool_executor()
         )
 
     @staticmethod
-    def get_eurovision_missing_tracks_collector(spotify_client: SpotifyClient) -> EurovisionMissingTracksCollector:
+    def get_tagged_mistakes_tracks_collector(
+        spotify_client: SpotifyClient,
+    ) -> ChartsTaggedMistakesTracksCollector:
+        return ChartsTaggedMistakesTracksCollector(
+            db_engine=get_database_engine(), spotify_client=spotify_client
+        )
+
+    def get_every_hit_collector(
+        self, session: ClientSession
+    ) -> EveryHitChartsDataCollector:
+        return EveryHitChartsDataCollector(
+            session=session, pool_executor=self._tools.get_pool_executor()
+        )
+
+    @staticmethod
+    def get_eurovision_missing_tracks_collector(
+        spotify_client: SpotifyClient,
+    ) -> EurovisionMissingTracksCollector:
         return EurovisionMissingTracksCollector(spotify_client)

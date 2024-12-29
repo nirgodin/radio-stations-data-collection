@@ -17,12 +17,14 @@ from data_collectors.logic.updaters import ValuesDatabaseUpdater
 
 
 class TrackNamesEmbeddingsRetrievalManager(IManager):
-    def __init__(self,
-                 db_engine: AsyncEngine,
-                 embeddings_retriever: TrackNamesEmbeddingsRetrievalCollector,
-                 milvus_client: MilvusClient,
-                 db_updater: ValuesDatabaseUpdater,
-                 embeddings_serializer: OpenAIBatchEmbeddingsSerializer = OpenAIBatchEmbeddingsSerializer()):
+    def __init__(
+        self,
+        db_engine: AsyncEngine,
+        embeddings_retriever: TrackNamesEmbeddingsRetrievalCollector,
+        milvus_client: MilvusClient,
+        db_updater: ValuesDatabaseUpdater,
+        embeddings_serializer: OpenAIBatchEmbeddingsSerializer = OpenAIBatchEmbeddingsSerializer(),
+    ):
         self._db_engine = db_engine
         self._embeddings_retriever = embeddings_retriever
         self._milvus_client = milvus_client
@@ -49,9 +51,13 @@ class TrackNamesEmbeddingsRetrievalManager(IManager):
 
         return query_result.scalars().all()
 
-    async def _handle_single_batch(self, batch_id: str, batch_records: List[dict]) -> None:
+    async def _handle_single_batch(
+        self, batch_id: str, batch_records: List[dict]
+    ) -> None:
         track_id_name_mapping = await self._query_tracks_names(batch_id)
-        embeddings_records = self._embeddings_serializer.serialize(batch_records, track_id_name_mapping)
+        embeddings_records = self._embeddings_serializer.serialize(
+            batch_records, track_id_name_mapping
+        )
         await self._insert_embeddings_records(embeddings_records)
         await self._update_postgres_embeddings_exist(embeddings_records)
 
@@ -69,10 +75,11 @@ class TrackNamesEmbeddingsRetrievalManager(IManager):
     async def _insert_embeddings_records(self, records: List[dict]) -> None:
         logger.info(f"Starting to insert name embeddings for {len(records)} tracks")
         await self._milvus_client.vectors.insert(
-            collection_name=TRACK_NAMES_EMBEDDINGS_COLLECTION,
-            records=records
+            collection_name=TRACK_NAMES_EMBEDDINGS_COLLECTION, records=records
         )
-        logger.info(f"Successfully inserted tracks name embeddings to Milvus vector database")
+        logger.info(
+            f"Successfully inserted tracks name embeddings to Milvus vector database"
+        )
 
     async def _update_postgres_embeddings_exist(self, records: List[dict]) -> None:
         logger.info("Starting to update Postgres database of new existing embeddings")
@@ -80,8 +87,7 @@ class TrackNamesEmbeddingsRetrievalManager(IManager):
 
         for record in records:
             request = DBUpdateRequest(
-                id=record[ID],
-                values={Track.has_name_embeddings: True}
+                id=record[ID], values={Track.has_name_embeddings: True}
             )
             update_requests.append(request)
 

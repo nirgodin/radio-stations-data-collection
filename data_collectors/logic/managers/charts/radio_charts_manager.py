@@ -8,24 +8,39 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncEngine
 
 from data_collectors.consts.charts_consts import EXCLUDED_RADIO_CHARTS_FILES_IDS
-from data_collectors.logic.collectors import RadioChartsDataCollector, ChartsTracksCollector
-from data_collectors.logic.inserters.postgres import SpotifyInsertionsManager, ChartEntriesDatabaseInserter
+from data_collectors.logic.collectors import (
+    RadioChartsDataCollector,
+    ChartsTracksCollector,
+)
+from data_collectors.logic.inserters.postgres import (
+    SpotifyInsertionsManager,
+    ChartEntriesDatabaseInserter,
+)
 from data_collectors.logic.managers.charts.base_charts_manager import BaseChartsManager
 
 
 class RadioChartsManager(BaseChartsManager):
-    def __init__(self,
-                 charts_data_collector: RadioChartsDataCollector,
-                 charts_tracks_collector: ChartsTracksCollector,
-                 spotify_insertions_manager: SpotifyInsertionsManager,
-                 chart_entries_inserter: ChartEntriesDatabaseInserter,
-                 db_engine: AsyncEngine,
-                 drive_client: GoogleDriveClient):
-        super().__init__(charts_data_collector, charts_tracks_collector, spotify_insertions_manager, chart_entries_inserter)
+    def __init__(
+        self,
+        charts_data_collector: RadioChartsDataCollector,
+        charts_tracks_collector: ChartsTracksCollector,
+        spotify_insertions_manager: SpotifyInsertionsManager,
+        chart_entries_inserter: ChartEntriesDatabaseInserter,
+        db_engine: AsyncEngine,
+        drive_client: GoogleDriveClient,
+    ):
+        super().__init__(
+            charts_data_collector,
+            charts_tracks_collector,
+            spotify_insertions_manager,
+            chart_entries_inserter,
+        )
         self._drive_client = drive_client
         self._db_engine = db_engine
 
-    async def _generate_data_collector_kwargs(self, chart: Chart, limit: Optional[int]) -> Dict[str, Any]:
+    async def _generate_data_collector_kwargs(
+        self, chart: Chart, limit: Optional[int]
+    ) -> Dict[str, Any]:
         existing_files_names = await self._query_existing_files_names(chart)
         logger.info("Starting to select non existing charts to insert")
         drive_dir = self._charts_drive_dir_mapping[chart]
@@ -38,13 +53,12 @@ class RadioChartsManager(BaseChartsManager):
             if self._is_relevant_file(file, existing_files_names):
                 files.append(file)
 
-        return {
-            "chart_drive_files": files,
-            "chart": chart
-        }
+        return {"chart_drive_files": files, "chart": chart}
 
     async def _query_existing_files_names(self, chart: Chart) -> List[str]:
-        logger.info(f"Querying existing files names to prevent double insertion of same chart entries")
+        logger.info(
+            f"Querying existing files names to prevent double insertion of same chart entries"
+        )
         query = (
             select(ChartEntry.comment)
             .distinct(ChartEntry.comment)
@@ -67,5 +81,5 @@ class RadioChartsManager(BaseChartsManager):
         return {
             Chart.KOL_ISRAEL_WEEKLY_ISRAELI: "1v0otxK72J_1q_PNwUCTvmZTqPXsqMFUO",
             Chart.KOL_ISRAEL_WEEKLY_INTERNATIONAL: "1bSMmwXJrUBNQby5JHRwV-O495l7wgXev",
-            Chart.GALATZ_WEEKLY_ISRAELI: "1Om8H2ibRqOpCN-b7CKPUbwhJEHBJ3ZzT"
+            Chart.GALATZ_WEEKLY_ISRAELI: "1Om8H2ibRqOpCN-b7CKPUbwhJEHBJ3ZzT",
         }

@@ -17,9 +17,7 @@ class ChunksDatabaseInserter(IPostgresDatabaseInserter):
     async def insert(self, records: List[BaseORMModel]) -> None:
         logger.info(f"Inserting {len(records)} records")
         await self._chunks_generator.execute_by_chunk_in_parallel(
-            lst=records,
-            func=self._insert_records_in_chunk,
-            expected_type=type(None)
+            lst=records, func=self._insert_records_in_chunk, expected_type=type(None)
         )
 
     async def _insert_records_in_chunk(self, records: List[BaseORMModel]) -> None:
@@ -27,7 +25,9 @@ class ChunksDatabaseInserter(IPostgresDatabaseInserter):
             await insert_records(engine=self._db_engine, records=records)
 
         except IntegrityError:
-            logger.exception("Failed to insert records in one chunk. Trying to insert one by one")
+            logger.exception(
+                "Failed to insert records in one chunk. Trying to insert one by one"
+            )
             await self._insert_records_one_by_one(records)
 
     async def _insert_records_one_by_one(self, records: List[BaseORMModel]) -> None:

@@ -7,7 +7,11 @@ from genie_datastores.models import DataSource
 from google.generativeai import GenerativeModel
 
 from data_collectors.contract import ICollector
-from data_collectors.logic.models import ArtistExtractedDetails, ArtistExistingDetails, ArtistDetailsExtractionResponse
+from data_collectors.logic.models import (
+    ArtistExtractedDetails,
+    ArtistExistingDetails,
+    ArtistDetailsExtractionResponse,
+)
 from data_collectors.utils.gemini import serialize_generative_model_response
 
 
@@ -16,21 +20,23 @@ class GeminiArtistsAboutParsingCollector(ICollector):
         self._pool_executor = pool_executor
         self._model = model
 
-    async def collect(self,
-                      existing_details: List[ArtistExistingDetails],
-                      data_source: DataSource) -> List[ArtistDetailsExtractionResponse]:
+    async def collect(
+        self, existing_details: List[ArtistExistingDetails], data_source: DataSource
+    ) -> List[ArtistDetailsExtractionResponse]:
         logger.info(f"Sending {len(existing_details)} extraction requests to Gemini")
         return await self._pool_executor.run(
             iterable=existing_details,
             func=partial(self._extract_artist_details, data_source),
-            expected_type=ArtistDetailsExtractionResponse
+            expected_type=ArtistDetailsExtractionResponse,
         )
 
-    async def _extract_artist_details(self,
-                                      data_source: DataSource,
-                                      existing_details: ArtistExistingDetails) -> ArtistDetailsExtractionResponse:
+    async def _extract_artist_details(
+        self, data_source: DataSource, existing_details: ArtistExistingDetails
+    ) -> ArtistDetailsExtractionResponse:
         if existing_details.about is None:
-            logger.info("Artists details are missing an about field. Returning empty details by default")
+            logger.info(
+                "Artists details are missing an about field. Returning empty details by default"
+            )
             extracted_details = self._build_invalid_extracted_details_response()
         else:
             extracted_details = await self._fetch_model_response(existing_details)
@@ -38,10 +44,12 @@ class GeminiArtistsAboutParsingCollector(ICollector):
         return ArtistDetailsExtractionResponse(
             existing_details=existing_details,
             extracted_details=extracted_details,
-            data_source=data_source
+            data_source=data_source,
         )
 
-    async def _fetch_model_response(self, existing_details: ArtistExistingDetails) -> ArtistExtractedDetails:
+    async def _fetch_model_response(
+        self, existing_details: ArtistExistingDetails
+    ) -> ArtistExtractedDetails:
         prompt = """\
             Please return JSON describing the birth date, death date, and origin of music artists from this about \
             paragraph using the following schema:
@@ -73,11 +81,12 @@ class GeminiArtistsAboutParsingCollector(ICollector):
 
         response = await self._model.generate_content_async(
             contents=dedent(prompt) + existing_details.about,
-            generation_config={'response_mime_type': 'application/json'}
+            generation_config={"response_mime_type": "application/json"},
         )
-        serialized_response: Optional[ArtistExtractedDetails] = serialize_generative_model_response(
-            response=response,
-            model=ArtistExtractedDetails
+        serialized_response: Optional[ArtistExtractedDetails] = (
+            serialize_generative_model_response(
+                response=response, model=ArtistExtractedDetails
+            )
         )
 
         if serialized_response is None:
@@ -88,8 +97,5 @@ class GeminiArtistsAboutParsingCollector(ICollector):
     @staticmethod
     def _build_invalid_extracted_details_response() -> ArtistExtractedDetails:
         return ArtistExtractedDetails(
-            birth_date=None,
-            death_date=None,
-            origin=None,
-            gender=None
+            birth_date=None, death_date=None, origin=None, gender=None
         )

@@ -15,10 +15,12 @@ from data_collectors.utils.charts import extract_artist_and_track_from_chart_key
 
 
 class EurovisionMissingTracksCollector(ICollector):
-    def __init__(self,
-                 spotify_client: SpotifyClient,
-                 pool_executor: SyncPoolExecutor = SyncPoolExecutor(),
-                 entity_matcher: EntityMatcher = EntityMatcher()):
+    def __init__(
+        self,
+        spotify_client: SpotifyClient,
+        pool_executor: SyncPoolExecutor = SyncPoolExecutor(),
+        entity_matcher: EntityMatcher = EntityMatcher(),
+    ):
         self._spotify_client = spotify_client
         self._pool_executor = pool_executor
         self._entity_matcher = entity_matcher
@@ -30,7 +32,7 @@ class EurovisionMissingTracksCollector(ICollector):
         tracks = self._pool_executor.run(
             iterable=records,
             func=partial(self._match_single_track_id, years_playlists),
-            expected_type=tuple
+            expected_type=tuple,
         )
 
         return dict(tracks)
@@ -42,7 +44,9 @@ class EurovisionMissingTracksCollector(ICollector):
 
         return self._map_years_to_playlists(playlists)
 
-    def _map_years_to_playlists(self, playlists: List[Dict[str, Any]]) -> Dict[int, Dict[str, Any]]:
+    def _map_years_to_playlists(
+        self, playlists: List[Dict[str, Any]]
+    ) -> Dict[int, Dict[str, Any]]:
         year_playlist_mapping = {}
 
         for playlist in playlists:
@@ -52,29 +56,32 @@ class EurovisionMissingTracksCollector(ICollector):
 
         return year_playlist_mapping
 
-    def _match_single_track_id(self,
-                               years_playlists: Dict[int, dict],
-                               record: EurovisionRecord) -> Optional[Tuple[int, dict]]:
+    def _match_single_track_id(
+        self, years_playlists: Dict[int, dict], record: EurovisionRecord
+    ) -> Optional[Tuple[int, dict]]:
         playlist = years_playlists.get(record.date.year)
 
         if playlist is not None:
             return self._match_entity_to_playlist_items(playlist, record)
 
-        logger.warning(f"Did not find mapped playlists for year {record.date.year}. Skipping record `{record.key}`")
+        logger.warning(
+            f"Did not find mapped playlists for year {record.date.year}. Skipping record `{record.key}`"
+        )
 
-    def _match_entity_to_playlist_items(self, playlist: dict, record: EurovisionRecord) -> Optional[Tuple[int, dict]]:
+    def _match_entity_to_playlist_items(
+        self, playlist: dict, record: EurovisionRecord
+    ) -> Optional[Tuple[int, dict]]:
         items = safe_nested_get(playlist, [TRACKS, ITEMS], [])
         artist, track = extract_artist_and_track_from_chart_key(record.key)
-        entity = MatchingEntity(
-            track=track.strip(),
-            artist=artist.strip()
-        )
+        entity = MatchingEntity(track=track.strip(), artist=artist.strip())
         matching_item = self._extract_matching_track_id(items, entity)
 
         if matching_item is not None:
             return record.id, matching_item
 
-    def _extract_matching_track_id(self, items: List[Dict[str, Any]], entity: MatchingEntity) -> Optional[dict]:
+    def _extract_matching_track_id(
+        self, items: List[Dict[str, Any]], entity: MatchingEntity
+    ) -> Optional[dict]:
         for item in items:
             candidate = item.get(TRACK)
 

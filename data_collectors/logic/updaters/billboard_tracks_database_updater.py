@@ -14,5 +14,5 @@ class BillboardTracksDatabaseUpdater(IDatabaseUpdater):
             mapping=ids_weeks_mapping,
             orm=BillboardTrack,
             key_column=BillboardTrack.id,
-            value_column=BillboardTrack.weeks_on_chart
+            value_column=BillboardTrack.weeks_on_chart,
         )
