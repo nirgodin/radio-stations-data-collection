@@ -27,7 +27,7 @@ class SpotifyInsertionsVerifier:
             self._inserted_expected_spotify_tracks_records(tracks),
             self._inserted_expected_tracks_records(tracks),
             self._inserted_expected_audio_features_records(tracks),
-            self._inserted_expected_albums_records(tracks),
+            self._inserted_expected_track_id_mapping_records(tracks),
             self._inserted_expected_albums_records(albums),
         ]
         actual = await gather(*verification_coroutines)
