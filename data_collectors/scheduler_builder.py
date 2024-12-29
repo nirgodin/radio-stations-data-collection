@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from functools import partial
 from random import randint
-from typing import Dict
+from typing import Dict, Optional, List
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from genie_common.tools import logger, EmailSender
@@ -15,8 +15,12 @@ class SchedulerBuilder:
     def __init__(self, component_factory: ComponentFactory):
         self._component_factory = component_factory
 
-    async def build(self, scheduler: AsyncIOScheduler) -> AsyncIOScheduler:
-        jobs = await JobsLoader.load(self._component_factory)
+    async def build(
+        self, scheduler: AsyncIOScheduler, jobs: Optional[List[str]]
+    ) -> AsyncIOScheduler:
+        if jobs is None:
+            jobs = await JobsLoader.load(self._component_factory)
+
         logger.info(f"Found {len(jobs)} jobs to schedule")
         self._add_all_jobs(scheduler, jobs)
         logger.info(f"Added all jobs to the scheduler")
