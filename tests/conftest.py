@@ -2,7 +2,6 @@ import asyncio
 from asyncio import AbstractEventLoop
 
 from _pytest.fixtures import fixture
-from fastapi import FastAPI
 from genie_common.utils import random_alphanumeric_string
 from genie_datastores.testing.postgres import PostgresTestkit, postgres_session
 from spotipyio.auth import ClientCredentials, SpotifyGrantType
