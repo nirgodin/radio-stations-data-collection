@@ -1,5 +1,10 @@
 import asyncio
-from typing import Callable, Union, Awaitable, Type, Tuple
+from contextlib import contextmanager
+from typing import Callable, Union, Awaitable, Type, Tuple, Optional, AsyncContextManager
+
+from starlette.testclient import TestClient
+
+from main import lifespan, app
 
 
 async def until(
@@ -27,3 +32,18 @@ async def until(
         await asyncio.sleep(interval)
 
     raise TimeoutError(f"Condition not met within {timeout} seconds")
+
+
+@contextmanager
+def app_test_client_session(app_lifespan: Optional[AsyncContextManager] = None,
+                            dependency_overrides: Optional[dict] = None) -> TestClient:
+    if app_lifespan is not None:
+        app.router.lifespan_context = app_lifespan
+
+    if dependency_overrides is not None:
+        app.dependency_overrides = dependency_overrides
+
+    yield TestClient(app)
+
+    app.router.lifespan_context = lifespan
+    app.dependency_overrides = {}

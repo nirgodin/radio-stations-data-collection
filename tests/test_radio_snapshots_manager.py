@@ -1,14 +1,24 @@
+from asyncio import AbstractEventLoop
+from functools import partial
 from http import HTTPStatus
 from typing import Dict, List
 
+from apscheduler.triggers.interval import IntervalTrigger
 from genie_common.utils import chain_lists
 from genie_datastores.postgres.models import SpotifyStation
 from joblib.testing import fixture
 from spotipyio.testing import SpotifyTestClient, SpotifyMockFactory
 from starlette.testclient import TestClient
 
-from data_collectors.jobs.radio_snapshots_job_builder import RADIO_SNAPSHOTS_STATIONS
+from data_collectors.components import ComponentFactory
+from data_collectors.jobs.radio_snapshots_job_builder import (
+    RADIO_SNAPSHOTS_STATIONS,
+    RadioSnapshotsJobBuilder,
+)
+from data_collectors.logic.models import ScheduledJob
 from data_collectors.utils.spotify import extract_unique_artists_ids
+from main import lifespan
+from tests.testing_utils import until, app_test_client_session
 from tests.tools.spotify_insertions_verifier import SpotifyInsertionsVerifier
 
 
@@ -23,9 +33,12 @@ class TestRadioSnapshotsManager:
         test_client: TestClient,
         spotify_insertions_verifier: SpotifyInsertionsVerifier,
     ):
-        self._given_valid_playlists_response(spotify_test_client, station_playlist_map)
-        self._given_valid_artists_responses(spotify_test_client, artists)
-        self._given_valid_audio_features_responses(spotify_test_client, tracks)
+        self._given_expected_spotify_responses(
+            spotify_test_client=spotify_test_client,
+            station_playlist_map=station_playlist_map,
+            artists=artists,
+            tracks=tracks,
+        )
 
         actual = test_client.post("/jobs/trigger/radio_snapshots")
 
@@ -35,6 +48,54 @@ class TestRadioSnapshotsManager:
             tracks=chain_lists(tracks),
             albums=albums,
         )
+
+    async def test_scheduled_job(
+        self,
+        spotify_test_client: SpotifyTestClient,
+        station_playlist_map: Dict[SpotifyStation, dict],
+        artists: List[List[str]],
+        tracks: List[List[str]],
+        albums: List[str],
+        scheduled_test_client: TestClient,
+        spotify_insertions_verifier: SpotifyInsertionsVerifier,
+    ):
+        self._given_expected_spotify_responses(
+            spotify_test_client=spotify_test_client,
+            station_playlist_map=station_playlist_map,
+            artists=artists,
+            tracks=tracks,
+        )
+        condition = partial(
+            spotify_insertions_verifier.verify,
+            artists=chain_lists(artists),
+            tracks=chain_lists(tracks),
+            albums=albums,
+        )
+
+        with scheduled_test_client:
+            await until(condition)
+
+    @fixture
+    async def scheduled_test_client(
+        self, component_factory: ComponentFactory, radio_snapshots_job: ScheduledJob, event_loop: AbstractEventLoop
+    ) -> TestClient:
+        lifespan_context = partial(
+            lifespan,
+            component_factory=component_factory,
+            jobs={radio_snapshots_job.id: radio_snapshots_job},
+        )
+
+        with app_test_client_session(lifespan_context) as client:
+            yield client
+
+    @fixture
+    async def radio_snapshots_job(
+        self, component_factory: ComponentFactory
+    ) -> ScheduledJob:
+        builder = RadioSnapshotsJobBuilder(component_factory)
+        interval = IntervalTrigger(seconds=1)
+
+        return await builder.build(interval=interval)
 
     @fixture
     def station_playlist_map(self) -> Dict[SpotifyStation, dict]:
@@ -81,6 +142,17 @@ class TestRadioSnapshotsManager:
             albums_ids.extend(playlist_albums_ids)
 
         return albums_ids
+
+    def _given_expected_spotify_responses(
+        self,
+        spotify_test_client: SpotifyTestClient,
+        station_playlist_map: Dict[SpotifyStation, dict],
+        artists: List[List[str]],
+        tracks: List[List[str]],
+    ) -> None:
+        self._given_valid_playlists_response(spotify_test_client, station_playlist_map)
+        self._given_valid_artists_responses(spotify_test_client, artists)
+        self._given_valid_audio_features_responses(spotify_test_client, tracks)
 
     @staticmethod
     def _given_valid_playlists_response(
