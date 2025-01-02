@@ -1,6 +1,14 @@
 import asyncio
 from contextlib import contextmanager
-from typing import Callable, Union, Awaitable, Type, Tuple, Optional, AsyncContextManager
+from typing import (
+    Callable,
+    Union,
+    Awaitable,
+    Type,
+    Tuple,
+    Optional,
+    AsyncContextManager,
+)
 
 from starlette.testclient import TestClient
 
@@ -35,8 +43,10 @@ async def until(
 
 
 @contextmanager
-def app_test_client_session(app_lifespan: Optional[AsyncContextManager] = None,
-                            dependency_overrides: Optional[dict] = None) -> TestClient:
+def app_test_client_session(
+    app_lifespan: Optional[AsyncContextManager] = None,
+    dependency_overrides: Optional[dict] = None,
+) -> TestClient:
     if app_lifespan is not None:
         app.router.lifespan_context = app_lifespan
 
