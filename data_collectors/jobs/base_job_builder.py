@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
+from datetime import datetime
 
-from apscheduler.triggers.interval import IntervalTrigger
 from typing_extensions import Optional
 
 from data_collectors.components import ComponentFactory
@@ -12,5 +12,5 @@ class BaseJobBuilder(ABC):
         self._component_factory = component_factory
 
     @abstractmethod
-    async def build(self, interval: Optional[IntervalTrigger] = None) -> ScheduledJob:
+    async def build(self, next_run_time: Optional[datetime] = None) -> ScheduledJob:
         raise NotImplementedError

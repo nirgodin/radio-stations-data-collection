@@ -1,4 +1,5 @@
 from asyncio import AbstractEventLoop
+from datetime import datetime
 from functools import partial
 from http import HTTPStatus
 from typing import Dict, List
@@ -73,11 +74,14 @@ class TestRadioSnapshotsManager:
         )
 
         with scheduled_test_client:
-            await until(condition)
+            await until(condition, interval=0.5)
 
     @fixture
     async def scheduled_test_client(
-        self, component_factory: ComponentFactory, radio_snapshots_job: ScheduledJob, event_loop: AbstractEventLoop
+        self,
+        component_factory: ComponentFactory,
+        radio_snapshots_job: ScheduledJob,
+        event_loop: AbstractEventLoop,
     ) -> TestClient:
         lifespan_context = partial(
             lifespan,
@@ -93,9 +97,7 @@ class TestRadioSnapshotsManager:
         self, component_factory: ComponentFactory
     ) -> ScheduledJob:
         builder = RadioSnapshotsJobBuilder(component_factory)
-        interval = IntervalTrigger(seconds=1)
-
-        return await builder.build(interval=interval)
+        return await builder.build(next_run_time=datetime.now())
 
     @fixture
     def station_playlist_map(self) -> Dict[SpotifyStation, dict]:

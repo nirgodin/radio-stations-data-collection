@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import timedelta
 from functools import partial
 from random import randint
 from typing import Dict, Optional, List
@@ -30,17 +30,15 @@ class SchedulerBuilder:
     def _add_all_jobs(
         self, scheduler: AsyncIOScheduler, jobs: Dict[str, ScheduledJob]
     ) -> None:
-        next_run_time = datetime.now()
         email_sender = self._component_factory.tools.get_email_sender()
 
         for job in jobs.values():
-            # next_run_time += self._random_short_delay()
             func = partial(self._task_with_failure_notification, email_sender, job)
             scheduler.add_job(
                 func=func,
                 trigger=job.interval,
                 id=job.id.value,
-                # next_run_time=next_run_time
+                next_run_time=job.next_run_time,
             )
 
     @staticmethod
