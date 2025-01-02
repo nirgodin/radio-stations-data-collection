@@ -1,5 +1,6 @@
 import asyncio
 from asyncio import AbstractEventLoop
+from functools import partial
 
 from _pytest.fixtures import fixture
 from genie_common.utils import random_alphanumeric_string
@@ -15,7 +16,7 @@ from data_collectors.components import ComponentFactory
 from data_collectors.components.environment_component_factory import (
     EnvironmentComponentFactory,
 )
-from main import app
+from main import app, lifespan
 from tests.tools.spotify_insertions_verifier import SpotifyInsertionsVerifier
 
 
@@ -83,7 +84,13 @@ def component_factory(
 @fixture(scope="session")
 def test_client(component_factory: ComponentFactory) -> TestClient:
     app.dependency_overrides[get_component_factory] = lambda: component_factory
+    app.router.lifespan_context = partial(
+        lifespan, component_factory=component_factory, jobs={}
+    )
+
     yield TestClient(app)
+
+    app.router.lifespan_context = lifespan
     app.dependency_overrides = {}
 
 
