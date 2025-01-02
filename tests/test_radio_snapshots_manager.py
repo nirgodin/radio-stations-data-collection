@@ -1,5 +1,5 @@
 from asyncio import AbstractEventLoop
-from datetime import datetime
+from datetime import datetime, timedelta
 from functools import partial
 from http import HTTPStatus
 from typing import Dict, List
@@ -97,7 +97,9 @@ class TestRadioSnapshotsManager:
         self, component_factory: ComponentFactory
     ) -> ScheduledJob:
         builder = RadioSnapshotsJobBuilder(component_factory)
-        return await builder.build(next_run_time=datetime.now())
+        next_run_time = datetime.now() + timedelta(seconds=2)
+
+        return await builder.build(next_run_time=next_run_time)
 
     @fixture
     def station_playlist_map(self) -> Dict[SpotifyStation, dict]:
