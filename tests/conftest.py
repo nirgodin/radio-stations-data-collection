@@ -1,8 +1,8 @@
 import asyncio
 from asyncio import AbstractEventLoop
+from functools import partial
 
 from _pytest.fixtures import fixture
-from fastapi import FastAPI
 from genie_common.utils import random_alphanumeric_string
 from genie_datastores.testing.postgres import PostgresTestkit, postgres_session
 from spotipyio.auth import ClientCredentials, SpotifyGrantType
@@ -16,18 +16,19 @@ from data_collectors.components import ComponentFactory
 from data_collectors.components.environment_component_factory import (
     EnvironmentComponentFactory,
 )
-from main import app
+from main import lifespan
+from tests.testing_utils import app_test_client_session
 from tests.tools.spotify_insertions_verifier import SpotifyInsertionsVerifier
 
 
-@fixture(scope="session")
+@fixture
 def event_loop() -> AbstractEventLoop:
     loop = asyncio.get_event_loop_policy().new_event_loop()
     yield loop
     loop.close()
 
 
-@fixture(scope="session")
+@fixture
 def spotify_credentials() -> ClientCredentials:
     credentials = random_client_credentials()
     credentials.grant_type = SpotifyGrantType.CLIENT_CREDENTIALS
@@ -35,7 +36,7 @@ def spotify_credentials() -> ClientCredentials:
     return credentials
 
 
-@fixture(scope="session")
+@fixture
 async def spotify_test_client(
     spotify_credentials: ClientCredentials,
 ) -> SpotifyTestClient:
@@ -43,13 +44,13 @@ async def spotify_test_client(
         yield test_client
 
 
-@fixture(scope="session")
+@fixture
 def postgres_testkit() -> PostgresTestkit:
     with PostgresTestkit() as postgres_testkit:
         yield postgres_testkit
 
 
-@fixture(scope="session")
+@fixture
 def env_component_factory(
     spotify_credentials: ClientCredentials,
     spotify_test_client: SpotifyTestClient,
@@ -72,7 +73,7 @@ def env_component_factory(
     return EnvironmentComponentFactory(default_env)
 
 
-@fixture(scope="session")
+@fixture
 def component_factory(
     env_component_factory: EnvironmentComponentFactory,
 ) -> ComponentFactory:
@@ -81,14 +82,18 @@ def component_factory(
     )
 
 
-@fixture(scope="session")
+@fixture
 def test_client(component_factory: ComponentFactory) -> TestClient:
-    app.dependency_overrides[get_component_factory] = lambda: component_factory
-    yield TestClient(app)
-    app.dependency_overrides = {}
+    lifespan_context = partial(lifespan, component_factory=component_factory, jobs={})
+    dependency_overrides = {get_component_factory: lambda: component_factory}
+
+    with app_test_client_session(
+        lifespan_context=lifespan_context, dependency_overrides=dependency_overrides
+    ) as client:
+        yield client
 
 
-@fixture(scope="function")
+@fixture
 async def db_engine(postgres_testkit: PostgresTestkit) -> AsyncEngine:
     engine = postgres_testkit.get_database_engine()
 
@@ -96,6 +101,6 @@ async def db_engine(postgres_testkit: PostgresTestkit) -> AsyncEngine:
         yield engine
 
 
-@fixture(scope="function")
+@fixture
 def spotify_insertions_verifier(db_engine: AsyncEngine) -> SpotifyInsertionsVerifier:
     return SpotifyInsertionsVerifier(db_engine)

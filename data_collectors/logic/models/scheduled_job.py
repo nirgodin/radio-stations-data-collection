@@ -1,5 +1,6 @@
 from dataclasses import dataclass
-from typing import Callable, Awaitable
+from datetime import datetime
+from typing import Callable, Awaitable, Optional
 
 from apscheduler.triggers.interval import IntervalTrigger
 
@@ -11,3 +12,4 @@ class ScheduledJob:
     id: JobId
     task: Callable[[], Awaitable[None]]
     interval: IntervalTrigger
+    next_run_time: Optional[datetime] = None
