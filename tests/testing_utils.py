@@ -44,11 +44,11 @@ async def until(
 
 @contextmanager
 def app_test_client_session(
-    app_lifespan: Optional[AsyncContextManager] = None,
+    lifespan_context: Optional[AsyncContextManager] = None,
     dependency_overrides: Optional[dict] = None,
 ) -> TestClient:
-    if app_lifespan is not None:
-        app.router.lifespan_context = app_lifespan
+    if lifespan_context is not None:
+        app.router.lifespan_context = lifespan_context
 
     if dependency_overrides is not None:
         app.dependency_overrides = dependency_overrides
