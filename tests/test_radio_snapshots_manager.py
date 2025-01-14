@@ -12,6 +12,7 @@ from spotipyio.testing import SpotifyTestClient, SpotifyMockFactory
 from starlette.testclient import TestClient
 
 from data_collectors.components import ComponentFactory
+from data_collectors.jobs.job_id import JobId
 from data_collectors.jobs.radio_snapshots_job_builder import (
     RADIO_SNAPSHOTS_STATIONS,
     RadioSnapshotsJobBuilder,
@@ -42,7 +43,7 @@ class TestRadioSnapshotsManager:
         )
 
         with test_client as client:
-            actual = client.post("/jobs/trigger/radio_snapshots")
+            actual = client.post(f"/jobs/trigger/{JobId.RADIO_SNAPSHOTS.value}")
 
         assert actual.status_code == HTTPStatus.OK
         assert spotify_insertions_verifier.verify(
