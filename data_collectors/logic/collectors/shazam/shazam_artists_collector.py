@@ -17,9 +17,7 @@ class ShazamArtistsCollector(BaseShazamCollector):
             iterable=ids, func=self._extract_single_track_artist, expected_type=dict
         )
 
-    async def _extract_single_track_artist(
-        self, artist_id: Tuple[dict, str]
-    ) -> Optional[dict]:
+    async def _extract_single_track_artist(self, artist_id: str) -> Optional[dict]:
         if artist_id is None:
             logger.warning(
                 "Was not able to extract artist id from Shazam track. Ignoring"
