@@ -2,6 +2,7 @@ import asyncio
 from asyncio import AbstractEventLoop
 from functools import partial
 
+from aioresponses import aioresponses
 from _pytest.fixtures import fixture
 from genie_common.utils import random_alphanumeric_string
 from genie_datastores.testing.mongo.mongo_testkit import MongoTestkit
@@ -78,6 +79,12 @@ def env_component_factory(
         "MONGO_URI": mongo_testkit._container.get_connection_url(),
     }
     return EnvironmentComponentFactory(default_env)
+
+
+@fixture
+def mock_responses() -> aioresponses:
+    with aioresponses() as mock_responses:
+        yield mock_responses
 
 
 @fixture
