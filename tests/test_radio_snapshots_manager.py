@@ -46,7 +46,7 @@ class TestRadioSnapshotsManager:
             actual = client.post(f"/jobs/trigger/{JobId.RADIO_SNAPSHOTS.value}")
 
         assert actual.status_code == HTTPStatus.OK
-        assert spotify_insertions_verifier.verify(
+        assert await spotify_insertions_verifier.verify(
             artists=chain_lists(artists),
             tracks=chain_lists(tracks),
             albums=albums,
