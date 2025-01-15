@@ -8,8 +8,8 @@ from genie_datastores.postgres.models import ShazamLocation
 from sqlalchemy.ext.asyncio import AsyncEngine
 from starlette.testclient import TestClient
 
-from data_collectors.consts.shazam_consts import DATA, ADAM_ID, KEY, TITLE, ATTRIBUTES
-from data_collectors.consts.spotify_consts import ID, ARTISTS, NAME
+from data_collectors.consts.shazam_consts import DATA
+from data_collectors.consts.spotify_consts import ID
 from data_collectors.jobs.job_id import JobId
 from tests.helpers.shazam_track_resources import ShazamTrackResources
 
@@ -54,7 +54,7 @@ class TestShazamTopTracksManager:
 
         for location, playlist_id in location_playlist_id_map.items():
             tracks_ids = [
-                {ID: track.id} for track in location_shazam_tracks_map[location]
+                {ID: str(track.id)} for track in location_shazam_tracks_map[location]
             ]
             mock_responses.get(
                 url=f"https://www.shazam.com/services/amapi/v1/catalog/GB/playlists/{playlist_id}/tracks?limit=200&offset=0&l=EN&relate[songs]=artists,music-videos",
@@ -122,11 +122,7 @@ class TestShazamTopTracksManager:
         for track in tracks:
             mock_responses.get(
                 url=SHAZAM_TRACK_URL_FORMAT.format(id=track.id),
-                payload={
-                    KEY: str(track.id),
-                    TITLE: random_alphanumeric_string(),
-                    ARTISTS: [{ADAM_ID: str(track.artist_id)}],
-                },
+                payload=track.to_track_response(),
             )
 
     @staticmethod
@@ -139,12 +135,5 @@ class TestShazamTopTracksManager:
         for track in tracks:
             mock_responses.get(
                 url=SHAZAM_ARTIST_URL_FORMAT.format(id=track.artist_id),
-                payload={
-                    DATA: [
-                        {
-                            ID: str(track.artist_id),
-                            ATTRIBUTES: {NAME: random_alphanumeric_string()},
-                        }
-                    ]
-                },
+                payload=track.to_artist_response(),
             )
