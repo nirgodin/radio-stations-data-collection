@@ -4,7 +4,9 @@ from typing import Dict, List
 from _pytest.fixtures import fixture
 from aioresponses import aioresponses
 from genie_common.utils import random_alphanumeric_string, chain_lists
-from genie_datastores.postgres.models import ShazamLocation
+from genie_datastores.postgres.models import ShazamLocation, ShazamTopTrack
+from genie_datastores.postgres.operations import execute_query
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncEngine
 from starlette.testclient import TestClient
 
@@ -12,6 +14,7 @@ from data_collectors.consts.shazam_consts import DATA
 from data_collectors.consts.spotify_consts import ID
 from data_collectors.jobs.job_id import JobId
 from tests.helpers.shazam_track_resources import ShazamTrackResources
+from tests.tools.shazam_insertions_verifier import ShazamInsertionsVerifier
 
 # Must have the space in the end of URL in order aioresponses matches the request
 SHAZAM_TRACK_URL_FORMAT = "https://www.shazam.com/discovery/v5/EN/GB/web/-/track/{id}?shazamapiversion=v3&video=v3 "
@@ -23,32 +26,38 @@ class TestShazamTopTracksManager:
         self,
         test_client: TestClient,
         mock_responses: aioresponses,
-        location_playlist_id_map: Dict[str, str],
-        location_shazam_tracks_map: Dict[str, List[ShazamTrackResources]],
+        location_playlist_id_map: Dict[ShazamLocation, str],
+        location_shazam_tracks_map: Dict[ShazamLocation, List[ShazamTrackResources]],
+        shazam_tracks: List[ShazamTrackResources],
+        unique_shazam_tracks: List[ShazamTrackResources],
         db_engine: AsyncEngine,
+        shazam_insertions_verifier: ShazamInsertionsVerifier,
     ) -> None:
         self._given_successful_top_tracks_requests(
             mock_responses=mock_responses,
             location_playlist_id_map=location_playlist_id_map,
             location_shazam_tracks_map=location_shazam_tracks_map,
         )
-        self._given_successful_tracks_requests(
-            mock_responses, location_shazam_tracks_map
-        )
-        self._given_successful_artists_requests(
-            mock_responses, location_shazam_tracks_map
-        )
+        self._given_successful_tracks_requests(mock_responses, shazam_tracks)
+        self._given_successful_artists_requests(mock_responses, shazam_tracks)
 
         with test_client as client:
             actual = client.post(f"/jobs/trigger/{JobId.SHAZAM_TOP_TRACKS.value}")
 
         assert actual.status_code == HTTPStatus.OK.value
+        assert await shazam_insertions_verifier.verify(
+            tracks={str(track.id) for track in unique_shazam_tracks},
+            artists={str(track.artist_id) for track in unique_shazam_tracks},
+        )
+        await self._assert_expected_top_tracks_records(
+            db_engine, location_shazam_tracks_map
+        )
 
     def _given_successful_top_tracks_requests(
         self,
         mock_responses: aioresponses,
-        location_playlist_id_map: Dict[str, str],
-        location_shazam_tracks_map: Dict[str, List[ShazamTrackResources]],
+        location_playlist_id_map: Dict[ShazamLocation, str],
+        location_shazam_tracks_map: Dict[ShazamLocation, List[ShazamTrackResources]],
     ) -> None:
         self._given_successful_geo_responses(mock_responses, location_playlist_id_map)
 
@@ -63,25 +72,24 @@ class TestShazamTopTracksManager:
 
     @staticmethod
     def _given_successful_geo_responses(
-        mock_responses: aioresponses, location_playlist_id_map: Dict[str, str]
+        mock_responses: aioresponses,
+        location_playlist_id_map: Dict[ShazamLocation, str],
     ) -> None:
         payload = {
             "countries": [
                 {
                     "id": "IL",
-                    "listid": location_playlist_id_map[ShazamLocation.ISRAEL.value],
+                    "listid": location_playlist_id_map[ShazamLocation.ISRAEL],
                     "cities": [
                         {
                             "name": ShazamLocation.TEL_AVIV.value,
-                            "listid": location_playlist_id_map[
-                                ShazamLocation.TEL_AVIV.value
-                            ],
+                            "listid": location_playlist_id_map[ShazamLocation.TEL_AVIV],
                         }
                     ],
                 }
             ],
             "global": {
-                "top": {"listid": location_playlist_id_map[ShazamLocation.WORLD.value]},
+                "top": {"listid": location_playlist_id_map[ShazamLocation.WORLD]},
             },
         }
         mock_responses.get(
@@ -93,20 +101,38 @@ class TestShazamTopTracksManager:
     @fixture
     def location_playlist_id_map(
         self, locations: List[ShazamLocation]
-    ) -> Dict[str, str]:
-        return {location.value: random_alphanumeric_string() for location in locations}
+    ) -> Dict[ShazamLocation, str]:
+        return {location: random_alphanumeric_string() for location in locations}
 
     @fixture
     def location_shazam_tracks_map(
         self, locations: List[ShazamLocation]
-    ) -> Dict[str, List[ShazamTrackResources]]:
-        return {
-            location.value: self._random_shazam_resources() for location in locations
-        }
+    ) -> Dict[ShazamLocation, List[ShazamTrackResources]]:
+        return {location: self._random_shazam_resources() for location in locations}
 
     @fixture
     def locations(self) -> List[ShazamLocation]:
         return [ShazamLocation.TEL_AVIV, ShazamLocation.ISRAEL, ShazamLocation.WORLD]
+
+    @fixture
+    def shazam_tracks(
+        self, location_shazam_tracks_map: Dict[str, List[ShazamTrackResources]]
+    ) -> List[ShazamTrackResources]:
+        return chain_lists(list(location_shazam_tracks_map.values()))
+
+    @fixture
+    def unique_shazam_tracks(
+        self, shazam_tracks: List[ShazamTrackResources]
+    ) -> List[ShazamTrackResources]:
+        seen = set()
+        unique = []
+
+        for track in shazam_tracks:
+            if track.id not in seen:
+                unique.append(track)
+                seen.add(track.id)
+
+        return unique
 
     @staticmethod
     def _random_shazam_resources() -> List[ShazamTrackResources]:
@@ -114,12 +140,9 @@ class TestShazamTopTracksManager:
 
     @staticmethod
     def _given_successful_tracks_requests(
-        mock_responses: aioresponses,
-        location_shazam_tracks_map: Dict[str, List[ShazamTrackResources]],
+        mock_responses: aioresponses, shazam_tracks: List[ShazamTrackResources]
     ) -> None:
-        tracks = chain_lists(list(location_shazam_tracks_map.values()))
-
-        for track in tracks:
+        for track in shazam_tracks:
             mock_responses.get(
                 url=SHAZAM_TRACK_URL_FORMAT.format(id=track.id),
                 payload=track.to_track_response(),
@@ -127,13 +150,26 @@ class TestShazamTopTracksManager:
 
     @staticmethod
     def _given_successful_artists_requests(
-        mock_responses: aioresponses,
-        location_shazam_tracks_map: Dict[str, List[ShazamTrackResources]],
+        mock_responses: aioresponses, shazam_tracks: List[ShazamTrackResources]
     ) -> None:
-        tracks = chain_lists(list(location_shazam_tracks_map.values()))
-
-        for track in tracks:
+        for track in shazam_tracks:
             mock_responses.get(
                 url=SHAZAM_ARTIST_URL_FORMAT.format(id=track.artist_id),
                 payload=track.to_artist_response(),
             )
+
+    @staticmethod
+    async def _assert_expected_top_tracks_records(
+        db_engine: AsyncEngine,
+        location_shazam_tracks_map: Dict[ShazamLocation, List[ShazamTrackResources]],
+    ) -> None:
+        for location, tracks in location_shazam_tracks_map.items():
+            expected = [str(track.id) for track in tracks]
+            query = select(ShazamTopTrack.track_id).where(
+                ShazamTopTrack.location == location
+            )
+            query_result = await execute_query(db_engine, query)
+
+            actual = query_result.scalars().all()
+
+            assert sorted(actual) == sorted(expected)

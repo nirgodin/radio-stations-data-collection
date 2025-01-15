@@ -20,6 +20,7 @@ from data_collectors.components.environment_component_factory import (
 )
 from main import lifespan
 from tests.testing_utils import app_test_client_session
+from tests.tools.shazam_insertions_verifier import ShazamInsertionsVerifier
 from tests.tools.spotify_insertions_verifier import SpotifyInsertionsVerifier
 
 
@@ -118,3 +119,8 @@ async def db_engine(postgres_testkit: PostgresTestkit) -> AsyncEngine:
 @fixture
 def spotify_insertions_verifier(db_engine: AsyncEngine) -> SpotifyInsertionsVerifier:
     return SpotifyInsertionsVerifier(db_engine)
+
+
+@fixture
+def shazam_insertions_verifier(db_engine: AsyncEngine) -> ShazamInsertionsVerifier:
+    return ShazamInsertionsVerifier(db_engine)
