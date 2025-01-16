@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta
+from functools import partial
 from http import HTTPStatus
 from typing import Dict, List
 
@@ -10,10 +12,15 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncEngine
 from starlette.testclient import TestClient
 
+from data_collectors.components import ComponentFactory
 from data_collectors.consts.shazam_consts import DATA
 from data_collectors.consts.spotify_consts import ID
 from data_collectors.jobs.job_id import JobId
+from data_collectors.jobs.shazam_top_tracks_job_builder import ShazamTopTracksJobBuilder
+from data_collectors.logic.models import ScheduledJob
+from main import lifespan
 from tests.helpers.shazam_track_resources import ShazamTrackResources
+from tests.testing_utils import app_test_client_session, until
 from tests.tools.shazam_insertions_verifier import ShazamInsertionsVerifier
 
 # Must have the space in the end of URL in order aioresponses matches the request
@@ -33,25 +40,51 @@ class TestShazamTopTracksManager:
         db_engine: AsyncEngine,
         shazam_insertions_verifier: ShazamInsertionsVerifier,
     ) -> None:
-        self._given_successful_top_tracks_requests(
+        self._given_expected_shazam_responses(
             mock_responses=mock_responses,
             location_playlist_id_map=location_playlist_id_map,
             location_shazam_tracks_map=location_shazam_tracks_map,
+            shazam_tracks=shazam_tracks,
         )
-        self._given_successful_tracks_requests(mock_responses, shazam_tracks)
-        self._given_successful_artists_requests(mock_responses, shazam_tracks)
 
         with test_client as client:
             actual = client.post(f"/jobs/trigger/{JobId.SHAZAM_TOP_TRACKS.value}")
 
         assert actual.status_code == HTTPStatus.OK.value
-        assert await shazam_insertions_verifier.verify(
-            tracks={str(track.id) for track in unique_shazam_tracks},
-            artists={str(track.artist_id) for track in unique_shazam_tracks},
+        assert await self._are_expected_db_records_inserted(
+            shazam_insertions_verifier=shazam_insertions_verifier,
+            unique_shazam_tracks=unique_shazam_tracks,
+            db_engine=db_engine,
+            location_shazam_tracks_map=location_shazam_tracks_map,
         )
-        await self._assert_expected_top_tracks_records(
-            db_engine, location_shazam_tracks_map
+
+    async def test_scheduled_job(
+        self,
+        scheduled_test_client: TestClient,
+        mock_responses: aioresponses,
+        location_playlist_id_map: Dict[ShazamLocation, str],
+        location_shazam_tracks_map: Dict[ShazamLocation, List[ShazamTrackResources]],
+        shazam_tracks: List[ShazamTrackResources],
+        unique_shazam_tracks: List[ShazamTrackResources],
+        db_engine: AsyncEngine,
+        shazam_insertions_verifier: ShazamInsertionsVerifier,
+    ):
+        self._given_expected_shazam_responses(
+            mock_responses=mock_responses,
+            location_playlist_id_map=location_playlist_id_map,
+            location_shazam_tracks_map=location_shazam_tracks_map,
+            shazam_tracks=shazam_tracks,
         )
+        condition = partial(
+            self._are_expected_db_records_inserted,
+            shazam_insertions_verifier=shazam_insertions_verifier,
+            unique_shazam_tracks=unique_shazam_tracks,
+            db_engine=db_engine,
+            location_shazam_tracks_map=location_shazam_tracks_map,
+        )
+
+        with scheduled_test_client:
+            await until(condition)
 
     def _given_successful_top_tracks_requests(
         self,
@@ -134,6 +167,30 @@ class TestShazamTopTracksManager:
 
         return unique
 
+    @fixture
+    async def shazam_top_tracks_job(
+        self, component_factory: ComponentFactory
+    ) -> ScheduledJob:
+        builder = ShazamTopTracksJobBuilder(component_factory)
+        next_run_time = datetime.now() + timedelta(seconds=2)
+
+        return await builder.build(next_run_time=next_run_time)
+
+    @fixture
+    async def scheduled_test_client(
+        self,
+        component_factory: ComponentFactory,
+        shazam_top_tracks_job: ScheduledJob,
+    ) -> TestClient:
+        lifespan_context = partial(
+            lifespan,
+            component_factory=component_factory,
+            jobs={shazam_top_tracks_job.id: shazam_top_tracks_job},
+        )
+
+        with app_test_client_session(lifespan_context) as client:
+            yield client
+
     @staticmethod
     def _random_shazam_resources() -> List[ShazamTrackResources]:
         return [ShazamTrackResources.random() for _ in range(200)]
@@ -158,18 +215,54 @@ class TestShazamTopTracksManager:
                 payload=track.to_artist_response(),
             )
 
-    @staticmethod
-    async def _assert_expected_top_tracks_records(
+    def _given_expected_shazam_responses(
+        self,
+        mock_responses: aioresponses,
+        location_playlist_id_map: Dict[ShazamLocation, str],
+        location_shazam_tracks_map: Dict[ShazamLocation, List[ShazamTrackResources]],
+        shazam_tracks: List[ShazamTrackResources],
+    ) -> None:
+        self._given_successful_top_tracks_requests(
+            mock_responses=mock_responses,
+            location_playlist_id_map=location_playlist_id_map,
+            location_shazam_tracks_map=location_shazam_tracks_map,
+        )
+        self._given_successful_tracks_requests(mock_responses, shazam_tracks)
+        self._given_successful_artists_requests(mock_responses, shazam_tracks)
+
+    async def _are_expected_db_records_inserted(
+        self,
+        shazam_insertions_verifier: ShazamInsertionsVerifier,
+        unique_shazam_tracks: List[ShazamTrackResources],
         db_engine: AsyncEngine,
         location_shazam_tracks_map: Dict[ShazamLocation, List[ShazamTrackResources]],
-    ) -> None:
+    ) -> bool:
+        inserted_expected_shazam_tracks = await shazam_insertions_verifier.verify(
+            tracks={str(track.id) for track in unique_shazam_tracks},
+            artists={str(track.artist_id) for track in unique_shazam_tracks},
+        )
+
+        if inserted_expected_shazam_tracks:
+            return await self._are_expected_top_tracks_records_inserted(
+                db_engine, location_shazam_tracks_map
+            )
+
+        return False
+
+    @staticmethod
+    async def _are_expected_top_tracks_records_inserted(
+        db_engine: AsyncEngine,
+        location_shazam_tracks_map: Dict[ShazamLocation, List[ShazamTrackResources]],
+    ) -> bool:
         for location, tracks in location_shazam_tracks_map.items():
             expected = [str(track.id) for track in tracks]
             query = select(ShazamTopTrack.track_id).where(
                 ShazamTopTrack.location == location
             )
             query_result = await execute_query(db_engine, query)
-
             actual = query_result.scalars().all()
 
-            assert sorted(actual) == sorted(expected)
+            if sorted(actual) != sorted(expected):
+                return False
+
+        return True

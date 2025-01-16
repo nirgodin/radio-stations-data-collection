@@ -4,7 +4,6 @@ from functools import partial
 from http import HTTPStatus
 from typing import Dict, List
 
-from apscheduler.triggers.interval import IntervalTrigger
 from genie_common.utils import chain_lists
 from genie_datastores.postgres.models import SpotifyStation
 from joblib.testing import fixture
