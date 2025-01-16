@@ -2,8 +2,10 @@ import asyncio
 from asyncio import AbstractEventLoop
 from functools import partial
 
+from aioresponses import aioresponses
 from _pytest.fixtures import fixture
 from genie_common.utils import random_alphanumeric_string
+from genie_datastores.testing.mongo.mongo_testkit import MongoTestkit
 from genie_datastores.testing.postgres import PostgresTestkit, postgres_session
 from spotipyio.auth import ClientCredentials, SpotifyGrantType
 from spotipyio.logic.utils import random_client_credentials
@@ -18,6 +20,7 @@ from data_collectors.components.environment_component_factory import (
 )
 from main import lifespan
 from tests.testing_utils import app_test_client_session
+from tests.tools.shazam_insertions_verifier import ShazamInsertionsVerifier
 from tests.tools.spotify_insertions_verifier import SpotifyInsertionsVerifier
 
 
@@ -51,26 +54,38 @@ def postgres_testkit() -> PostgresTestkit:
 
 
 @fixture
+def mongo_testkit() -> MongoTestkit:
+    with MongoTestkit() as mongo_testkit:
+        yield mongo_testkit
+
+
+@fixture
 def env_component_factory(
     spotify_credentials: ClientCredentials,
     spotify_test_client: SpotifyTestClient,
     postgres_testkit: PostgresTestkit,
+    mongo_testkit: MongoTestkit,
 ) -> EnvironmentComponentFactory:
+    # TODO: Externalize authorization server url
+    token_request_url = spotify_test_client._authorization_server.url_for("")
     default_env = {
         "SPOTIPY_CLIENT_ID": spotify_credentials.client_id,
         "SPOTIPY_CLIENT_SECRET": spotify_credentials.client_secret,
         "SPOTIPY_REDIRECT_URI": spotify_credentials.redirect_uri,
         "SPOTIPY_BASE_URL": spotify_test_client.get_base_url(),
-        "SPOTIPY_TOKEN_REQUEST_URL": spotify_test_client._authorization_server.url_for(
-            ""
-        ).rstrip(
-            "/"
-        ),  # TODO: Externalize authorization server url
+        "SPOTIPY_TOKEN_REQUEST_URL": token_request_url.rstrip("/"),
         "DATABASE_URL": postgres_testkit.get_database_url(),
         "EMAIL_USER": random_alphanumeric_string(),
         "EMAIL_PASSWORD": random_alphanumeric_string(),
+        "MONGO_URI": mongo_testkit._container.get_connection_url(),
     }
     return EnvironmentComponentFactory(default_env)
+
+
+@fixture
+def mock_responses() -> aioresponses:
+    with aioresponses() as mock_responses:
+        yield mock_responses
 
 
 @fixture
@@ -104,3 +119,8 @@ async def db_engine(postgres_testkit: PostgresTestkit) -> AsyncEngine:
 @fixture
 def spotify_insertions_verifier(db_engine: AsyncEngine) -> SpotifyInsertionsVerifier:
     return SpotifyInsertionsVerifier(db_engine)
+
+
+@fixture
+def shazam_insertions_verifier(db_engine: AsyncEngine) -> ShazamInsertionsVerifier:
+    return ShazamInsertionsVerifier(db_engine)

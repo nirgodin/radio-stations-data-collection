@@ -13,10 +13,12 @@ from genie_datastores.google.sheets import (
     Role,
 )
 from genie_datastores.milvus import MilvusClient
+from genie_datastores.mongo.operations import get_motor_client
 from genie_datastores.postgres.operations import get_database_engine
 from google import generativeai
 from google.generativeai import GenerativeModel
 from langid.langid import LanguageIdentifier, model
+from motor.motor_asyncio import AsyncIOMotorClient
 from openai import OpenAI
 from shazamio import Shazam
 from spotipyio import SpotifyClient
@@ -39,6 +41,9 @@ class ToolsComponentFactory:
     def get_database_engine(self) -> AsyncEngine:
         url = self._env.get_database_url()
         return get_database_engine(url)
+
+    def get_motor_client(self) -> AsyncIOMotorClient:
+        return get_motor_client(uri=self._env.get_mongo_uri())
 
     def get_email_sender(self) -> EmailSender:
         return EmailSender(

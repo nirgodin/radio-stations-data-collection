@@ -19,6 +19,10 @@ class EnvironmentComponentFactory:
         )
 
     @lru_cache
+    def get_mongo_uri(self) -> str:
+        return self._lookup_env_var("MONGO_URI")
+
+    @lru_cache
     def get_spotify_token_request_url(self) -> str:
         return self._lookup_env_var("SPOTIPY_TOKEN_REQUEST_URL")
 
