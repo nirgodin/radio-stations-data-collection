@@ -100,3 +100,15 @@ class MiscellaneousManagerFactory(BaseManagerFactory):
             spotify_client=self.tools.get_spotify_client(spotify_authorized_session),
             playlist_id=self.env.get_release_radar_playlist_id(),
         )
+
+    def get_status_reporter_manager(self) -> StatusReporterManager:
+        collectors = [
+            self.collectors.misc.get_radio_tracks_status_collector(),
+            self.collectors.misc.get_shazam_top_tracks_status_collector(),
+        ]
+        return StatusReporterManager(
+            collectors=collectors,
+            pool_executor=self.tools.get_pool_executor(),
+            email_sender=self.tools.get_email_sender(),
+            recipients=[self.env.get_email_user()],
+        )
