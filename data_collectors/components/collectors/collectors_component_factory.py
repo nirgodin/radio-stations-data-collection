@@ -52,7 +52,7 @@ class CollectorsComponentFactory:
         self.charts = charts or ChartsCollectorsComponentFactory(tools)
         self.genius = genius or GeniusCollectorsComponentFactory(tools)
         self.google = google or GoogleCollectorsComponentFactory(tools)
-        self.misc = misc or MiscellaneousCollectorsFactory()
+        self.misc = misc or MiscellaneousCollectorsFactory(tools)
         self.musixmatch = musixmatch or MusixmatchCollectorsComponentFactory()
         self.openai = openai or OpenAICollectorsComponentFactory(tools)
         self.shazam = shazam or ShazamCollectorsComponentFactory(tools)

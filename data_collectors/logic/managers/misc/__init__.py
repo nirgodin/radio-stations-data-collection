@@ -5,6 +5,9 @@ from data_collectors.logic.managers.misc.radio_snapshots_manager import (
 from data_collectors.logic.managers.misc.release_radar_manager import (
     ReleaseRadarManager,
 )
+from data_collectors.logic.managers.misc.status_reporter_manager import (
+    StatusReporterManager,
+)
 from data_collectors.logic.managers.misc.tracks_lyrics_manager import (
     TracksLyricsManager,
 )
@@ -26,6 +29,7 @@ __all__ = [
     "BillboardManager",
     "RadioStationsSnapshotsManager",
     "ReleaseRadarManager",
+    "StatusReporterManager",
     "TracksLyricsManager",
     "TracksLyricsMissingIDsManager",
     "TracksVectorizerManager",
