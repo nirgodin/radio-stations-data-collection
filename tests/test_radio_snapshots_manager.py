@@ -12,7 +12,7 @@ from starlette.testclient import TestClient
 
 from data_collectors.components import ComponentFactory
 from data_collectors.jobs.job_id import JobId
-from data_collectors.jobs.radio_snapshots_job_builder import (
+from data_collectors.jobs.job_builders.radio_snapshots_job_builder import (
     RADIO_SNAPSHOTS_STATIONS,
     RadioSnapshotsJobBuilder,
 )
