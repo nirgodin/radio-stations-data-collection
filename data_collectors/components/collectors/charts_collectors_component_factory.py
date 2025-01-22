@@ -3,7 +3,6 @@ from typing import Dict, Optional
 from aiohttp import ClientSession
 from genie_datastores.google.drive import GoogleDriveClient
 from genie_datastores.postgres.models import Chart
-from genie_datastores.postgres.operations import get_database_engine
 from spotipyio import SpotifyClient
 
 from data_collectors.components.tools_component_factory import ToolsComponentFactory
@@ -60,22 +59,22 @@ class ChartsCollectorsComponentFactory:
         return ChartsTracksCollector(
             pool_executor=self._tools.get_pool_executor(),
             spotify_client=spotify_client,
-            db_engine=get_database_engine(),
+            db_engine=self._tools.get_database_engine(),
             key_searcher=chart_key_searcher,
         )
 
     def get_charts_tagged_mistakes_collector(self) -> ChartsTaggedMistakesCollector:
         return ChartsTaggedMistakesCollector(
             pool_executor=self._tools.get_pool_executor(),
-            db_engine=get_database_engine(),
+            db_engine=self._tools.get_database_engine(),
         )
 
-    @staticmethod
     def get_tagged_mistakes_tracks_collector(
+        self,
         spotify_client: SpotifyClient,
     ) -> ChartsTaggedMistakesTracksCollector:
         return ChartsTaggedMistakesTracksCollector(
-            db_engine=get_database_engine(), spotify_client=spotify_client
+            db_engine=self._tools.get_database_engine(), spotify_client=spotify_client
         )
 
     def get_every_hit_collector(
