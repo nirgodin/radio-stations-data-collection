@@ -131,7 +131,7 @@ class TestRadioSnapshotsManager:
         station_playlist_map: Dict[str, SpotifyPlaylistsResources],
     ) -> None:
         for playlist_resources in station_playlist_map.values():
-            sorted_artists = sorted(playlist_resources.artists)
+            sorted_artists = sorted(playlist_resources.artist_ids)
             # The call to artists endpoint is made twice, by the ArtistsInserter and by the RadioTracksInserter
             spotify_test_client.artists.info.expect_success(sorted_artists)
             spotify_test_client.artists.info.expect_success(sorted_artists)
@@ -143,7 +143,7 @@ class TestRadioSnapshotsManager:
     ) -> None:
         for playlist_resources in station_playlist_map.values():
             spotify_test_client.tracks.audio_features.expect_success(
-                sorted(playlist_resources.tracks),
+                sorted(playlist_resources.track_ids),
             )
 
     async def _are_expected_db_records_inserted(
@@ -171,13 +171,13 @@ class TestRadioSnapshotsManager:
         station_playlist_map: Dict[str, SpotifyPlaylistsResources],
     ) -> bool:
         tracks = chain_lists(
-            [resources.tracks for resources in station_playlist_map.values()]
+            [resources.track_ids for resources in station_playlist_map.values()]
         )
         artists = chain_lists(
-            [resources.artists for resources in station_playlist_map.values()]
+            [resources.artist_ids for resources in station_playlist_map.values()]
         )
         albums = chain_lists(
-            [resources.albums for resources in station_playlist_map.values()]
+            [resources.album_ids for resources in station_playlist_map.values()]
         )
 
         return await spotify_insertions_verifier.verify(
@@ -198,7 +198,7 @@ class TestRadioSnapshotsManager:
             query_result = await execute_query(db_engine, query)
             actual = query_result.scalars().all()
 
-            if not sorted(actual) == sorted(playlist_resources.tracks):
+            if not sorted(actual) == sorted(playlist_resources.track_ids):
                 return False
 
         return True

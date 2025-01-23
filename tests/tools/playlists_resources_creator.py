@@ -18,14 +18,19 @@ class PlaylistsResourcesCreator:
     def create_single(playlist_id: str) -> SpotifyPlaylistsResources:
         playlist = SpotifyMockFactory.playlist(id=playlist_id)
         items = playlist["tracks"]["items"]
-        tracks = [item["track"]["id"] for item in items]
-        artists = extract_unique_artists_ids(*items)
-        albums = [item["track"]["album"]["id"] for item in items]
+        tracks = {item["track"]["id"]: item for item in items}
+        artists = {
+            item["track"]["artists"][0]["id"]: item["track"]["artists"][0]
+            for item in items
+        }
+        albums = {
+            item["track"]["album"]["id"]: item["track"]["album"] for item in items
+        }
 
         return SpotifyPlaylistsResources(
             id=playlist_id,
             playlist=playlist,
             tracks=tracks,
-            artists=list(artists),
+            artists=artists,
             albums=albums,
         )
