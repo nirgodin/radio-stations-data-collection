@@ -5,21 +5,26 @@ from http import HTTPStatus
 from typing import Dict, List
 
 from genie_common.utils import chain_lists
-from genie_datastores.postgres.models import SpotifyStation
+from genie_datastores.postgres.models import SpotifyStation, RadioTrack
+from genie_datastores.postgres.operations import execute_query
 from joblib.testing import fixture
-from spotipyio.testing import SpotifyTestClient, SpotifyMockFactory
+from spotipyio.testing import SpotifyTestClient
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncEngine
 from starlette.testclient import TestClient
 
 from data_collectors.components import ComponentFactory
-from data_collectors.jobs.job_id import JobId
 from data_collectors.jobs.job_builders.radio_snapshots_job_builder import (
     RADIO_SNAPSHOTS_STATIONS,
     RadioSnapshotsJobBuilder,
 )
+from data_collectors.jobs.job_id import JobId
 from data_collectors.logic.models import ScheduledJob
-from data_collectors.utils.spotify import extract_unique_artists_ids
 from main import lifespan
+from tests.conftest import db_engine
+from tests.helpers.spotify_playlists_resources import SpotifyPlaylistsResources
 from tests.testing_utils import until, app_test_client_session
+from tests.tools.playlists_resources_creator import PlaylistsResourcesCreator
 from tests.tools.spotify_insertions_verifier import SpotifyInsertionsVerifier
 
 
@@ -27,55 +32,47 @@ class TestRadioSnapshotsManager:
     async def test_trigger(
         self,
         spotify_test_client: SpotifyTestClient,
-        station_playlist_map: Dict[SpotifyStation, dict],
-        artists: List[List[str]],
-        tracks: List[List[str]],
-        albums: List[str],
+        station_playlist_map: Dict[str, SpotifyPlaylistsResources],
         test_client: TestClient,
         spotify_insertions_verifier: SpotifyInsertionsVerifier,
+        db_engine: AsyncEngine,
     ):
         self._given_expected_spotify_responses(
             spotify_test_client=spotify_test_client,
             station_playlist_map=station_playlist_map,
-            artists=artists,
-            tracks=tracks,
         )
 
         with test_client as client:
             actual = client.post(f"/jobs/trigger/{JobId.RADIO_SNAPSHOTS.value}")
 
         assert actual.status_code == HTTPStatus.OK
-        assert await spotify_insertions_verifier.verify(
-            artists=chain_lists(artists),
-            tracks=chain_lists(tracks),
-            albums=albums,
+        assert await self._are_expected_db_records_inserted(
+            spotify_insertions_verifier=spotify_insertions_verifier,
+            station_playlist_map=station_playlist_map,
+            db_engine=db_engine,
         )
 
     async def test_scheduled_job(
         self,
         spotify_test_client: SpotifyTestClient,
-        station_playlist_map: Dict[SpotifyStation, dict],
-        artists: List[List[str]],
-        tracks: List[List[str]],
-        albums: List[str],
+        station_playlist_map: Dict[str, SpotifyPlaylistsResources],
         scheduled_test_client: TestClient,
         spotify_insertions_verifier: SpotifyInsertionsVerifier,
+        db_engine: AsyncEngine,
     ):
         self._given_expected_spotify_responses(
             spotify_test_client=spotify_test_client,
             station_playlist_map=station_playlist_map,
-            artists=artists,
-            tracks=tracks,
         )
         condition = partial(
-            spotify_insertions_verifier.verify,
-            artists=chain_lists(artists),
-            tracks=chain_lists(tracks),
-            albums=albums,
+            self._are_expected_db_records_inserted,
+            spotify_insertions_verifier=spotify_insertions_verifier,
+            station_playlist_map=station_playlist_map,
+            db_engine=db_engine,
         )
 
         with scheduled_test_client:
-            await until(condition, interval=0.5)
+            await until(condition)
 
     @fixture
     async def scheduled_test_client(
@@ -103,85 +100,105 @@ class TestRadioSnapshotsManager:
         return await builder.build(next_run_time=next_run_time)
 
     @fixture
-    def station_playlist_map(self) -> Dict[SpotifyStation, dict]:
-        return {
-            station: SpotifyMockFactory.playlist(id=station.value)
-            for station in RADIO_SNAPSHOTS_STATIONS
-        }
-
-    @fixture
-    def artists(
-        self, station_playlist_map: Dict[SpotifyStation, dict]
-    ) -> List[List[str]]:
-        artists_ids = []
-
-        for playlist in station_playlist_map.values():
-            playlist_tracks = playlist["tracks"]["items"]
-            playlist_artists = extract_unique_artists_ids(*playlist_tracks)
-            artists_ids.append(list(playlist_artists))
-
-        return artists_ids
-
-    @fixture
-    def tracks(
-        self, station_playlist_map: Dict[SpotifyStation, dict]
-    ) -> List[List[str]]:
-        tracks_ids = []
-
-        for playlist in station_playlist_map.values():
-            playlist_tracks = playlist["tracks"]["items"]
-            playlist_tracks_ids = [track["track"]["id"] for track in playlist_tracks]
-            tracks_ids.append(playlist_tracks_ids)
-
-        return tracks_ids
-
-    @fixture
-    def albums(self, station_playlist_map: Dict[SpotifyStation, dict]) -> List[str]:
-        albums_ids = []
-
-        for playlist in station_playlist_map.values():
-            playlist_tracks = playlist["tracks"]["items"]
-            playlist_albums_ids = [
-                track["track"]["album"]["id"] for track in playlist_tracks
-            ]
-            albums_ids.extend(playlist_albums_ids)
-
-        return albums_ids
+    def station_playlist_map(self) -> Dict[str, SpotifyPlaylistsResources]:
+        ids = [station.value for station in RADIO_SNAPSHOTS_STATIONS]
+        return PlaylistsResourcesCreator.create(ids)
 
     def _given_expected_spotify_responses(
         self,
         spotify_test_client: SpotifyTestClient,
-        station_playlist_map: Dict[SpotifyStation, dict],
-        artists: List[List[str]],
-        tracks: List[List[str]],
+        station_playlist_map: Dict[str, SpotifyPlaylistsResources],
     ) -> None:
         self._given_valid_playlists_response(spotify_test_client, station_playlist_map)
-        self._given_valid_artists_responses(spotify_test_client, artists)
-        self._given_valid_audio_features_responses(spotify_test_client, tracks)
+        self._given_valid_artists_responses(spotify_test_client, station_playlist_map)
+        self._given_valid_audio_features_responses(
+            spotify_test_client, station_playlist_map
+        )
 
     @staticmethod
     def _given_valid_playlists_response(
         spotify_test_client: SpotifyTestClient,
-        station_playlist_map: Dict[SpotifyStation, dict],
+        station_playlist_map: Dict[str, SpotifyPlaylistsResources],
     ) -> None:
-        for station, playlist in station_playlist_map.items():
-            spotify_test_client.playlists.info.expect_success(station.value, [playlist])
+        for playlist_id, playlist_resources in station_playlist_map.items():
+            spotify_test_client.playlists.info.expect_success(
+                playlist_id, [playlist_resources.playlist]
+            )
 
     @staticmethod
     def _given_valid_artists_responses(
-        spotify_test_client: SpotifyTestClient, artists: List[List[str]]
+        spotify_test_client: SpotifyTestClient,
+        station_playlist_map: Dict[str, SpotifyPlaylistsResources],
     ) -> None:
-        for playlist_artists in artists:
-            sorted_artists = sorted(playlist_artists)
+        for playlist_resources in station_playlist_map.values():
+            sorted_artists = sorted(playlist_resources.artists)
             # The call to artists endpoint is made twice, by the ArtistsInserter and by the RadioTracksInserter
             spotify_test_client.artists.info.expect_success(sorted_artists)
             spotify_test_client.artists.info.expect_success(sorted_artists)
 
     @staticmethod
     def _given_valid_audio_features_responses(
-        spotify_test_client: SpotifyTestClient, tracks: List[List[str]]
+        spotify_test_client: SpotifyTestClient,
+        station_playlist_map: Dict[str, SpotifyPlaylistsResources],
     ) -> None:
-        for station_tracks in tracks:
+        for playlist_resources in station_playlist_map.values():
             spotify_test_client.tracks.audio_features.expect_success(
-                sorted(station_tracks)
+                sorted(playlist_resources.tracks),
             )
+
+    async def _are_expected_db_records_inserted(
+        self,
+        spotify_insertions_verifier: SpotifyInsertionsVerifier,
+        station_playlist_map: Dict[str, SpotifyPlaylistsResources],
+        db_engine: AsyncEngine,
+    ) -> bool:
+        are_spotify_records_inserted = (
+            await self._are_expected_spotify_records_inserted(
+                spotify_insertions_verifier, station_playlist_map
+            )
+        )
+
+        if are_spotify_records_inserted:
+            return await self._are_expected_radio_tracks_records_inserted(
+                station_playlist_map, db_engine
+            )
+
+        return False
+
+    @staticmethod
+    async def _are_expected_spotify_records_inserted(
+        spotify_insertions_verifier: SpotifyInsertionsVerifier,
+        station_playlist_map: Dict[str, SpotifyPlaylistsResources],
+    ) -> bool:
+        tracks = chain_lists(
+            [resources.tracks for resources in station_playlist_map.values()]
+        )
+        artists = chain_lists(
+            [resources.artists for resources in station_playlist_map.values()]
+        )
+        albums = chain_lists(
+            [resources.albums for resources in station_playlist_map.values()]
+        )
+
+        return await spotify_insertions_verifier.verify(
+            artists=artists,
+            tracks=tracks,
+            albums=albums,
+        )
+
+    @staticmethod
+    async def _are_expected_radio_tracks_records_inserted(
+        station_playlist_map: Dict[str, SpotifyPlaylistsResources],
+        db_engine: AsyncEngine,
+    ) -> bool:
+        for playlist_id, playlist_resources in station_playlist_map.items():
+            query = select(RadioTrack.track_id).where(
+                RadioTrack.station == SpotifyStation(playlist_id)
+            )
+            query_result = await execute_query(db_engine, query)
+            actual = query_result.scalars().all()
+
+            if not sorted(actual) == sorted(playlist_resources.tracks):
+                return False
+
+        return True
