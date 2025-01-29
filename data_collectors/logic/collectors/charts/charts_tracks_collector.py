@@ -30,7 +30,9 @@ class ChartsTracksCollector(ICollector):
         self._spotify_client = spotify_client
         self._key_searcher = key_searcher
 
-    async def collect(self, charts_entries: List[ChartEntry]) -> Any:
+    async def collect(
+        self, charts_entries: List[ChartEntry]
+    ) -> List[RadioChartEntryDetails]:
         logger.info(
             f"Starting to collect tracks for {len(charts_entries)} charts entries"
         )

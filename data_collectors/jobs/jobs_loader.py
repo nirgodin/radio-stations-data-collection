@@ -29,14 +29,15 @@ class JobsLoader:
     @staticmethod
     def _import_all_job_builders() -> None:
         builders_dir = os.path.relpath(os.path.dirname(__file__))
-        builders_module = JobsLoader._get_builders_module(builders_dir)
 
-        for filename in os.listdir(builders_dir):
-            logger.info(f"Loading {filename}")
+        for dir_path, dir_names, filenames in os.walk(builders_dir):
+            dir_module = JobsLoader._get_builders_module(dir_path)
 
-            if JobsLoader._is_python_file(filename):
-                module_name = os.path.splitext(filename)[0]
-                import_module(f"{builders_module}.{module_name}")
+            for filename in filenames:
+                if JobsLoader._is_python_file(filename):
+                    logger.info(f"Loading {filename}")
+                    module_name = os.path.splitext(filename)[0]
+                    import_module(f"{dir_module}.{module_name}")
 
     @staticmethod
     def _get_builders_module(builders_dir: str) -> str:

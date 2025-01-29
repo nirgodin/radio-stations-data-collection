@@ -16,7 +16,9 @@ from data_collectors.components import ComponentFactory
 from data_collectors.consts.shazam_consts import DATA
 from data_collectors.consts.spotify_consts import ID
 from data_collectors.jobs.job_id import JobId
-from data_collectors.jobs.shazam_top_tracks_job_builder import ShazamTopTracksJobBuilder
+from data_collectors.jobs.job_builders.shazam_top_tracks_job_builder import (
+    ShazamTopTracksJobBuilder,
+)
 from data_collectors.logic.models import ScheduledJob
 from main import lifespan
 from tests.helpers.shazam_track_resources import ShazamTrackResources
