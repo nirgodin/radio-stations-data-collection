@@ -153,7 +153,7 @@ class TestRadioSnapshotsManager:
     ) -> bool:
         resources = list(station_playlist_map.values())
         are_spotify_records_inserted = (
-            spotify_insertions_verifier.verify_playlist_resources(resources)
+            await spotify_insertions_verifier.verify_playlist_resources(resources)
         )
 
         if are_spotify_records_inserted:
