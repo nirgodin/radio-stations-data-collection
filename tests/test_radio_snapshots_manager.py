@@ -2,9 +2,8 @@ from asyncio import AbstractEventLoop
 from datetime import datetime, timedelta
 from functools import partial
 from http import HTTPStatus
-from typing import Dict, List
+from typing import Dict
 
-from genie_common.utils import chain_lists
 from genie_datastores.postgres.models import SpotifyStation, RadioTrack
 from genie_datastores.postgres.operations import execute_query
 from joblib.testing import fixture
@@ -152,10 +151,9 @@ class TestRadioSnapshotsManager:
         station_playlist_map: Dict[str, SpotifyPlaylistsResources],
         db_engine: AsyncEngine,
     ) -> bool:
+        resources = list(station_playlist_map.values())
         are_spotify_records_inserted = (
-            await self._are_expected_spotify_records_inserted(
-                spotify_insertions_verifier, station_playlist_map
-            )
+            spotify_insertions_verifier.verify_playlist_resources(resources)
         )
 
         if are_spotify_records_inserted:
@@ -164,27 +162,6 @@ class TestRadioSnapshotsManager:
             )
 
         return False
-
-    @staticmethod
-    async def _are_expected_spotify_records_inserted(
-        spotify_insertions_verifier: SpotifyInsertionsVerifier,
-        station_playlist_map: Dict[str, SpotifyPlaylistsResources],
-    ) -> bool:
-        tracks = chain_lists(
-            [resources.track_ids for resources in station_playlist_map.values()]
-        )
-        artists = chain_lists(
-            [resources.artist_ids for resources in station_playlist_map.values()]
-        )
-        albums = chain_lists(
-            [resources.album_ids for resources in station_playlist_map.values()]
-        )
-
-        return await spotify_insertions_verifier.verify(
-            artists=artists,
-            tracks=tracks,
-            albums=albums,
-        )
 
     @staticmethod
     async def _are_expected_radio_tracks_records_inserted(
