@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta
+from functools import partial
 from http import HTTPStatus
 from typing import Dict
 
@@ -10,11 +12,18 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncEngine
 from starlette.testclient import TestClient
 
+from data_collectors.components import ComponentFactory
 from data_collectors.components.managers.charts_manager_factory import (
     SPOTIFY_PLAYLIST_CHART_MAP,
 )
+from data_collectors.jobs.job_builders.spotify_charts_job_builder import (
+    SpotifyChartsJobBuilder,
+)
 from data_collectors.jobs.job_id import JobId
+from data_collectors.logic.models import ScheduledJob
+from main import lifespan
 from tests.helpers.spotify_playlists_resources import SpotifyPlaylistsResources
+from tests.testing_utils import until, app_test_client_session
 from tests.tools.playlists_resources_creator import PlaylistsResourcesCreator
 from tests.tools.spotify_insertions_verifier import SpotifyInsertionsVerifier
 
@@ -28,13 +37,8 @@ class TestSpotifyChartsManager:
         spotify_insertions_verifier: SpotifyInsertionsVerifier,
         db_engine: AsyncEngine,
     ):
-        self._given_valid_playlists_responses(
+        self._given_expected_spotify_responses(
             playlist_resources_map, spotify_test_client
-        )
-        self._given_valid_tracks_responses(playlist_resources_map, spotify_test_client)
-        self._given_valid_artists_responses(spotify_test_client, playlist_resources_map)
-        self._given_valid_audio_features_responses(
-            spotify_test_client, playlist_resources_map
         )
 
         with test_client as client:
@@ -43,6 +47,70 @@ class TestSpotifyChartsManager:
         assert actual.status_code == HTTPStatus.OK
         assert await self._are_expected_db_records_inserted(
             db_engine, spotify_insertions_verifier, playlist_resources_map
+        )
+
+    async def test_scheduled_job(
+        self,
+        spotify_test_client: SpotifyTestClient,
+        scheduled_test_client: TestClient,
+        playlist_resources_map: Dict[str, SpotifyPlaylistsResources],
+        spotify_insertions_verifier: SpotifyInsertionsVerifier,
+        db_engine: AsyncEngine,
+    ):
+        self._given_expected_spotify_responses(
+            playlist_resources_map, spotify_test_client
+        )
+        condition = partial(
+            self._are_expected_db_records_inserted,
+            db_engine=db_engine,
+            spotify_insertions_verifier=spotify_insertions_verifier,
+            playlist_resources_map=playlist_resources_map,
+        )
+
+        with scheduled_test_client:
+            await until(condition)
+
+    @fixture
+    async def scheduled_test_client(
+        self,
+        component_factory: ComponentFactory,
+        spotify_charts_job: ScheduledJob,
+    ) -> TestClient:
+        lifespan_context = partial(
+            lifespan,
+            component_factory=component_factory,
+            jobs={spotify_charts_job.id: spotify_charts_job},
+        )
+
+        with app_test_client_session(lifespan_context) as client:
+            yield client
+
+    @fixture
+    async def spotify_charts_job(
+        self, component_factory: ComponentFactory
+    ) -> ScheduledJob:
+        builder = SpotifyChartsJobBuilder(component_factory)
+        next_run_time = datetime.now() + timedelta(seconds=2)
+
+        return await builder.build(next_run_time=next_run_time)
+
+    @fixture
+    def playlist_resources_map(self) -> Dict[str, SpotifyPlaylistsResources]:
+        playlists = list(SPOTIFY_PLAYLIST_CHART_MAP.keys())
+        return PlaylistsResourcesCreator.create(playlists)
+
+    def _given_expected_spotify_responses(
+        self,
+        playlist_resources_map: Dict[str, SpotifyPlaylistsResources],
+        spotify_test_client: SpotifyTestClient,
+    ):
+        self._given_valid_playlists_responses(
+            playlist_resources_map, spotify_test_client
+        )
+        self._given_valid_tracks_responses(playlist_resources_map, spotify_test_client)
+        self._given_valid_artists_responses(spotify_test_client, playlist_resources_map)
+        self._given_valid_audio_features_responses(
+            spotify_test_client, playlist_resources_map
         )
 
     @staticmethod
@@ -54,11 +122,6 @@ class TestSpotifyChartsManager:
             spotify_test_client.playlists.info.expect_success(
                 playlist_id, [playlist_resources.playlist]
             )
-
-    @fixture
-    def playlist_resources_map(self) -> Dict[str, SpotifyPlaylistsResources]:
-        playlists = list(SPOTIFY_PLAYLIST_CHART_MAP.keys())
-        return PlaylistsResourcesCreator.create(playlists)
 
     @staticmethod
     def _given_valid_tracks_responses(
