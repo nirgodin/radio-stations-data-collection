@@ -1,12 +1,18 @@
 from http import HTTPStatus
-from typing import Dict, List
+from typing import Dict
 
 from _pytest.fixtures import fixture
 from genie_common.utils import chain_lists
+from genie_datastores.postgres.models import ChartEntry
+from genie_datastores.postgres.operations import execute_query
 from spotipyio.testing import SpotifyTestClient
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncEngine
 from starlette.testclient import TestClient
 
+from data_collectors.components.managers.charts_manager_factory import (
+    SPOTIFY_PLAYLIST_CHART_MAP,
+)
 from data_collectors.jobs.job_id import JobId
 from tests.helpers.spotify_playlists_resources import SpotifyPlaylistsResources
 from tests.tools.playlists_resources_creator import PlaylistsResourcesCreator
@@ -51,11 +57,7 @@ class TestSpotifyChartsManager:
 
     @fixture
     def playlist_resources_map(self) -> Dict[str, SpotifyPlaylistsResources]:
-        playlists = [
-            "37i9dQZEVXbJ6IpvItkve3",
-            "37i9dQZEVXbMDoHDwVN2tF",
-        ]  # TODO: Move to const
-
+        playlists = list(SPOTIFY_PLAYLIST_CHART_MAP.keys())
         return PlaylistsResourcesCreator.create(playlists)
 
     @staticmethod
@@ -96,4 +98,29 @@ class TestSpotifyChartsManager:
         playlist_resources_map: Dict[str, SpotifyPlaylistsResources],
     ):
         resources = list(playlist_resources_map.values())
-        return await spotify_insertions_verifier.verify_playlist_resources(resources)
+        are_spotify_records_inserted = (
+            await spotify_insertions_verifier.verify_playlist_resources(resources)
+        )
+
+        if are_spotify_records_inserted:
+            return await self._are_chart_entries_records_inserted(
+                playlist_resources_map, db_engine
+            )
+
+        return False
+
+    @staticmethod
+    async def _are_chart_entries_records_inserted(
+        playlist_resources_map: Dict[str, SpotifyPlaylistsResources],
+        db_engine: AsyncEngine,
+    ):
+        for playlist_id, resources in playlist_resources_map.items():
+            chart = SPOTIFY_PLAYLIST_CHART_MAP[playlist_id]
+            query = select(ChartEntry.track_id).where(ChartEntry.chart == chart)
+            query_result = await execute_query(engine=db_engine, query=query)
+            actual = query_result.scalars().all()
+
+            if sorted(actual) != sorted(resources.track_ids):
+                return False
+
+        return True
