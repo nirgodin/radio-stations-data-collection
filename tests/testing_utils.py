@@ -1,5 +1,7 @@
 import asyncio
 from contextlib import contextmanager
+from datetime import datetime, timedelta
+from functools import partial
 from typing import (
     Callable,
     Union,
@@ -10,8 +12,11 @@ from typing import (
     AsyncContextManager,
 )
 
+from genie_common.utils import random_alphanumeric_string
 from starlette.testclient import TestClient
 
+from data_collectors.components import ComponentFactory
+from data_collectors.jobs.base_job_builder import BaseJobBuilder
 from main import lifespan, app
 
 
@@ -57,3 +62,22 @@ def app_test_client_session(
 
     app.router.lifespan_context = lifespan
     app.dependency_overrides = {}
+
+
+async def build_scheduled_test_client(
+    component_factory: ComponentFactory, builder_class: Type[BaseJobBuilder]
+) -> TestClient:
+    job_builder = builder_class(component_factory)
+    next_run_time = datetime.now() + timedelta(seconds=2)
+    job = await job_builder.build(next_run_time)
+    lifespan_context = partial(
+        lifespan,
+        component_factory=component_factory,
+        jobs={job.id: job},
+    )
+
+    return app_test_client_session(lifespan_context)
+
+
+async def raise_exception() -> None:
+    raise Exception(random_alphanumeric_string())

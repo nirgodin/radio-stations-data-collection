@@ -1,8 +1,7 @@
 from abc import ABC, abstractmethod
-from datetime import datetime, timedelta
 from functools import partial
 from http import HTTPStatus
-from typing import Dict
+from typing import Dict, Type
 
 from _pytest.fixtures import fixture
 from genie_common.utils import chain_lists
@@ -14,12 +13,10 @@ from sqlalchemy.ext.asyncio import AsyncEngine
 from starlette.testclient import TestClient
 
 from data_collectors.components import ComponentFactory
-from data_collectors.consts.charts_consts import SPOTIFY_PLAYLIST_CHART_MAP
 from data_collectors.jobs.base_job_builder import BaseJobBuilder
-from data_collectors.logic.models import ScheduledJob
-from main import lifespan
+from data_collectors.jobs.job_id import JobId
 from tests.helpers.spotify_playlists_resources import SpotifyPlaylistsResources
-from tests.testing_utils import until, app_test_client_session
+from tests.testing_utils import until, build_scheduled_test_client
 from tests.tools.playlists_resources_creator import PlaylistsResourcesCreator
 from tests.tools.spotify_insertions_verifier import SpotifyInsertionsVerifier
 
@@ -33,14 +30,14 @@ class BasePlaylistsChartsTest(ABC):
         playlist_chart_map: Dict[str, Chart],
         spotify_insertions_verifier: SpotifyInsertionsVerifier,
         db_engine: AsyncEngine,
-        job: ScheduledJob,
+        job_id: JobId,
     ):
         self._given_expected_spotify_responses(
             playlist_resources_map, spotify_test_client
         )
 
         with test_client as client:
-            actual = client.post(f"jobs/trigger/{job.id.value}")
+            actual = client.post(f"jobs/trigger/{job_id.value}")
 
         assert actual.status_code == HTTPStatus.OK
         assert await self._are_expected_db_records_inserted(
@@ -80,29 +77,24 @@ class BasePlaylistsChartsTest(ABC):
 
     @abstractmethod
     @fixture
-    def job_builder(self, component_factory: ComponentFactory) -> BaseJobBuilder:
+    def job_builder(self) -> Type[BaseJobBuilder]:
         raise NotImplementedError()
 
+    @abstractmethod
     @fixture
-    async def job(
-        self, component_factory: ComponentFactory, job_builder: BaseJobBuilder
-    ) -> ScheduledJob:
-        next_run_time = datetime.now() + timedelta(seconds=2)
-        return await job_builder.build(next_run_time=next_run_time)
+    def job_id(self) -> JobId:
+        raise NotImplementedError()
 
     @fixture
     async def scheduled_test_client(
         self,
         component_factory: ComponentFactory,
-        job: ScheduledJob,
+        job_builder: Type[BaseJobBuilder],
     ) -> TestClient:
-        lifespan_context = partial(
-            lifespan,
-            component_factory=component_factory,
-            jobs={job.id: job},
+        scheduled_client = await build_scheduled_test_client(
+            component_factory, job_builder
         )
-
-        with app_test_client_session(lifespan_context) as client:
+        with scheduled_client as client:
             yield client
 
     @fixture
