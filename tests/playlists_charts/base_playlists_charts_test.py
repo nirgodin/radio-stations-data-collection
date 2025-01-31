@@ -1,3 +1,4 @@
+from abc import ABC, abstractmethod
 from datetime import datetime, timedelta
 from functools import partial
 from http import HTTPStatus
@@ -5,7 +6,7 @@ from typing import Dict
 
 from _pytest.fixtures import fixture
 from genie_common.utils import chain_lists
-from genie_datastores.postgres.models import ChartEntry
+from genie_datastores.postgres.models import ChartEntry, Chart
 from genie_datastores.postgres.operations import execute_query
 from spotipyio.testing import SpotifyTestClient
 from sqlalchemy import select
@@ -13,13 +14,8 @@ from sqlalchemy.ext.asyncio import AsyncEngine
 from starlette.testclient import TestClient
 
 from data_collectors.components import ComponentFactory
-from data_collectors.components.managers.charts_manager_factory import (
-    SPOTIFY_PLAYLIST_CHART_MAP,
-)
-from data_collectors.jobs.job_builders.spotify_charts_job_builder import (
-    SpotifyChartsJobBuilder,
-)
-from data_collectors.jobs.job_id import JobId
+from data_collectors.consts.charts_consts import SPOTIFY_PLAYLIST_CHART_MAP
+from data_collectors.jobs.base_job_builder import BaseJobBuilder
 from data_collectors.logic.models import ScheduledJob
 from main import lifespan
 from tests.helpers.spotify_playlists_resources import SpotifyPlaylistsResources
@@ -28,25 +24,30 @@ from tests.tools.playlists_resources_creator import PlaylistsResourcesCreator
 from tests.tools.spotify_insertions_verifier import SpotifyInsertionsVerifier
 
 
-class TestSpotifyChartsManager:
+class BasePlaylistsChartsTest(ABC):
     async def test_trigger(
         self,
         spotify_test_client: SpotifyTestClient,
         test_client: TestClient,
         playlist_resources_map: Dict[str, SpotifyPlaylistsResources],
+        playlist_chart_map: Dict[str, Chart],
         spotify_insertions_verifier: SpotifyInsertionsVerifier,
         db_engine: AsyncEngine,
+        job: ScheduledJob,
     ):
         self._given_expected_spotify_responses(
             playlist_resources_map, spotify_test_client
         )
 
         with test_client as client:
-            actual = client.post(f"jobs/trigger/{JobId.SPOTIFY_CHARTS.value}")
+            actual = client.post(f"jobs/trigger/{job.id.value}")
 
         assert actual.status_code == HTTPStatus.OK
         assert await self._are_expected_db_records_inserted(
-            db_engine, spotify_insertions_verifier, playlist_resources_map
+            db_engine=db_engine,
+            spotify_insertions_verifier=spotify_insertions_verifier,
+            playlist_resources_map=playlist_resources_map,
+            playlist_chart_map=playlist_chart_map,
         )
 
     async def test_scheduled_job(
@@ -56,6 +57,7 @@ class TestSpotifyChartsManager:
         playlist_resources_map: Dict[str, SpotifyPlaylistsResources],
         spotify_insertions_verifier: SpotifyInsertionsVerifier,
         db_engine: AsyncEngine,
+        playlist_chart_map: Dict[str, Chart],
     ):
         self._given_expected_spotify_responses(
             playlist_resources_map, spotify_test_client
@@ -65,38 +67,49 @@ class TestSpotifyChartsManager:
             db_engine=db_engine,
             spotify_insertions_verifier=spotify_insertions_verifier,
             playlist_resources_map=playlist_resources_map,
+            playlist_chart_map=playlist_chart_map,
         )
 
         with scheduled_test_client:
             await until(condition)
 
+    @abstractmethod
+    @fixture
+    def playlist_chart_map(self) -> Dict[str, Chart]:
+        raise NotImplementedError()
+
+    @abstractmethod
+    @fixture
+    def job_builder(self, component_factory: ComponentFactory) -> BaseJobBuilder:
+        raise NotImplementedError()
+
+    @fixture
+    async def job(
+        self, component_factory: ComponentFactory, job_builder: BaseJobBuilder
+    ) -> ScheduledJob:
+        next_run_time = datetime.now() + timedelta(seconds=2)
+        return await job_builder.build(next_run_time=next_run_time)
+
     @fixture
     async def scheduled_test_client(
         self,
         component_factory: ComponentFactory,
-        spotify_charts_job: ScheduledJob,
+        job: ScheduledJob,
     ) -> TestClient:
         lifespan_context = partial(
             lifespan,
             component_factory=component_factory,
-            jobs={spotify_charts_job.id: spotify_charts_job},
+            jobs={job.id: job},
         )
 
         with app_test_client_session(lifespan_context) as client:
             yield client
 
     @fixture
-    async def spotify_charts_job(
-        self, component_factory: ComponentFactory
-    ) -> ScheduledJob:
-        builder = SpotifyChartsJobBuilder(component_factory)
-        next_run_time = datetime.now() + timedelta(seconds=2)
-
-        return await builder.build(next_run_time=next_run_time)
-
-    @fixture
-    def playlist_resources_map(self) -> Dict[str, SpotifyPlaylistsResources]:
-        playlists = list(SPOTIFY_PLAYLIST_CHART_MAP.keys())
+    def playlist_resources_map(
+        self, playlist_chart_map: Dict[str, Chart]
+    ) -> Dict[str, SpotifyPlaylistsResources]:
+        playlists = list(playlist_chart_map.keys())
         return PlaylistsResourcesCreator.create(playlists)
 
     def _given_expected_spotify_responses(
@@ -159,6 +172,7 @@ class TestSpotifyChartsManager:
         db_engine: AsyncEngine,
         spotify_insertions_verifier: SpotifyInsertionsVerifier,
         playlist_resources_map: Dict[str, SpotifyPlaylistsResources],
+        playlist_chart_map: Dict[str, Chart],
     ):
         resources = list(playlist_resources_map.values())
         are_spotify_records_inserted = (
@@ -167,18 +181,21 @@ class TestSpotifyChartsManager:
 
         if are_spotify_records_inserted:
             return await self._are_chart_entries_records_inserted(
-                playlist_resources_map, db_engine
+                playlist_chart_map=playlist_chart_map,
+                playlist_resources_map=playlist_resources_map,
+                db_engine=db_engine,
             )
 
         return False
 
     @staticmethod
     async def _are_chart_entries_records_inserted(
+        playlist_chart_map: Dict[str, Chart],
         playlist_resources_map: Dict[str, SpotifyPlaylistsResources],
         db_engine: AsyncEngine,
     ):
         for playlist_id, resources in playlist_resources_map.items():
-            chart = SPOTIFY_PLAYLIST_CHART_MAP[playlist_id]
+            chart = playlist_chart_map[playlist_id]
             query = select(ChartEntry.track_id).where(ChartEntry.chart == chart)
             query_result = await execute_query(engine=db_engine, query=query)
             actual = query_result.scalars().all()

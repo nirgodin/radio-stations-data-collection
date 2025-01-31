@@ -11,17 +11,16 @@ from spotipyio.tools.extractors import (
 )
 from spotipyio.auth import SpotifySession
 
+from data_collectors.consts.charts_consts import (
+    SPOTIFY_PLAYLIST_CHART_MAP,
+    MAKO_PLAYLIST_CHART_MAP,
+)
 from data_collectors.logic.collectors import (
     ChartsTracksCollector,
     ArtistTranslatorChartKeySearcher,
 )
 from data_collectors.components.managers.base_manager_factory import BaseManagerFactory
 from data_collectors.logic.managers import *
-
-SPOTIFY_PLAYLIST_CHART_MAP = {
-    "37i9dQZEVXbJ6IpvItkve3": Chart.SPOTIFY_DAILY_ISRAELI,
-    "37i9dQZEVXbMDoHDwVN2tF": Chart.SPOTIFY_DAILY_INTERNATIONAL,
-}
 
 
 class ChartsManagerFactory(BaseManagerFactory):
@@ -96,13 +95,9 @@ class ChartsManagerFactory(BaseManagerFactory):
     def get_mako_hit_list_charts_manager(
         self, spotify_session: SpotifySession
     ) -> PlaylistsChartsManager:
-        playlist_id_to_chart_mapping = {
-            "3Oh3oSaZjfsXcNwSpVMye2": Chart.MAKO_WEEKLY_HIT_LIST,
-        }
-
         return self._get_playlists_chart_manager(
             spotify_session=spotify_session,
-            playlist_id_to_chart_mapping=playlist_id_to_chart_mapping,
+            playlist_id_to_chart_mapping=MAKO_PLAYLIST_CHART_MAP,
         )
 
     def get_tagged_mistakes_manager(
