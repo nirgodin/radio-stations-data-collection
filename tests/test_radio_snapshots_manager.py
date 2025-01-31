@@ -1,5 +1,3 @@
-from asyncio import AbstractEventLoop
-from datetime import datetime, timedelta
 from functools import partial
 from http import HTTPStatus
 from typing import Dict
@@ -18,11 +16,9 @@ from data_collectors.jobs.job_builders.radio_snapshots_job_builder import (
     RadioSnapshotsJobBuilder,
 )
 from data_collectors.jobs.job_id import JobId
-from data_collectors.logic.models import ScheduledJob
-from main import lifespan
 from tests.conftest import db_engine
 from tests.helpers.spotify_playlists_resources import SpotifyPlaylistsResources
-from tests.testing_utils import until, app_test_client_session
+from tests.testing_utils import until, build_scheduled_test_client
 from tests.tools.playlists_resources_creator import PlaylistsResourcesCreator
 from tests.tools.spotify_insertions_verifier import SpotifyInsertionsVerifier
 
@@ -77,26 +73,12 @@ class TestRadioSnapshotsManager:
     async def scheduled_test_client(
         self,
         component_factory: ComponentFactory,
-        radio_snapshots_job: ScheduledJob,
-        event_loop: AbstractEventLoop,
     ) -> TestClient:
-        lifespan_context = partial(
-            lifespan,
-            component_factory=component_factory,
-            jobs={radio_snapshots_job.id: radio_snapshots_job},
+        scheduled_client = await build_scheduled_test_client(
+            component_factory, RadioSnapshotsJobBuilder
         )
-
-        with app_test_client_session(lifespan_context) as client:
+        with scheduled_client as client:
             yield client
-
-    @fixture
-    async def radio_snapshots_job(
-        self, component_factory: ComponentFactory
-    ) -> ScheduledJob:
-        builder = RadioSnapshotsJobBuilder(component_factory)
-        next_run_time = datetime.now() + timedelta(seconds=2)
-
-        return await builder.build(next_run_time=next_run_time)
 
     @fixture
     def station_playlist_map(self) -> Dict[str, SpotifyPlaylistsResources]:

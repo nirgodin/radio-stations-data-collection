@@ -1,4 +1,3 @@
-from datetime import datetime, timedelta
 from functools import partial
 from http import HTTPStatus
 from typing import Dict, List
@@ -15,14 +14,12 @@ from starlette.testclient import TestClient
 from data_collectors.components import ComponentFactory
 from data_collectors.consts.shazam_consts import DATA
 from data_collectors.consts.spotify_consts import ID
-from data_collectors.jobs.job_id import JobId
 from data_collectors.jobs.job_builders.shazam_top_tracks_job_builder import (
     ShazamTopTracksJobBuilder,
 )
-from data_collectors.logic.models import ScheduledJob
-from main import lifespan
+from data_collectors.jobs.job_id import JobId
 from tests.helpers.shazam_track_resources import ShazamTrackResources
-from tests.testing_utils import app_test_client_session, until
+from tests.testing_utils import until, build_scheduled_test_client
 from tests.tools.shazam_insertions_verifier import ShazamInsertionsVerifier
 
 # Must have the space in the end of URL in order aioresponses matches the request
@@ -170,27 +167,14 @@ class TestShazamTopTracksManager:
         return unique
 
     @fixture
-    async def shazam_top_tracks_job(
-        self, component_factory: ComponentFactory
-    ) -> ScheduledJob:
-        builder = ShazamTopTracksJobBuilder(component_factory)
-        next_run_time = datetime.now() + timedelta(seconds=2)
-
-        return await builder.build(next_run_time=next_run_time)
-
-    @fixture
     async def scheduled_test_client(
         self,
         component_factory: ComponentFactory,
-        shazam_top_tracks_job: ScheduledJob,
     ) -> TestClient:
-        lifespan_context = partial(
-            lifespan,
-            component_factory=component_factory,
-            jobs={shazam_top_tracks_job.id: shazam_top_tracks_job},
+        scheduled_client = await build_scheduled_test_client(
+            component_factory, ShazamTopTracksJobBuilder
         )
-
-        with app_test_client_session(lifespan_context) as client:
+        with scheduled_client as client:
             yield client
 
     @staticmethod

@@ -1,3 +1,5 @@
+from genie_datastores.postgres.models import Chart
+
 POSITION_COLUMN_NAME = b"\xd7\x9e\xd7\xa7\xd7\x95\xd7\x9d".decode("utf-8")
 SONG_COLUMN_NAME = b"\xd7\xa9\xd7\x99\xd7\xa8".decode("utf-8")
 ARTIST_COLUMN_NAME = b"\xd7\x91\xd7\x99\xd7\xa6\xd7\x95\xd7\xa2".decode("utf-8")
@@ -18,3 +20,10 @@ EXCLUDED_RADIO_CHARTS_FILES_IDS = [
     "1XSReUm0scWptWpBnxeDLuLpfGRwaPNPA",
 ]
 CHART_KEY_FORMAT = "{artist} - {track}"
+SPOTIFY_PLAYLIST_CHART_MAP = {
+    "37i9dQZEVXbJ6IpvItkve3": Chart.SPOTIFY_DAILY_ISRAELI,
+    "37i9dQZEVXbMDoHDwVN2tF": Chart.SPOTIFY_DAILY_INTERNATIONAL,
+}
+MAKO_PLAYLIST_CHART_MAP = {
+    "3Oh3oSaZjfsXcNwSpVMye2": Chart.MAKO_WEEKLY_HIT_LIST,
+}
