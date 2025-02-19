@@ -3,9 +3,6 @@ from typing import Optional
 from genie_datastores.milvus import MilvusClient
 from genie_datastores.mongo.operations import initialize_mongo
 
-from data_collectors.components.inserters.billboard_inserters_component_factory import (
-    BillboardInsertersComponentFactory,
-)
 from data_collectors.components.inserters.shazam_inserters_compoent_factory import (
     ShazamInsertersComponentFactory,
 )
@@ -33,14 +30,12 @@ class InsertersComponentFactory:
     def __init__(
         self,
         tools: ToolsComponentFactory,
-        billboard: Optional[BillboardInsertersComponentFactory] = None,
         spotify: Optional[SpotifyInsertersComponentFactory] = None,
         shazam: Optional[ShazamInsertersComponentFactory] = None,
         serializers: Optional[SerializersComponentFactory] = None,
     ):
         self._tools = tools
 
-        self.billboard = billboard or BillboardInsertersComponentFactory()
         self.spotify = spotify or SpotifyInsertersComponentFactory(tools)
         self.shazam = shazam or ShazamInsertersComponentFactory(tools)
         self._serializers = serializers or SerializersComponentFactory(tools)

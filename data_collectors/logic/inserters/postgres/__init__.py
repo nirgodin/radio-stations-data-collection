@@ -4,7 +4,6 @@ from data_collectors.logic.inserters.postgres.base_ids_database_inserter import 
 from data_collectors.logic.inserters.postgres.base_unique_database_inserter import (
     BaseUniqueDatabaseInserter,
 )
-from data_collectors.logic.inserters.postgres.billboard import *
 from data_collectors.logic.inserters.postgres.chart_entries_database_inserter import (
     ChartEntriesDatabaseInserter,
 )
@@ -27,9 +26,6 @@ from data_collectors.logic.inserters.postgres.radio_tracks_database_inserter imp
 )
 
 __all__ = [
-    # Billboard
-    "BillboardChartsDatabaseInserter",
-    "BillboardTracksDatabaseInserter",
     # Spotify
     "SpotifyAlbumsDatabaseInserter",
     "SpotifyArtistsDatabaseInserter",
