@@ -14,6 +14,7 @@ from spotipyio.auth import SpotifySession
 from data_collectors.consts.charts_consts import (
     SPOTIFY_PLAYLIST_CHART_MAP,
     MAKO_PLAYLIST_CHART_MAP,
+    BILLBOARD_PLAYLIST_CHART_MAP,
 )
 from data_collectors.logic.collectors import (
     ChartsTracksCollector,
@@ -98,6 +99,14 @@ class ChartsManagerFactory(BaseManagerFactory):
         return self._get_playlists_chart_manager(
             spotify_session=spotify_session,
             playlist_id_to_chart_mapping=MAKO_PLAYLIST_CHART_MAP,
+        )
+
+    def get_billboard_charts_manager(
+        self, spotify_session: SpotifySession
+    ) -> PlaylistsChartsManager:
+        return self._get_playlists_chart_manager(
+            spotify_session=spotify_session,
+            playlist_id_to_chart_mapping=BILLBOARD_PLAYLIST_CHART_MAP,
         )
 
     def get_tagged_mistakes_manager(
