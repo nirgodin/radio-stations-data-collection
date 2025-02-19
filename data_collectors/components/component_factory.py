@@ -20,7 +20,6 @@ class ComponentFactory:
     def __init__(
         self,
         env: EnvironmentComponentFactory = EnvironmentComponentFactory(),
-        billboard: Optional[BillboardManagerFactory] = None,
         charts: Optional[ChartsManagerFactory] = None,
         deleters: Optional[DeletersComponentFactory] = None,
         exporters: Optional[ExportersComponentFactory] = None,
@@ -42,12 +41,6 @@ class ComponentFactory:
         self.env = env
         self.sessions = sessions_factory
         self.tools = tools_factory
-
-        self.billboard = billboard or BillboardManagerFactory(
-            env=env,
-            sessions=sessions_factory,
-            tools=tools_factory,
-        )
         self.charts = charts or ChartsManagerFactory(
             env=env,
             sessions=sessions_factory,

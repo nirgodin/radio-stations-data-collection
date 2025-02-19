@@ -1,4 +1,3 @@
-from data_collectors.logic.managers.misc.billboard_manager import BillboardManager
 from data_collectors.logic.managers.misc.radio_snapshots_manager import (
     RadioStationsSnapshotsManager,
 )
@@ -26,7 +25,6 @@ from data_collectors.logic.managers.misc.artists_images_gender_manager import (
 
 __all__ = [
     "ArtistsImagesGenderManager",
-    "BillboardManager",
     "RadioStationsSnapshotsManager",
     "ReleaseRadarManager",
     "StatusReporterManager",
