@@ -137,7 +137,9 @@ class ToolsComponentFactory:
         return GenerativeModel(model_name=model_name)
 
     @staticmethod
-    def get_multi_entity_matcher(entity_matcher: Optional[EntityMatcher] = None) -> MultiEntityMatcher:
+    def get_multi_entity_matcher(
+        entity_matcher: Optional[EntityMatcher] = None,
+    ) -> MultiEntityMatcher:
         return MultiEntityMatcher(entity_matcher or EntityMatcher())
 
     def _get_google_default_share_settings(self) -> List[ShareSettings]:

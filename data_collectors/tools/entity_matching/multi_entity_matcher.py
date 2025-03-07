@@ -11,14 +11,15 @@ class MultiEntityMatcher:
 
     def match(
         self,
-        entity: MatchingEntity,
+        entities: List[MatchingEntity],
         prioritized_candidates: List[Any],
         extract_fn: Callable[[Any], Optional[Any]],
     ) -> Optional[Any]:
         for candidate in prioritized_candidates:
-            is_matching, _ = self._entity_matcher.match(entity, candidate)
+            for entity in entities:
+                is_matching, _ = self._entity_matcher.match(entity, candidate)
 
-            if is_matching:
-                return extract_fn(candidate)
+                if is_matching:
+                    return extract_fn(candidate)
 
         logger.info("Failed to match any of the provided candidates. Returning None")

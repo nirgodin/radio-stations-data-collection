@@ -12,7 +12,6 @@ from data_collectors.logic.collectors import (
     GeniusArtistsExistingDetailsCollector,
 )
 from data_collectors.tools import (
-    MultiEntityMatcher,
     GeniusTrackEntityExtractor,
     GeniusArtistEntityExtractor,
 )
@@ -29,7 +28,7 @@ class GeniusCollectorsComponentFactory:
         return GeniusSearchCollector(
             session=session,
             pool_executor=self._tools.get_pool_executor(),
-            entity_matcher=MultiEntityMatcher(entity_matcher),
+            entity_matcher=self._tools.get_multi_entity_matcher(entity_matcher),
         )
 
     def get_lyrics_collector(self, session: ClientSession) -> GeniusLyricsCollector:

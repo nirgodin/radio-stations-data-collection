@@ -48,7 +48,7 @@ class CollectorsComponentFactory:
         self.genius = genius or GeniusCollectorsComponentFactory(tools)
         self.google = google or GoogleCollectorsComponentFactory(tools)
         self.misc = misc or MiscellaneousCollectorsFactory(tools)
-        self.musixmatch = musixmatch or MusixmatchCollectorsComponentFactory()
+        self.musixmatch = musixmatch or MusixmatchCollectorsComponentFactory(tools)
         self.openai = openai or OpenAICollectorsComponentFactory(tools)
         self.shazam = shazam or ShazamCollectorsComponentFactory(tools)
         self.spotify = spotify or SpotifyCollectorsComponentFactory(tools)

@@ -3,13 +3,13 @@ from typing import Dict, Optional
 from aiohttp import ClientSession
 from genie_common.tools import AioPoolExecutor
 from genie_common.utils import safe_nested_get
+from spotipyio.tools.matching import MultiEntityMatcher
 
 from data_collectors.consts.genius_consts import RESPONSE, RESULT, GENIUS_SEARCH_URL
 from data_collectors.consts.shazam_consts import HITS
 from data_collectors.consts.spotify_consts import ID
 from data_collectors.contract import BaseSearchCollector
 from data_collectors.logic.models import MissingTrack
-from data_collectors.tools import MultiEntityMatcher
 from data_collectors.utils.genius import is_valid_response
 
 
@@ -54,11 +54,13 @@ class GeniusSearchCollector(BaseSearchCollector):
         hits = safe_nested_get(response, [RESPONSE, HITS])
 
         if hits:
-            return self._entity_matcher.match(
-                entity=missing_track.to_matching_entity(),
-                prioritized_candidates=hits,
-                extract_fn=self._extract_genius_id,
+            candidate = self._entity_matcher.match(
+                entities=[missing_track.to_matching_entity()],
+                candidates=hits,
             )
+
+            if candidate:
+                return self._extract_genius_id(candidate)
 
     @staticmethod
     def _extract_genius_id(hit: Dict[str, dict]) -> Optional[str]:

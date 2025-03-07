@@ -51,8 +51,7 @@ class BaseChartKeySearcher(ABC):
         items = safe_nested_get(search_result, [TRACKS, ITEMS], [])
         matching_entities = self._build_matching_entities_options(search_item)
         candidate = self._entity_matcher.match(
-            entities=matching_entities,
-            candidates=items
+            entities=matching_entities, candidates=items
         )
 
         if candidate is None:
