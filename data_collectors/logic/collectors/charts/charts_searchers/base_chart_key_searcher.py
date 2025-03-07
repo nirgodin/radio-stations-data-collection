@@ -7,7 +7,7 @@ from genie_common.utils import safe_nested_get
 from genie_datastores.postgres.models import ChartEntry
 from spotipyio import SpotifyClient
 from spotipyio.models import SearchItem, MatchingEntity
-from spotipyio.tools.matching import EntityMatcher
+from spotipyio.tools.matching import MultiEntityMatcher
 
 from data_collectors.consts.spotify_consts import TRACKS, ITEMS, ID, TRACK
 from data_collectors.logic.models import RadioChartEntryDetails
@@ -17,7 +17,7 @@ class BaseChartKeySearcher(ABC):
     def __init__(
         self,
         spotify_client: SpotifyClient,
-        entity_matcher: EntityMatcher = EntityMatcher(),
+        entity_matcher: MultiEntityMatcher,
     ):
         self._spotify_client = spotify_client
         self._entity_matcher = entity_matcher
@@ -50,15 +50,15 @@ class BaseChartKeySearcher(ABC):
     ) -> Optional[dict]:
         items = safe_nested_get(search_result, [TRACKS, ITEMS], [])
         matching_entities = self._build_matching_entities_options(search_item)
+        candidate = self._entity_matcher.match(
+            entities=matching_entities,
+            candidates=items
+        )
 
-        for candidate in items:
-            for entity in matching_entities:
-                is_matching, score = self._entity_matcher.match(entity, candidate)
+        if candidate is None:
+            logger.info(f"Did not find any track that matches . Ignoring")
 
-                if is_matching:
-                    return candidate
-
-        logger.info(f"Did not find any track that matches . Ignoring")
+        return candidate
 
     @abstractmethod
     def _build_matching_entities_options(

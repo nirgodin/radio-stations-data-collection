@@ -42,7 +42,7 @@ class ChartsManagerFactory(BaseManagerFactory):
         key_searcher = ArtistTranslatorChartKeySearcher(
             spotify_client=spotify_client,
             translation_adapter=self.tools.get_translation_adapter(),
-            entity_matcher=entity_matcher,
+            entity_matcher=self.tools.get_multi_entity_matcher(entity_matcher),
         )
         tracks_collector = self.collectors.charts.get_tracks_collector(
             spotify_client=spotify_client, key_searcher=key_searcher

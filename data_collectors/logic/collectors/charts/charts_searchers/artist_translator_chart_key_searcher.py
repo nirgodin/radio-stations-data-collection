@@ -10,7 +10,7 @@ from spotipyio.models import (
     SpotifySearchType,
     MatchingEntity,
 )
-from spotipyio.tools.matching import EntityMatcher
+from spotipyio.tools.matching import MultiEntityMatcher
 
 from data_collectors.logic.collectors.charts.charts_searchers.base_chart_key_searcher import (
     BaseChartKeySearcher,
@@ -24,7 +24,7 @@ class ArtistTranslatorChartKeySearcher(BaseChartKeySearcher):
         self,
         spotify_client: SpotifyClient,
         translation_adapter: TranslationAdapter,
-        entity_matcher: EntityMatcher,
+        entity_matcher: MultiEntityMatcher,
     ):
         super().__init__(spotify_client, entity_matcher)
         self._translation_adapter = translation_adapter
