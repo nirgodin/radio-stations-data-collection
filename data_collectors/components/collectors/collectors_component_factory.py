@@ -1,8 +1,5 @@
 from typing import Optional
 
-from data_collectors.components.collectors.billboard_collectors_component_factory import (
-    BillboardCollectorsComponentFactory,
-)
 from data_collectors.components.collectors.genius_collectors_component_factory import (
     GeniusCollectorsComponentFactory,
 )
@@ -37,7 +34,6 @@ class CollectorsComponentFactory:
     def __init__(
         self,
         tools: ToolsComponentFactory,
-        billboard: Optional[BillboardCollectorsComponentFactory] = None,
         charts: Optional[ChartsCollectorsComponentFactory] = None,
         genius: Optional[GeniusCollectorsComponentFactory] = None,
         google: Optional[GoogleCollectorsComponentFactory] = None,
@@ -48,7 +44,6 @@ class CollectorsComponentFactory:
         spotify: Optional[SpotifyCollectorsComponentFactory] = None,
         wikipedia: Optional[WikipediaCollectorsComponentFactory] = None,
     ):
-        self.billboard = billboard or BillboardCollectorsComponentFactory()
         self.charts = charts or ChartsCollectorsComponentFactory(tools)
         self.genius = genius or GeniusCollectorsComponentFactory(tools)
         self.google = google or GoogleCollectorsComponentFactory(tools)

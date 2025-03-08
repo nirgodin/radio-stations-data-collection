@@ -1,6 +1,3 @@
-from data_collectors.components.managers.billboard_manager_factory import (
-    BillboardManagerFactory,
-)
 from data_collectors.components.managers.genius_manager_factory import (
     GeniusManagerFactory,
 )
@@ -33,7 +30,6 @@ from data_collectors.components.managers.wikipedia_manager_factory import (
 )
 
 __all__ = [
-    "BillboardManagerFactory",
     "GeniusManagerFactory",
     "GenresManagerFactory",
     "GoogleManagerFactory",
