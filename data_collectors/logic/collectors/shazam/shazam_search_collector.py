@@ -4,6 +4,7 @@ from genie_common.tools import AioPoolExecutor
 from genie_common.tools import logger
 from genie_common.utils import safe_nested_get
 from shazamio import Shazam
+from spotipyio.tools.matching import MultiEntityMatcher
 
 from data_collectors.consts.shazam_consts import HITS, KEY
 from data_collectors.consts.spotify_consts import TRACKS
@@ -12,7 +13,6 @@ from data_collectors.logic.collectors.shazam.base_shazam_collector import (
     BaseShazamCollector,
 )
 from data_collectors.logic.models import MissingTrack
-from data_collectors.tools import MultiEntityMatcher
 
 
 class ShazamSearchCollector(BaseSearchCollector, BaseShazamCollector):
@@ -49,8 +49,10 @@ class ShazamSearchCollector(BaseSearchCollector, BaseShazamCollector):
         hits = safe_nested_get(response, [TRACKS, HITS])
 
         if hits:
-            return self._entity_matcher.match(
-                entity=missing_track.to_matching_entity(),
-                prioritized_candidates=hits,
-                extract_fn=lambda hit: hit.get(KEY),
+            candidate = self._entity_matcher.match(
+                entities=[missing_track.to_matching_entity()],
+                candidates=hits,
             )
+
+            if candidate is not None:
+                return candidate.get(KEY)

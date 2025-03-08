@@ -23,6 +23,7 @@ from openai import OpenAI
 from shazamio import Shazam
 from spotipyio import SpotifyClient
 from spotipyio.auth import SpotifySession
+from spotipyio.tools.matching import MultiEntityMatcher, EntityMatcher
 from sqlalchemy.ext.asyncio import AsyncEngine
 
 from data_collectors.components.environment_component_factory import (
@@ -134,6 +135,12 @@ class ToolsComponentFactory:
     ) -> GenerativeModel:
         generativeai.configure(api_key=self._env.get_gemini_api_key())
         return GenerativeModel(model_name=model_name)
+
+    @staticmethod
+    def get_multi_entity_matcher(
+        entity_matcher: Optional[EntityMatcher] = None,
+    ) -> MultiEntityMatcher:
+        return MultiEntityMatcher(entity_matcher or EntityMatcher())
 
     def _get_google_default_share_settings(self) -> List[ShareSettings]:
         users = self._env.get_google_sheets_users()

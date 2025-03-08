@@ -10,7 +10,6 @@ from data_collectors.logic.collectors.shazam import *
 from data_collectors.tools import (
     ShazamTrackEntityExtractor,
     ShazamArtistEntityExtractor,
-    MultiEntityMatcher,
 )
 
 
@@ -18,9 +17,8 @@ class ShazamCollectorsComponentFactory:
     def __init__(self, tools: ToolsComponentFactory):
         self._tools = tools
 
-    @staticmethod
     def get_search_collector(
-        shazam: Shazam, pool_executor: AioPoolExecutor
+        self, shazam: Shazam, pool_executor: AioPoolExecutor
     ) -> ShazamSearchCollector:
         entity_matcher = EntityMatcher(
             {
@@ -31,7 +29,7 @@ class ShazamCollectorsComponentFactory:
         return ShazamSearchCollector(
             shazam=shazam,
             pool_executor=pool_executor,
-            entity_matcher=MultiEntityMatcher(entity_matcher),
+            entity_matcher=self._tools.get_multi_entity_matcher(entity_matcher),
         )
 
     @staticmethod

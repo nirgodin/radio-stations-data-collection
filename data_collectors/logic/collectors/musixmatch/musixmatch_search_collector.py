@@ -4,6 +4,7 @@ from typing import Dict, Optional
 from aiohttp import ClientSession
 from genie_common.tools import AioPoolExecutor
 from genie_common.utils import safe_nested_get
+from spotipyio.tools.matching import MultiEntityMatcher
 
 from data_collectors.consts.musixmatch_consts import (
     MESSAGE,
@@ -19,7 +20,6 @@ from data_collectors.logic.collectors.musixmatch.base_musixmatch_collector impor
     BaseMusixmatchCollector,
 )
 from data_collectors.logic.models import MissingTrack
-from data_collectors.tools import MultiEntityMatcher
 
 
 class MusixmatchSearchCollector(BaseSearchCollector, BaseMusixmatchCollector):
@@ -39,11 +39,10 @@ class MusixmatchSearchCollector(BaseSearchCollector, BaseMusixmatchCollector):
     ) -> Dict[MissingTrack, Optional[str]]:
         response = await self._get(params=self._to_query(missing_track))
         candidates = self._extract_candidates(response)
-        track_id = self._entity_matcher.match(
-            entity=missing_track.to_matching_entity(),
-            prioritized_candidates=candidates,
-            extract_fn=self._extract_track_id,
+        candidate = self._entity_matcher.match(
+            entities=[missing_track.to_matching_entity()], candidates=candidates
         )
+        track_id = self._extract_track_id(candidate) if candidate is not None else None
 
         return {missing_track: track_id}
 

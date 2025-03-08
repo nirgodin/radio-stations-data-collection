@@ -55,7 +55,10 @@ class ChartsCollectorsComponentFactory:
         spotify_client: SpotifyClient,
         key_searcher: Optional[BaseChartKeySearcher] = None,
     ) -> ChartsTracksCollector:
-        chart_key_searcher = key_searcher or IsraeliChartKeySearcher(spotify_client)
+        chart_key_searcher = key_searcher or IsraeliChartKeySearcher(
+            spotify_client=spotify_client,
+            entity_matcher=self._tools.get_multi_entity_matcher(),
+        )
         return ChartsTracksCollector(
             pool_executor=self._tools.get_pool_executor(),
             spotify_client=spotify_client,

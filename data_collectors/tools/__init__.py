@@ -16,9 +16,6 @@ from data_collectors.tools.entity_matching.entity_extractors.shazam_artist_entit
 from data_collectors.tools.entity_matching.entity_extractors.shazam_track_entity_extractor import (
     ShazamTrackEntityExtractor,
 )
-from data_collectors.tools.entity_matching.multi_entity_matcher import (
-    MultiEntityMatcher,
-)
 from data_collectors.tools.image_detection.image_gender_detector import (
     ImageGenderDetector,
 )
@@ -30,7 +27,6 @@ __all__ = [
     "TranslationAdapter",
     "WebElementsExtractor",
     # Entity Matching
-    "MultiEntityMatcher",
     "ShazamTrackEntityExtractor",
     "ShazamArtistEntityExtractor",
     "GeniusTrackEntityExtractor",

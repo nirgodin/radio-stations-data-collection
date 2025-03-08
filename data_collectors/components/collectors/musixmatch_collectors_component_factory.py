@@ -1,23 +1,24 @@
 from aiohttp import ClientSession
+from genie_common.tools import AioPoolExecutor
 from spotipyio.tools.matching import EntityMatcher
 
+from data_collectors.components.tools_component_factory import ToolsComponentFactory
 from data_collectors.logic.collectors.musixmatch import (
     MusixmatchSearchCollector,
     MusixmatchLyricsCollector,
 )
-from genie_common.tools import AioPoolExecutor
-
 from data_collectors.tools import (
-    MultiEntityMatcher,
     MusixmatchTrackEntityExtractor,
     MusixmatchArtistEntityExtractor,
 )
 
 
 class MusixmatchCollectorsComponentFactory:
-    @staticmethod
+    def __init__(self, tools: ToolsComponentFactory):
+        self._tools = tools
+
     def get_search_collector(
-        session: ClientSession, pool_executor: AioPoolExecutor, api_key: str
+        self, session: ClientSession, pool_executor: AioPoolExecutor, api_key: str
     ) -> MusixmatchSearchCollector:
         entity_matcher = EntityMatcher(
             {
@@ -29,7 +30,7 @@ class MusixmatchCollectorsComponentFactory:
             session=session,
             pool_executor=pool_executor,
             api_key=api_key,
-            entity_matcher=MultiEntityMatcher(entity_matcher),
+            entity_matcher=self._tools.get_multi_entity_matcher(entity_matcher),
         )
 
     @staticmethod
