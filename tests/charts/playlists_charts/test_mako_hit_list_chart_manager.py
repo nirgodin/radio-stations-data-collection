@@ -8,7 +8,7 @@ from data_collectors.jobs.job_builders.mako_hit_list_chart_job_builder import (
     MakoHitListChartJobBuilder,
 )
 from data_collectors.jobs.job_id import JobId
-from tests.playlists_charts.base_playlists_charts_test import BasePlaylistsChartsTest
+from tests.charts.playlists_charts.base_playlists_charts_test import BasePlaylistsChartsTest
 
 
 class TestMakoHitListChartsManager(BasePlaylistsChartsTest):
