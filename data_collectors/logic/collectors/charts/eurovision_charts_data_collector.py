@@ -3,16 +3,14 @@ from datetime import datetime
 from typing import List, Tuple, Optional
 
 import pandas as pd
-from aiohttp import ClientSession
 from genie_common.tools import AioPoolExecutor, logger
 from genie_common.utils import sub_between_two_characters, extract_int_from_string
 from genie_datastores.postgres.models import ChartEntry, Chart
 from pandas import DataFrame, Series
 
-from data_collectors.logic.serializers import EurovisionChartsSerializer
 from data_collectors.consts.charts_consts import CHART_KEY_FORMAT
 from data_collectors.consts.eurovision_consts import (
-    EUROVISION_WIKIPEDIA_PAGE_URL_FORMAT,
+    EUROVISION_WIKIPEDIA_PAGE_TITLE_FORMAT,
     EUROVISION_ARTIST_COLUMN,
     EUROVISION_SONG_COLUMN,
     EUROVISION_PLACE_COLUMN,
@@ -20,17 +18,19 @@ from data_collectors.consts.eurovision_consts import (
     EUROVISION_TABLE_CONTEST_ID_COLUMNS,
 )
 from data_collectors.contract import IChartsDataCollector
+from data_collectors.logic.collectors.wikipedia import WikipediaTextCollector
+from data_collectors.logic.serializers import EurovisionChartsSerializer
 
 
 class EurovisionChartsDataCollector(IChartsDataCollector):
     def __init__(
         self,
-        session: ClientSession,
         pool_executor: AioPoolExecutor,
+        wikipedia_text_collector: WikipediaTextCollector,
         charts_serializer: EurovisionChartsSerializer = EurovisionChartsSerializer(),
     ):
-        self._session = session
         self._pool_executor = pool_executor
+        self._wikipedia_text_collector = wikipedia_text_collector
         self._charts_serializer = charts_serializer
 
     async def collect(self, years: List[int]) -> List[ChartEntry]:
@@ -56,11 +56,8 @@ class EurovisionChartsDataCollector(IChartsDataCollector):
         )
 
     async def _query_single_year_wikipedia_page(self, year: int) -> Tuple[int, str]:
-        url = EUROVISION_WIKIPEDIA_PAGE_URL_FORMAT.format(year=year)
-
-        async with self._session.get(url) as raw_response:
-            raw_response.raise_for_status()
-            response = await raw_response.text()
+        title = EUROVISION_WIKIPEDIA_PAGE_TITLE_FORMAT.format(year=year)
+        response = await self._wikipedia_text_collector.collect(title)
 
         return year, response
 

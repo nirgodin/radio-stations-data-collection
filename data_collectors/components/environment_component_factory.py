@@ -97,8 +97,16 @@ class EnvironmentComponentFactory:
     def get_release_radar_playlist_id() -> str:
         return os.environ["RELEASE_RADAR_PLAYLIST_ID"]
 
-    def _lookup_env_var(self, key: str) -> str:
+    def get_wikipedia_base_url(self):
+        return self._lookup_env_var(
+            "WIKIPEDIA_BASE_URL", default="https://en.wikipedia.org/wiki"
+        )
+
+    def _lookup_env_var(self, key: str, default: Optional[str] = None) -> str:
         if key in self._default_env.keys():
             return self._default_env[key]
+
+        if default is not None:
+            return os.getenv(key, default)
 
         return os.environ[key]

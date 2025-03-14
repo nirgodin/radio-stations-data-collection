@@ -35,7 +35,8 @@ class ChartsCollectorsComponentFactory:
         self, session: ClientSession
     ) -> EurovisionChartsDataCollector:
         return EurovisionChartsDataCollector(
-            session=session, pool_executor=self._tools.get_pool_executor()
+            pool_executor=self._tools.get_pool_executor(),
+            wikipedia_text_collector=self._tools.get_wikipedia_text_collector(session),
         )
 
     def get_glglz_charts_collector(self) -> GlglzChartsDataCollector:
