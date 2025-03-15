@@ -32,9 +32,10 @@ class SchedulerBuilder:
     ) -> None:
         email_sender = self._component_factory.tools.get_email_sender()
 
-        for job in jobs.values():
+        for job_name, job in jobs.items():
             func = partial(self._task_with_failure_notification, email_sender, job)
             scheduler.add_job(
+                name=job_name,
                 func=func,
                 trigger=job.interval,
                 id=job.id.value,

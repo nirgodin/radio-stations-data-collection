@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 
 from apscheduler.triggers.interval import IntervalTrigger
+from apscheduler.util import undefined
 from typing_extensions import Optional
 
 from data_collectors.components import ComponentFactory
@@ -18,7 +19,7 @@ class StatusReporterJobBuilder(BaseJobBuilder):
         super().__init__(component_factory)
         self._lookback_period = lookback_period or timedelta(days=7)
 
-    async def build(self, next_run_time: Optional[datetime] = None) -> ScheduledJob:
+    async def build(self, next_run_time: Optional[datetime] = undefined) -> ScheduledJob:
         return ScheduledJob(
             task=self._task,
             id=JobId.STATUS_REPORTER,

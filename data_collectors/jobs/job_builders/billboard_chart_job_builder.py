@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from apscheduler.triggers.interval import IntervalTrigger
+from apscheduler.util import undefined
 from typing_extensions import Optional
 
 from data_collectors.jobs.base_job_builder import BaseJobBuilder
@@ -9,7 +10,7 @@ from data_collectors.logic.models import ScheduledJob
 
 
 class BillboardChartJobBuilder(BaseJobBuilder):
-    async def build(self, next_run_time: Optional[datetime] = None) -> ScheduledJob:
+    async def build(self, next_run_time: Optional[datetime] = undefined) -> ScheduledJob:
         return ScheduledJob(
             task=self._task,
             id=JobId.BILLBOARD_CHARTS,
