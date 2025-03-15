@@ -1,4 +1,5 @@
 from datetime import datetime
+from functools import partial
 from http import HTTPStatus
 from random import randint
 from typing import List
@@ -14,6 +15,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncEngine
 from starlette.testclient import TestClient
 
+from data_collectors.components import ComponentFactory
 from data_collectors.consts.eurovision_consts import (
     EUROVISION_WIKIPEDIA_PAGE_TITLE_FORMAT,
     EUROVISION_ARTIST_COLUMN,
@@ -21,9 +23,13 @@ from data_collectors.consts.eurovision_consts import (
     EUROVISION_POINTS_COLUMN,
     EUROVISION_PLACE_COLUMN,
 )
-from data_collectors.consts.spotify_consts import TRACKS, ITEMS, ID
+from data_collectors.consts.spotify_consts import TRACKS, ITEMS
+from data_collectors.jobs.job_builders.eurovision_chart_job_builder import (
+    EurovisionChartJobBuilder,
+)
 from data_collectors.jobs.job_id import JobId
 from tests.helpers.spotify_track_resources import SpotifyTrackResources
+from tests.testing_utils import until, build_scheduled_test_client
 from tests.tools.spotify_insertions_verifier import SpotifyInsertionsVerifier
 from tests.tools.wikipedia_test_client import WikipediaTestClient
 
@@ -57,6 +63,33 @@ class TestEurovisionChartsManager:
             year=year,
         )
 
+    async def test_scheduled_job(
+        self,
+        scheduled_test_client: TestClient,
+        db_engine: AsyncEngine,
+        year: int,
+        wikipedia_test_client: WikipediaTestClient,
+        wikipedia_summary_table: DataFrame,
+        spotify_test_client: SpotifyTestClient,
+        tracks_resources: List[SpotifyTrackResources],
+        spotify_insertions_verifier: SpotifyInsertionsVerifier,
+    ):
+        await self._given_existing_eurovision_chart_entry(db_engine, year)
+        self._given_valid_wikipedia_response(
+            wikipedia_test_client, year, wikipedia_summary_table
+        )
+        self._given_valid_spotify_responses(spotify_test_client, tracks_resources)
+        condition = partial(
+            self._are_expected_db_records_inserted,
+            tracks_resources=tracks_resources,
+            spotify_insertions_verifier=spotify_insertions_verifier,
+            db_engine=db_engine,
+            year=year,
+        )
+
+        with scheduled_test_client:
+            await until(condition)
+
     @fixture
     def year(self) -> int:
         return randint(1950, 2024)
@@ -81,6 +114,17 @@ class TestEurovisionChartsManager:
     @fixture
     def tracks_resources(self) -> List[SpotifyTrackResources]:
         return [SpotifyTrackResources.random() for _ in range(randint(1, 10))]
+
+    @fixture
+    async def scheduled_test_client(
+        self,
+        component_factory: ComponentFactory,
+    ) -> TestClient:
+        scheduled_client = await build_scheduled_test_client(
+            component_factory, EurovisionChartJobBuilder
+        )
+        with scheduled_client as client:
+            yield client
 
     @staticmethod
     async def _given_existing_eurovision_chart_entry(
