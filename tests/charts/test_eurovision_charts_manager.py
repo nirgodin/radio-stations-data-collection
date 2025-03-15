@@ -5,11 +5,12 @@ from typing import List
 
 import pandas as pd
 from genie_datastores.postgres.models import ChartEntry, Chart
-from genie_datastores.postgres.operations import insert_records
+from genie_datastores.postgres.operations import insert_records, execute_query
 from joblib.testing import fixture
 from pandas import DataFrame
 from spotipyio.models import SearchItem, SearchItemMetadata, SpotifySearchType
 from spotipyio.testing import SpotifyTestClient
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncEngine
 from starlette.testclient import TestClient
 
@@ -20,7 +21,7 @@ from data_collectors.consts.eurovision_consts import (
     EUROVISION_POINTS_COLUMN,
     EUROVISION_PLACE_COLUMN,
 )
-from data_collectors.consts.spotify_consts import TRACKS, ITEMS
+from data_collectors.consts.spotify_consts import TRACKS, ITEMS, ID
 from data_collectors.jobs.job_id import JobId
 from tests.helpers.spotify_track_resources import SpotifyTrackResources
 from tests.tools.spotify_insertions_verifier import SpotifyInsertionsVerifier
@@ -49,6 +50,12 @@ class TestEurovisionChartsManager:
             actual = client.post(f"jobs/trigger/{JobId.EUROVISION_CHARTS.value}")
 
         assert actual.status_code == HTTPStatus.OK
+        assert await self._are_expected_db_records_inserted(
+            tracks_resources=tracks_resources,
+            spotify_insertions_verifier=spotify_insertions_verifier,
+            db_engine=db_engine,
+            year=year,
+        )
 
     @fixture
     def year(self) -> int:
@@ -133,3 +140,40 @@ class TestEurovisionChartsManager:
                 }
             }
             spotify_test_client.search.search_item.expect_success(search_item, response)
+
+    async def _are_expected_db_records_inserted(
+        self,
+        tracks_resources: List[SpotifyTrackResources],
+        spotify_insertions_verifier: SpotifyInsertionsVerifier,
+        db_engine: AsyncEngine,
+        year: int,
+    ) -> bool:
+        tracks_ids = [resource.track_id for resource in tracks_resources]
+        are_expected_spotify_records_inserted = (
+            await spotify_insertions_verifier.verify(
+                artists=[resource.artist_id for resource in tracks_resources],
+                tracks=tracks_ids,
+                albums=[resource.album_id for resource in tracks_resources],
+            )
+        )
+
+        if are_expected_spotify_records_inserted:
+            return await self._are_expected_chart_entries_inserted(
+                tracks_ids=tracks_ids, db_engine=db_engine, year=year
+            )
+
+        return False
+
+    @staticmethod
+    async def _are_expected_chart_entries_inserted(
+        tracks_ids: List[str], db_engine: AsyncEngine, year: int
+    ) -> bool:
+        query = (
+            select(ChartEntry.track_id)
+            .where(ChartEntry.date == datetime(year, 1, 1))
+            .where(ChartEntry.chart == Chart.EUROVISION)
+        )
+        query_result = await execute_query(engine=db_engine, query=query)
+        actual = query_result.scalars().all()
+
+        return sorted(tracks_ids) == sorted(actual)
