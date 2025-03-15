@@ -22,6 +22,7 @@ from main import lifespan
 from tests.testing_utils import app_test_client_session
 from tests.tools.shazam_insertions_verifier import ShazamInsertionsVerifier
 from tests.tools.spotify_insertions_verifier import SpotifyInsertionsVerifier
+from tests.tools.wikipedia_test_client import WikipediaTestClient
 
 
 @fixture
@@ -65,6 +66,7 @@ def env_component_factory(
     spotify_test_client: SpotifyTestClient,
     postgres_testkit: PostgresTestkit,
     mongo_testkit: MongoTestkit,
+    wikipedia_test_client: WikipediaTestClient,
 ) -> EnvironmentComponentFactory:
     # TODO: Externalize authorization server url
     token_request_url = spotify_test_client._authorization_server.url_for("")
@@ -78,6 +80,7 @@ def env_component_factory(
         "EMAIL_USER": random_alphanumeric_string(),
         "EMAIL_PASSWORD": random_alphanumeric_string(),
         "MONGO_URI": mongo_testkit._container.get_connection_url(),
+        "WIKIPEDIA_BASE_URL": wikipedia_test_client.get_base_url(),
     }
     return EnvironmentComponentFactory(default_env)
 
@@ -124,3 +127,9 @@ def spotify_insertions_verifier(db_engine: AsyncEngine) -> SpotifyInsertionsVeri
 @fixture
 def shazam_insertions_verifier(db_engine: AsyncEngine) -> ShazamInsertionsVerifier:
     return ShazamInsertionsVerifier(db_engine)
+
+
+@fixture
+def wikipedia_test_client() -> WikipediaTestClient:
+    with WikipediaTestClient() as test_client:
+        yield test_client

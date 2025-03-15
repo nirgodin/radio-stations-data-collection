@@ -1,6 +1,4 @@
-EUROVISION_WIKIPEDIA_PAGE_URL_FORMAT = (
-    "https://en.wikipedia.org/wiki/Eurovision_Song_Contest_{year}"
-)
+EUROVISION_WIKIPEDIA_PAGE_TITLE_FORMAT = "Eurovision_Song_Contest_{year}"
 EUROVISION_ARTIST_COLUMN = "Artist"
 EUROVISION_SONG_COLUMN = "Song"
 EUROVISION_POINTS_COLUMN = "Points"

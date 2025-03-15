@@ -10,7 +10,9 @@ from data_collectors.jobs.job_builders.billboard_chart_job_builder import (
     BillboardChartJobBuilder,
 )
 from data_collectors.jobs.job_id import JobId
-from tests.playlists_charts.base_playlists_charts_test import BasePlaylistsChartsTest
+from tests.charts.playlists_charts.base_playlists_charts_test import (
+    BasePlaylistsChartsTest,
+)
 
 
 class TestBillboardChartsManager(BasePlaylistsChartsTest):

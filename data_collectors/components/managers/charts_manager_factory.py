@@ -60,7 +60,7 @@ class ChartsManagerFactory(BaseManagerFactory):
         )
 
         return EurovisionChartsManager(
-            db_engine=get_database_engine(),
+            db_engine=self.tools.get_database_engine(),
             charts_data_collector=eurovision_charts_collector,
             charts_tracks_collector=tracks_collector,
             spotify_insertions_manager=self.inserters.spotify.get_insertions_manager(

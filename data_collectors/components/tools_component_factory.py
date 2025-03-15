@@ -2,6 +2,7 @@ import os.path
 from functools import lru_cache
 from typing import Optional, List
 
+from aiohttp import ClientSession
 from genie_common.clients.google import GoogleTranslateClient
 from genie_common.tools import AioPoolExecutor, ChunksGenerator, EmailSender
 from genie_datastores.google.drive import GoogleDriveClient
@@ -25,7 +26,9 @@ from spotipyio import SpotifyClient
 from spotipyio.auth import SpotifySession
 from spotipyio.tools.matching import MultiEntityMatcher, EntityMatcher
 from sqlalchemy.ext.asyncio import AsyncEngine
+from wikipediaapi import Wikipedia
 
+from data_collectors import WikipediaTextCollector
 from data_collectors.components.environment_component_factory import (
     EnvironmentComponentFactory,
 )
@@ -153,3 +156,10 @@ class ToolsComponentFactory:
             share_settings.append(user_setting)
 
         return share_settings
+
+    def get_wikipedia_text_collector(
+        self, session: ClientSession
+    ) -> WikipediaTextCollector:
+        return WikipediaTextCollector(
+            session=session, base_url=self._env.get_wikipedia_base_url()
+        )

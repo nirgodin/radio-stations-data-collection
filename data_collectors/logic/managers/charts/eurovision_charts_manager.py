@@ -37,10 +37,13 @@ class EurovisionChartsManager(BaseChartsManager):
         self._db_engine = db_engine
 
     async def _generate_data_collector_kwargs(
-        self, years: Optional[List[int]], limit: Optional[int]
+        self, years: Optional[List[int]] = None, limit: Optional[int] = None
     ) -> Dict[str, List[int]]:
         if years is not None:
             return {"years": years}
+
+        if limit is None:
+            limit = 1
 
         last_chart_year = await self._query_last_db_eurovision_year()
         next_chart_year = self._get_next_chart_year(last_chart_year)
