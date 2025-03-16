@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from genie_datastores.postgres.inner_utils.spotify_utils import extract_artist_id
 from genie_datastores.postgres.models import SpotifyArtist, SpotifyStation, RadioTrack
@@ -58,17 +58,21 @@ class RadioStationsSnapshotsManager(IManager):
 
         for track in tracks:
             artist = self._extract_artist_details(track, artists)
-            record = RadioTrack.from_playlist_artist_track(
-                playlist=playlist, artist=artist, track=track
-            )
-            records.append(record)
+
+            if isinstance(artist, dict):
+                record = RadioTrack.from_playlist_artist_track(
+                    playlist=playlist, artist=artist, track=track
+                )
+                records.append(record)
 
         return records
 
     @staticmethod
-    def _extract_artist_details(track: dict, artists: List[dict]) -> dict:
+    def _extract_artist_details(track: dict, artists: List[dict]) -> Optional[dict]:
         artist_id = extract_artist_id(track[TRACK])
 
         for artist in artists:
             if artist[ID] == artist_id:
                 return artist
+
+        logger.warning("Did not find track's artist. Ignoring")
