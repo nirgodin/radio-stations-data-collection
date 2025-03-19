@@ -10,12 +10,14 @@ from data_collectors.logic.models import ScheduledJob
 
 
 class BillboardChartJobBuilder(BaseJobBuilder):
-    async def build(self, next_run_time: Optional[datetime] = undefined) -> ScheduledJob:
+    async def build(
+        self, next_run_time: Optional[datetime] = undefined
+    ) -> ScheduledJob:
         return ScheduledJob(
             task=self._task,
             id=JobId.BILLBOARD_CHARTS,
             interval=IntervalTrigger(weeks=1),
-            next_run_time=next_run_time,
+            next_run_time=None,  # next_run_time or find_next_weekday(WeekDay.SUNDAY, 8),
         )
 
     async def _task(self) -> None:

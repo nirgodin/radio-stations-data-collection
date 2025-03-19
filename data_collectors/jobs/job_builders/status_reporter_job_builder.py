@@ -8,6 +8,7 @@ from data_collectors.components import ComponentFactory
 from data_collectors.jobs.base_job_builder import BaseJobBuilder
 from data_collectors.jobs.job_id import JobId
 from data_collectors.logic.models import ScheduledJob
+from data_collectors.utils.datetime import random_upcoming_time
 
 
 class StatusReporterJobBuilder(BaseJobBuilder):
@@ -19,12 +20,14 @@ class StatusReporterJobBuilder(BaseJobBuilder):
         super().__init__(component_factory)
         self._lookback_period = lookback_period or timedelta(days=7)
 
-    async def build(self, next_run_time: Optional[datetime] = undefined) -> ScheduledJob:
+    async def build(
+        self, next_run_time: Optional[datetime] = undefined
+    ) -> ScheduledJob:
         return ScheduledJob(
             task=self._task,
             id=JobId.STATUS_REPORTER,
             interval=IntervalTrigger(days=7),
-            next_run_time=next_run_time,
+            next_run_time=next_run_time or random_upcoming_time(),
         )
 
     async def _task(self) -> None:

@@ -10,12 +10,14 @@ from data_collectors.logic.models import ScheduledJob
 
 
 class MakoHitListChartJobBuilder(BaseJobBuilder):
-    async def build(self, next_run_time: Optional[datetime] = undefined) -> ScheduledJob:
+    async def build(
+        self, next_run_time: Optional[datetime] = undefined
+    ) -> ScheduledJob:
         return ScheduledJob(
             task=self._task,
             id=JobId.MAKO_HIT_LIST,
             interval=IntervalTrigger(weeks=1),
-            next_run_time=next_run_time,
+            next_run_time=None,
         )
 
     async def _task(self) -> None:

@@ -1,5 +1,5 @@
 from asyncio import gather
-from typing import List, Set
+from typing import Set
 
 from genie_datastores.postgres.models import (
     ShazamArtist,
