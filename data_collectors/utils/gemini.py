@@ -13,7 +13,7 @@ def serialize_generative_model_response(
             return model.parse_raw(response.text)
 
         logger.warning(
-            f"Did not receive valid response parts. Returning None by default"
+            "Did not receive valid response parts. Returning None by default"
         )
         return None
 

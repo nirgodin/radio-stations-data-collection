@@ -57,7 +57,7 @@ class RadioChartsManager(BaseChartsManager):
 
     async def _query_existing_files_names(self, chart: Chart) -> List[str]:
         logger.info(
-            f"Querying existing files names to prevent double insertion of same chart entries"
+            "Querying existing files names to prevent double insertion of same chart entries"
         )
         query = (
             select(ChartEntry.comment)

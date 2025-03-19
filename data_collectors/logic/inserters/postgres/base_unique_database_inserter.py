@@ -42,7 +42,7 @@ class BaseUniqueDatabaseInserter(IPostgresDatabaseInserter, ABC):
                 non_existing_records.append(record)
             else:
                 logger.debug(
-                    f"Record with the table unique identifiers already exists. Skipping"
+                    "Record with the table unique identifiers already exists. Skipping"
                 )
 
         logger.info(

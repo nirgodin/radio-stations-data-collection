@@ -26,7 +26,6 @@ from spotipyio import SpotifyClient
 from spotipyio.auth import SpotifySession
 from spotipyio.tools.matching import MultiEntityMatcher, EntityMatcher
 from sqlalchemy.ext.asyncio import AsyncEngine
-from wikipediaapi import Wikipedia
 
 from data_collectors import WikipediaTextCollector
 from data_collectors.components.environment_component_factory import (

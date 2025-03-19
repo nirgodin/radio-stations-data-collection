@@ -23,7 +23,7 @@ class SchedulerBuilder:
 
         logger.info(f"Found {len(jobs)} jobs to schedule")
         self._add_all_jobs(scheduler, jobs)
-        logger.info(f"Added all jobs to the scheduler")
+        logger.info("Added all jobs to the scheduler")
 
         return scheduler
 
@@ -54,5 +54,5 @@ class SchedulerBuilder:
             with email_sender.notify_failure():
                 await job.task()
 
-        except Exception as e:
+        except Exception:
             logger.exception(f"Failed executing job `{job.id.value}`")

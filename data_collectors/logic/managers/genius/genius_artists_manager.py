@@ -66,7 +66,7 @@ class GeniusArtistsManager(IManager):
         valid_artists = [
             artist
             for artist in artists
-            if not artist[NAME].lower() in ["genius", "spotify"]
+            if artist[NAME].lower() not in ["genius", "spotify"]
         ]
         await self._insert_artists_about_documents(valid_artists)
         await self._insert_genius_artists_records(valid_artists)
@@ -89,7 +89,7 @@ class GeniusArtistsManager(IManager):
         await self._chunks_inserter.insert(records)
 
     async def _insert_artists_about_documents(self, artists: List[dict]) -> None:
-        logger.info(f"Extracting artists description documents")
+        logger.info("Extracting artists description documents")
         documents = self._create_about_documents(artists)
 
         if not documents:

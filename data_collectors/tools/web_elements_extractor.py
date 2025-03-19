@@ -89,13 +89,13 @@ class WebElementsExtractor:
     def _extract_tag_value(
         self, tag: Tag, web_element: WebElement
     ) -> Union[str, List[str]]:
-        if web_element.expected_type == str:
+        if web_element.expected_type is str:
             if web_element.split_breaks:
                 return self._split_line_breaks(tag)
 
             return tag.text
 
-        if web_element.expected_type == list:
+        if web_element.expected_type is list:
             return list(tag.stripped_strings)
 
         raise ValueError(

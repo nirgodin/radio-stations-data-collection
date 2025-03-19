@@ -60,7 +60,7 @@ class BaseMissingIDsManager(IManager, ABC):
         return MISSING_TRACKS_SELECT_COLUMNS + [self._column]
 
     async def _query_candidates(self, limit: Optional[int]) -> List[MissingTrack]:
-        logger.info(f"Querying database for missing ids")
+        logger.info("Querying database for missing ids")
         query = (
             select(*self._query_columns)
             .where(TrackIDMapping.id == SpotifyTrack.id)

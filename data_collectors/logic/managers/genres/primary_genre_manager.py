@@ -38,7 +38,7 @@ class PrimaryGenreManager(IManager):
         await self._db_updater.update(update_requests)
 
     async def _retrieve_tracks_genres(self, limit: Optional[int]) -> List[Row]:
-        logger.info(f"Retrieving tracks without primary genre")
+        logger.info("Retrieving tracks without primary genre")
         query = (
             select(
                 Track.id,

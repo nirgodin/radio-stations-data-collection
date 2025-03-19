@@ -1,14 +1,13 @@
 from typing import List, Dict, Coroutine, Tuple
 
+from genie_common.tools import logger
+from genie_common.utils import merge_dicts
 from genie_datastores.postgres.models import ShazamLocation
 
 from data_collectors.consts.shazam_consts import ISRAEL_COUNTRY_CODE, DATA
-from data_collectors.consts.spotify_consts import TRACKS
 from data_collectors.logic.collectors.shazam.base_shazam_collector import (
     BaseShazamCollector,
 )
-from genie_common.utils import merge_dicts
-from genie_common.tools import logger
 
 
 class ShazamTopTracksCollector(BaseShazamCollector):

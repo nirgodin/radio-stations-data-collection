@@ -55,7 +55,7 @@ class SpotifyArtistsAboutCollector(ICollector):
                 browser=browser, artist_id=artist_id, artist_name=artist_name
             )
 
-        except:
+        except Exception:
             logger.exception(
                 "Received exception during artist details collection. Returning empty details by default"
             )
