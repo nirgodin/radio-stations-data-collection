@@ -17,7 +17,7 @@ class MakoHitListChartJobBuilder(BaseJobBuilder):
             task=self._task,
             id=JobId.MAKO_HIT_LIST,
             interval=IntervalTrigger(weeks=1),
-            next_run_time=None,
+            next_run_time=next_run_time or None,
         )
 
     async def _task(self) -> None:

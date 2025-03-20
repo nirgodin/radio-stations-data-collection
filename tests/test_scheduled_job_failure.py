@@ -5,6 +5,7 @@ from unittest.mock import patch, MagicMock
 
 from _pytest.fixtures import fixture
 from genie_common.tools import EmailSender
+from sqlalchemy.ext.asyncio import AsyncEngine
 from starlette.testclient import TestClient
 
 from data_collectors.components import ComponentFactory
@@ -24,7 +25,9 @@ class TestScheduledJobFailure:
             await until(lambda: mock_send.call_count == 1)
 
     @fixture
-    async def failed_job(self, component_factory: ComponentFactory) -> ScheduledJob:
+    async def failed_job(
+        self, component_factory: ComponentFactory, db_engine: AsyncEngine
+    ) -> ScheduledJob:
         jobs = await JobsLoader.load(component_factory)
         selected_job: ScheduledJob = choice(list(jobs.values()))
         selected_job.task = raise_exception

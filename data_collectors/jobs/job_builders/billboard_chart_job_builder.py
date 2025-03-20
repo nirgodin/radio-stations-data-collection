@@ -17,7 +17,7 @@ class BillboardChartJobBuilder(BaseJobBuilder):
             task=self._task,
             id=JobId.BILLBOARD_CHARTS,
             interval=IntervalTrigger(weeks=1),
-            next_run_time=None,  # next_run_time or find_next_weekday(WeekDay.SUNDAY, 8),
+            next_run_time=next_run_time or None,
         )
 
     async def _task(self) -> None:

@@ -34,7 +34,16 @@ class ShazamTopTracksJobBuilder(BaseJobBuilder):
         latest_entry_date = query_result.scalars().first()
         today = datetime.today()
 
-        if latest_entry_date.date() == today.date():
-            return today + timedelta(days=1)
+        if self._should_execute_job_today(today, latest_entry_date):
+            return today
 
-        return today
+        return today + timedelta(days=1)
+
+    @staticmethod
+    def _should_execute_job_today(
+        today: datetime, latest_entry_date: Optional[datetime]
+    ) -> bool:
+        if latest_entry_date is None:
+            return True
+
+        return latest_entry_date.date() < today.date()
