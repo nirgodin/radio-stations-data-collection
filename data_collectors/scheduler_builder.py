@@ -23,7 +23,7 @@ class SchedulerBuilder:
 
         logger.info(f"Found {len(jobs)} jobs to schedule")
         self._add_all_jobs(scheduler, jobs)
-        logger.info(f"Added all jobs to the scheduler")
+        logger.info("Added all jobs to the scheduler")
 
         return scheduler
 
@@ -32,9 +32,10 @@ class SchedulerBuilder:
     ) -> None:
         email_sender = self._component_factory.tools.get_email_sender()
 
-        for job in jobs.values():
+        for job_name, job in jobs.items():
             func = partial(self._task_with_failure_notification, email_sender, job)
             scheduler.add_job(
+                name=job_name,
                 func=func,
                 trigger=job.interval,
                 id=job.id.value,
@@ -53,5 +54,5 @@ class SchedulerBuilder:
             with email_sender.notify_failure():
                 await job.task()
 
-        except Exception as e:
+        except Exception:
             logger.exception(f"Failed executing job `{job.id.value}`")

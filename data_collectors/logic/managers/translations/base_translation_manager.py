@@ -41,7 +41,7 @@ class BaseTranslationManager(IManager):
         )
 
     async def _query_relevant_entities(self, limit: Optional[int]) -> Dict[str, str]:
-        logger.info(f"Querying database for relevant entities")
+        logger.info("Querying database for relevant entities")
         translations_subquery = (
             select(Translation.text)
             .where(Translation.entity_source == self._entity_source)

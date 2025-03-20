@@ -1,13 +1,13 @@
-from typing import Any, List, Optional, Tuple
+from typing import Any, List, Optional
 
+from genie_common.tools import logger
+from genie_common.utils import get_all_enum_values
 from shazamio.schemas.artists import ArtistQuery
 from shazamio.schemas.enums import ArtistView, ArtistExtend
 
 from data_collectors.logic.collectors.shazam.base_shazam_collector import (
     BaseShazamCollector,
 )
-from genie_common.tools import logger
-from genie_common.utils import get_all_enum_values
 
 
 class ShazamArtistsCollector(BaseShazamCollector):

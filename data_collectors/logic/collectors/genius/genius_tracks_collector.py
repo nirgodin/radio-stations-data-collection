@@ -1,5 +1,5 @@
 from functools import partial
-from typing import Optional, Dict, List, Literal
+from typing import List
 
 from aiohttp import ClientSession
 from genie_common.tools import AioPoolExecutor, logger

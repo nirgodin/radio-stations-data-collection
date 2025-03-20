@@ -2,7 +2,6 @@ from typing import List, Dict
 
 from spotipyio.testing import SpotifyMockFactory
 
-from data_collectors.utils.spotify import extract_unique_artists_ids
 from tests.helpers.spotify_playlists_resources import SpotifyPlaylistsResources
 
 

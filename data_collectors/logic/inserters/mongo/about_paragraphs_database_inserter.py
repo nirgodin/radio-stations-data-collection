@@ -68,7 +68,7 @@ class AboutParagraphsDatabaseInserter(IDatabaseInserter):
                 text=text,
             )
 
-        except:
+        except Exception:
             logger.exception(
                 f"Failed to create paragraph document for document id `{about_document.id}`, paragraph number "
                 f"{number}, with the following text: `{text}`. Returning None by default"

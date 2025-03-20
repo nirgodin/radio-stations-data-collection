@@ -78,7 +78,7 @@ class TrackNamesEmbeddingsRetrievalManager(IManager):
             collection_name=TRACK_NAMES_EMBEDDINGS_COLLECTION, records=records
         )
         logger.info(
-            f"Successfully inserted tracks name embeddings to Milvus vector database"
+            "Successfully inserted tracks name embeddings to Milvus vector database"
         )
 
     async def _update_postgres_embeddings_exist(self, records: List[dict]) -> None:

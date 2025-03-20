@@ -1,6 +1,6 @@
 .PHONY: verify
 verify:
-	make .format_check test coverage
+	make lint test coverage
 
 .PHONY: install
 install:

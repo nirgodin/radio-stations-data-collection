@@ -22,4 +22,4 @@ class TrackIDsMappingDatabaseUpdater(IDatabaseUpdater):
             key_column=TrackIDMapping.id,
             value_column=value_column,
         )
-        logger.info(f"Successfully update ids mapping records with shazam ids")
+        logger.info("Successfully update ids mapping records with shazam ids")

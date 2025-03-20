@@ -1,13 +1,11 @@
-from itertools import chain
-
 from genie_common.tools import logger
 from genie_common.utils import chain_lists
 
 from data_collectors.consts.spotify_consts import ID
 from data_collectors.contract import IManager
 from data_collectors.logic.collectors import ShazamTopTracksCollector
-from data_collectors.logic.inserters.postgres import ShazamTopTracksDatabaseInserter
 from data_collectors.logic.inserters import ShazamInsertionsManager
+from data_collectors.logic.inserters.postgres import ShazamTopTracksDatabaseInserter
 
 
 class ShazamTopTracksManager(IManager):

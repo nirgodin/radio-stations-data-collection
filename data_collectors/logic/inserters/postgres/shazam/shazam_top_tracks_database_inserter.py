@@ -4,7 +4,6 @@ from typing import List, Dict
 from genie_common.tools import logger
 from genie_datastores.postgres.models import ShazamTopTrack, ShazamLocation
 
-from data_collectors.consts.shazam_consts import KEY
 from data_collectors.consts.spotify_consts import ID
 from data_collectors.logic.inserters.postgres import ChunksDatabaseInserter
 

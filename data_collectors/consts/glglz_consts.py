@@ -1,8 +1,6 @@
 from datetime import datetime
 from itertools import product
 
-from data_collectors.tools.web_elements_extractor import WebElement, HTMLElement
-
 GLGLZ_WEEKLY_CHART_URL_FORMAT = "https://glz.co.il/%D7%92%D7%9C%D7%92%D7%9C%D7%A6/%D7%9B%D7%AA%D7%91%D7%95%D7%AA/%D7%94%D7%9E%D7%A6%D7%A2%D7%93-%D7%94%D7%A9%D7%91%D7%95%D7%A2%D7%99-{date}"
 GLGLZ_DAY_FORMATS = ["%d", "%#e"]
 GLGLZ_MONTH_FORMATS = ["%m", "%#m"]

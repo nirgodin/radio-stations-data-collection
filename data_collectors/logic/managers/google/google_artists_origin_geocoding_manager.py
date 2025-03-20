@@ -1,13 +1,13 @@
-from typing import Optional, Dict, List
+from typing import Optional
 
 from genie_common.tools import logger, SyncPoolExecutor
 
-from data_collectors.logic.collectors import GoogleGeocodingCollector
-from data_collectors.logic.models.geocoding_response import GeocodingResponse
-from data_collectors.logic.updaters import ValuesDatabaseUpdater
 from data_collectors.contract import IManager
+from data_collectors.logic.collectors import GoogleGeocodingCollector
 from data_collectors.logic.models import DBUpdateRequest
+from data_collectors.logic.models.geocoding_response import GeocodingResponse
 from data_collectors.logic.serializers import GoogleGeocodingResponseSerializer
+from data_collectors.logic.updaters import ValuesDatabaseUpdater
 
 
 class GoogleArtistsOriginGeocodingManager(IManager):

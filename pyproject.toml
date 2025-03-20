@@ -45,6 +45,13 @@ testpaths = ["tests"]
 markers = ["asyncio: mark a test as an asyncio coroutine"]
 addopts = "--asyncio-mode=auto"
 
+[tool.ruff]
+lint.ignore = [
+    "F403", # unable to detect undefined names
+    "F405", # may be undefined, or defined from star imports
+    "E712", # Avoid equality comparisons to `False`
+]
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"

@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Dict, Any, Optional, List
+from typing import Dict, Optional, List
 
 from genie_common.tools import logger
 from genie_datastores.postgres.models import ChartEntry, Chart

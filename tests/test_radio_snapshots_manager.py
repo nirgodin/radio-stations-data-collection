@@ -16,7 +16,6 @@ from data_collectors.jobs.job_builders.radio_snapshots_job_builder import (
     RadioSnapshotsJobBuilder,
 )
 from data_collectors.jobs.job_id import JobId
-from tests.conftest import db_engine
 from tests.helpers.spotify_playlists_resources import SpotifyPlaylistsResources
 from tests.testing_utils import until, build_scheduled_test_client
 from tests.tools.playlists_resources_creator import PlaylistsResourcesCreator

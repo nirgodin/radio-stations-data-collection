@@ -40,7 +40,7 @@ class GeminiArtistsAboutManager(IManager):
         if artists_existing_details:
             await self._parse_artists_about(artists_existing_details)
         else:
-            logger.info(f"Did not find any relevant artist about to parse. Aborting")
+            logger.info("Did not find any relevant artist about to parse. Aborting")
 
     async def _parse_artists_about(
         self, artists_existing_details: List[ArtistExistingDetails]

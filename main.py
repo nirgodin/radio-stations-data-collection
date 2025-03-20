@@ -31,7 +31,7 @@ async def lifespan(
 
         yield
 
-    except Exception as e:
+    except Exception:
         scheduler.shutdown()
         raise
 

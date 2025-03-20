@@ -55,7 +55,7 @@ class BaseChartKeySearcher(ABC):
         )
 
         if candidate is None:
-            logger.info(f"Did not find any track that matches . Ignoring")
+            logger.info("Did not find any track that matches . Ignoring")
 
         return candidate
 

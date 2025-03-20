@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from datetime import datetime
 
+from apscheduler.util import undefined
 from typing_extensions import Optional
 
 from data_collectors.components import ComponentFactory
@@ -12,5 +13,7 @@ class BaseJobBuilder(ABC):
         self._component_factory = component_factory
 
     @abstractmethod
-    async def build(self, next_run_time: Optional[datetime] = None) -> ScheduledJob:
+    async def build(
+        self, next_run_time: Optional[datetime] = undefined
+    ) -> ScheduledJob:
         raise NotImplementedError

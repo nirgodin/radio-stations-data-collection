@@ -26,7 +26,7 @@ class GlglzChartsHTMLAnalyzer(IAnalyzer):
         self._web_elements_extractor = web_elements_extractor
 
     def analyze(self, charts_details: List[GlglzChartDetails]) -> List[ChartEntry]:
-        logger.info(f"Starting to parse charts HTMLs")
+        logger.info("Starting to parse charts HTMLs")
         charts_entries = []
 
         for chart in charts_details:

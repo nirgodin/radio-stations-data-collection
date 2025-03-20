@@ -1,4 +1,4 @@
-from typing import Any, List, Optional
+from typing import List, Optional
 
 from genie_common.tools import AioPoolExecutor, logger
 from genie_datastores.postgres.models import ChartEntry, SpotifyTrack

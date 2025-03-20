@@ -1,4 +1,3 @@
-from genie_datastores.postgres.operations import get_database_engine
 from spotipyio import SpotifyClient
 from sqlalchemy.ext.asyncio import AsyncEngine
 
