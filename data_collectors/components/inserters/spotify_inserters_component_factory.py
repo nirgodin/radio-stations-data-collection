@@ -27,6 +27,9 @@ class SpotifyInsertersComponentFactory:
             ),
             artists_inserter=self.get_artists_inserter(database_engine),
             tracks_inserter=self.get_tracks_inserter(database_engine),
+            featured_artists_inserter=self.get_featured_artists_inserter(
+                database_engine
+            ),
         )
 
     @staticmethod
@@ -68,3 +71,9 @@ class SpotifyInsertersComponentFactory:
     @staticmethod
     def get_tracks_inserter(db_engine: AsyncEngine) -> TracksDatabaseInserter:
         return TracksDatabaseInserter(db_engine)
+
+    @staticmethod
+    def get_featured_artists_inserter(
+        db_engine: AsyncEngine,
+    ) -> SpotifyFeaturedArtistsDatabaseInserter:
+        return SpotifyFeaturedArtistsDatabaseInserter(db_engine)

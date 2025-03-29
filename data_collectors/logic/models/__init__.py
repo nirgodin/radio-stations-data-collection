@@ -22,6 +22,7 @@ from data_collectors.logic.models.artist_wikipedia_details import ArtistWikipedi
 from data_collectors.logic.models.database_update_request import DBUpdateRequest
 from data_collectors.logic.models.date_range import DateRange
 from data_collectors.logic.models.eurovision_record import EurovisionRecord
+from data_collectors.logic.models.featured_artist import FeaturedArtist
 from data_collectors.logic.models.genius_text_format import GeniusTextFormat
 from data_collectors.logic.models.glglz_chart_details import GlglzChartDetails
 from data_collectors.logic.models.html_element import HTMLElement
@@ -48,6 +49,7 @@ __all__ = [
     "DateRange",
     "DBUpdateRequest",
     "EurovisionRecord",
+    "FeaturedArtist",
     "HTMLElement",
     "GeniusTextFormat",
     "GlglzChartDetails",
