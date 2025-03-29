@@ -65,13 +65,9 @@ class InsertersComponentFactory:
             chunks_inserter=self.get_chunks_database_inserter(),
         )
 
-    def get_milvus_chunks_inserter(
-        self, milvus_client: MilvusClient
-    ) -> MilvusChunksDatabaseInserter:
+    def get_milvus_chunks_inserter(self, milvus_client: MilvusClient) -> MilvusChunksDatabaseInserter:
         chunks_generator = self._tools.get_chunks_generator()
-        return MilvusChunksDatabaseInserter(
-            chunks_generator=chunks_generator, milvus_client=milvus_client
-        )
+        return MilvusChunksDatabaseInserter(chunks_generator=chunks_generator, milvus_client=milvus_client)
 
     async def get_mongo_chunks_inserter(self) -> MongoChunksDatabaseInserter:
         await initialize_mongo()

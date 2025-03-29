@@ -98,9 +98,7 @@ class EnvironmentComponentFactory:
         return os.environ["RELEASE_RADAR_PLAYLIST_ID"]
 
     def get_wikipedia_base_url(self):
-        return self._lookup_env_var(
-            "WIKIPEDIA_BASE_URL", default="https://en.wikipedia.org/wiki"
-        )
+        return self._lookup_env_var("WIKIPEDIA_BASE_URL", default="https://en.wikipedia.org/wiki")
 
     def _lookup_env_var(self, key: str, default: Optional[str] = None) -> str:
         if key in self._default_env.keys():

@@ -34,9 +34,7 @@ class ExportersComponentFactory:
             sheets_uploader=self.tools.get_google_sheets_uploader(),
         )
 
-    def get_users_playlists_exporter(
-        self, spotify_session: SpotifySession
-    ) -> UsersPlaylistsExporter:
+    def get_users_playlists_exporter(self, spotify_session: SpotifySession) -> UsersPlaylistsExporter:
         spotify_client = self.tools.get_spotify_client(spotify_session)
         return UsersPlaylistsExporter(
             spotify_client=spotify_client,

@@ -47,9 +47,7 @@ class TestEurovisionChartsManager:
         spotify_insertions_verifier: SpotifyInsertionsVerifier,
     ):
         await self._given_existing_eurovision_chart_entry(db_engine, year)
-        self._given_valid_wikipedia_response(
-            wikipedia_test_client, year, wikipedia_summary_table
-        )
+        self._given_valid_wikipedia_response(wikipedia_test_client, year, wikipedia_summary_table)
         self._given_valid_spotify_responses(spotify_test_client, tracks_resources)
 
         with test_client as client:
@@ -75,9 +73,7 @@ class TestEurovisionChartsManager:
         spotify_insertions_verifier: SpotifyInsertionsVerifier,
     ):
         await self._given_existing_eurovision_chart_entry(db_engine, year)
-        self._given_valid_wikipedia_response(
-            wikipedia_test_client, year, wikipedia_summary_table
-        )
+        self._given_valid_wikipedia_response(wikipedia_test_client, year, wikipedia_summary_table)
         self._given_valid_spotify_responses(spotify_test_client, tracks_resources)
         condition = partial(
             self._are_expected_db_records_inserted,
@@ -95,9 +91,7 @@ class TestEurovisionChartsManager:
         return randint(1950, 2024)
 
     @fixture
-    def wikipedia_summary_table(
-        self, tracks_resources: List[SpotifyTrackResources]
-    ) -> DataFrame:
+    def wikipedia_summary_table(self, tracks_resources: List[SpotifyTrackResources]) -> DataFrame:
         records = []
 
         for i, resource in enumerate(tracks_resources):
@@ -120,16 +114,12 @@ class TestEurovisionChartsManager:
         self,
         component_factory: ComponentFactory,
     ) -> TestClient:
-        scheduled_client = await build_scheduled_test_client(
-            component_factory, EurovisionChartJobBuilder
-        )
+        scheduled_client = await build_scheduled_test_client(component_factory, EurovisionChartJobBuilder)
         with scheduled_client as client:
             yield client
 
     @staticmethod
-    async def _given_existing_eurovision_chart_entry(
-        db_engine: AsyncEngine, year: int
-    ) -> None:
+    async def _given_existing_eurovision_chart_entry(db_engine: AsyncEngine, year: int) -> None:
         last_year = year - 1
         entry = ChartEntry(
             chart=Chart.EUROVISION,
@@ -146,18 +136,14 @@ class TestEurovisionChartsManager:
         wikipedia_summary_table: DataFrame,
     ) -> None:
         title = EUROVISION_WIKIPEDIA_PAGE_TITLE_FORMAT.format(year=year)
-        wikipedia_test_client.given_valid_response(
-            title=title, response=wikipedia_summary_table.to_html()
-        )
+        wikipedia_test_client.given_valid_response(title=title, response=wikipedia_summary_table.to_html())
 
     def _given_valid_spotify_responses(
         self,
         spotify_test_client: SpotifyTestClient,
         tracks_resources: List[SpotifyTrackResources],
     ) -> None:
-        self._given_valid_spotify_search_responses(
-            spotify_test_client, tracks_resources
-        )
+        self._given_valid_spotify_search_responses(spotify_test_client, tracks_resources)
         tracks_ids = sorted([resource.track_id for resource in tracks_resources])
         artists_ids = sorted([resource.artist_id for resource in tracks_resources])
         spotify_test_client.artists.info.expect_success(sorted(artists_ids))
@@ -172,9 +158,7 @@ class TestEurovisionChartsManager:
             key = f"{resource.artist_name} - {resource.track_name}"
             search_item = SearchItem(
                 text=key,
-                metadata=SearchItemMetadata(
-                    search_types=[SpotifySearchType.TRACK], quote=False
-                ),
+                metadata=SearchItemMetadata(search_types=[SpotifySearchType.TRACK], quote=False),
             )
             response = {
                 TRACKS: {
@@ -193,12 +177,10 @@ class TestEurovisionChartsManager:
         year: int,
     ) -> bool:
         tracks_ids = [resource.track_id for resource in tracks_resources]
-        are_expected_spotify_records_inserted = (
-            await spotify_insertions_verifier.verify(
-                artists=[resource.artist_id for resource in tracks_resources],
-                tracks=tracks_ids,
-                albums=[resource.album_id for resource in tracks_resources],
-            )
+        are_expected_spotify_records_inserted = await spotify_insertions_verifier.verify(
+            artists=[resource.artist_id for resource in tracks_resources],
+            tracks=tracks_ids,
+            albums=[resource.album_id for resource in tracks_resources],
         )
 
         if are_expected_spotify_records_inserted:
@@ -209,9 +191,7 @@ class TestEurovisionChartsManager:
         return False
 
     @staticmethod
-    async def _are_expected_chart_entries_inserted(
-        tracks_ids: List[str], db_engine: AsyncEngine, year: int
-    ) -> bool:
+    async def _are_expected_chart_entries_inserted(tracks_ids: List[str], db_engine: AsyncEngine, year: int) -> bool:
         query = (
             select(ChartEntry.track_id)
             .where(ChartEntry.date == datetime(year, 1, 1))

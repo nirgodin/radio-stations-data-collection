@@ -31,9 +31,7 @@ class ChartsCollectorsComponentFactory:
     ) -> RadioChartsDataCollector:
         return RadioChartsDataCollector(google_drive_client)
 
-    def get_eurovision_charts_collector(
-        self, session: ClientSession
-    ) -> EurovisionChartsDataCollector:
+    def get_eurovision_charts_collector(self, session: ClientSession) -> EurovisionChartsDataCollector:
         return EurovisionChartsDataCollector(
             pool_executor=self._tools.get_pool_executor(),
             wikipedia_text_collector=self._tools.get_wikipedia_text_collector(session),
@@ -81,12 +79,8 @@ class ChartsCollectorsComponentFactory:
             db_engine=self._tools.get_database_engine(), spotify_client=spotify_client
         )
 
-    def get_every_hit_collector(
-        self, session: ClientSession
-    ) -> EveryHitChartsDataCollector:
-        return EveryHitChartsDataCollector(
-            session=session, pool_executor=self._tools.get_pool_executor()
-        )
+    def get_every_hit_collector(self, session: ClientSession) -> EveryHitChartsDataCollector:
+        return EveryHitChartsDataCollector(session=session, pool_executor=self._tools.get_pool_executor())
 
     @staticmethod
     def get_eurovision_missing_tracks_collector(

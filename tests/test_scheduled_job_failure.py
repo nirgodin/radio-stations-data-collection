@@ -25,9 +25,7 @@ class TestScheduledJobFailure:
             await until(lambda: mock_send.call_count == 1)
 
     @fixture
-    async def failed_job(
-        self, component_factory: ComponentFactory, db_engine: AsyncEngine
-    ) -> ScheduledJob:
+    async def failed_job(self, component_factory: ComponentFactory, db_engine: AsyncEngine) -> ScheduledJob:
         jobs = await JobsLoader.load(component_factory)
         selected_job: ScheduledJob = choice(list(jobs.values()))
         selected_job.task = raise_exception

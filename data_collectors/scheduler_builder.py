@@ -15,9 +15,7 @@ class SchedulerBuilder:
     def __init__(self, component_factory: ComponentFactory):
         self._component_factory = component_factory
 
-    async def build(
-        self, scheduler: AsyncIOScheduler, jobs: Optional[List[str]]
-    ) -> AsyncIOScheduler:
+    async def build(self, scheduler: AsyncIOScheduler, jobs: Optional[List[str]]) -> AsyncIOScheduler:
         if jobs is None:
             jobs = await JobsLoader.load(self._component_factory)
 
@@ -27,9 +25,7 @@ class SchedulerBuilder:
 
         return scheduler
 
-    def _add_all_jobs(
-        self, scheduler: AsyncIOScheduler, jobs: Dict[str, ScheduledJob]
-    ) -> None:
+    def _add_all_jobs(self, scheduler: AsyncIOScheduler, jobs: Dict[str, ScheduledJob]) -> None:
         email_sender = self._component_factory.tools.get_email_sender()
 
         for job_name, job in jobs.items():
@@ -47,9 +43,7 @@ class SchedulerBuilder:
         return timedelta(minutes=randint(1, 3))
 
     @staticmethod
-    async def _task_with_failure_notification(
-        email_sender: EmailSender, job: ScheduledJob
-    ) -> None:
+    async def _task_with_failure_notification(email_sender: EmailSender, job: ScheduledJob) -> None:
         try:
             with email_sender.notify_failure():
                 await job.task()

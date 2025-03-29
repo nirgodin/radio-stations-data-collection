@@ -4,7 +4,9 @@ from genie_common.utils import safe_nested_get
 from genie_datastores.postgres.models import Track
 
 from data_collectors.consts.spotify_consts import TRACK, ID
-from data_collectors.logic.inserters.postgres import BaseSpotifyDatabaseInserter
+from data_collectors.logic.inserters.postgres.spotify.base_spotify_database_inserter import (
+    BaseSpotifyDatabaseInserter,
+)
 
 
 class TracksDatabaseInserter(BaseSpotifyDatabaseInserter):

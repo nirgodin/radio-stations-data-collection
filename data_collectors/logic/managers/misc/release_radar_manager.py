@@ -37,9 +37,7 @@ class ReleaseRadarManager(IManager):
 
     async def _remove_existing_playlist_items(self) -> None:
         logger.info("Fetching existing release radar playlist")
-        playlist = await self._spotify_client.playlists.info.run_single(
-            id_=self._playlist_id, max_pages=math.inf
-        )
+        playlist = await self._spotify_client.playlists.info.run_single(id_=self._playlist_id, max_pages=math.inf)
         existing_items = safe_nested_get(playlist, [TRACKS, ITEMS])
         existing_uris = [safe_nested_get(item, [TRACK, URI]) for item in existing_items]
         logger.info("Removing all existing items from playlist")
@@ -56,18 +54,12 @@ class ReleaseRadarManager(IManager):
             return
 
         uris = [to_uri(track_id, SpotifyEntityType.TRACK) for track_id in track_ids]
-        await self._spotify_client.playlists.add_items.run(
-            playlist_id=self._playlist_id, uris=uris, position=0
-        )
+        await self._spotify_client.playlists.add_items.run(playlist_id=self._playlist_id, uris=uris, position=0)
 
     async def _query_newly_released_tracks(self) -> List[str]:
         logger.info("Querying newly released tracks from database")
         week_ago = datetime.now() - self._release_range
-        query = (
-            select(SpotifyTrack.id)
-            .distinct(SpotifyTrack.id)
-            .where(SpotifyTrack.release_date >= week_ago)
-        )
+        query = select(SpotifyTrack.id).distinct(SpotifyTrack.id).where(SpotifyTrack.release_date >= week_ago)
         cursor = await execute_query(query=query, engine=self._db_engine)
         tracks_ids = cursor.scalars().all()
         logger.info(f"Found {len(tracks_ids)} newly released tracks in database")

@@ -28,9 +28,7 @@ class GeniusArtistsIDsManager(IManager):
 
     async def run(self, limit: Optional[int]) -> None:
         logger.info(f"Starting to search for {limit} artists ids")
-        genius_id_artist_id_mapping = await self._query_genius_id_to_artist_id_map(
-            limit
-        )
+        genius_id_artist_id_mapping = await self._query_genius_id_to_artist_id_map(limit)
 
         if not genius_id_artist_id_mapping:
             logger.info("Did not find any missing genius ids. Aborting")
@@ -38,9 +36,7 @@ class GeniusArtistsIDsManager(IManager):
 
         await self._collect_and_update_artists_ids(genius_id_artist_id_mapping)
 
-    async def _query_genius_id_to_artist_id_map(
-        self, limit: Optional[int]
-    ) -> Dict[str, str]:
+    async def _query_genius_id_to_artist_id_map(self, limit: Optional[int]) -> Dict[str, str]:
         logger.info("Querying db for genius tracks ids and spotify artists ids")
         query = (
             select(TrackIDMapping.genius_id, Artist.id)
@@ -69,21 +65,15 @@ class GeniusArtistsIDsManager(IManager):
 
         return spotify_genius_artists_ids_map
 
-    async def _collect_and_update_artists_ids(
-        self, genius_id_artist_id_mapping: Dict[str, str]
-    ) -> None:
+    async def _collect_and_update_artists_ids(self, genius_id_artist_id_mapping: Dict[str, str]) -> None:
         track_ids = list(genius_id_artist_id_mapping.keys())
         tracks = await self._tracks_collector.collect(track_ids, GeniusTextFormat.PLAIN)
 
         if not tracks:
-            logger.warning(
-                "Did not receive any valid response from tracks collector. Aborting"
-            )
+            logger.warning("Did not receive any valid response from tracks collector. Aborting")
             return
 
-        artists_ids_map = self._map_spotify_and_genius_artists_ids(
-            tracks, genius_id_artist_id_mapping
-        )
+        artists_ids_map = self._map_spotify_and_genius_artists_ids(tracks, genius_id_artist_id_mapping)
         await self._update_artists_genius_ids(artists_ids_map)
 
     def _map_single_track_ids(
@@ -108,9 +98,7 @@ class GeniusArtistsIDsManager(IManager):
         update_requests = []
 
         for spotify_id, genius_id in artists_ids_map.items():
-            request = DBUpdateRequest(
-                id=spotify_id, values={Artist.genius_id: genius_id}
-            )
+            request = DBUpdateRequest(id=spotify_id, values={Artist.genius_id: genius_id})
             update_requests.append(request)
 
         await self._db_updater.update(update_requests)

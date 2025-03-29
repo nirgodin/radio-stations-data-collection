@@ -30,23 +30,17 @@ class SpotifyArtistsImagesCollector(ICollector):
         ids_to_images = await self._pool_executor.run(
             iterable=artists, func=self._collect_single_artist_image, expected_type=dict
         )
-        logger.info(
-            f"Successfully collected {len(ids_to_images)} images out of {n_artists} requests"
-        )
+        logger.info(f"Successfully collected {len(ids_to_images)} images out of {n_artists} requests")
 
         return merge_dicts(*ids_to_images)
 
-    async def _collect_single_artist_image(
-        self, artist: dict
-    ) -> Optional[Dict[str, ndarray]]:
+    async def _collect_single_artist_image(self, artist: dict) -> Optional[Dict[str, ndarray]]:
         images = artist.get(IMAGES)
         if not images:
             return
 
         first_image_url = images[0][URL]
-        image_bytes = await fetch_image(
-            session=self._client_session, url=first_image_url, wrap_exceptions=False
-        )
+        image_bytes = await fetch_image(session=self._client_session, url=first_image_url, wrap_exceptions=False)
         image = decode_image(image_bytes)
 
         return {artist[ID]: image}

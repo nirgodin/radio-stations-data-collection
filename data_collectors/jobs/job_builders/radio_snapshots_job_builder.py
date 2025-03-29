@@ -20,9 +20,7 @@ RADIO_SNAPSHOTS_STATIONS = [
 
 
 class RadioSnapshotsJobBuilder(BaseJobBuilder):
-    async def build(
-        self, next_run_time: Optional[datetime] = undefined
-    ) -> ScheduledJob:
+    async def build(self, next_run_time: Optional[datetime] = undefined) -> ScheduledJob:
         return ScheduledJob(
             task=self._task,
             id=JobId.RADIO_SNAPSHOTS,

@@ -46,11 +46,5 @@ class ArtistTranslatorChartKeySearcher(BaseChartKeySearcher):
                 metadata=SearchItemMetadata(search_types=[SpotifySearchType.TRACK]),
             )
 
-    def _build_matching_entities_options(
-        self, search_item: SearchItem
-    ) -> List[MatchingEntity]:
-        return [
-            MatchingEntity(
-                artist=search_item.filters.artist, track=search_item.filters.track
-            )
-        ]
+    def _build_matching_entities_options(self, search_item: SearchItem) -> List[MatchingEntity]:
+        return [MatchingEntity(artist=search_item.filters.artist, track=search_item.filters.track)]

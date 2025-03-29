@@ -26,9 +26,7 @@ class EveryHitChartsDataCollector(IChartsDataCollector):
         self._pool_executor = pool_executor
 
     async def collect(self, date_ranges: List[DateRange]) -> List[ChartEntry]:
-        logger.info(
-            f"Starting to collect charts entries for {len(date_ranges)} date ranges"
-        )
+        logger.info(f"Starting to collect charts entries for {len(date_ranges)} date ranges")
         nested_charts_entries: List[List[ChartEntry]] = await self._pool_executor.run(
             iterable=date_ranges,
             func=self._collect_single_date_range_chart,
@@ -36,9 +34,7 @@ class EveryHitChartsDataCollector(IChartsDataCollector):
         )
         return chain_lists(nested_charts_entries)
 
-    async def _collect_single_date_range_chart(
-        self, date_range: DateRange
-    ) -> Optional[List[ChartEntry]]:
+    async def _collect_single_date_range_chart(self, date_range: DateRange) -> Optional[List[ChartEntry]]:
         chart_data = await self._fetch_chart_data(date_range)
 
         if chart_data is not None:
@@ -47,18 +43,14 @@ class EveryHitChartsDataCollector(IChartsDataCollector):
     async def _fetch_chart_data(self, date_range: DateRange) -> Optional[DataFrame]:
         params = self._build_request_params(date_range)
 
-        async with self._session.get(
-            url=EVERY_HIT_RETRO_CHARTS_BASE_URL, params=params
-        ) as raw_response:
+        async with self._session.get(url=EVERY_HIT_RETRO_CHARTS_BASE_URL, params=params) as raw_response:
             raw_response.raise_for_status()
             page_content = await raw_response.text()
 
         return self._convert_page_content_to_dataframe(date_range, page_content)
 
     @staticmethod
-    def _convert_page_content_to_dataframe(
-        date_range: DateRange, page_content: str
-    ) -> Optional[DataFrame]:
+    def _convert_page_content_to_dataframe(date_range: DateRange, page_content: str) -> Optional[DataFrame]:
         page_tables: List[DataFrame] = pd.read_html(page_content)
 
         if page_tables:
@@ -66,9 +58,7 @@ class EveryHitChartsDataCollector(IChartsDataCollector):
         else:
             start_date = from_datetime(date_range.start_date)
             end_date = from_datetime(date_range.end_date)
-            logger.warn(
-                f"Was not able to extract charts data from page between {start_date} to {end_date}"
-            )
+            logger.warn(f"Was not able to extract charts data from page between {start_date} to {end_date}")
 
     @staticmethod
     def _build_request_params(date_range: DateRange) -> Dict[str, str]:
@@ -83,23 +73,17 @@ class EveryHitChartsDataCollector(IChartsDataCollector):
             "day2": date_range.start_date.strftime("%d"),
         }
 
-    def _to_chart_entries(
-        self, start_date: datetime, data: DataFrame
-    ) -> Optional[List[ChartEntry]]:
+    def _to_chart_entries(self, start_date: datetime, data: DataFrame) -> Optional[List[ChartEntry]]:
         n_columns = len(data.columns.tolist())
 
         if n_columns != 3:
-            logger.info(
-                f"Number of columns did not match format. Expected 3, received {n_columns}"
-            )
+            logger.info(f"Number of columns did not match format. Expected 3, received {n_columns}")
             return
 
         return self._convert_data_to_charts_entries(start_date, data)
 
     @staticmethod
-    def _convert_data_to_charts_entries(
-        start_date: datetime, data: DataFrame
-    ) -> List[ChartEntry]:
+    def _convert_data_to_charts_entries(start_date: datetime, data: DataFrame) -> List[ChartEntry]:
         data.columns = EVERY_HIT_ORDERED_COLUMNS
         entries = []
 

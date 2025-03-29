@@ -11,9 +11,7 @@ from sqlalchemy.sql import Select
 
 
 class TranslationAdapter:
-    def __init__(
-        self, db_engine: AsyncEngine, translation_client: GoogleTranslateClient
-    ):
+    def __init__(self, db_engine: AsyncEngine, translation_client: GoogleTranslateClient):
         self._db_engine = db_engine
         self._translation_client = translation_client
 
@@ -60,9 +58,7 @@ class TranslationAdapter:
         return query_result.scalars().first()
 
     @staticmethod
-    def _build_cache_query(
-        text: str, target_language: str, filters: Dict[Type[Translation], Any]
-    ) -> Select:
+    def _build_cache_query(text: str, target_language: str, filters: Dict[Type[Translation], Any]) -> Select:
         query = (
             select(Translation.translation)
             .where(Translation.text.ilike(text))
@@ -75,9 +71,7 @@ class TranslationAdapter:
 
         return query.limit(1)
 
-    async def _fetch_translation(
-        self, text: str, target_language: str, source_language: str
-    ) -> Optional[str]:
+    async def _fetch_translation(self, text: str, target_language: str, source_language: str) -> Optional[str]:
         translation_response = await self._translation_client.translate(
             texts=[text],
             target_language=target_language,

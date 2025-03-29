@@ -30,10 +30,6 @@ class ShazamMissingIDsManager(BaseMissingIDsManager):
     def _column(self) -> TrackIDMapping:
         return TrackIDMapping.shazam_id
 
-    async def _insert_additional_records(
-        self, matched_ids: Dict[str, Optional[str]]
-    ) -> None:
-        non_missing_shazam_ids = [
-            shazam_id for shazam_id in matched_ids.values() if shazam_id is not None
-        ]
+    async def _insert_additional_records(self, matched_ids: Dict[str, Optional[str]]) -> None:
+        non_missing_shazam_ids = [shazam_id for shazam_id in matched_ids.values() if shazam_id is not None]
         await self._insertions_manager.insert(non_missing_shazam_ids)

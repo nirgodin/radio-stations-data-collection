@@ -40,8 +40,6 @@ class ShazamTopTracksCollector(BaseShazamCollector):
                 city_name=ShazamLocation.TEL_AVIV.value,
                 limit=200,
             ),
-            ShazamLocation.ISRAEL: self._shazam.top_country_tracks(
-                country_code=ISRAEL_COUNTRY_CODE, limit=200
-            ),
+            ShazamLocation.ISRAEL: self._shazam.top_country_tracks(country_code=ISRAEL_COUNTRY_CODE, limit=200),
             ShazamLocation.WORLD: self._shazam.top_world_tracks(limit=200),
         }

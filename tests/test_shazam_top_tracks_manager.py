@@ -94,9 +94,7 @@ class TestShazamTopTracksManager:
         self._given_successful_geo_responses(mock_responses, location_playlist_id_map)
 
         for location, playlist_id in location_playlist_id_map.items():
-            tracks_ids = [
-                {ID: str(track.id)} for track in location_shazam_tracks_map[location]
-            ]
+            tracks_ids = [{ID: str(track.id)} for track in location_shazam_tracks_map[location]]
             mock_responses.get(
                 url=f"https://www.shazam.com/services/amapi/v1/catalog/GB/playlists/{playlist_id}/tracks?limit=200&offset=0&l=EN&relate[songs]=artists,music-videos",
                 payload={DATA: tracks_ids},
@@ -131,9 +129,7 @@ class TestShazamTopTracksManager:
         )
 
     @fixture
-    def location_playlist_id_map(
-        self, locations: List[ShazamLocation]
-    ) -> Dict[ShazamLocation, str]:
+    def location_playlist_id_map(self, locations: List[ShazamLocation]) -> Dict[ShazamLocation, str]:
         return {location: random_alphanumeric_string() for location in locations}
 
     @fixture
@@ -153,9 +149,7 @@ class TestShazamTopTracksManager:
         return chain_lists(list(location_shazam_tracks_map.values()))
 
     @fixture
-    def unique_shazam_tracks(
-        self, shazam_tracks: List[ShazamTrackResources]
-    ) -> List[ShazamTrackResources]:
+    def unique_shazam_tracks(self, shazam_tracks: List[ShazamTrackResources]) -> List[ShazamTrackResources]:
         seen = set()
         unique = []
 
@@ -171,9 +165,7 @@ class TestShazamTopTracksManager:
         self,
         component_factory: ComponentFactory,
     ) -> TestClient:
-        scheduled_client = await build_scheduled_test_client(
-            component_factory, ShazamTopTracksJobBuilder
-        )
+        scheduled_client = await build_scheduled_test_client(component_factory, ShazamTopTracksJobBuilder)
         with scheduled_client as client:
             yield client
 
@@ -229,9 +221,7 @@ class TestShazamTopTracksManager:
         )
 
         if inserted_expected_shazam_tracks:
-            return await self._are_expected_top_tracks_records_inserted(
-                db_engine, location_shazam_tracks_map
-            )
+            return await self._are_expected_top_tracks_records_inserted(db_engine, location_shazam_tracks_map)
 
         return False
 
@@ -242,9 +232,7 @@ class TestShazamTopTracksManager:
     ) -> bool:
         for location, tracks in location_shazam_tracks_map.items():
             expected = [str(track.id) for track in tracks]
-            query = select(ShazamTopTrack.track_id).where(
-                ShazamTopTrack.location == location
-            )
+            query = select(ShazamTopTrack.track_id).where(ShazamTopTrack.location == location)
             query_result = await execute_query(db_engine, query)
             actual = query_result.scalars().all()
 

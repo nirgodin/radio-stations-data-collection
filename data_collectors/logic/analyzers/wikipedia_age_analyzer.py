@@ -24,28 +24,20 @@ class WikipediaAgeAnalyzer(IAnalyzer):
         self._punctuation_regex: Pattern = re.compile(r"[^A-Za-z0-9]+")
 
     def analyze(self, summaries: Dict[str, str]) -> List[ArtistWikipediaDetails]:
-        logger.info(
-            f"Starting to extract age details from Wikipedia page for {len(summaries)} artists"
-        )
+        logger.info(f"Starting to extract age details from Wikipedia page for {len(summaries)} artists")
         return self._pool_executor.run(
             iterable=summaries.items(),
             func=self._extract_single_artist_age_details,
             expected_type=ArtistWikipediaDetails,
         )
 
-    def _extract_single_artist_age_details(
-        self, artist_id_and_summary: Tuple[str, str]
-    ) -> ArtistWikipediaDetails:
+    def _extract_single_artist_age_details(self, artist_id_and_summary: Tuple[str, str]) -> ArtistWikipediaDetails:
         artist_id, summary = artist_id_and_summary
         birth_date, death_date = self._get_birth_and_death_date(summary)
 
-        return ArtistWikipediaDetails(
-            id=artist_id, birth_date=birth_date, death_date=death_date
-        )
+        return ArtistWikipediaDetails(id=artist_id, birth_date=birth_date, death_date=death_date)
 
-    def _get_birth_and_death_date(
-        self, page_summary: str
-    ) -> Tuple[Optional[datetime], Optional[datetime]]:
+    def _get_birth_and_death_date(self, page_summary: str) -> Tuple[Optional[datetime], Optional[datetime]]:
         birth_date = self._extract_normalized_birth_date(page_summary)
         if birth_date:
             return birth_date, None
@@ -55,9 +47,7 @@ class WikipediaAgeAnalyzer(IAnalyzer):
     def _extract_normalized_birth_and_death_date(
         self, page_summary: str
     ) -> Tuple[Optional[datetime], Optional[datetime]]:
-        raw_dates = search_between_two_characters(
-            start_char=r"\(", end_char=r"\)", text=page_summary
-        )
+        raw_dates = search_between_two_characters(start_char=r"\(", end_char=r"\)", text=page_summary)
         if not raw_dates:
             return None, None
 

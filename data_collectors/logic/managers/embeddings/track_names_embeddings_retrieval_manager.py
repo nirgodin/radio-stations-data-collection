@@ -51,13 +51,9 @@ class TrackNamesEmbeddingsRetrievalManager(IManager):
 
         return query_result.scalars().all()
 
-    async def _handle_single_batch(
-        self, batch_id: str, batch_records: List[dict]
-    ) -> None:
+    async def _handle_single_batch(self, batch_id: str, batch_records: List[dict]) -> None:
         track_id_name_mapping = await self._query_tracks_names(batch_id)
-        embeddings_records = self._embeddings_serializer.serialize(
-            batch_records, track_id_name_mapping
-        )
+        embeddings_records = self._embeddings_serializer.serialize(batch_records, track_id_name_mapping)
         await self._insert_embeddings_records(embeddings_records)
         await self._update_postgres_embeddings_exist(embeddings_records)
 
@@ -74,21 +70,15 @@ class TrackNamesEmbeddingsRetrievalManager(IManager):
 
     async def _insert_embeddings_records(self, records: List[dict]) -> None:
         logger.info(f"Starting to insert name embeddings for {len(records)} tracks")
-        await self._milvus_client.vectors.insert(
-            collection_name=TRACK_NAMES_EMBEDDINGS_COLLECTION, records=records
-        )
-        logger.info(
-            "Successfully inserted tracks name embeddings to Milvus vector database"
-        )
+        await self._milvus_client.vectors.insert(collection_name=TRACK_NAMES_EMBEDDINGS_COLLECTION, records=records)
+        logger.info("Successfully inserted tracks name embeddings to Milvus vector database")
 
     async def _update_postgres_embeddings_exist(self, records: List[dict]) -> None:
         logger.info("Starting to update Postgres database of new existing embeddings")
         update_requests = []
 
         for record in records:
-            request = DBUpdateRequest(
-                id=record[ID], values={Track.has_name_embeddings: True}
-            )
+            request = DBUpdateRequest(id=record[ID], values={Track.has_name_embeddings: True})
             update_requests.append(request)
 
         await self._db_updater.update(update_requests)

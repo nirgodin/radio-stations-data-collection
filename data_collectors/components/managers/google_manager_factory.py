@@ -10,9 +10,7 @@ from data_collectors.logic.managers import (
 
 
 class GoogleManagerFactory(BaseManagerFactory):
-    def get_artists_origin_geocoding_manager(
-        self, session: ClientSession
-    ) -> GoogleArtistsOriginGeocodingManager:
+    def get_artists_origin_geocoding_manager(self, session: ClientSession) -> GoogleArtistsOriginGeocodingManager:
         geocoding_collector = self.collectors.google.get_geocoding_collector(session)
 
         return GoogleArtistsOriginGeocodingManager(
@@ -21,26 +19,18 @@ class GoogleManagerFactory(BaseManagerFactory):
         )
 
     async def get_spotify_artists_about_manager(self) -> GeminiArtistsAboutManager:
-        existing_details_collector = (
-            await self.collectors.spotify.get_artist_existing_details_collector()
-        )
+        existing_details_collector = await self.collectors.spotify.get_artist_existing_details_collector()
         return self._get_artists_about_manager(existing_details_collector)
 
     async def get_shazam_artists_about_manager(self) -> GeminiArtistsAboutManager:
-        existing_details_collector = (
-            await self.collectors.shazam.get_artist_existing_details_collector()
-        )
+        existing_details_collector = await self.collectors.shazam.get_artist_existing_details_collector()
         return self._get_artists_about_manager(existing_details_collector)
 
     def get_wikipedia_artists_about_manager(self) -> GeminiArtistsAboutManager:
-        return self._get_artists_about_manager(
-            self.collectors.wikipedia.get_wikipedia_existing_details_collector()
-        )
+        return self._get_artists_about_manager(self.collectors.wikipedia.get_wikipedia_existing_details_collector())
 
     async def get_genius_artists_about_manager(self) -> GeminiArtistsAboutManager:
-        existing_details_collector = (
-            await self.collectors.genius.get_artists_existing_details_collector()
-        )
+        existing_details_collector = await self.collectors.genius.get_artists_existing_details_collector()
         return self._get_artists_about_manager(existing_details_collector)
 
     def _get_artists_about_manager(

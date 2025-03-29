@@ -36,9 +36,7 @@ class GenresArtistsOriginManager(IManager):
         logger.info("Starting to run GenresArtistsOriginManager")
         missing_origin_artists = await self._query_missing_origin_artists(limit)
         genres_to_update_requests = self._to_update_requests(missing_origin_artists)
-        update_requests = [
-            update_request for genre, update_request in genres_to_update_requests
-        ]
+        update_requests = [update_request for genre, update_request in genres_to_update_requests]
         await self._db_updater.update(update_requests)
         decision_records = self._to_decisions(genres_to_update_requests)
         await self._db_inserter.insert(decision_records)
@@ -75,9 +73,7 @@ class GenresArtistsOriginManager(IManager):
                 return genre, origin
 
     @staticmethod
-    def _to_decisions(
-        genres_to_update_requests: List[Tuple[str, DBUpdateRequest]]
-    ) -> List[Decision]:
+    def _to_decisions(genres_to_update_requests: List[Tuple[str, DBUpdateRequest]]) -> List[Decision]:
         logger.info("Transforming update requests to decisions entries")
         decisions = []
 

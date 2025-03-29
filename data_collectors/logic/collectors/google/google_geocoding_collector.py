@@ -44,14 +44,10 @@ class GoogleGeocodingCollector(ICollector):
         missing_location_rows = await self._query_missing_geocoding_locations(limit)
 
         if not missing_location_rows:
-            logger.info(
-                "Did not find any artist with missing origin location. Returning empty list."
-            )
+            logger.info("Did not find any artist with missing origin location. Returning empty list.")
             return []
 
-        logger.info(
-            f"Starting to geocode {len(missing_location_rows)} locations using Google Geocode API"
-        )
+        logger.info(f"Starting to geocode {len(missing_location_rows)} locations using Google Geocode API")
         results = await self._pool_executor.run(
             iterable=missing_location_rows,
             func=self._geocode_single_location,
@@ -61,12 +57,8 @@ class GoogleGeocodingCollector(ICollector):
 
         return results
 
-    async def _query_missing_geocoding_locations(
-        self, limit: Optional[int]
-    ) -> List[Row]:
-        logger.info(
-            "Starting to query artists origin locations based on `artists` table data"
-        )
+    async def _query_missing_geocoding_locations(self, limit: Optional[int]) -> List[Row]:
+        logger.info("Starting to query artists origin locations based on `artists` table data")
         query = (
             select(Artist.id, Artist.origin)
             .where(Artist.country.is_(None))
@@ -87,9 +79,7 @@ class GoogleGeocodingCollector(ICollector):
         return existing_location_geocoding
 
     @alru_cache
-    async def _query_db_for_existing_location(
-        self, row: Row
-    ) -> Optional[GeocodingResponse]:
+    async def _query_db_for_existing_location(self, row: Row) -> Optional[GeocodingResponse]:
         query = (
             select(*ARTIST_TABLE_GEOCODING_COLUMNS)
             .where(Artist.origin == row.origin)
@@ -100,19 +90,14 @@ class GoogleGeocodingCollector(ICollector):
         query_result = response.first()
 
         if query_result is not None:
-            result = {
-                col: getattr(query_result, col.key)
-                for col in ARTIST_TABLE_GEOCODING_COLUMNS
-            }
+            result = {col: getattr(query_result, col.key) for col in ARTIST_TABLE_GEOCODING_COLUMNS}
             return GeocodingResponse(id=row.id, result=result, is_from_cache=True)
 
     @alru_cache
     async def _send_geocoding_request(self, row: Row) -> GeocodingResponse:
         params = {ADDRESS: row.origin, LANGUAGE: "en"}
 
-        async with self._session.get(
-            url=GOOGLE_GEOCODING_API_URL, params=params
-        ) as raw_response:
+        async with self._session.get(url=GOOGLE_GEOCODING_API_URL, params=params) as raw_response:
             response = await jsonify_response(raw_response)
 
         return GeocodingResponse(id=row.id, result=response, is_from_cache=False)
@@ -123,6 +108,4 @@ class GoogleGeocodingCollector(ICollector):
         cache_hits = [result for result in results if result.is_from_cache]
         cache_hits_number = len(cache_hits)
 
-        logger.info(
-            f"Out of {results_number} results, {cache_hits_number} were cache hits"
-        )
+        logger.info(f"Out of {results_number} results, {cache_hits_number} were cache hits")

@@ -41,9 +41,7 @@ class TracksVectorizerTrainDataCollector(ICollector):
 
     async def _query_tracks_data(self) -> DataFrame:
         logger.info("Querying tracks data")
-        query = select(*self._tracks_query_columns).where(
-            SpotifyTrack.id == AudioFeatures.id
-        )
+        query = select(*self._tracks_query_columns).where(SpotifyTrack.id == AudioFeatures.id)
         return await read_sql(engine=self._db_engine, query=query)
 
     @property

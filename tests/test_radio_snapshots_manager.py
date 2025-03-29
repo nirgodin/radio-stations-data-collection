@@ -73,9 +73,7 @@ class TestRadioSnapshotsManager:
         self,
         component_factory: ComponentFactory,
     ) -> TestClient:
-        scheduled_client = await build_scheduled_test_client(
-            component_factory, RadioSnapshotsJobBuilder
-        )
+        scheduled_client = await build_scheduled_test_client(component_factory, RadioSnapshotsJobBuilder)
         with scheduled_client as client:
             yield client
 
@@ -91,9 +89,7 @@ class TestRadioSnapshotsManager:
     ) -> None:
         self._given_valid_playlists_response(spotify_test_client, station_playlist_map)
         self._given_valid_artists_responses(spotify_test_client, station_playlist_map)
-        self._given_valid_audio_features_responses(
-            spotify_test_client, station_playlist_map
-        )
+        self._given_valid_audio_features_responses(spotify_test_client, station_playlist_map)
 
     @staticmethod
     def _given_valid_playlists_response(
@@ -101,9 +97,7 @@ class TestRadioSnapshotsManager:
         station_playlist_map: Dict[str, SpotifyPlaylistsResources],
     ) -> None:
         for playlist_id, playlist_resources in station_playlist_map.items():
-            spotify_test_client.playlists.info.expect_success(
-                playlist_id, [playlist_resources.playlist]
-            )
+            spotify_test_client.playlists.info.expect_success(playlist_id, [playlist_resources.playlist])
 
     @staticmethod
     def _given_valid_artists_responses(
@@ -133,14 +127,10 @@ class TestRadioSnapshotsManager:
         db_engine: AsyncEngine,
     ) -> bool:
         resources = list(station_playlist_map.values())
-        are_spotify_records_inserted = (
-            await spotify_insertions_verifier.verify_playlist_resources(resources)
-        )
+        are_spotify_records_inserted = await spotify_insertions_verifier.verify_playlist_resources(resources)
 
         if are_spotify_records_inserted:
-            return await self._are_expected_radio_tracks_records_inserted(
-                station_playlist_map, db_engine
-            )
+            return await self._are_expected_radio_tracks_records_inserted(station_playlist_map, db_engine)
 
         return False
 
@@ -150,9 +140,7 @@ class TestRadioSnapshotsManager:
         db_engine: AsyncEngine,
     ) -> bool:
         for playlist_id, playlist_resources in station_playlist_map.items():
-            query = select(RadioTrack.track_id).where(
-                RadioTrack.station == SpotifyStation(playlist_id)
-            )
+            query = select(RadioTrack.track_id).where(RadioTrack.station == SpotifyStation(playlist_id))
             query_result = await execute_query(db_engine, query)
             actual = query_result.scalars().all()
 

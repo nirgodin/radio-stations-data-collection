@@ -39,9 +39,7 @@ class ShazamArtistsDatabaseInserter(IDatabaseInserter):
         await self._insert_about_documents(documents)
 
     def _serialize_about_documents(self, records: List[dict]) -> List[AboutDocument]:
-        logger.info(
-            f"Serializing {len(records)} Shazam artist records to about documents"
-        )
+        logger.info(f"Serializing {len(records)} Shazam artist records to about documents")
         documents = []
 
         for record in records:

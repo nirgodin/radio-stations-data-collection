@@ -25,17 +25,13 @@ from data_collectors.logic.managers import *
 
 
 class ChartsManagerFactory(BaseManagerFactory):
-    def get_radio_charts_manager(
-        self, spotify_session: SpotifySession
-    ) -> RadioChartsManager:
+    def get_radio_charts_manager(self, spotify_session: SpotifySession) -> RadioChartsManager:
         spotify_client = self.tools.get_spotify_client(spotify_session)
         tracks_collector = self.collectors.charts.get_tracks_collector(spotify_client)
 
         return self._get_radio_chart_manager(spotify_client, tracks_collector)
 
-    def get_translated_artist_radio_charts_manager(
-        self, spotify_session: SpotifySession
-    ) -> RadioChartsManager:
+    def get_translated_artist_radio_charts_manager(self, spotify_session: SpotifySession) -> RadioChartsManager:
         spotify_client = self.tools.get_spotify_client(spotify_session)
         extractors = {TrackEntityExtractor(): 0.5, PrimaryArtistEntityExtractor(): 0.5}
         entity_matcher = EntityMatcher(extractors=extractors, threshold=0.75)
@@ -55,23 +51,17 @@ class ChartsManagerFactory(BaseManagerFactory):
     ) -> EurovisionChartsManager:
         spotify_client = self.tools.get_spotify_client(spotify_session)
         tracks_collector = self.collectors.charts.get_tracks_collector(spotify_client)
-        eurovision_charts_collector = (
-            self.collectors.charts.get_eurovision_charts_collector(client_session)
-        )
+        eurovision_charts_collector = self.collectors.charts.get_eurovision_charts_collector(client_session)
 
         return EurovisionChartsManager(
             db_engine=self.tools.get_database_engine(),
             charts_data_collector=eurovision_charts_collector,
             charts_tracks_collector=tracks_collector,
-            spotify_insertions_manager=self.inserters.spotify.get_insertions_manager(
-                spotify_client
-            ),
+            spotify_insertions_manager=self.inserters.spotify.get_insertions_manager(spotify_client),
             chart_entries_inserter=self.inserters.get_chart_entries_inserter(),
         )
 
-    def get_glglz_charts_manager(
-        self, spotify_session: SpotifySession
-    ) -> GlglzChartsManager:
+    def get_glglz_charts_manager(self, spotify_session: SpotifySession) -> GlglzChartsManager:
         spotify_client = self.tools.get_spotify_client(spotify_session)
         tracks_collector = self.collectors.charts.get_tracks_collector(spotify_client)
 
@@ -79,52 +69,38 @@ class ChartsManagerFactory(BaseManagerFactory):
             chart_entries_inserter=self.inserters.get_chart_entries_inserter(),
             charts_data_collector=self.collectors.charts.get_glglz_charts_collector(),
             charts_tracks_collector=tracks_collector,
-            spotify_insertions_manager=self.inserters.spotify.get_insertions_manager(
-                spotify_client
-            ),
+            spotify_insertions_manager=self.inserters.spotify.get_insertions_manager(spotify_client),
             db_engine=get_database_engine(),
         )
 
-    def get_spotify_charts_manager(
-        self, spotify_session: SpotifySession
-    ) -> PlaylistsChartsManager:
+    def get_spotify_charts_manager(self, spotify_session: SpotifySession) -> PlaylistsChartsManager:
         return self._get_playlists_chart_manager(
             spotify_session=spotify_session,
             playlist_id_to_chart_mapping=SPOTIFY_PLAYLIST_CHART_MAP,
         )
 
-    def get_mako_hit_list_charts_manager(
-        self, spotify_session: SpotifySession
-    ) -> PlaylistsChartsManager:
+    def get_mako_hit_list_charts_manager(self, spotify_session: SpotifySession) -> PlaylistsChartsManager:
         return self._get_playlists_chart_manager(
             spotify_session=spotify_session,
             playlist_id_to_chart_mapping=MAKO_PLAYLIST_CHART_MAP,
         )
 
-    def get_billboard_charts_manager(
-        self, spotify_session: SpotifySession
-    ) -> PlaylistsChartsManager:
+    def get_billboard_charts_manager(self, spotify_session: SpotifySession) -> PlaylistsChartsManager:
         return self._get_playlists_chart_manager(
             spotify_session=spotify_session,
             playlist_id_to_chart_mapping=BILLBOARD_PLAYLIST_CHART_MAP,
         )
 
-    def get_tagged_mistakes_manager(
-        self, spotify_session: SpotifySession
-    ) -> ChartsTaggedMistakesManager:
+    def get_tagged_mistakes_manager(self, spotify_session: SpotifySession) -> ChartsTaggedMistakesManager:
         spotify_client = self.tools.get_spotify_client(spotify_session)
-        tagged_mistakes_tracks_collector = (
-            self.collectors.charts.get_tagged_mistakes_tracks_collector(spotify_client)
-        )
+        tagged_mistakes_tracks_collector = self.collectors.charts.get_tagged_mistakes_tracks_collector(spotify_client)
 
         return ChartsTaggedMistakesManager(
             sheets_client=self.tools.get_google_sheets_client(),
             tagged_mistakes_collector=self.collectors.charts.get_charts_tagged_mistakes_collector(),
             tagged_mistakes_tracks_collector=tagged_mistakes_tracks_collector,
             db_updater=self.updaters.get_values_updater(),
-            spotify_insertions_manager=self.inserters.spotify.get_insertions_manager(
-                spotify_client
-            ),
+            spotify_insertions_manager=self.inserters.spotify.get_insertions_manager(spotify_client),
         )
 
     def get_israeli_artists_manager(self) -> ChartsIsraeliArtistsManager:
@@ -139,36 +115,24 @@ class ChartsManagerFactory(BaseManagerFactory):
     ) -> EveryHitChartsManager:
         spotify_client = self.tools.get_spotify_client(spotify_session)
         tracks_collector = self.collectors.charts.get_tracks_collector(spotify_client)
-        every_hit_charts_collector = self.collectors.charts.get_every_hit_collector(
-            client_session
-        )
+        every_hit_charts_collector = self.collectors.charts.get_every_hit_collector(client_session)
 
         return EveryHitChartsManager(
             db_engine=get_database_engine(),
             charts_data_collector=every_hit_charts_collector,
             charts_tracks_collector=tracks_collector,
-            spotify_insertions_manager=self.inserters.spotify.get_insertions_manager(
-                spotify_client
-            ),
+            spotify_insertions_manager=self.inserters.spotify.get_insertions_manager(spotify_client),
             chart_entries_inserter=self.inserters.get_chart_entries_inserter(),
         )
 
-    def get_eurovision_missing_tracks_manager(
-        self, spotify_session: SpotifySession
-    ) -> EurovisionMissingTracksManager:
+    def get_eurovision_missing_tracks_manager(self, spotify_session: SpotifySession) -> EurovisionMissingTracksManager:
         spotify_client = self.tools.get_spotify_client(spotify_session)
-        missing_tracks_collector = (
-            self.collectors.charts.get_eurovision_missing_tracks_collector(
-                spotify_client
-            )
-        )
+        missing_tracks_collector = self.collectors.charts.get_eurovision_missing_tracks_collector(spotify_client)
 
         return EurovisionMissingTracksManager(
             db_engine=get_database_engine(),
             missing_tracks_collector=missing_tracks_collector,
-            spotify_insertions_manager=self.inserters.spotify.get_insertions_manager(
-                spotify_client
-            ),
+            spotify_insertions_manager=self.inserters.spotify.get_insertions_manager(spotify_client),
             db_updater=self.updaters.get_values_updater(),
         )
 
@@ -188,9 +152,7 @@ class ChartsManagerFactory(BaseManagerFactory):
             chart_entries_inserter=self.inserters.get_chart_entries_inserter(),
             charts_data_collector=data_collector,
             charts_tracks_collector=tracks_collector,
-            spotify_insertions_manager=self.inserters.spotify.get_insertions_manager(
-                spotify_client
-            ),
+            spotify_insertions_manager=self.inserters.spotify.get_insertions_manager(spotify_client),
         )
 
     def _get_radio_chart_manager(
@@ -201,12 +163,8 @@ class ChartsManagerFactory(BaseManagerFactory):
         return RadioChartsManager(
             db_engine=get_database_engine(),
             drive_client=drive_client,
-            charts_data_collector=self.collectors.charts.get_radio_charts_collector(
-                drive_client
-            ),
+            charts_data_collector=self.collectors.charts.get_radio_charts_collector(drive_client),
             charts_tracks_collector=tracks_collector,
-            spotify_insertions_manager=self.inserters.spotify.get_insertions_manager(
-                spotify_client
-            ),
+            spotify_insertions_manager=self.inserters.spotify.get_insertions_manager(spotify_client),
             chart_entries_inserter=self.inserters.get_chart_entries_inserter(),
         )

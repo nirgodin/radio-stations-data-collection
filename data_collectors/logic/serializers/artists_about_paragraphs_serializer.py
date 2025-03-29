@@ -36,16 +36,12 @@ class ArtistsAboutParagraphsSerializer(ISerializer):
 
             if self._is_paragraph_too_long(formatted_paragraph):
                 split_paragraphs = self._split_long_paragraph(formatted_paragraph)
-                current_paragraphs = self._join_current_paragraphs(
-                    paragraphs_on_hold, split_paragraphs
-                )
+                current_paragraphs = self._join_current_paragraphs(paragraphs_on_hold, split_paragraphs)
                 paragraphs.extend(current_paragraphs)
                 paragraphs_on_hold = []
 
             elif self._is_standalone_paragraph(formatted_paragraph):
-                current_paragraphs = self._join_current_paragraphs(
-                    paragraphs_on_hold, [formatted_paragraph]
-                )
+                current_paragraphs = self._join_current_paragraphs(paragraphs_on_hold, [formatted_paragraph])
                 paragraphs.extend(current_paragraphs)
                 paragraphs_on_hold = []
 
@@ -111,10 +107,8 @@ class ArtistsAboutParagraphsSerializer(ISerializer):
             contents=dedent(prompt) + text,
             generation_config={"response_mime_type": "application/json"},
         )
-        serialized_response: Optional[ArtistAboutParagraphs] = (
-            serialize_generative_model_response(
-                response=response, model=ArtistAboutParagraphs
-            )
+        serialized_response: Optional[ArtistAboutParagraphs] = serialize_generative_model_response(
+            response=response, model=ArtistAboutParagraphs
         )
 
         return [] if serialized_response is None else serialized_response.paragraphs
@@ -124,9 +118,7 @@ class ArtistsAboutParagraphsSerializer(ISerializer):
         return tokens_number >= self._min_paragraph_tokens
 
     @staticmethod
-    def _join_current_paragraphs(
-        paragraphs_on_hold: List[str], current_paragraphs: List[str]
-    ) -> List[str]:
+    def _join_current_paragraphs(paragraphs_on_hold: List[str], current_paragraphs: List[str]) -> List[str]:
         first_current_paragraph = current_paragraphs[0]
         new_first_paragraph = paragraphs_on_hold + [first_current_paragraph]
 

@@ -3,9 +3,6 @@ from typing import List, Dict
 from genie_datastores.postgres.models import BaseORMModel
 
 from data_collectors.logic.inserters.postgres.spotify import *
-from data_collectors.logic.inserters.postgres.spotify.tracks_database_inserter import (
-    TracksDatabaseInserter,
-)
 
 
 class SpotifyInsertionsManager:
@@ -18,6 +15,7 @@ class SpotifyInsertionsManager:
         track_id_mapping_inserter: TrackIDMappingDatabaseInserter,
         artists_inserter: ArtistsDatabaseInserter,
         tracks_inserter: TracksDatabaseInserter,
+        featured_artists_inserter: SpotifyFeaturedArtistsDatabaseInserter,
     ):
         self._spotify_artists_inserter = spotify_artists_inserter
         self._albums_inserter = albums_inserter
@@ -26,6 +24,7 @@ class SpotifyInsertionsManager:
         self._track_id_mapping_inserter = track_id_mapping_inserter
         self._artists_inserter = artists_inserter
         self._tracks_inserter = tracks_inserter
+        self._featured_artists_inserter = featured_artists_inserter
 
     async def insert(self, tracks: List[dict]) -> Dict[str, List[BaseORMModel]]:
         spotify_records = {}
@@ -42,6 +41,7 @@ class SpotifyInsertionsManager:
             self._spotify_artists_inserter,
             self._albums_inserter,
             self._spotify_tracks_inserter,
+            self._featured_artists_inserter,
             self._audio_features_inserter,
             self._track_id_mapping_inserter,
             self._artists_inserter,

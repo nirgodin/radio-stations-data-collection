@@ -24,17 +24,13 @@ class ShazamInsertionsVerifier:
         return all(actual)
 
     async def _inserted_expected_artists_records(self, expected: Set[str]) -> bool:
-        query_result = await execute_query(
-            engine=self._db_engine, query=select(ShazamArtist.id)
-        )
+        query_result = await execute_query(engine=self._db_engine, query=select(ShazamArtist.id))
         actual = query_result.scalars().all()
 
         return sorted(expected) == sorted(actual)
 
     async def _inserted_expected_tracks_records(self, expected: Set[str]) -> bool:
-        query_result = await execute_query(
-            engine=self._db_engine, query=select(ShazamTrack.id)
-        )
+        query_result = await execute_query(engine=self._db_engine, query=select(ShazamTrack.id))
         actual = query_result.scalars().all()
 
         return sorted(expected) == sorted(actual)

@@ -5,11 +5,11 @@ from data_collectors.logic.models.week_day import WeekDay
 
 
 def random_upcoming_time() -> datetime:
-    return datetime.utcnow() + timedelta(minutes=randint(1, 10))
+    return datetime.now() + timedelta(minutes=randint(1, 10))
 
 
 def find_next_weekday(target: WeekDay, hour: int) -> datetime:
-    now = datetime.utcnow()
+    now = datetime.now()
     current = now.weekday()
 
     if current == target.value:

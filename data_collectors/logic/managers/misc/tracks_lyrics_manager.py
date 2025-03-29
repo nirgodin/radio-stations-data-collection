@@ -39,9 +39,7 @@ class TracksLyricsManager(IManager):
             TrackIDMapping.musixmatch_id.isnot(None),
         )
         track_lyrics_subquery = (
-            select(TrackLyrics.id)
-            .where(TrackLyrics.lyrics.isnot(None))
-            .order_by(TrackLyrics.update_date.asc())
+            select(TrackLyrics.id).where(TrackLyrics.lyrics.isnot(None)).order_by(TrackLyrics.update_date.asc())
         )
         query = (
             select(
@@ -58,35 +56,25 @@ class TracksLyricsManager(IManager):
 
         return query_result.all()
 
-    async def _collect_tracks_lyrics(
-        self, tracks_without_lyrics: List[Row]
-    ) -> List[TrackLyrics]:
+    async def _collect_tracks_lyrics(self, tracks_without_lyrics: List[Row]) -> List[TrackLyrics]:
         records = []
 
         for source_details in self._prioritized_sources:
-            source_records = await self._collect_single_source_records(
-                tracks_without_lyrics, source_details
-            )
+            source_records = await self._collect_single_source_records(tracks_without_lyrics, source_details)
             records.extend(source_records)
             self._remove_found_tracks_from_missing_ids(
                 tracks_without_lyrics=tracks_without_lyrics,
                 source_records=source_records,
             )
 
-        missing_lyrics_records = [
-            TrackLyrics(id=row.id) for row in tracks_without_lyrics
-        ]
+        missing_lyrics_records = [TrackLyrics(id=row.id) for row in tracks_without_lyrics]
         return records + missing_lyrics_records
 
     async def _collect_single_source_records(
         self, tracks_without_lyrics: List[Row], source_details: LyricsSourceDetails
     ) -> List[TrackLyrics]:
-        logger.info(
-            f"Collecting lyrics from `{source_details.data_source.value}` source"
-        )
-        non_missing_ids = self._extract_non_missing_collector_ids(
-            tracks_without_lyrics, source_details.column
-        )
+        logger.info(f"Collecting lyrics from `{source_details.data_source.value}` source")
+        non_missing_ids = self._extract_non_missing_collector_ids(tracks_without_lyrics, source_details.column)
         ids_lyrics_mapping = await source_details.collector.collect(non_missing_ids)
 
         return self._records_serializer.serialize(
@@ -96,9 +84,7 @@ class TracksLyricsManager(IManager):
         )
 
     @staticmethod
-    def _extract_non_missing_collector_ids(
-        tracks_without_lyrics: List[Row], column: TrackIDMapping
-    ) -> List[str]:
+    def _extract_non_missing_collector_ids(tracks_without_lyrics: List[Row], column: TrackIDMapping) -> List[str]:
         non_missing_ids = set()
 
         for row in tracks_without_lyrics:

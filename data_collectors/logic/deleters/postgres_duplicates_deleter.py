@@ -13,9 +13,7 @@ class PostgresDuplicatesDeleter(IDatabaseDeleter):
     def __init__(self, db_engine: AsyncEngine):
         self._db_engine = db_engine
 
-    async def delete(
-        self, orm: Type[BaseORMModel], subset: List[str], primary_key: str
-    ) -> None:
+    async def delete(self, orm: Type[BaseORMModel], subset: List[str], primary_key: str) -> None:
         select_query = self._build_select_query(orm, subset)
         data = await read_sql(engine=self._db_engine, query=select_query)
         duplicates = data[data.duplicated(subset=subset)]

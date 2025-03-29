@@ -20,9 +20,5 @@ class MilvusChunksDatabaseInserter(IDatabaseInserter):
             expected_type=type(None),
         )
 
-    async def _insert_records_in_chunk(
-        self, collection_name: str, records: List[dict]
-    ) -> None:
-        await self._milvus_client.vectors.insert(
-            collection_name=collection_name, records=records
-        )
+    async def _insert_records_in_chunk(self, collection_name: str, records: List[dict]) -> None:
+        await self._milvus_client.vectors.insert(collection_name=collection_name, records=records)

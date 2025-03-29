@@ -30,9 +30,7 @@ class UsersPlaylistsExporter(IExporter):
 
     async def export(self, users_ids: List[str], spreadsheet_title: str) -> Any:
         logger.info("Fetching users playlists from spotify with pagination")
-        users_playlists = await self._spotify_client.users.playlists.run(
-            ids=users_ids, max_pages=math.inf
-        )
+        users_playlists = await self._spotify_client.users.playlists.run(ids=users_ids, max_pages=math.inf)
         logger.info("Extracting relevant data from spotify responses")
         records: List[List[dict]] = self._pool_executor.run(
             iterable=users_playlists,
@@ -65,10 +63,6 @@ class UsersPlaylistsExporter(IExporter):
         flattened_records = chain_lists(records)
         data = pd.DataFrame.from_records(flattened_records)
         sheet = Sheet(data=data, name="users_playlists")
-        spreadsheet = self._google_sheets_uploader.upload(
-            sheets=[sheet], title=spreadsheet_title
-        )
+        spreadsheet = self._google_sheets_uploader.upload(sheets=[sheet], title=spreadsheet_title)
 
-        logger.info(
-            f"Successfully uploaded users playlists to the following spreadsheet `{spreadsheet.url}`"
-        )
+        logger.info(f"Successfully uploaded users playlists to the following spreadsheet `{spreadsheet.url}`")

@@ -22,9 +22,7 @@ class GeniusCollectorsComponentFactory:
         self._tools = tools
 
     def get_search_collector(self, session: ClientSession) -> GeniusSearchCollector:
-        entity_matcher = EntityMatcher(
-            {GeniusTrackEntityExtractor(): 0.7, GeniusArtistEntityExtractor(): 0.3}
-        )
+        entity_matcher = EntityMatcher({GeniusTrackEntityExtractor(): 0.7, GeniusArtistEntityExtractor(): 0.3})
         return GeniusSearchCollector(
             session=session,
             pool_executor=self._tools.get_pool_executor(),
@@ -32,19 +30,13 @@ class GeniusCollectorsComponentFactory:
         )
 
     def get_lyrics_collector(self, session: ClientSession) -> GeniusLyricsCollector:
-        return GeniusLyricsCollector(
-            session=session, pool_executor=self._tools.get_pool_executor()
-        )
+        return GeniusLyricsCollector(session=session, pool_executor=self._tools.get_pool_executor())
 
     def get_tracks_collector(self, session: ClientSession) -> GeniusTracksCollector:
-        return GeniusTracksCollector(
-            session=session, pool_executor=self._tools.get_pool_executor()
-        )
+        return GeniusTracksCollector(session=session, pool_executor=self._tools.get_pool_executor())
 
     def get_artists_collector(self, session: ClientSession) -> GeniusArtistsCollector:
-        return GeniusArtistsCollector(
-            session=session, pool_executor=self._tools.get_pool_executor()
-        )
+        return GeniusArtistsCollector(session=session, pool_executor=self._tools.get_pool_executor())
 
     async def get_artists_existing_details_collector(
         self,

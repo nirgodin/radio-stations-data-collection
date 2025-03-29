@@ -7,9 +7,13 @@ from data_collectors.logic.managers.spotify.playlists.spotify_playlists_artists_
 from data_collectors.logic.managers.spotify.playlists.spotify_playlists_tracks_manager import (
     SpotifyPlaylistsTracksManager,
 )
+from data_collectors.logic.managers.spotify.spotify_featured_artists_imputer_manager import (
+    SpotifyFeaturedArtistImputerManager,
+)
 
 __all__ = [
     "SpotifyArtistsAboutManager",
+    "SpotifyFeaturedArtistImputerManager",
     "SpotifyPlaylistsArtistsManager",
     "SpotifyPlaylistsTracksManager",
 ]

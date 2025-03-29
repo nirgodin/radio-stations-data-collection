@@ -22,9 +22,7 @@ class TracksLyricsSerializer(ISerializer):
     ):
         self._language_identifier = language_identifier
         self._pool_executor = pool_executor
-        self._numeric_punctuation_spaces_regex = re.compile(
-            r"[%s]" % re.escape(string.punctuation)
-        )
+        self._numeric_punctuation_spaces_regex = re.compile(r"[%s]" % re.escape(string.punctuation))
 
     def serialize(
         self,
@@ -32,12 +30,8 @@ class TracksLyricsSerializer(ISerializer):
         source_details: LyricsSourceDetails,
         track_ids_mapping: List[Row],
     ) -> List[TrackLyrics]:
-        func = partial(
-            self._serialize_single_track_lyrics, source_details, track_ids_mapping
-        )
-        return self._pool_executor.run(
-            iterable=ids_lyrics_mapping.items(), func=func, expected_type=TrackLyrics
-        )
+        func = partial(self._serialize_single_track_lyrics, source_details, track_ids_mapping)
+        return self._pool_executor.run(iterable=ids_lyrics_mapping.items(), func=func, expected_type=TrackLyrics)
 
     def _serialize_single_track_lyrics(
         self,
@@ -66,9 +60,7 @@ class TracksLyricsSerializer(ISerializer):
         )
 
     @staticmethod
-    def _find_spotify_id(
-        source_id: str, column: TrackIDMapping, track_ids_mapping: List[Row]
-    ) -> str:
+    def _find_spotify_id(source_id: str, column: TrackIDMapping, track_ids_mapping: List[Row]) -> str:
         for row in track_ids_mapping:
             row_source_id = getattr(row, column.key)
 
@@ -80,9 +72,7 @@ class TracksLyricsSerializer(ISerializer):
 
         for line in lyrics:
             clean_line = self._numeric_punctuation_spaces_regex.sub("", line)
-            tokens = [
-                token.strip().lower() for token in clean_line.split(" ") if token != ""
-            ]
+            tokens = [token.strip().lower() for token in clean_line.split(" ") if token != ""]
             tokens_count = Counter(tokens)
             track_word_count += tokens_count
 

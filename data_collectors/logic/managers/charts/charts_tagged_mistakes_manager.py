@@ -41,21 +41,15 @@ class ChartsTaggedMistakesManager(IManager):
         await self._insert_records(tracks, update_requests)
         self._update_mistakes_sheet(data)
 
-    async def _insert_records(
-        self, tracks: List[dict], update_requests: List[DBUpdateRequest]
-    ) -> None:
+    async def _insert_records(self, tracks: List[dict], update_requests: List[DBUpdateRequest]) -> None:
         if tracks:
-            logger.info(
-                "Found non existing spotify tracks. Inserting to spotify tables before updating charts entries"
-            )
+            logger.info("Found non existing spotify tracks. Inserting to spotify tables before updating charts entries")
             await self._spotify_insertions_manager.insert(tracks)
 
         await self._db_updater.update(update_requests)
 
     def _update_mistakes_sheet(self, data: DataFrame) -> None:
-        logger.info(
-            "Setting all spreadsheet records as done and overwriting existing data"
-        )
+        logger.info("Setting all spreadsheet records as done and overwriting existing data")
         data["done"] = True
 
         self._sheets_client.write(

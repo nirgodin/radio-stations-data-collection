@@ -60,14 +60,8 @@ class GeniusArtistsManager(IManager):
         return cursor.scalars().all()
 
     async def _query_and_insert_artists_data(self, artists_ids: List[str]) -> None:
-        artists = await self._artists_collector.collect(
-            ids=artists_ids, text_format=self._text_format
-        )
-        valid_artists = [
-            artist
-            for artist in artists
-            if artist[NAME].lower() not in ["genius", "spotify"]
-        ]
+        artists = await self._artists_collector.collect(ids=artists_ids, text_format=self._text_format)
+        valid_artists = [artist for artist in artists if artist[NAME].lower() not in ["genius", "spotify"]]
         await self._insert_artists_about_documents(valid_artists)
         await self._insert_genius_artists_records(valid_artists)
 
@@ -93,9 +87,7 @@ class GeniusArtistsManager(IManager):
         documents = self._create_about_documents(artists)
 
         if not documents:
-            logger.info(
-                "Did not find any valid description. Aborting documents insertion"
-            )
+            logger.info("Did not find any valid description. Aborting documents insertion")
             return
 
         logger.info(f"Inserting {len(documents)} artists description documents")

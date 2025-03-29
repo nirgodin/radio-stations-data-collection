@@ -12,9 +12,7 @@ from data_collectors.logic.collectors.wikipedia.base_wikipedia_age_collector imp
 
 
 class WikipediaAgeLinkCollector(BaseWikipediaAgeCollector):
-    async def _get_missing_artists_details(
-        self, limit: Optional[int]
-    ) -> List[Tuple[str, str]]:
+    async def _get_missing_artists_details(self, limit: Optional[int]) -> List[Tuple[str, str]]:
         query = (
             select(
                 SpotifyArtist.id,

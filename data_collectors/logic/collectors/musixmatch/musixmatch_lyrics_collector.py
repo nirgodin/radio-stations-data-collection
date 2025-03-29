@@ -17,9 +17,7 @@ class MusixmatchLyricsCollector(BaseMusixmatchCollector, ILyricsCollector):
         )
         return dict(results)
 
-    async def _collect_single_track_lyrics(
-        self, track_id: str
-    ) -> Tuple[str, List[str]]:
+    async def _collect_single_track_lyrics(self, track_id: str) -> Tuple[str, List[str]]:
         response = await self._get(params={"track_id": track_id})
         lyrics = safe_nested_get(response, ["message", "body", "lyrics", "lyrics_body"])
 

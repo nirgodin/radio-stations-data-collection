@@ -31,6 +31,7 @@ __all__ = [
     "SpotifyArtistsDatabaseInserter",
     "SpotifyAudioFeaturesDatabaseInserter",
     "SpotifyTracksDatabaseInserter",
+    "SpotifyFeaturedArtistsDatabaseInserter",
     "TrackIDMappingDatabaseInserter",
     "ArtistsDatabaseInserter",
     "BaseSpotifyDatabaseInserter",

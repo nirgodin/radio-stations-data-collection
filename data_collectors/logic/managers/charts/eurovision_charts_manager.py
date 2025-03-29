@@ -82,7 +82,5 @@ class EurovisionChartsManager(BaseChartsManager):
             if now > datetime(year, 6, 1):
                 return True
 
-        logger.warn(
-            f"Eurovision charts entries of year `{year}` are not available yet. Skipping"
-        )
+        logger.warn(f"Eurovision charts entries of year `{year}` are not available yet. Skipping")
         return False

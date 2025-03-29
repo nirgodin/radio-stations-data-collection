@@ -36,33 +36,23 @@ class RadioStationsSnapshotsManager(IManager):
             logger.info(f"Starting to insert playlist `{playlist[ID]}` spotify records")
             tracks = playlist[TRACKS][ITEMS]
             spotify_records = await self._spotify_insertions_manager.insert(tracks)
-            await self._insert_radio_tracks(
-                playlist=playlist, tracks=tracks, artists=spotify_records[ARTISTS]
-            )
+            await self._insert_radio_tracks(playlist=playlist, tracks=tracks, artists=spotify_records[ARTISTS])
 
-    async def _insert_radio_tracks(
-        self, playlist: dict, tracks: List[dict], artists: List[SpotifyArtist]
-    ) -> None:
+    async def _insert_radio_tracks(self, playlist: dict, tracks: List[dict], artists: List[SpotifyArtist]) -> None:
         artists_ids = sorted([artist.id for artist in artists])
         artists_responses = await self._spotify_client.artists.info.run(artists_ids)
-        records = self._to_records(
-            playlist=playlist, tracks=tracks, artists=artists_responses
-        )
+        records = self._to_records(playlist=playlist, tracks=tracks, artists=artists_responses)
 
         await self._radio_tracks_database_inserter.insert(records)
 
-    def _to_records(
-        self, playlist: dict, tracks: List[dict], artists: List[dict]
-    ) -> List[RadioTrack]:
+    def _to_records(self, playlist: dict, tracks: List[dict], artists: List[dict]) -> List[RadioTrack]:
         records = []
 
         for track in tracks:
             artist = self._extract_artist_details(track, artists)
 
             if isinstance(artist, dict):
-                record = RadioTrack.from_playlist_artist_track(
-                    playlist=playlist, artist=artist, track=track
-                )
+                record = RadioTrack.from_playlist_artist_track(playlist=playlist, artist=artist, track=track)
                 records.append(record)
 
         return records

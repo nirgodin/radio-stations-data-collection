@@ -29,20 +29,16 @@ class AboutParagraphsDatabaseInserter(IDatabaseInserter):
 
     async def insert(self, about_documents: List[AboutDocument]) -> None:
         logger.info(f"Serializing {len(about_documents)} to paragraph documents")
-        paragraphs_documents: List[List[AboutParagraphDocument]] = (
-            await self._pool_executor.run(
-                iterable=about_documents,
-                func=self._to_paragraph_documents,
-                expected_type=list,
-            )
+        paragraphs_documents: List[List[AboutParagraphDocument]] = await self._pool_executor.run(
+            iterable=about_documents,
+            func=self._to_paragraph_documents,
+            expected_type=list,
         )
         flattened_documents = chain_lists(paragraphs_documents)
 
         await self._chunks_inserter.insert(flattened_documents, AboutParagraphDocument)
 
-    async def _to_paragraph_documents(
-        self, about_document: AboutDocument
-    ) -> List[AboutParagraphDocument]:
+    async def _to_paragraph_documents(self, about_document: AboutDocument) -> List[AboutParagraphDocument]:
         paragraphs = self._paragraphs_serializer.serialize(about_document.about)
         documents = []
 

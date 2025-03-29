@@ -58,15 +58,11 @@ class PrimaryGenreManager(IManager):
         return query_result.all()
 
     @staticmethod
-    def _to_update_requests(
-        tracks_primary_genres: Dict[str, PrimaryGenre]
-    ) -> List[DBUpdateRequest]:
+    def _to_update_requests(tracks_primary_genres: Dict[str, PrimaryGenre]) -> List[DBUpdateRequest]:
         update_requests = []
 
         for track_id, primary_genre in tracks_primary_genres.items():
-            request = DBUpdateRequest(
-                id=track_id, values={Track.primary_genre: primary_genre}
-            )
+            request = DBUpdateRequest(id=track_id, values={Track.primary_genre: primary_genre})
             update_requests.append(request)
 
         return update_requests

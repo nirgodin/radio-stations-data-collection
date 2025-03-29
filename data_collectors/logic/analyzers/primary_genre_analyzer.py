@@ -50,9 +50,7 @@ class PrimaryGenreAnalyzer(IAnalyzer):
 
     def _map_raw_genres_to_primary(self, raw_genres: List[str]) -> PrimaryGenre:
         mapped_genres = [self._genre_mapper.analyze(genre) for genre in raw_genres]
-        non_other_main_genres = [
-            genre for genre in mapped_genres if genre != PrimaryGenre.OTHER
-        ]
+        non_other_main_genres = [genre for genre in mapped_genres if genre != PrimaryGenre.OTHER]
 
         if non_other_main_genres:
             return find_most_common_element(non_other_main_genres)

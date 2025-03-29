@@ -36,9 +36,7 @@ class ShazamLyricsCollector(ILyricsCollector):
 
         return dict(results)
 
-    async def _collect_single_track_lyrics(
-        self, browser: Browser, track_id: str
-    ) -> Optional[Tuple[str, List[str]]]:
+    async def _collect_single_track_lyrics(self, browser: Browser, track_id: str) -> Optional[Tuple[str, List[str]]]:
         page_source = await self._fetch_lyrics_page(browser, track_id)
         lyrics = self._extract_track_lyrics(page_source, track_id)
 
@@ -53,15 +51,11 @@ class ShazamLyricsCollector(ILyricsCollector):
 
         return await get_page_content(page)
 
-    def _extract_track_lyrics(
-        self, page_source: Optional[str], track_id: str
-    ) -> Optional[List[str]]:
+    def _extract_track_lyrics(self, page_source: Optional[str], track_id: str) -> Optional[List[str]]:
         if page_source is None:
             return
 
-        web_elements = self._web_elements_extractor.extract(
-            page_source, SHAZAM_LYRICS_WEB_ELEMENT
-        )
+        web_elements = self._web_elements_extractor.extract(page_source, SHAZAM_LYRICS_WEB_ELEMENT)
 
         if web_elements:
             lyrics = web_elements[0][SHAZAM_LYRICS_WEB_ELEMENT_NAME]

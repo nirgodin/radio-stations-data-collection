@@ -55,9 +55,7 @@ class ToolsComponentFactory:
         )
 
     @staticmethod
-    def get_pool_executor(
-        pool_size: int = 5, validate_results: bool = True
-    ) -> AioPoolExecutor:
+    def get_pool_executor(pool_size: int = 5, validate_results: bool = True) -> AioPoolExecutor:
         return AioPoolExecutor(pool_size, validate_results)
 
     @staticmethod
@@ -65,9 +63,7 @@ class ToolsComponentFactory:
         return Shazam(language)
 
     def get_spotify_client(self, spotify_session: SpotifySession) -> SpotifyClient:
-        return SpotifyClient.create(
-            session=spotify_session, base_url=self._env.get_spotify_base_url()
-        )
+        return SpotifyClient.create(session=spotify_session, base_url=self._env.get_spotify_base_url())
 
     @staticmethod
     @lru_cache
@@ -89,23 +85,17 @@ class ToolsComponentFactory:
             default_settings=default_settings,
         )
 
-    def get_image_gender_detector(
-        self, confidence_threshold: float
-    ) -> ImageGenderDetector:
+    def get_image_gender_detector(self, confidence_threshold: float) -> ImageGenderDetector:
         if not os.path.exists(GENDER_MODEL_RESOURCES_DIR):
             gender_model_folder_id = self._env.get_gender_model_folder_id()
             os.mkdir(GENDER_MODEL_RESOURCES_DIR)
             drive_adapter = ToolsComponentFactory.get_google_drive_client()
-            drive_adapter.download_all_dir_files(
-                folder_id=gender_model_folder_id, local_dir=GENDER_MODEL_RESOURCES_DIR
-            )
+            drive_adapter.download_all_dir_files(folder_id=gender_model_folder_id, local_dir=GENDER_MODEL_RESOURCES_DIR)
 
         return ImageGenderDetector.create(confidence_threshold)
 
     @staticmethod
-    def get_chunks_generator(
-        pool_executor: Optional[AioPoolExecutor] = None, chunk_size: int = 50
-    ) -> ChunksGenerator:
+    def get_chunks_generator(pool_executor: Optional[AioPoolExecutor] = None, chunk_size: int = 50) -> ChunksGenerator:
         executor = pool_executor or ToolsComponentFactory.get_pool_executor()
         return ChunksGenerator(pool_executor=executor, chunk_size=chunk_size)
 
@@ -132,9 +122,7 @@ class ToolsComponentFactory:
             db_engine=get_database_engine(),
         )
 
-    def get_gemini_model(
-        self, model_name: str = "models/gemini-1.5-pro-latest"
-    ) -> GenerativeModel:
+    def get_gemini_model(self, model_name: str = "models/gemini-1.5-pro-latest") -> GenerativeModel:
         generativeai.configure(api_key=self._env.get_gemini_api_key())
         return GenerativeModel(model_name=model_name)
 
@@ -149,16 +137,10 @@ class ToolsComponentFactory:
         share_settings = []
 
         for user in users:
-            user_setting = ShareSettings(
-                email=user, permission_type=PermissionType.USER, role=Role.WRITER
-            )
+            user_setting = ShareSettings(email=user, permission_type=PermissionType.USER, role=Role.WRITER)
             share_settings.append(user_setting)
 
         return share_settings
 
-    def get_wikipedia_text_collector(
-        self, session: ClientSession
-    ) -> WikipediaTextCollector:
-        return WikipediaTextCollector(
-            session=session, base_url=self._env.get_wikipedia_base_url()
-        )
+    def get_wikipedia_text_collector(self, session: ClientSession) -> WikipediaTextCollector:
+        return WikipediaTextCollector(session=session, base_url=self._env.get_wikipedia_base_url())

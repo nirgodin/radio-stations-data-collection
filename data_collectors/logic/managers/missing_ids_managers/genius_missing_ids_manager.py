@@ -13,7 +13,5 @@ class GeniusMissingIDsManager(BaseMissingIDsManager):
     def _column(self) -> TrackIDMapping:
         return TrackIDMapping.genius_id
 
-    async def _insert_additional_records(
-        self, matched_ids: Dict[str, Optional[str]]
-    ) -> None:
+    async def _insert_additional_records(self, matched_ids: Dict[str, Optional[str]]) -> None:
         logger.info("No Genius additional records to insert. Skipping.")

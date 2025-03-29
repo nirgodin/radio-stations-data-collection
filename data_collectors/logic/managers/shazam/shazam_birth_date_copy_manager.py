@@ -22,19 +22,13 @@ class ShazamBirthDateCopyManager(IManager):
         query_result = await self._query_missing_artists_birth_dates(limit)
 
         if query_result:
-            logger.info(
-                f"Found {len(query_result)} artists. Converting rows to update requests"
-            )
+            logger.info(f"Found {len(query_result)} artists. Converting rows to update requests")
             update_requests = [self._to_update_request(row) for row in query_result]
 
             await self._db_updater.update(update_requests)
 
-    async def _query_missing_artists_birth_dates(
-        self, limit: Optional[int]
-    ) -> List[Row]:
-        logger.info(
-            "Querying `shazam_artists` table for artists birth date that are missing on `artists` table"
-        )
+    async def _query_missing_artists_birth_dates(self, limit: Optional[int]) -> List[Row]:
+        logger.info("Querying `shazam_artists` table for artists birth date that are missing on `artists` table")
         query = (
             select(Artist.id, ShazamArtist.birth_date)
             .where(Artist.shazam_id == ShazamArtist.id)

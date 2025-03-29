@@ -22,9 +22,7 @@ async def lifespan(
     scheduler = AsyncIOScheduler()
 
     try:
-        scheduler_builder = SchedulerBuilder(
-            component_factory or get_component_factory()
-        )
+        scheduler_builder = SchedulerBuilder(component_factory or get_component_factory())
         await scheduler_builder.build(scheduler, jobs)
         logger.info("Starting scheduler")
         scheduler.start()

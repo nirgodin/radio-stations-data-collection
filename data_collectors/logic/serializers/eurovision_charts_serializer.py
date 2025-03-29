@@ -25,18 +25,14 @@ class EurovisionChartsSerializer(ISerializer):
             else:
                 data["stage"] = "semi_final"
 
-    def _merge_stage_results(
-        self, results: DataFrame, stage_results: DataFrame
-    ) -> DataFrame:
+    def _merge_stage_results(self, results: DataFrame, stage_results: DataFrame) -> DataFrame:
         missing_rows = self._detect_missing_countries(results, stage_results)
         missing_countries_data = stage_results[stage_results.index.isin(missing_rows)]
 
         return pd.concat([results, missing_countries_data])
 
     @staticmethod
-    def _detect_missing_countries(
-        results: DataFrame, stage_results: DataFrame
-    ) -> List[int]:
+    def _detect_missing_countries(results: DataFrame, stage_results: DataFrame) -> List[int]:
         existing_countries = results[EUROVISION_COUNTRY_COLUMN].unique().tolist()
         missing_countries_rows = []
 

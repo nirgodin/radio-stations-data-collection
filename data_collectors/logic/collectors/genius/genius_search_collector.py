@@ -24,9 +24,7 @@ class GeniusSearchCollector(BaseSearchCollector):
         self._session = session
         self._entity_matcher = entity_matcher
 
-    async def _search_single_track(
-        self, missing_track: MissingTrack
-    ) -> Dict[MissingTrack, Optional[str]]:
+    async def _search_single_track(self, missing_track: MissingTrack) -> Dict[MissingTrack, Optional[str]]:
         params = self._to_query(missing_track)
         response = await self._get(params)
 
@@ -42,15 +40,11 @@ class GeniusSearchCollector(BaseSearchCollector):
         return {"q": query}
 
     async def _get(self, params: Dict[str, str]) -> dict:
-        async with self._session.get(
-            url=GENIUS_SEARCH_URL, params=params
-        ) as raw_response:
+        async with self._session.get(url=GENIUS_SEARCH_URL, params=params) as raw_response:
             raw_response.raise_for_status()
             return await raw_response.json()
 
-    def _serialize_response(
-        self, response: dict, missing_track: MissingTrack
-    ) -> Optional[str]:
+    def _serialize_response(self, response: dict, missing_track: MissingTrack) -> Optional[str]:
         hits = safe_nested_get(response, [RESPONSE, HITS])
 
         if hits:

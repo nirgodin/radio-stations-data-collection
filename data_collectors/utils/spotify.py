@@ -1,4 +1,4 @@
-from typing import Set, Optional
+from typing import Set, List
 
 from data_collectors.consts.spotify_consts import TRACK, ARTISTS, ID
 
@@ -7,21 +7,18 @@ def extract_unique_artists_ids(*tracks: dict) -> Set[str]:
     artists_ids = set()
 
     for track in tracks:
-        artist_id = _extract_single_artist_id(track)
+        track_artists = _extract_single_artist_id(track)
 
-        if artist_id is not None:
+        for artist_id in track_artists:
             artists_ids.add(artist_id)
 
     return artists_ids
 
 
-def _extract_single_artist_id(track: dict) -> Optional[str]:
-    inner_track = track.get(TRACK, {})
-    if inner_track is None:
-        return
+def get_track_artists(track: dict) -> List[dict]:
+    return track.get(TRACK, {}).get(ARTISTS, [])
 
-    artists = inner_track.get(ARTISTS, [])
-    if not artists:
-        return
 
-    return artists[0][ID]
+def _extract_single_artist_id(track: dict) -> List[str]:
+    artists = get_track_artists(track)
+    return [artist[ID] for artist in artists]

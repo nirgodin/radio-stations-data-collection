@@ -33,22 +33,16 @@ class GeniusLyricsCollector(ILyricsCollector):
 
         return dict(results)
 
-    async def _collect_single_track_lyrics(
-        self, track_id: str
-    ) -> Optional[Tuple[str, List[str]]]:
+    async def _collect_single_track_lyrics(self, track_id: str) -> Optional[Tuple[str, List[str]]]:
         url = GENIUS_LYRICS_URL_FORMAT.format(id=track_id)
 
         async with self._session.get(url) as raw_response:
             if raw_response.ok:
                 return await self._serialize_response(track_id, raw_response)
             else:
-                logger.warn(
-                    f"Did not find lyrics page for track `{track_id}`. Ignoring"
-                )
+                logger.warn(f"Did not find lyrics page for track `{track_id}`. Ignoring")
 
-    async def _serialize_response(
-        self, track_id: str, raw_response: ClientResponse
-    ) -> Optional[Tuple[str, List[str]]]:
+    async def _serialize_response(self, track_id: str, raw_response: ClientResponse) -> Optional[Tuple[str, List[str]]]:
         page_content = await raw_response.text()
         raw_html_elements = self._web_elements_extractor.extract(
             html=page_content, web_element=GENIUS_LYRICS_WEB_ELEMENT
@@ -56,17 +50,13 @@ class GeniusLyricsCollector(ILyricsCollector):
         raw_lyrics = self._extract_lyrics_from_html(raw_html_elements)
 
         if raw_lyrics is None:
-            logger.warn(
-                f"Was not able to extract lyrics from page for track `{track_id}`. Ignoring"
-            )
+            logger.warn(f"Was not able to extract lyrics from page for track `{track_id}`. Ignoring")
         else:
             lyrics = [row for row in raw_lyrics if self._is_valid_row(row)]
             return track_id, lyrics
 
     @staticmethod
-    def _extract_lyrics_from_html(
-        raw_html_elements: Optional[List[Dict[str, str]]]
-    ) -> Optional[str]:
+    def _extract_lyrics_from_html(raw_html_elements: Optional[List[Dict[str, str]]]) -> Optional[str]:
         if raw_html_elements:
             return raw_html_elements[0][GENIUS_LYRICS_ELEMENT_NAME]
 

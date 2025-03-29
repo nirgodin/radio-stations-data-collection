@@ -43,33 +43,21 @@ class GlglzChartsManager(BaseChartsManager):
         if dates is not None:
             return {"dates": dates}
 
-        logger.info(
-            "No date was supplied. Querying database to find next missing charts dates"
-        )
+        logger.info("No date was supplied. Querying database to find next missing charts dates")
         query = (
             select(ChartEntry.date)
-            .where(
-                ChartEntry.chart.in_(
-                    [Chart.GLGLZ_WEEKLY_ISRAELI, Chart.GLGLZ_WEEKLY_INTERNATIONAL]
-                )
-            )
+            .where(ChartEntry.chart.in_([Chart.GLGLZ_WEEKLY_ISRAELI, Chart.GLGLZ_WEEKLY_INTERNATIONAL]))
             .order_by(ChartEntry.date.desc())
             .limit(1)
         )
         query_result = await execute_query(engine=self._db_engine, query=query)
         last_chart_date = query_result.scalars().first()
-        next_dates = (
-            self._build_next_dates(last_chart_date, limit)
-            if last_chart_date
-            else [FIRST_GLGLZ_CHART_DATE]
-        )
+        next_dates = self._build_next_dates(last_chart_date, limit) if last_chart_date else [FIRST_GLGLZ_CHART_DATE]
 
         return {"dates": next_dates}
 
     @staticmethod
-    def _build_next_dates(
-        last_chart_date: datetime, limit: Optional[int]
-    ) -> List[datetime]:
+    def _build_next_dates(last_chart_date: datetime, limit: Optional[int]) -> List[datetime]:
         if limit is None:
             limit = 1
 

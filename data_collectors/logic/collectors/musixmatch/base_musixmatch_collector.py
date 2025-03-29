@@ -8,9 +8,7 @@ from genie_common.tools import AioPoolExecutor
 
 
 class BaseMusixmatchCollector(ICollector, ABC):
-    def __init__(
-        self, session: ClientSession, pool_executor: AioPoolExecutor, api_key: str
-    ):
+    def __init__(self, session: ClientSession, pool_executor: AioPoolExecutor, api_key: str):
         self._session = session
         self._pool_executor = pool_executor
         self._api_key = api_key

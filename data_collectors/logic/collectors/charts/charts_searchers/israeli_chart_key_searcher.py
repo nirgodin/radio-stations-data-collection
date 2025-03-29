@@ -17,14 +17,10 @@ class IsraeliChartKeySearcher(BaseChartKeySearcher):
     async def _build_search_item(self, key: str) -> Optional[SearchItem]:
         return SearchItem(
             text=key,
-            metadata=SearchItemMetadata(
-                search_types=[SpotifySearchType.TRACK], quote=False
-            ),
+            metadata=SearchItemMetadata(search_types=[SpotifySearchType.TRACK], quote=False),
         )
 
-    def _build_matching_entities_options(
-        self, search_item: SearchItem
-    ) -> List[MatchingEntity]:
+    def _build_matching_entities_options(self, search_item: SearchItem) -> List[MatchingEntity]:
         token_a, token_b = extract_artist_and_track_from_chart_key(search_item.text)
         entity = MatchingEntity(track=token_a.strip(), artist=token_b.strip())
         reversed_entity = MatchingEntity(track=token_b.strip(), artist=token_a.strip())
