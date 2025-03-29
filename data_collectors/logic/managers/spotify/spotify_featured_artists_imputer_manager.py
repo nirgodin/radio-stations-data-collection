@@ -16,7 +16,13 @@ from data_collectors.logic.updaters import ValuesDatabaseUpdater
 
 
 class SpotifyFeaturedArtistImputerManager(IManager):
-    def __init__(self, spotify_client: SpotifyClient, db_engine: AsyncEngine, spotify_insertions_manager: SpotifyInsertionsManager, db_updater: ValuesDatabaseUpdater):
+    def __init__(
+        self,
+        spotify_client: SpotifyClient,
+        db_engine: AsyncEngine,
+        spotify_insertions_manager: SpotifyInsertionsManager,
+        db_updater: ValuesDatabaseUpdater,
+    ):
         self._spotify_client = spotify_client
         self._db_engine = db_engine
         self._spotify_insertions_manager = spotify_insertions_manager
