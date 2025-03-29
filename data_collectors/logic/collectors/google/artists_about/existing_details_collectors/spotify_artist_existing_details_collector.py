@@ -37,9 +37,7 @@ class SpotifyArtistsExistingDetailsCollector(BaseArtistsExistingDetailsCollector
             expected_type=ArtistExistingDetails,
         )
 
-    async def _query_database_for_relevant_artists(
-        self, limit: Optional[int]
-    ) -> List[Row]:
+    async def _query_database_for_relevant_artists(self, limit: Optional[int]) -> List[Row]:
         logger.info(f"Querying {limit} artists about")
         query = (
             select(ARTIST_ABOUT_COLUMNS)
@@ -52,9 +50,7 @@ class SpotifyArtistsExistingDetailsCollector(BaseArtistsExistingDetailsCollector
 
         return query_result.all()
 
-    async def _create_single_artist_existing_details(
-        self, row: Row
-    ) -> Optional[ArtistExistingDetails]:
+    async def _create_single_artist_existing_details(self, row: Row) -> Optional[ArtistExistingDetails]:
         document = await AboutDocument.find_one(
             AboutDocument.entity_id == row.id, AboutDocument.source == self.data_source
         )

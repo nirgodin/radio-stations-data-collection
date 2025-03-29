@@ -34,14 +34,10 @@ class MusixmatchSearchCollector(BaseSearchCollector, BaseMusixmatchCollector):
         super(BaseMusixmatchCollector, self).__init__()
         self._entity_matcher = entity_matcher
 
-    async def _search_single_track(
-        self, missing_track: MissingTrack
-    ) -> Dict[MissingTrack, Optional[str]]:
+    async def _search_single_track(self, missing_track: MissingTrack) -> Dict[MissingTrack, Optional[str]]:
         response = await self._get(params=self._to_query(missing_track))
         candidates = self._extract_candidates(response)
-        candidate = self._entity_matcher.match(
-            entities=[missing_track.to_matching_entity()], candidates=candidates
-        )
+        candidate = self._entity_matcher.match(entities=[missing_track.to_matching_entity()], candidates=candidates)
         track_id = self._extract_track_id(candidate) if candidate is not None else None
 
         return {missing_track: track_id}

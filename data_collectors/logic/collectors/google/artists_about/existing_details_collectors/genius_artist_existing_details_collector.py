@@ -38,12 +38,8 @@ class GeniusArtistsExistingDetailsCollector(BaseArtistsExistingDetailsCollector)
             func=self._query_about_document_and_build_artist_details,
             expected_type=ArtistExistingDetails,
         )
-        artists_with_about_field = [
-            details for details in artists_details if details.about is not None
-        ]
-        logger.info(
-            f"Found about field for {len(artists_with_about_field)} out of {len(artists_details)} artists"
-        )
+        artists_with_about_field = [details for details in artists_details if details.about is not None]
+        logger.info(f"Found about field for {len(artists_with_about_field)} out of {len(artists_details)} artists")
 
         return artists_details
 
@@ -69,9 +65,7 @@ class GeniusArtistsExistingDetailsCollector(BaseArtistsExistingDetailsCollector)
     async def _query_about_document_and_build_artist_details(
         row: Row,
     ) -> ArtistExistingDetails:
-        document = await AboutDocument.find_one(
-            AboutDocument.entity_id == row.genius_id
-        )
+        document = await AboutDocument.find_one(AboutDocument.entity_id == row.genius_id)
 
         if document is None:
             about = None

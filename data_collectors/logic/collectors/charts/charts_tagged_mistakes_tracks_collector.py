@@ -17,16 +17,12 @@ class ChartsTaggedMistakesTracksCollector(ICollector):
         self._db_engine = db_engine
         self._spotify_client = spotify_client
 
-    async def collect(
-        self, update_requests: List[DBUpdateRequest]
-    ) -> List[Dict[str, dict]]:
+    async def collect(self, update_requests: List[DBUpdateRequest]) -> List[Dict[str, dict]]:
         ids = self._get_unique_tracks_ids(update_requests)
         non_existing_ids = await self._filter_out_existing_ids(ids)
 
         if non_existing_ids:
-            logger.info(
-                "Found non existing tracks ids. Querying Spotify for equivalent tracks records"
-            )
+            logger.info("Found non existing tracks ids. Querying Spotify for equivalent tracks records")
             raw_tracks = await self._spotify_client.tracks.info.run(non_existing_ids)
             return [{TRACK: track} for track in raw_tracks]
 

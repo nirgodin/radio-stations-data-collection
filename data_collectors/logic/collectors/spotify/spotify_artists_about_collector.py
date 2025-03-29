@@ -28,14 +28,10 @@ class SpotifyArtistsAboutCollector(ICollector):
 
     async def collect(self, id_name_map: Dict[str, str]) -> List[SpotifyArtistAbout]:
         if not id_name_map:
-            logger.warning(
-                "Did not receive any artist id to collect. Returning empty list"
-            )
+            logger.warning("Did not receive any artist id to collect. Returning empty list")
             return []
 
-        logger.info(
-            f"Starting to collect Spotify artists about for {len(id_name_map)} artists"
-        )
+        logger.info(f"Starting to collect Spotify artists about for {len(id_name_map)} artists")
         async with async_playwright() as p:
             browser = await p.chromium.launch()
 
@@ -56,14 +52,10 @@ class SpotifyArtistsAboutCollector(ICollector):
             )
 
         except Exception:
-            logger.exception(
-                "Received exception during artist details collection. Returning empty details by default"
-            )
+            logger.exception("Received exception during artist details collection. Returning empty details by default")
             return SpotifyArtistAbout(id=artist_id, name=artist_name)
 
-    async def _collect_single_artist_details(
-        self, browser: Browser, artist_id: str, artist_name: str
-    ):
+    async def _collect_single_artist_details(self, browser: Browser, artist_id: str, artist_name: str):
         html = await self._get_page_content(browser, artist_id)
         details = []
 

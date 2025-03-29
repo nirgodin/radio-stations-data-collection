@@ -7,9 +7,7 @@ from data_collectors.logic.models import SpotifyArtistAbout
 
 
 class SpotifyArtistAboutSerializer(ISerializer):
-    def serialize(
-        self, artist_id: str, artist_name: str, details: List[Dict[str, str]]
-    ) -> SpotifyArtistAbout:
+    def serialize(self, artist_id: str, artist_name: str, details: List[Dict[str, str]]) -> SpotifyArtistAbout:
         artist_about = SpotifyArtistAbout(id=artist_id, name=artist_name)
 
         for (

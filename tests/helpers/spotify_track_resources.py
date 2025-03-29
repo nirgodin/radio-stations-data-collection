@@ -14,9 +14,7 @@ class SpotifyTrackResources:
     track_name: str
 
     def __post_init__(self) -> None:
-        self.artist = SpotifyMockFactory.artist(
-            id=self.artist_id, name=self.artist_name
-        )
+        self.artist = SpotifyMockFactory.artist(id=self.artist_id, name=self.artist_name)
         self.album = SpotifyMockFactory.album(id=self.album_id, artists=[self.artist])
         self.track = SpotifyMockFactory.track(
             id=self.track_id,

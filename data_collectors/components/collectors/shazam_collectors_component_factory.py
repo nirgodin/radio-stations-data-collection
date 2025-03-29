@@ -17,9 +17,7 @@ class ShazamCollectorsComponentFactory:
     def __init__(self, tools: ToolsComponentFactory):
         self._tools = tools
 
-    def get_search_collector(
-        self, shazam: Shazam, pool_executor: AioPoolExecutor
-    ) -> ShazamSearchCollector:
+    def get_search_collector(self, shazam: Shazam, pool_executor: AioPoolExecutor) -> ShazamSearchCollector:
         entity_matcher = EntityMatcher(
             {
                 ShazamTrackEntityExtractor(): 0.7,
@@ -33,21 +31,15 @@ class ShazamCollectorsComponentFactory:
         )
 
     @staticmethod
-    def get_top_tracks_collector(
-        shazam: Shazam, pool_executor: AioPoolExecutor
-    ) -> ShazamTopTracksCollector:
+    def get_top_tracks_collector(shazam: Shazam, pool_executor: AioPoolExecutor) -> ShazamTopTracksCollector:
         return ShazamTopTracksCollector(shazam, pool_executor)
 
     @staticmethod
-    def get_artists_collector(
-        shazam: Shazam, pool_executor: AioPoolExecutor
-    ) -> ShazamArtistsCollector:
+    def get_artists_collector(shazam: Shazam, pool_executor: AioPoolExecutor) -> ShazamArtistsCollector:
         return ShazamArtistsCollector(shazam, pool_executor)
 
     @staticmethod
-    def get_tracks_collector(
-        shazam: Shazam, pool_executor: AioPoolExecutor
-    ) -> ShazamTracksCollector:
+    def get_tracks_collector(shazam: Shazam, pool_executor: AioPoolExecutor) -> ShazamTracksCollector:
         return ShazamTracksCollector(shazam, pool_executor)
 
     @staticmethod

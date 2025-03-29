@@ -25,27 +25,19 @@ class WikipediaArtistsAboutManager(IManager):
         self._page_summary_collector = page_summary_collector
 
     async def run(self, limit: Optional[int]) -> None:
-        logger.info(
-            f"Starting to run WikipediaArtistsAboutDocumentManager for {limit} artists"
-        )
+        logger.info(f"Starting to run WikipediaArtistsAboutDocumentManager for {limit} artists")
         raw_artists_details = await self._retrieve_artists_raw_details(limit)
-        logger.info(
-            f"Collecting {len(raw_artists_details)} artists Wikipedia page summaries"
-        )
+        logger.info(f"Collecting {len(raw_artists_details)} artists Wikipedia page summaries")
         artists_details = await self._pool_executor.run(
             iterable=raw_artists_details,
             func=self._collect_artist_wiki_summary,
             expected_type=WikipediaArtistAbout,
         )
-        logger.info(
-            f"Inserting Wikipedia summary documents for {len(artists_details)} artists summaries"
-        )
+        logger.info(f"Inserting Wikipedia summary documents for {len(artists_details)} artists summaries")
 
         await self._insert_wikipedia_summary_documents(artists_details)
 
-    async def _retrieve_artists_raw_details(
-        self, limit: Optional[int]
-    ) -> List[WikipediaArtistAbout]:
+    async def _retrieve_artists_raw_details(self, limit: Optional[int]) -> List[WikipediaArtistAbout]:
         query = (
             select(
                 SpotifyArtist.id,
@@ -78,9 +70,7 @@ class WikipediaArtistsAboutManager(IManager):
 
         return artist_details
 
-    async def _insert_wikipedia_summary_documents(
-        self, artists_details: List[WikipediaArtistAbout]
-    ) -> None:
+    async def _insert_wikipedia_summary_documents(self, artists_details: List[WikipediaArtistAbout]) -> None:
         results = await self._pool_executor.run(
             iterable=artists_details,
             func=self._insert_single_summary_document,
@@ -89,9 +79,7 @@ class WikipediaArtistsAboutManager(IManager):
         number_of_successful_results = len(results)
         inserted_documents = [result for result in results if result is True]
         number_of_inserted_documents = len(inserted_documents)
-        number_of_non_inserted_documents = (
-            number_of_successful_results - number_of_inserted_documents
-        )
+        number_of_non_inserted_documents = number_of_successful_results - number_of_inserted_documents
 
         logger.info(
             f"Out of {number_of_successful_results} results, {number_of_inserted_documents} wre inserted as new "

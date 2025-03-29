@@ -13,15 +13,11 @@ from data_collectors.logic.collectors.shazam.base_shazam_collector import (
 class ShazamArtistsCollector(BaseShazamCollector):
     async def collect(self, ids: List[str]) -> Any:
         logger.info(f"Starting to collect {len(ids)} Shazam artists")
-        return await self._pool_executor.run(
-            iterable=ids, func=self._extract_single_track_artist, expected_type=dict
-        )
+        return await self._pool_executor.run(iterable=ids, func=self._extract_single_track_artist, expected_type=dict)
 
     async def _extract_single_track_artist(self, artist_id: str) -> Optional[dict]:
         if artist_id is None:
-            logger.warning(
-                "Was not able to extract artist id from Shazam track. Ignoring"
-            )
+            logger.warning("Was not able to extract artist id from Shazam track. Ignoring")
             return
 
         return await self._shazam.artist_about(

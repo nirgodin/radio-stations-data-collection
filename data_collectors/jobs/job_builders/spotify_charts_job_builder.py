@@ -14,9 +14,7 @@ from data_collectors.logic.models import ScheduledJob
 
 
 class SpotifyChartsJobBuilder(BaseJobBuilder):
-    async def build(
-        self, next_run_time: Optional[datetime] = undefined
-    ) -> ScheduledJob:
+    async def build(self, next_run_time: Optional[datetime] = undefined) -> ScheduledJob:
         return ScheduledJob(
             task=self._task,
             id=JobId.SPOTIFY_CHARTS,
@@ -34,11 +32,7 @@ class SpotifyChartsJobBuilder(BaseJobBuilder):
     async def _calculate_next_run_time(self) -> datetime:
         engine = self._component_factory.tools.get_database_engine()
         spotify_charts = list(SPOTIFY_PLAYLIST_CHART_MAP.values())
-        query = (
-            select(func.max(ChartEntry.date))
-            .where(ChartEntry.chart.in_(spotify_charts))
-            .limit(1)
-        )
+        query = select(func.max(ChartEntry.date)).where(ChartEntry.chart.in_(spotify_charts)).limit(1)
         query_result = await execute_query(engine, query)
         latest_entry_date = query_result.scalars().first()
         today = datetime.today()
@@ -49,9 +43,7 @@ class SpotifyChartsJobBuilder(BaseJobBuilder):
         return today + timedelta(days=1)
 
     @staticmethod
-    def _should_execute_job_today(
-        today: datetime, latest_entry_date: Optional[datetime]
-    ) -> bool:
+    def _should_execute_job_today(today: datetime, latest_entry_date: Optional[datetime]) -> bool:
         if latest_entry_date is None:
             return True
 

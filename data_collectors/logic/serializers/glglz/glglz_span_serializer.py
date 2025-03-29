@@ -11,9 +11,7 @@ from data_collectors.utils.glglz import generate_chart_date_url
 
 
 class GlglzChartsSpanSerializer(IGlglzChartsSerializer):
-    def serialize(
-        self, chart_details: GlglzChartDetails, elements: List[Dict[str, str]]
-    ) -> List[ChartEntry]:
+    def serialize(self, chart_details: GlglzChartDetails, elements: List[Dict[str, str]]) -> List[ChartEntry]:
         logger.info("Serializing charts entries using span serializer")
         charts_entries = []
 
@@ -61,9 +59,7 @@ class GlglzChartsSpanSerializer(IGlglzChartsSerializer):
             return Chart.GLGLZ_WEEKLY_ISRAELI
 
         if existing_elements_number >= 20:
-            logger.warn(
-                f"Found list item with index `{existing_elements_number}`, where maximum 20 where expected"
-            )
+            logger.warn(f"Found list item with index `{existing_elements_number}`, where maximum 20 where expected")
 
         return Chart.GLGLZ_WEEKLY_INTERNATIONAL
 
@@ -81,12 +77,8 @@ class GlglzChartsSpanSerializer(IGlglzChartsSerializer):
     @staticmethod
     def _is_valid_element(element: Dict[str, str]) -> bool:
         content = element[GLGLZ_CHART_ENTRY]
-        return contains_any_alpha_character(content) and contains_any_substring(
-            content, ["-", "–"]
-        )
+        return contains_any_alpha_character(content) and contains_any_substring(content, ["-", "–"])
 
     @staticmethod
-    def _is_new_entry(
-        contender_entry: ChartEntry, existing_entries: List[ChartEntry]
-    ) -> bool:
+    def _is_new_entry(contender_entry: ChartEntry, existing_entries: List[ChartEntry]) -> bool:
         return not any(contender_entry.key == entry.key for entry in existing_entries)

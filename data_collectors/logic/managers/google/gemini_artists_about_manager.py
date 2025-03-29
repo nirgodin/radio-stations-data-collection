@@ -42,25 +42,19 @@ class GeminiArtistsAboutManager(IManager):
         else:
             logger.info("Did not find any relevant artist about to parse. Aborting")
 
-    async def _parse_artists_about(
-        self, artists_existing_details: List[ArtistExistingDetails]
-    ) -> None:
+    async def _parse_artists_about(self, artists_existing_details: List[ArtistExistingDetails]) -> None:
         responses = await self._parsing_collector.collect(
             existing_details=artists_existing_details,
             data_source=self._existing_details_collector.data_source,
         )
-        logger.info(
-            f"Received {len(responses)} valid extraction responses. Updating artists database entries"
-        )
+        logger.info(f"Received {len(responses)} valid extraction responses. Updating artists database entries")
         await self._pool_executor.run(
             iterable=responses,
             func=self._update_artist_entries,
             expected_type=type(None),
         )
 
-    async def _update_artist_entries(
-        self, response: ArtistDetailsExtractionResponse
-    ) -> None:
+    async def _update_artist_entries(self, response: ArtistDetailsExtractionResponse) -> None:
         missing_fields = self._extract_missing_fields(response)
 
         if missing_fields:
@@ -76,9 +70,7 @@ class GeminiArtistsAboutManager(IManager):
             )
             await self._db_updater.update_single(update_request)
 
-    def _extract_missing_fields(
-        self, response: ArtistDetailsExtractionResponse
-    ) -> List[Type[Artist]]:
+    def _extract_missing_fields(self, response: ArtistDetailsExtractionResponse) -> List[Type[Artist]]:
         missing_fields = []
 
         for field in [
@@ -96,9 +88,7 @@ class GeminiArtistsAboutManager(IManager):
         return missing_fields
 
     @staticmethod
-    def _is_relevant_field(
-        existing_field: Optional[Any], extracted_field: Optional[BaseDecision]
-    ) -> bool:
+    def _is_relevant_field(existing_field: Optional[Any], extracted_field: Optional[BaseDecision]) -> bool:
         if existing_field is None:
             if extracted_field is not None:
                 return extracted_field.value is not None
@@ -118,9 +108,7 @@ class GeminiArtistsAboutManager(IManager):
         return DBUpdateRequest(id=response.existing_details.id, values=values)
 
     @staticmethod
-    def _to_decisions(
-        response: ArtistDetailsExtractionResponse, missing_fields: List[Type[Artist]]
-    ) -> List[Decision]:
+    def _to_decisions(response: ArtistDetailsExtractionResponse, missing_fields: List[Type[Artist]]) -> List[Decision]:
         decisions = []
 
         for field in missing_fields:

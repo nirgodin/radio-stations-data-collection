@@ -20,9 +20,7 @@ class StatusReporterJobBuilder(BaseJobBuilder):
         super().__init__(component_factory)
         self._lookback_period = lookback_period or timedelta(days=7)
 
-    async def build(
-        self, next_run_time: Optional[datetime] = undefined
-    ) -> ScheduledJob:
+    async def build(self, next_run_time: Optional[datetime] = undefined) -> ScheduledJob:
         return ScheduledJob(
             task=self._task,
             id=JobId.STATUS_REPORTER,

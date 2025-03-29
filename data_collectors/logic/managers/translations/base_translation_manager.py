@@ -47,17 +47,13 @@ class BaseTranslationManager(IManager):
             .where(Translation.entity_source == self._entity_source)
             .where(Translation.entity_type == self._entity_type)
         )
-        query = self._query.where(self._orm.name.notin_(translations_subquery)).limit(
-            limit
-        )
+        query = self._query.where(self._orm.name.notin_(translations_subquery)).limit(limit)
         raw_result = await execute_query(engine=self._db_engine, query=query)
         query_result = raw_result.all()
 
         return {entity.id: entity.name for entity in query_result}
 
-    async def _translate_single_record(
-        self, entity_id_and_name: Tuple[str, str]
-    ) -> None:
+    async def _translate_single_record(self, entity_id_and_name: Tuple[str, str]) -> None:
         entity_id, entity_name = entity_id_and_name
         await self._translation_adapter.translate(
             text=entity_name,

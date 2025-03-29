@@ -29,9 +29,7 @@ class TranslationManagerFactory(BaseManagerFactory):
     ) -> ShazamIsraeliTracksTranslationManager:
         return self._create_translation_manager(ShazamIsraeliTracksTranslationManager)
 
-    def _create_translation_manager(
-        self, manager: Type[BaseTranslationManager]
-    ) -> TranslationManager:
+    def _create_translation_manager(self, manager: Type[BaseTranslationManager]) -> TranslationManager:
         return manager(
             db_engine=get_database_engine(),
             pool_executor=self.tools.get_pool_executor(),

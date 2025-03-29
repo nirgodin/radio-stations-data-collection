@@ -45,6 +45,9 @@ testpaths = ["tests"]
 markers = ["asyncio: mark a test as an asyncio coroutine"]
 addopts = "--asyncio-mode=auto"
 
+[tool.black]
+line-length = 120
+
 [tool.ruff]
 lint.ignore = [
     "F403", # unable to detect undefined names

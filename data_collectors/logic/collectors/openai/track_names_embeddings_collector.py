@@ -14,16 +14,12 @@ from data_collectors.logic.models import MissingTrack
 
 
 class TrackNamesEmbeddingsCollector(ICollector):
-    def __init__(
-        self, openai: OpenAI, pool_executor: SyncPoolExecutor = SyncPoolExecutor()
-    ):
+    def __init__(self, openai: OpenAI, pool_executor: SyncPoolExecutor = SyncPoolExecutor()):
         self._openai = openai
         self._pool_executor = pool_executor
 
     async def collect(self, missing_tracks: List[MissingTrack]) -> str:
-        logger.info(
-            f"Creating embeddings batch requests for {len(missing_tracks)} tracks"
-        )
+        logger.info(f"Creating embeddings batch requests for {len(missing_tracks)} tracks")
         requests = self._pool_executor.run(
             iterable=missing_tracks,
             func=self._create_single_embeddings_request,
@@ -31,9 +27,7 @@ class TrackNamesEmbeddingsCollector(ICollector):
         )
         logger.info("Generating embeddings batch input file")
         batch_input_file = self._generate_batch_input_file(requests)
-        logger.info(
-            f"Sending batch request with id `{batch_input_file.id}` to OpenAI batch endpoint"
-        )
+        logger.info(f"Sending batch request with id `{batch_input_file.id}` to OpenAI batch endpoint")
         batch: Batch = self._openai.batches.create(
             input_file_id=batch_input_file.id,
             endpoint="/v1/embeddings",

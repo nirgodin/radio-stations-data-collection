@@ -25,9 +25,7 @@ class ChunksDatabaseInserter(IPostgresDatabaseInserter):
             await insert_records(engine=self._db_engine, records=records)
 
         except IntegrityError:
-            logger.exception(
-                "Failed to insert records in one chunk. Trying to insert one by one"
-            )
+            logger.exception("Failed to insert records in one chunk. Trying to insert one by one")
             await self._insert_records_one_by_one(records)
 
     async def _insert_records_one_by_one(self, records: List[BaseORMModel]) -> None:

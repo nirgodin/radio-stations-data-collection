@@ -37,6 +37,4 @@ class MusixmatchCollectorsComponentFactory:
     def get_lyrics_collector(
         session: ClientSession, pool_executor: AioPoolExecutor, api_key: str
     ) -> MusixmatchLyricsCollector:
-        return MusixmatchLyricsCollector(
-            session=session, pool_executor=pool_executor, api_key=api_key
-        )
+        return MusixmatchLyricsCollector(session=session, pool_executor=pool_executor, api_key=api_key)

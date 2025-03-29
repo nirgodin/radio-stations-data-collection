@@ -36,7 +36,4 @@ class SpotifyFeaturedArtistsDatabaseInserter(BaseSpotifyDatabaseInserter):
         raw_artists = get_track_artists(track)
         raw_featured_artists = raw_artists[1:]
 
-        return [
-            FeaturedArtist.from_raw_artist(track_id, i, artist)
-            for i, artist in enumerate(raw_featured_artists)
-        ]
+        return [FeaturedArtist.from_raw_artist(track_id, i, artist) for i, artist in enumerate(raw_featured_artists)]

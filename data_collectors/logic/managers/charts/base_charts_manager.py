@@ -27,17 +27,11 @@ class BaseChartsManager(IManager, ABC):
 
     async def run(self, *args, **kwargs) -> None:
         logger.info(f"Starting to run `{self.__class__.__name__}` charts manager")
-        data_collector_kwargs: Dict[str, Any] = (
-            await self._generate_data_collector_kwargs(*args, **kwargs)
-        )
-        charts_entries = await self._charts_data_collector.collect(
-            **data_collector_kwargs
-        )
+        data_collector_kwargs: Dict[str, Any] = await self._generate_data_collector_kwargs(*args, **kwargs)
+        charts_entries = await self._charts_data_collector.collect(**data_collector_kwargs)
 
         if charts_entries:
-            charts_entries_details = await self._charts_tracks_collector.collect(
-                charts_entries
-            )
+            charts_entries_details = await self._charts_tracks_collector.collect(charts_entries)
             await self._insert_records(charts_entries_details)
 
         else:
@@ -47,14 +41,8 @@ class BaseChartsManager(IManager, ABC):
     async def _generate_data_collector_kwargs(self, *args, **kwargs) -> Dict[str, Any]:
         raise NotImplementedError
 
-    async def _insert_records(
-        self, charts_entries_details: List[RadioChartEntryDetails]
-    ) -> None:
-        spotify_tracks = [
-            detail.track
-            for detail in charts_entries_details
-            if detail.track is not None
-        ]
+    async def _insert_records(self, charts_entries_details: List[RadioChartEntryDetails]) -> None:
+        spotify_tracks = [detail.track for detail in charts_entries_details if detail.track is not None]
 
         if spotify_tracks:
             logger.info("Starting to insert spotify tracks to all relevant tables")

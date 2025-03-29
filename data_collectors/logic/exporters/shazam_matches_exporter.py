@@ -49,9 +49,7 @@ class ShazamMatchesExporter(IExporter):
         )
         logger.info(f"Exported data to sheet with url `{spreadsheet.url}`")
 
-    async def _query_spotify_to_shazam_tracks_mapping(
-        self, limit: Optional[int]
-    ) -> DataFrame:
+    async def _query_spotify_to_shazam_tracks_mapping(self, limit: Optional[int]) -> DataFrame:
         logger.info("Querying comparison data from db")
         non_null_condition = and_(
             SpotifyTrack.name.isnot(None),
@@ -74,12 +72,8 @@ class ShazamMatchesExporter(IExporter):
 
     def _pre_process_output_data(self, data: DataFrame) -> None:
         logger.info("Pre processing data")
-        data[SPOTIFY_KEY_COLUMN] = (
-            data[SPOTIFY_ARTIST_NAME_COLUMN] + " - " + data[SPOTIFY_TRACK_NAME_COLUMN]
-        )
-        data[SHAZAM_KEY_COLUMN] = (
-            data[SHAZAM_ARTIST_NAME_COLUMN] + " - " + data[SHAZAM_TRACK_NAME_COLUMN]
-        )
+        data[SPOTIFY_KEY_COLUMN] = data[SPOTIFY_ARTIST_NAME_COLUMN] + " - " + data[SPOTIFY_TRACK_NAME_COLUMN]
+        data[SHAZAM_KEY_COLUMN] = data[SHAZAM_ARTIST_NAME_COLUMN] + " - " + data[SHAZAM_TRACK_NAME_COLUMN]
         similarities = self._pool_executor.run(
             iterable=[row for _, row in data.iterrows()],
             func=self._compute_keys_similarity,

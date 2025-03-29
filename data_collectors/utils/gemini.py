@@ -12,13 +12,9 @@ def serialize_generative_model_response(
         if response.parts:
             return model.parse_raw(response.text)
 
-        logger.warning(
-            "Did not receive valid response parts. Returning None by default"
-        )
+        logger.warning("Did not receive valid response parts. Returning None by default")
         return None
 
     except ValidationError:
-        logger.exception(
-            "Was not able to serialize model response. Returning None by default"
-        )
+        logger.exception("Was not able to serialize model response. Returning None by default")
         return None

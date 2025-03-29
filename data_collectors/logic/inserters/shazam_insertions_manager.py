@@ -40,9 +40,7 @@ class ShazamInsertionsManager:
         return serialized_records
 
     async def _fetch_raw_records(self, ids: List[str]) -> List[List[dict]]:
-        logger.info(
-            f"Starting to collect tracks and artists from shazam for {len(ids)} tracks ids"
-        )
+        logger.info(f"Starting to collect tracks and artists from shazam for {len(ids)} tracks ids")
         tracks = await self._tracks_collector.collect(ids)
         artists_ids = {self._extract_artist_id(track) for track in tracks}
         artists = await self._artists_collector.collect(list(artists_ids))

@@ -21,9 +21,7 @@ class GeniusArtistsCollector(ICollector):
         self._pool_executor = pool_executor
         self._session = session
 
-    async def collect(
-        self, ids: List[str], text_format: GeniusTextFormat = GeniusTextFormat.PLAIN
-    ) -> Any:
+    async def collect(self, ids: List[str], text_format: GeniusTextFormat = GeniusTextFormat.PLAIN) -> Any:
         logger.info(f"Starting to collect {len(ids)} artists from Genius")
         return await self._pool_executor.run(
             iterable=ids,
@@ -31,9 +29,7 @@ class GeniusArtistsCollector(ICollector):
             expected_type=dict,
         )
 
-    async def _collect_single_artist(
-        self, text_format: GeniusTextFormat, artist_id: str
-    ) -> dict:
+    async def _collect_single_artist(self, text_format: GeniusTextFormat, artist_id: str) -> dict:
         url = GENIUS_ARTIST_URL_FORMAT.format(id=artist_id)
         params = {TEXT_FORMAT: text_format.value}
 

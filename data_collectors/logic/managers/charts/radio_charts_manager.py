@@ -38,9 +38,7 @@ class RadioChartsManager(BaseChartsManager):
         self._drive_client = drive_client
         self._db_engine = db_engine
 
-    async def _generate_data_collector_kwargs(
-        self, chart: Chart, limit: Optional[int]
-    ) -> Dict[str, Any]:
+    async def _generate_data_collector_kwargs(self, chart: Chart, limit: Optional[int]) -> Dict[str, Any]:
         existing_files_names = await self._query_existing_files_names(chart)
         logger.info("Starting to select non existing charts to insert")
         drive_dir = self._charts_drive_dir_mapping[chart]
@@ -56,14 +54,8 @@ class RadioChartsManager(BaseChartsManager):
         return {"chart_drive_files": files, "chart": chart}
 
     async def _query_existing_files_names(self, chart: Chart) -> List[str]:
-        logger.info(
-            "Querying existing files names to prevent double insertion of same chart entries"
-        )
-        query = (
-            select(ChartEntry.comment)
-            .distinct(ChartEntry.comment)
-            .where(ChartEntry.chart == chart)
-        )
+        logger.info("Querying existing files names to prevent double insertion of same chart entries")
+        query = select(ChartEntry.comment).distinct(ChartEntry.comment).where(ChartEntry.chart == chart)
         query_result = await execute_query(engine=self._db_engine, query=query)
 
         return query_result.scalars().all()

@@ -9,9 +9,7 @@ class FeaturedArtist(BaseModel):
     position: int
 
     @classmethod
-    def from_raw_artist(
-        cls, track_id: str, index: int, artist: dict
-    ) -> "FeaturedArtist":
+    def from_raw_artist(cls, track_id: str, index: int, artist: dict) -> "FeaturedArtist":
         return cls(
             id=artist[ID],
             track_id=track_id,

@@ -13,7 +13,5 @@ class BaseJobBuilder(ABC):
         self._component_factory = component_factory
 
     @abstractmethod
-    async def build(
-        self, next_run_time: Optional[datetime] = undefined
-    ) -> ScheduledJob:
+    async def build(self, next_run_time: Optional[datetime] = undefined) -> ScheduledJob:
         raise NotImplementedError

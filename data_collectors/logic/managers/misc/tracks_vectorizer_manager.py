@@ -47,9 +47,7 @@ class TracksVectorizerManager(IManager):
             training_data=training_data,
             column_transformer=column_transformer,
         )
-        await self._milvus_inserter.insert(
-            collection_name=TRACKS_FEATURES_COLLECTION, records=records
-        )
+        await self._milvus_inserter.insert(collection_name=TRACKS_FEATURES_COLLECTION, records=records)
         self._upload_column_transformer(column_transformer)
 
     @staticmethod
@@ -90,9 +88,7 @@ class TracksVectorizerManager(IManager):
         )
 
     @staticmethod
-    def _create_single_record(
-        data: DataFrame, transformed_data: DataFrame, index: int
-    ) -> dict:
+    def _create_single_record(data: DataFrame, transformed_data: DataFrame, index: int) -> dict:
         features = transformed_data.loc[index]
         return {ID: data.at[index, TRACK_ID], FEATURES_FIELD_NAME: features.tolist()}
 
@@ -109,9 +105,7 @@ class TracksVectorizerManager(IManager):
             self._google_drive_client.upload(file_metadata)
 
     @staticmethod
-    def _save_column_transformer(
-        dir_path: str, column_transformer: ColumnTransformer
-    ) -> str:
+    def _save_column_transformer(dir_path: str, column_transformer: ColumnTransformer) -> str:
         file_path = os.path.join(dir_path, "column_transformer.pkl")
 
         with open(file_path, "wb") as f:

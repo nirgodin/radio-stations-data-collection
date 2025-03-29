@@ -27,11 +27,7 @@ class TracksLyricsMissingIDsManager(IManager):
     async def _query_missing_ids(self, limit: Optional[int]) -> List[str]:
         logger.info("Querying tracks ids that are missing from tracks_lyrics table")
         tracks_lyrics_subquery = select(TrackLyrics.id)
-        query = (
-            select(SpotifyTrack.id)
-            .where(SpotifyTrack.id.notin_(tracks_lyrics_subquery))
-            .limit(limit)
-        )
+        query = select(SpotifyTrack.id).where(SpotifyTrack.id.notin_(tracks_lyrics_subquery)).limit(limit)
         query_result = await execute_query(engine=self._db_engine, query=query)
 
         return query_result.scalars().all()

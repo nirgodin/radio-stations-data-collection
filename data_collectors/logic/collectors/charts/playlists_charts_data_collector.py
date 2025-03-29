@@ -36,22 +36,16 @@ class PlaylistsChartsDataCollector(IChartsDataCollector):
 
         return charts_entries
 
-    def _convert_single_playlist_to_chart_entries(
-        self, playlist: dict
-    ) -> List[ChartEntry]:
+    def _convert_single_playlist_to_chart_entries(self, playlist: dict) -> List[ChartEntry]:
         tracks = safe_nested_get(playlist, [TRACKS, ITEMS])
         playlist_id = playlist[ID]
         chart = self._playlist_id_to_chart_mapping[playlist_id]
         chart_date = datetime.now().date()
 
-        return self._create_chart_entries(
-            tracks=tracks, playlist_id=playlist_id, chart=chart, chart_date=chart_date
-        )
+        return self._create_chart_entries(tracks=tracks, playlist_id=playlist_id, chart=chart, chart_date=chart_date)
 
     @staticmethod
-    def _create_chart_entries(
-        tracks: List[dict], playlist_id: str, chart: Chart, chart_date: date
-    ) -> List[ChartEntry]:
+    def _create_chart_entries(tracks: List[dict], playlist_id: str, chart: Chart, chart_date: date) -> List[ChartEntry]:
         chart_entries = []
 
         for i, track in enumerate(tracks):

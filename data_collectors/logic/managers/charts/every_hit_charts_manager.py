@@ -41,9 +41,7 @@ class EveryHitChartsManager(BaseChartsManager):
         self, date_ranges: Optional[List[DateRange]], limit: Optional[int]
     ) -> Dict[str, List[DateRange]]:
         if date_ranges is None:
-            last_chart_date = (
-                await self._query_last_chart_date() or LAST_DATE_WITHOUT_EVERY_HIT_CHART
-            )
+            last_chart_date = await self._query_last_chart_date() or LAST_DATE_WITHOUT_EVERY_HIT_CHART
             date_ranges = self._generate_date_ranges(last_chart_date, limit)
 
         return {"date_ranges": date_ranges}
@@ -59,9 +57,7 @@ class EveryHitChartsManager(BaseChartsManager):
 
         return query_result.scalars().first()
 
-    def _generate_date_ranges(
-        self, last_chart_date: datetime, limit: int
-    ) -> List[DateRange]:
+    def _generate_date_ranges(self, last_chart_date: datetime, limit: int) -> List[DateRange]:
         date_ranges = [self._build_single_date_range(last_chart_date)]
 
         while len(date_ranges) < limit:

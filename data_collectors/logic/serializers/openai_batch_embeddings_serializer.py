@@ -16,9 +16,7 @@ from data_collectors.contract import ISerializer
 
 
 class OpenAIBatchEmbeddingsSerializer(ISerializer):
-    def serialize(
-        self, batch_records: List[dict], track_id_name_mapping: Dict[str, str]
-    ) -> List[dict]:
+    def serialize(self, batch_records: List[dict], track_id_name_mapping: Dict[str, str]) -> List[dict]:
         logger.info("Serializing batch records to embeddings data records")
         records = []
 
@@ -30,9 +28,7 @@ class OpenAIBatchEmbeddingsSerializer(ISerializer):
 
         return records
 
-    def _serialize_single_record(
-        self, record: dict, track_id_name_mapping: Dict[str, str]
-    ) -> Optional[dict]:
+    def _serialize_single_record(self, record: dict, track_id_name_mapping: Dict[str, str]) -> Optional[dict]:
         track_id = record[CUSTOM_ID]
 
         if record.get("error") is None:

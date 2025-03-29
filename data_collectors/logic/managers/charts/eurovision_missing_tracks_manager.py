@@ -31,17 +31,13 @@ class EurovisionMissingTracksManager(IManager):
     async def run(self, limit: Optional[int]) -> None:
         logger.info("Starting to run EurovisionMissingTracksManager")
         tracks_keys_and_dates = await self._query_missing_eurovision_tracks(limit)
-        chart_id_tracks_mapping = await self._missing_tracks_collector.collect(
-            tracks_keys_and_dates
-        )
+        chart_id_tracks_mapping = await self._missing_tracks_collector.collect(tracks_keys_and_dates)
         tracks = list(chart_id_tracks_mapping.values())
         logger.info("Inserting collected tracks to spotify tables")
         await self._spotify_insertions_manager.insert(tracks)
         await self._update_charts_entries_records(chart_id_tracks_mapping)
 
-    async def _query_missing_eurovision_tracks(
-        self, limit: Optional[int]
-    ) -> List[EurovisionRecord]:
+    async def _query_missing_eurovision_tracks(self, limit: Optional[int]) -> List[EurovisionRecord]:
         logger.info("Querying database for Eurovision records without track id")
         query = (
             select(ChartEntry.id, ChartEntry.key, ChartEntry.date)
@@ -54,18 +50,14 @@ class EurovisionMissingTracksManager(IManager):
 
         return [EurovisionRecord.from_row(row) for row in query_result.all()]
 
-    async def _update_charts_entries_records(
-        self, chart_id_tracks_mapping: Dict[int, dict]
-    ) -> None:
+    async def _update_charts_entries_records(self, chart_id_tracks_mapping: Dict[int, dict]) -> None:
         logger.info("Updating charts_entries table records with collected tracks ids")
         update_requests = self._to_update_requests(chart_id_tracks_mapping)
 
         await self._db_updater.update(update_requests)
 
     @staticmethod
-    def _to_update_requests(
-        chart_id_tracks_mapping: Dict[int, dict]
-    ) -> List[DBUpdateRequest]:
+    def _to_update_requests(chart_id_tracks_mapping: Dict[int, dict]) -> List[DBUpdateRequest]:
         update_requests = []
 
         for id_, track in chart_id_tracks_mapping.items():

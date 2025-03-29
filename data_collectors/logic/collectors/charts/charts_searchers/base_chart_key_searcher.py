@@ -36,23 +36,17 @@ class BaseChartKeySearcher(ABC):
         search_item = await self._build_search_item(key)
 
         if search_item is not None:
-            search_result = await self._spotify_client.search.search_item.run_single(
-                search_item
-            )
+            search_result = await self._spotify_client.search.search_item.run_single(search_item)
             return self._extract_matching_track(search_item, search_result)
 
     @abstractmethod
     async def _build_search_item(self, key: str) -> Optional[SearchItem]:
         raise NotImplementedError
 
-    def _extract_matching_track(
-        self, search_item: SearchItem, search_result: dict
-    ) -> Optional[dict]:
+    def _extract_matching_track(self, search_item: SearchItem, search_result: dict) -> Optional[dict]:
         items = safe_nested_get(search_result, [TRACKS, ITEMS], [])
         matching_entities = self._build_matching_entities_options(search_item)
-        candidate = self._entity_matcher.match(
-            entities=matching_entities, candidates=items
-        )
+        candidate = self._entity_matcher.match(entities=matching_entities, candidates=items)
 
         if candidate is None:
             logger.info("Did not find any track that matches . Ignoring")
@@ -60,7 +54,5 @@ class BaseChartKeySearcher(ABC):
         return candidate
 
     @abstractmethod
-    def _build_matching_entities_options(
-        self, search_item: SearchItem
-    ) -> List[MatchingEntity]:
+    def _build_matching_entities_options(self, search_item: SearchItem) -> List[MatchingEntity]:
         raise NotImplementedError

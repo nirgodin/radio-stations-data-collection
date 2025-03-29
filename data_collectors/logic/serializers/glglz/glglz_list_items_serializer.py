@@ -10,16 +10,12 @@ from data_collectors.utils.glglz import generate_chart_date_url
 
 
 class GlglzChartsListItemsSerializer(IGlglzChartsSerializer):
-    def serialize(
-        self, chart_details: GlglzChartDetails, elements: List[Dict[str, str]]
-    ) -> List[ChartEntry]:
+    def serialize(self, chart_details: GlglzChartDetails, elements: List[Dict[str, str]]) -> List[ChartEntry]:
         logger.info("Serializing charts entries using list items serializer")
         charts_entries = []
 
         for i, element in enumerate(elements):
-            entry = self._create_single_chart_entry(
-                chart_details=chart_details, index=i, element=element
-            )
+            entry = self._create_single_chart_entry(chart_details=chart_details, index=i, element=element)
             charts_entries.append(entry)
 
         return charts_entries
@@ -50,9 +46,7 @@ class GlglzChartsListItemsSerializer(IGlglzChartsSerializer):
             return Chart.GLGLZ_WEEKLY_ISRAELI
 
         if index >= 20:
-            logger.warn(
-                f"Found list item with index `{index}`, where maximum 20 where expected"
-            )
+            logger.warn(f"Found list item with index `{index}`, where maximum 20 where expected")
 
         return Chart.GLGLZ_WEEKLY_INTERNATIONAL
 

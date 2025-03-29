@@ -13,9 +13,7 @@ from data_collectors.logic.models import ScheduledJob
 
 
 class ShazamTopTracksJobBuilder(BaseJobBuilder):
-    async def build(
-        self, next_run_time: Optional[datetime] = undefined
-    ) -> ScheduledJob:
+    async def build(self, next_run_time: Optional[datetime] = undefined) -> ScheduledJob:
         return ScheduledJob(
             task=self._task,
             id=JobId.SHAZAM_TOP_TRACKS,
@@ -40,9 +38,7 @@ class ShazamTopTracksJobBuilder(BaseJobBuilder):
         return today + timedelta(days=1)
 
     @staticmethod
-    def _should_execute_job_today(
-        today: datetime, latest_entry_date: Optional[datetime]
-    ) -> bool:
+    def _should_execute_job_today(today: datetime, latest_entry_date: Optional[datetime]) -> bool:
         if latest_entry_date is None:
             return True
 

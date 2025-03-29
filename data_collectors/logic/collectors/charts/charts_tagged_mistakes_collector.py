@@ -34,19 +34,13 @@ class ChartsTaggedMistakesCollector(ICollector):
         update_requests = []
 
         for id_ in existing_rows_ids:
-            request = DBUpdateRequest(
-                id=id_, values={ChartEntry.track_id: row["correct_track_id"]}
-            )
+            request = DBUpdateRequest(id=id_, values={ChartEntry.track_id: row["correct_track_id"]})
             update_requests.append(request)
 
         return update_requests
 
     async def _query_existing_rows_ids(self, row: Series) -> List[int]:
-        query = (
-            select(ChartEntry.id)
-            .where(ChartEntry.chart == Chart(row["chart"]))
-            .where(ChartEntry.key == row["key"])
-        )
+        query = select(ChartEntry.id).where(ChartEntry.chart == Chart(row["chart"])).where(ChartEntry.key == row["key"])
         query_result = await execute_query(engine=self._db_engine, query=query)
 
         return query_result.scalars().all()

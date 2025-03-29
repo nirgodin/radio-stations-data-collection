@@ -6,9 +6,7 @@ from data_collectors.logic.models import WebElement, HTMLElement
 
 
 class WebElementsExtractor:
-    def extract(
-        self, html: str, web_element: WebElement
-    ) -> List[Optional[Dict[str, str]]]:
+    def extract(self, html: str, web_element: WebElement) -> List[Optional[Dict[str, str]]]:
         soup = BeautifulSoup(html, "html.parser")
         tag = soup.find(web_element.type.value, class_=web_element.class_)
 
@@ -26,39 +24,24 @@ class WebElementsExtractor:
 
         return self._serialize_details(details)
 
-    def _extract_multiple_details(
-        self, tag: Optional[Tag], web_element: WebElement
-    ) -> List[Optional[Dict[str, str]]]:
+    def _extract_multiple_details(self, tag: Optional[Tag], web_element: WebElement) -> List[Optional[Dict[str, str]]]:
         if tag is None:
             return []
 
         tags = tag.find_all(web_element.type.value, class_=web_element.class_)
         if web_element.child_element is not None and tags is not None:
-            tags = [
-                self._extract_child_elements_tags(tag, web_element.child_element)
-                for tag in tags
-            ]
+            tags = [self._extract_child_elements_tags(tag, web_element.child_element) for tag in tags]
 
         if tags is None:
             return []
 
         if web_element.enumerate:
-            return [
-                self._extract_single_detail(child_tag, web_element, i + 1)
-                for i, child_tag in enumerate(tags)
-            ]
+            return [self._extract_single_detail(child_tag, web_element, i + 1) for i, child_tag in enumerate(tags)]
         else:
-            return [
-                self._extract_single_detail(child_tag, web_element)
-                for child_tag in tags
-            ]
+            return [self._extract_single_detail(child_tag, web_element) for child_tag in tags]
 
-    def _extract_child_elements_tags(
-        self, father_element_tag: Tag, child_element: WebElement
-    ) -> Tag:
-        child_tag = father_element_tag.find_next(
-            child_element.type.value, class_=child_element.class_
-        )
+    def _extract_child_elements_tags(self, father_element_tag: Tag, child_element: WebElement) -> Tag:
+        child_tag = father_element_tag.find_next(child_element.type.value, class_=child_element.class_)
 
         if child_element.child_element is None:
             return child_tag
@@ -86,9 +69,7 @@ class WebElementsExtractor:
 
         return [{f"{web_element.name}{number}": tag_value}]
 
-    def _extract_tag_value(
-        self, tag: Tag, web_element: WebElement
-    ) -> Union[str, List[str]]:
+    def _extract_tag_value(self, tag: Tag, web_element: WebElement) -> Union[str, List[str]]:
         if web_element.expected_type is str:
             if web_element.split_breaks:
                 return self._split_line_breaks(tag)
@@ -98,9 +79,7 @@ class WebElementsExtractor:
         if web_element.expected_type is list:
             return list(tag.stripped_strings)
 
-        raise ValueError(
-            f"Got unexpected return type for web element `{web_element.name}`"
-        )
+        raise ValueError(f"Got unexpected return type for web element `{web_element.name}`")
 
     @staticmethod
     def _split_line_breaks(tag: Tag) -> List[str]:
@@ -119,9 +98,7 @@ class WebElementsExtractor:
         return split_text
 
     @staticmethod
-    def _serialize_details(
-        details: List[Union[List[Dict[str, str]], Dict[str, str]]]
-    ) -> List[Dict[str, str]]:
+    def _serialize_details(details: List[Union[List[Dict[str, str]], Dict[str, str]]]) -> List[Dict[str, str]]:
         serialized_details = []
 
         for detail in details:
@@ -130,8 +107,6 @@ class WebElementsExtractor:
             elif isinstance(detail, list):
                 serialized_details.extend(detail)
             else:
-                raise ValueError(
-                    "Encountered unexpected detail type. Only list and dict are supported"
-                )
+                raise ValueError("Encountered unexpected detail type. Only list and dict are supported")
 
         return serialized_details

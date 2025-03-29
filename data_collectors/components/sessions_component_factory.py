@@ -20,20 +20,14 @@ class SessionsComponentFactory:
         credentials = self._env.get_spotify_credentials()
         token_request_url = self._env.get_spotify_token_request_url()
 
-        return SpotifySession(
-            token_request_url=token_request_url, credentials=credentials
-        )
+        return SpotifySession(token_request_url=token_request_url, credentials=credentials)
 
     @staticmethod
     def get_authorized_spotify_session() -> SpotifySession:
-        cache_handler = RedisSessionCacheHandler(
-            key="genie_radio_auth_v2", redis=get_redis()
-        )
+        cache_handler = RedisSessionCacheHandler(key="genie_radio_auth_v2", redis=get_redis())
         credentials = ClientCredentials(grant_type=SpotifyGrantType.AUTHORIZATION_CODE)
 
-        return SpotifySession(
-            session_cache_handler=cache_handler, credentials=credentials
-        )
+        return SpotifySession(session_cache_handler=cache_handler, credentials=credentials)
 
     @staticmethod
     def get_client_session() -> ClientSession:

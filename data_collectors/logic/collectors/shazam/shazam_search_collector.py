@@ -29,9 +29,7 @@ class ShazamSearchCollector(BaseSearchCollector, BaseShazamCollector):
     def _to_query(self, missing_track: MissingTrack) -> str:
         return f"{missing_track.artist_name} - {missing_track.track_name}"
 
-    async def _search_single_track(
-        self, missing_track: MissingTrack
-    ) -> Dict[MissingTrack, Optional[str]]:
+    async def _search_single_track(self, missing_track: MissingTrack) -> Dict[MissingTrack, Optional[str]]:
         query = self._to_query(missing_track)
         response = await self._shazam.search_track(query=query, limit=1)
 
@@ -43,9 +41,7 @@ class ShazamSearchCollector(BaseSearchCollector, BaseShazamCollector):
 
         return {missing_track: track_id}
 
-    def _extract_matching_track_id(
-        self, response: Dict[str, dict], missing_track: MissingTrack
-    ) -> Optional[str]:
+    def _extract_matching_track_id(self, response: Dict[str, dict], missing_track: MissingTrack) -> Optional[str]:
         hits = safe_nested_get(response, [TRACKS, HITS])
 
         if hits:

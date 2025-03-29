@@ -38,13 +38,9 @@ class GoogleArtistsOriginGeocodingManager(IManager):
         if response.is_from_cache:
             return DBUpdateRequest(id=response.id, values=response.result)
 
-        serialized_request = self._geocoding_serializer.serialize(
-            response.id, response.result
-        )
+        serialized_request = self._geocoding_serializer.serialize(response.id, response.result)
 
         if serialized_request is not None:
             return serialized_request
         else:
-            logger.warn(
-                f"Could not serialize geocoding response for artist `{response.id}`. Skipping"
-            )
+            logger.warn(f"Could not serialize geocoding response for artist `{response.id}`. Skipping")

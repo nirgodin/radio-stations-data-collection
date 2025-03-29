@@ -40,9 +40,7 @@ class ArtistsImagesGenderManager(IManager):
 
         return query_result.scalars().all()
 
-    def _build_update_requests(
-        self, ids_images_mapping: Dict[str, ndarray]
-    ) -> List[DBUpdateRequest]:
+    def _build_update_requests(self, ids_images_mapping: Dict[str, ndarray]) -> List[DBUpdateRequest]:
         update_requests = []
 
         for artist_id, image in ids_images_mapping.items():

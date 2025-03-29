@@ -17,9 +17,7 @@ from data_collectors.utils.glglz import generate_chart_date_url
 
 
 class GlglzChartsParagraphSerializer(IGlglzChartsSerializer):
-    def serialize(
-        self, chart_details: GlglzChartDetails, elements: List[Dict[str, str]]
-    ) -> List[ChartEntry]:
+    def serialize(self, chart_details: GlglzChartDetails, elements: List[Dict[str, str]]) -> List[ChartEntry]:
         logger.info("Serializing charts entries using paragraph serializer")
         chart = None
         charts_entries = []
@@ -36,9 +34,7 @@ class GlglzChartsParagraphSerializer(IGlglzChartsSerializer):
 
         return charts_entries
 
-    def _get_relevant_chart(
-        self, element_text: str, existing_chart: Optional[Chart]
-    ) -> Optional[Chart]:
+    def _get_relevant_chart(self, element_text: str, existing_chart: Optional[Chart]) -> Optional[Chart]:
         if self._is_chart_name_element(element_text):
             chart_name, _ = self._get_most_similar_chart_name(element_text)
             return self._names_charts_mapping[chart_name]
@@ -55,9 +51,7 @@ class GlglzChartsParagraphSerializer(IGlglzChartsSerializer):
         position = extract_int_from_string(split_text[0])
 
         if position is None:
-            logger.warn(
-                f"Was not able to convert `{split_text[0]}` to position integer. Skipping record"
-            )
+            logger.warn(f"Was not able to convert `{split_text[0]}` to position integer. Skipping record")
             return
 
         entry_key = POSITION_TRACK_NAME_SEPARATOR.join(split_text[1:])
@@ -84,10 +78,7 @@ class GlglzChartsParagraphSerializer(IGlglzChartsSerializer):
         return similarity > CHART_NAME_SIMILARITY_THRESHOLD
 
     def _get_most_similar_chart_name(self, text: str) -> Tuple[str, float]:
-        similarities = {
-            chart: compute_similarity_score(text, chart)
-            for chart in self._names_charts_mapping.keys()
-        }
+        similarities = {chart: compute_similarity_score(text, chart) for chart in self._names_charts_mapping.keys()}
         most_similar_chart = max(similarities, key=lambda k: similarities[k])
         similarity = similarities[most_similar_chart]
 

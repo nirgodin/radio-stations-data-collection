@@ -12,9 +12,7 @@ from data_collectors.logic.models import LyricsSourceDetails
 
 class MiscellaneousManagerFactory(BaseManagerFactory):
     def get_track_names_embeddings_manager(self) -> TrackNamesEmbeddingsManager:
-        embeddings_collector = (
-            self.collectors.openai.get_track_names_embeddings_collector()
-        )
+        embeddings_collector = self.collectors.openai.get_track_names_embeddings_collector()
 
         return TrackNamesEmbeddingsManager(
             db_engine=get_database_engine(),
@@ -22,9 +20,7 @@ class MiscellaneousManagerFactory(BaseManagerFactory):
             db_updater=self.updaters.get_values_updater(),
         )
 
-    def get_track_names_embeddings_retriever(
-        self, milvus_client: MilvusClient
-    ) -> TrackNamesEmbeddingsRetrievalManager:
+    def get_track_names_embeddings_retriever(self, milvus_client: MilvusClient) -> TrackNamesEmbeddingsRetrievalManager:
         return TrackNamesEmbeddingsRetrievalManager(
             db_engine=get_database_engine(),
             embeddings_retriever=self.collectors.openai.get_track_names_embeddings_retrieval_collector(),
@@ -32,16 +28,12 @@ class MiscellaneousManagerFactory(BaseManagerFactory):
             db_updater=self.updaters.get_values_updater(),
         )
 
-    def get_radio_snapshots_manager(
-        self, spotify_session: SpotifySession
-    ) -> RadioStationsSnapshotsManager:
+    def get_radio_snapshots_manager(self, spotify_session: SpotifySession) -> RadioStationsSnapshotsManager:
         spotify_client = self.tools.get_spotify_client(spotify_session)
 
         return RadioStationsSnapshotsManager(
             spotify_client=spotify_client,
-            spotify_insertions_manager=self.inserters.spotify.get_insertions_manager(
-                spotify_client
-            ),
+            spotify_insertions_manager=self.inserters.spotify.get_insertions_manager(spotify_client),
             radio_tracks_database_inserter=self.inserters.get_radio_tracks_inserter(),
         )
 
@@ -82,9 +74,7 @@ class MiscellaneousManagerFactory(BaseManagerFactory):
             chunks_inserter=self.inserters.get_chunks_database_inserter(),
         )
 
-    def get_tracks_vectorizer_manager(
-        self, milvus_client: MilvusClient
-    ) -> TracksVectorizerManager:
+    def get_tracks_vectorizer_manager(self, milvus_client: MilvusClient) -> TracksVectorizerManager:
         return TracksVectorizerManager(
             train_data_collector=self.collectors.misc.get_tracks_vectorizer_train_data_collector(),
             milvus_inserter=self.inserters.get_milvus_chunks_inserter(milvus_client),
@@ -92,9 +82,7 @@ class MiscellaneousManagerFactory(BaseManagerFactory):
             google_drive_client=self.tools.get_google_drive_client(),
         )
 
-    def get_release_radar_manager(
-        self, spotify_authorized_session: SpotifySession
-    ) -> ReleaseRadarManager:
+    def get_release_radar_manager(self, spotify_authorized_session: SpotifySession) -> ReleaseRadarManager:
         return ReleaseRadarManager(
             db_engine=get_database_engine(),
             spotify_client=self.tools.get_spotify_client(spotify_authorized_session),

@@ -10,9 +10,7 @@ from data_collectors.logic.models import ScheduledJob
 
 
 class MakoHitListChartJobBuilder(BaseJobBuilder):
-    async def build(
-        self, next_run_time: Optional[datetime] = undefined
-    ) -> ScheduledJob:
+    async def build(self, next_run_time: Optional[datetime] = undefined) -> ScheduledJob:
         return ScheduledJob(
             task=self._task,
             id=JobId.MAKO_HIT_LIST,
@@ -24,7 +22,5 @@ class MakoHitListChartJobBuilder(BaseJobBuilder):
         spotify_session = self._component_factory.sessions.get_spotify_session()
 
         async with spotify_session as session:
-            manager = self._component_factory.charts.get_mako_hit_list_charts_manager(
-                session
-            )
+            manager = self._component_factory.charts.get_mako_hit_list_charts_manager(session)
             await manager.run()

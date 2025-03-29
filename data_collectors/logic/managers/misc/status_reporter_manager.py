@@ -31,14 +31,10 @@ class StatusReporterManager(IManager):
         report = self._merge_status_reports(reports)
         logger.info("Mailing final status report")
 
-        self._email_sender.send(
-            recipients=self._recipients, subject="Genie Status Report", body=report
-        )
+        self._email_sender.send(recipients=self._recipients, subject="Genie Status Report", body=report)
 
     @staticmethod
-    async def _run_single_collector(
-        lookback_period: timedelta, collector: IStatusCollector
-    ) -> Tuple[str, str]:
+    async def _run_single_collector(lookback_period: timedelta, collector: IStatusCollector) -> Tuple[str, str]:
         logger.info(f"Running `{collector.name}` collector")
         status = await collector.collect(lookback_period)
         return collector.name, status

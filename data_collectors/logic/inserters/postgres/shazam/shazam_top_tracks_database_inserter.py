@@ -12,9 +12,7 @@ class ShazamTopTracksDatabaseInserter:
     def __init__(self, chunks_inserter: ChunksDatabaseInserter):
         self._chunks_inserter = chunks_inserter
 
-    async def insert(
-        self, locations_tracks: Dict[ShazamLocation, List[dict]]
-    ) -> List[ShazamTopTrack]:
+    async def insert(self, locations_tracks: Dict[ShazamLocation, List[dict]]) -> List[ShazamTopTrack]:
         logger.info("Starting to insert shazam top tracks to database")
         records = self._to_records(locations_tracks)
         await self._chunks_inserter.insert(records)
@@ -22,9 +20,7 @@ class ShazamTopTracksDatabaseInserter:
 
         return records
 
-    def _to_records(
-        self, locations_tracks: Dict[ShazamLocation, List[dict]]
-    ) -> List[ShazamTopTrack]:
+    def _to_records(self, locations_tracks: Dict[ShazamLocation, List[dict]]) -> List[ShazamTopTrack]:
         records = []
         today = date.today()
 
@@ -35,16 +31,12 @@ class ShazamTopTracksDatabaseInserter:
         return records
 
     @staticmethod
-    def _get_location_records(
-        location: ShazamLocation, tracks: List[dict], today: date
-    ) -> List[ShazamTopTrack]:
+    def _get_location_records(location: ShazamLocation, tracks: List[dict], today: date) -> List[ShazamTopTrack]:
         logger.info(f"Turning `{location.value}` tracks to ORM records")
         records = []
 
         for i, track in enumerate(tracks):
-            record = ShazamTopTrack(
-                track_id=track[ID], location=location, date=today, position=i + 1
-            )
+            record = ShazamTopTrack(track_id=track[ID], location=location, date=today, position=i + 1)
             records.append(record)
 
         return records

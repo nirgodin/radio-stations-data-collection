@@ -32,9 +32,7 @@ class BasePlaylistsChartsTest(ABC):
         db_engine: AsyncEngine,
         job_id: JobId,
     ):
-        self._given_expected_spotify_responses(
-            playlist_resources_map, spotify_test_client
-        )
+        self._given_expected_spotify_responses(playlist_resources_map, spotify_test_client)
 
         with test_client as client:
             actual = client.post(f"jobs/trigger/{job_id.value}")
@@ -56,9 +54,7 @@ class BasePlaylistsChartsTest(ABC):
         db_engine: AsyncEngine,
         playlist_chart_map: Dict[str, Chart],
     ):
-        self._given_expected_spotify_responses(
-            playlist_resources_map, spotify_test_client
-        )
+        self._given_expected_spotify_responses(playlist_resources_map, spotify_test_client)
         condition = partial(
             self._are_expected_db_records_inserted,
             db_engine=db_engine,
@@ -91,16 +87,12 @@ class BasePlaylistsChartsTest(ABC):
         component_factory: ComponentFactory,
         job_builder: Type[BaseJobBuilder],
     ) -> TestClient:
-        scheduled_client = await build_scheduled_test_client(
-            component_factory, job_builder
-        )
+        scheduled_client = await build_scheduled_test_client(component_factory, job_builder)
         with scheduled_client as client:
             yield client
 
     @fixture
-    def playlist_resources_map(
-        self, playlist_chart_map: Dict[str, Chart]
-    ) -> Dict[str, SpotifyPlaylistsResources]:
+    def playlist_resources_map(self, playlist_chart_map: Dict[str, Chart]) -> Dict[str, SpotifyPlaylistsResources]:
         playlists = list(playlist_chart_map.keys())
         return PlaylistsResourcesCreator.create(playlists)
 
@@ -109,14 +101,10 @@ class BasePlaylistsChartsTest(ABC):
         playlist_resources_map: Dict[str, SpotifyPlaylistsResources],
         spotify_test_client: SpotifyTestClient,
     ):
-        self._given_valid_playlists_responses(
-            playlist_resources_map, spotify_test_client
-        )
+        self._given_valid_playlists_responses(playlist_resources_map, spotify_test_client)
         self._given_valid_tracks_responses(playlist_resources_map, spotify_test_client)
         self._given_valid_artists_responses(spotify_test_client, playlist_resources_map)
-        self._given_valid_audio_features_responses(
-            spotify_test_client, playlist_resources_map
-        )
+        self._given_valid_audio_features_responses(spotify_test_client, playlist_resources_map)
 
     @staticmethod
     def _given_valid_playlists_responses(
@@ -124,9 +112,7 @@ class BasePlaylistsChartsTest(ABC):
         spotify_test_client: SpotifyTestClient,
     ):
         for playlist_id, playlist_resources in playlist_resources_map.items():
-            spotify_test_client.playlists.info.expect_success(
-                playlist_id, [playlist_resources.playlist]
-            )
+            spotify_test_client.playlists.info.expect_success(playlist_id, [playlist_resources.playlist])
 
     @staticmethod
     def _given_valid_tracks_responses(
@@ -144,9 +130,7 @@ class BasePlaylistsChartsTest(ABC):
         spotify_test_client: SpotifyTestClient,
         playlists_resources_map: Dict[str, SpotifyPlaylistsResources],
     ) -> None:
-        artists_ids = chain_lists(
-            [resource.artist_ids for resource in playlists_resources_map.values()]
-        )
+        artists_ids = chain_lists([resource.artist_ids for resource in playlists_resources_map.values()])
         spotify_test_client.artists.info.expect_success(sorted(artists_ids))
 
     @staticmethod
@@ -154,9 +138,7 @@ class BasePlaylistsChartsTest(ABC):
         spotify_test_client: SpotifyTestClient,
         playlists_resources_map: Dict[str, SpotifyPlaylistsResources],
     ) -> None:
-        tracks_ids = chain_lists(
-            [resource.track_ids for resource in playlists_resources_map.values()]
-        )
+        tracks_ids = chain_lists([resource.track_ids for resource in playlists_resources_map.values()])
         spotify_test_client.tracks.audio_features.expect_success(sorted(tracks_ids))
 
     async def _are_expected_db_records_inserted(
@@ -167,9 +149,7 @@ class BasePlaylistsChartsTest(ABC):
         playlist_chart_map: Dict[str, Chart],
     ):
         resources = list(playlist_resources_map.values())
-        are_spotify_records_inserted = (
-            await spotify_insertions_verifier.verify_playlist_resources(resources)
-        )
+        are_spotify_records_inserted = await spotify_insertions_verifier.verify_playlist_resources(resources)
 
         if are_spotify_records_inserted:
             return await self._are_chart_entries_records_inserted(

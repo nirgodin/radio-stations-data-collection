@@ -34,9 +34,7 @@ class SpotifyArtistAbout:
         return DBUpdateRequest(id=self.id, values=values)
 
     def to_existing_about_document_update_request(self) -> DBUpdateRequest:
-        return DBUpdateRequest(
-            id=self.id, values={SpotifyArtist.has_about_document: True}
-        )
+        return DBUpdateRequest(id=self.id, values={SpotifyArtist.has_about_document: True})
 
     def to_about_document(self) -> AboutDocument:
         return AboutDocument(

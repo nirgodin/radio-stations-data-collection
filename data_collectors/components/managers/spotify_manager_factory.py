@@ -13,17 +13,13 @@ from data_collectors.logic.managers import (
 
 
 class SpotifyManagerFactory(BaseManagerFactory):
-    def get_playlists_artists_manager(
-        self, spotify_session: SpotifySession
-    ) -> SpotifyPlaylistsArtistsManager:
+    def get_playlists_artists_manager(self, spotify_session: SpotifySession) -> SpotifyPlaylistsArtistsManager:
         return SpotifyPlaylistsArtistsManager(
             spotify_client=self.tools.get_spotify_client(spotify_session),
             db_updater=self.updaters.get_values_updater(),
         )
 
-    def get_playlists_tracks_manager(
-        self, spotify_session: SpotifySession
-    ) -> SpotifyPlaylistsTracksManager:
+    def get_playlists_tracks_manager(self, spotify_session: SpotifySession) -> SpotifyPlaylistsTracksManager:
         return SpotifyPlaylistsTracksManager(
             spotify_client=self.tools.get_spotify_client(spotify_session),
             db_updater=self.updaters.get_values_updater(),

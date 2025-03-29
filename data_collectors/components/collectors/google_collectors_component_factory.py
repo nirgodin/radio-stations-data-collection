@@ -12,9 +12,7 @@ class GoogleCollectorsComponentFactory:
     def __init__(self, tools: ToolsComponentFactory):
         self._tools = tools
 
-    def get_geocoding_collector(
-        self, session: ClientSession
-    ) -> GoogleGeocodingCollector:
+    def get_geocoding_collector(self, session: ClientSession) -> GoogleGeocodingCollector:
         return GoogleGeocodingCollector(
             db_engine=get_database_engine(),
             pool_executor=self._tools.get_pool_executor(),
