@@ -54,7 +54,10 @@ class SpotifyManagerFactory(BaseManagerFactory):
     def get_spotify_featured_artists_imputer_manager(
         self, spotify_session: SpotifySession
     ) -> SpotifyFeaturedArtistImputerManager:
+        spotify_client = self.tools.get_spotify_client(spotify_session)
         return SpotifyFeaturedArtistImputerManager(
             spotify_client=self.tools.get_spotify_client(spotify_session),
             db_engine=self.tools.get_database_engine(),
+            spotify_insertions_manager=self.inserters.spotify.get_insertions_manager(spotify_client),
+            db_updater=self.updaters.get_values_updater(),
         )
