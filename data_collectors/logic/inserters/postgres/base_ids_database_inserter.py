@@ -54,7 +54,7 @@ class BaseIDsDatabaseInserter(IPostgresDatabaseInserter, ABC):
         filtered_records = []
 
         for record in records:
-            if record.id not in seen_ids:
+            if record.id is None or record.id not in seen_ids:
                 seen_ids.add(record.id)
                 filtered_records.append(record)
 
