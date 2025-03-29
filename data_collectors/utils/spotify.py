@@ -1,4 +1,4 @@
-from typing import Set, Optional, List
+from typing import Set, List
 
 from data_collectors.consts.spotify_consts import TRACK, ARTISTS, ID
 

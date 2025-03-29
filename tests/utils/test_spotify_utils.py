@@ -1,6 +1,6 @@
 from typing import List
 
-from genie_common.utils import random_string_dict, random_string_array
+from genie_common.utils import random_string_dict
 from spotipyio.testing import SpotifyMockFactory
 
 from data_collectors.consts.spotify_consts import TRACK
