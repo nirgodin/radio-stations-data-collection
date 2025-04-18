@@ -18,7 +18,7 @@ class EurovisionChartJobBuilder(BaseJobBuilder):
         )
 
     async def _task(self) -> None:
-        async with self._component_factory.sessions.get_spotify_session() as spotify_session:
+        async with self._component_factory.sessions.enter_spotify_session() as spotify_session:
             async with self._component_factory.sessions.get_client_session() as client_session:
                 manager = self._component_factory.charts.get_eurovision_charts_manager(
                     client_session=client_session,

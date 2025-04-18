@@ -20,6 +20,6 @@ class FeaturedArtistsImputerJobBuilder(BaseJobBuilder):
         )
 
     async def _task(self) -> None:
-        async with self._component_factory.sessions.get_spotify_session() as spotify_session:
+        async with self._component_factory.sessions.enter_spotify_session() as spotify_session:
             manager = self._component_factory.spotify.get_spotify_featured_artists_imputer_manager(spotify_session)
             await manager.run(limit=100)
