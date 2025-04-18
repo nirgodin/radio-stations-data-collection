@@ -1,4 +1,7 @@
-from aiohttp import ClientSession
+from collections.abc import AsyncGenerator
+from contextlib import asynccontextmanager
+
+from aiohttp import ClientSession, ClientResponseError
 from genie_common.clients.utils import (
     create_client_session,
     build_authorization_headers,
@@ -6,6 +9,7 @@ from genie_common.clients.utils import (
 from genie_datastores.redis.operations import get_redis
 from spotipyio.auth import SpotifyGrantType, SpotifySession, ClientCredentials
 from spotipyio.extras.redis import RedisSessionCacheHandler
+from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
 
 from data_collectors.components.environment_component_factory import (
     EnvironmentComponentFactory,
@@ -15,6 +19,22 @@ from data_collectors.components.environment_component_factory import (
 class SessionsComponentFactory:
     def __init__(self, env: EnvironmentComponentFactory):
         self._env = env
+
+    @asynccontextmanager
+    async def enter_spotify_session(self) -> AsyncGenerator[SpotifySession, None]:
+        session = None
+
+        try:
+            session = self.get_spotify_session()
+            await self._start_spotify_session_with_retries(session)
+            yield session
+
+        except Exception as e:
+            raise e
+
+        finally:
+            if session is not None:
+                await session.stop()
 
     def get_spotify_session(self) -> SpotifySession:
         credentials = self._env.get_spotify_credentials()
@@ -56,3 +76,12 @@ class SessionsComponentFactory:
             "X-RapidAPI-Host": "google-maps-geocoding.p.rapidapi.com",
         }
         return create_client_session(headers)
+
+    @retry(
+        retry=retry_if_exception_type(ClientResponseError),
+        stop=stop_after_attempt(3),
+        wait=wait_exponential(multiplier=1, min=1, max=10),
+        reraise=True,
+    )
+    async def _start_spotify_session_with_retries(self, session: SpotifySession) -> None:
+        await session.start()

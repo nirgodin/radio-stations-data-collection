@@ -19,8 +19,6 @@ class BillboardChartJobBuilder(BaseJobBuilder):
         )
 
     async def _task(self) -> None:
-        spotify_session = self._component_factory.sessions.get_spotify_session()
-
-        async with spotify_session as session:
+        async with self._component_factory.sessions.enter_spotify_session() as session:
             manager = self._component_factory.charts.get_billboard_charts_manager(session)
             await manager.run()

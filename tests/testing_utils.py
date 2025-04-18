@@ -79,5 +79,8 @@ async def build_scheduled_test_client(
     return app_test_client_session(lifespan_context)
 
 
-async def raise_exception() -> None:
-    raise Exception(random_alphanumeric_string())
+async def raise_exception(exception: Optional[Exception] = None) -> None:
+    if exception is None:
+        exception = Exception(random_alphanumeric_string())
+
+    raise exception
