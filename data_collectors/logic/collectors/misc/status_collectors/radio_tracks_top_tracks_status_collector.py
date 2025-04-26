@@ -2,7 +2,6 @@ from datetime import timedelta, datetime
 from typing import List, Dict
 
 import pandas as pd
-from genie_common.utils import chain_lists
 from genie_datastores.postgres.models import (
     RadioTrack,
     SpotifyStation,
