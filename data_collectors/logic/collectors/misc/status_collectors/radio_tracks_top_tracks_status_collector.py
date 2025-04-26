@@ -104,4 +104,4 @@ class RadioTracksTopTracksStatusCollector(IStatusCollector):
 
     @property
     def name(self) -> str:
-        return "Radio Tracks"
+        return "Top Tracks by Station"
