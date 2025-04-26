@@ -6,4 +6,8 @@ from data_collectors.logic.collectors.misc.status_collectors.shazam_top_tracks_s
     ShazamTopTracksStatusCollector,
 )
 
-__all__ = ["RadioTracksStatusCollector", "ShazamTopTracksStatusCollector"]
+from data_collectors.logic.collectors.misc.status_collectors.radio_tracks_top_tracks_status_collector import (
+    RadioTracksTopTracksStatusCollector,
+)
+
+__all__ = ["RadioTracksStatusCollector", "ShazamTopTracksStatusCollector", "RadioTracksTopTracksStatusCollector"]

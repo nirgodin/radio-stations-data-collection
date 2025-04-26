@@ -7,3 +7,4 @@ from data_collectors.logic.collectors.openai import *
 from data_collectors.logic.collectors.shazam import *
 from data_collectors.logic.collectors.spotify import *
 from data_collectors.logic.collectors.wikipedia import *
+from data_collectors.logic.collectors.misc import *

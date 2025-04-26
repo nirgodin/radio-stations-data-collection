@@ -1,8 +1,9 @@
-from data_collectors import ShazamTopTracksStatusCollector
 from data_collectors.components.tools_component_factory import ToolsComponentFactory
 from data_collectors.logic.collectors import (
     RadioTracksStatusCollector,
     TracksVectorizerTrainDataCollector,
+    RadioTracksTopTracksStatusCollector,
+    ShazamTopTracksStatusCollector,
 )
 
 
@@ -20,3 +21,6 @@ class MiscellaneousCollectorsFactory:
 
     def get_shazam_top_tracks_status_collector(self) -> ShazamTopTracksStatusCollector:
         return ShazamTopTracksStatusCollector(self._tools.get_database_engine())
+
+    def get_radio_tracks_top_tracks_status_collector(self) -> RadioTracksTopTracksStatusCollector:
+        return RadioTracksTopTracksStatusCollector(db_engine=self._tools.get_database_engine())
