@@ -1,7 +1,10 @@
 from datetime import timedelta
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 from functools import partial
 from typing import List, Dict, Tuple
 
+from data_collectors.logic.models.summary_section import SummarySection
 from genie_common.tools import AioPoolExecutor, EmailSender, logger
 
 from data_collectors.contract import IManager, IStatusCollector
@@ -29,21 +32,30 @@ class StatusReporterManager(IManager):
         )
         reports = dict(status_report_pairs)
         report = self._merge_status_reports(reports)
+        message = MIMEMultipart()
+        message.attach(MIMEText(report, "html"))
         logger.info("Mailing final status report")
 
-        self._email_sender.send(recipients=self._recipients, subject="Genie Status Report", body=report)
+        self._email_sender.send_multipart(recipients=self._recipients, subject="Genie Status Report", message=message)
 
     @staticmethod
-    async def _run_single_collector(lookback_period: timedelta, collector: IStatusCollector) -> Tuple[str, str]:
+    async def _run_single_collector(
+        lookback_period: timedelta, collector: IStatusCollector
+    ) -> Tuple[str, List[SummarySection]]:
         logger.info(f"Running `{collector.name}` collector")
         status = await collector.collect(lookback_period)
         return collector.name, status
 
     @staticmethod
-    def _merge_status_reports(reports: Dict[str, str]) -> str:
+    def _merge_status_reports(reports: Dict[str, List[SummarySection]]) -> str:
         report_elements = []
 
-        for name, report in reports.items():
-            report_elements.append(f"{name}:\n {report}")
+        for name, sections in reports.items():
+            element_summary = f"<div><h2>{name}</h2>"
 
-        return "\n\n".join(report_elements)
+            for section in sections:
+                element_summary += section.to_html()
+
+            report_elements.append(f"{element_summary}</div>")
+
+        return "<br>".join(report_elements)
