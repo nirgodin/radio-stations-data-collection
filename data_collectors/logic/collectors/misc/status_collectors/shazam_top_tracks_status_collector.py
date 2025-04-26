@@ -3,7 +3,7 @@ from typing import List, Dict
 
 import pandas as pd
 from genie_common.utils import sort_dict_by_key
-from genie_datastores.postgres.models import ShazamTopTrack, ShazamLocation
+from genie_datastores.postgres.models import ShazamTopTrack
 from genie_datastores.postgres.operations import execute_query
 from sqlalchemy import select, func
 from sqlalchemy.engine import Row
