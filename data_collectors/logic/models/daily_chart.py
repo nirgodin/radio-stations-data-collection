@@ -12,7 +12,7 @@ class DailyChart(BaseModel):
     date: datetime
     entries: List[RawEntry]
 
-    @validator('date')
+    @validator("date")
     def _normalize_date(cls, date: datetime) -> datetime:
         return date.replace(hour=0, minute=0, second=0, microsecond=0, tzinfo=None)
 
