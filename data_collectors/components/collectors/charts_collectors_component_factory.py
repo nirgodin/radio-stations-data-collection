@@ -38,7 +38,10 @@ class ChartsCollectorsComponentFactory:
         )
 
     def get_glglz_charts_collector(self) -> GlglzChartsDataCollector:
-        return GlglzChartsDataCollector(self._tools.get_pool_executor())
+        return GlglzChartsDataCollector(
+            pool_executor=self._tools.get_pool_executor(),
+            generative_model=self._tools.get_gemini_model("gemini-2.0-flash")
+        )
 
     @staticmethod
     def get_playlists_charts_collector(
