@@ -100,6 +100,9 @@ class EnvironmentComponentFactory:
     def get_wikipedia_base_url(self):
         return self._lookup_env_var("WIKIPEDIA_BASE_URL", default="https://en.wikipedia.org/wiki")
 
+    def get_playwright_endpoint(self) -> str:
+        return self._lookup_env_var("PLAYWRIGHT_ENDPOINT", default="ws://127.0.0.1:3000/")
+
     def _lookup_env_var(self, key: str, default: Optional[str] = None) -> str:
         if key in self._default_env.keys():
             return self._default_env[key]

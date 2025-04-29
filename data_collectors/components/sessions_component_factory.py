@@ -7,6 +7,7 @@ from genie_common.clients.utils import (
     build_authorization_headers,
 )
 from genie_datastores.redis.operations import get_redis
+from playwright.async_api import Browser, async_playwright
 from spotipyio.auth import SpotifyGrantType, SpotifySession, ClientCredentials
 from spotipyio.extras.redis import RedisSessionCacheHandler
 from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
@@ -35,6 +36,12 @@ class SessionsComponentFactory:
         finally:
             if session is not None:
                 await session.stop()
+
+    @asynccontextmanager
+    async def enter_browser_session(self) -> AsyncGenerator[Browser, None]:
+        async with async_playwright() as p:
+            browser = await p.chromium.connect(self._env.get_playwright_endpoint())
+            yield browser
 
     def get_spotify_session(self) -> SpotifySession:
         credentials = self._env.get_spotify_credentials()
