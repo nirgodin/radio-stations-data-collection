@@ -53,7 +53,7 @@ class GlglzChartsDataCollector(IChartsDataCollector):
         page = await self._browser.new_page()
         await page.goto(url)
 
-        return await get_page_content(page)
+        return await get_page_content(page, sleep_between=2)
 
     @staticmethod
     def _is_ok_response(page_source: str, url: str) -> bool:
