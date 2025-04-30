@@ -1,5 +1,5 @@
 # Stage 1 - Python requirements
-FROM python:3.10-slim as requirements-stage
+FROM python:3.10-slim AS requirements-stage
 WORKDIR /tmp
 RUN pip install poetry==1.6.1
 COPY ./pyproject.toml ./poetry.lock* /tmp/
