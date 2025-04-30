@@ -8,8 +8,11 @@ from playwright.async_api import Browser
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncEngine
 
-from data_collectors.consts.glglz_consts import WEEKLY_CHART_PREFIX, GLGLZ_CHARTS_ARCHIVE_URL, \
-    GLGLZ_CHARTS_LINKS_WEB_ELEMENT
+from data_collectors.consts.glglz_consts import (
+    WEEKLY_CHART_PREFIX,
+    GLGLZ_CHARTS_ARCHIVE_URL,
+    GLGLZ_CHARTS_LINKS_WEB_ELEMENT,
+)
 from data_collectors.logic.collectors import (
     GlglzChartsDataCollector,
     ChartsTracksCollector,
