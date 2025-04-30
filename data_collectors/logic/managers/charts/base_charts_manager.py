@@ -1,7 +1,9 @@
+import json
 from abc import ABC, abstractmethod
 from typing import Any, List, Dict
 
 from genie_common.tools import logger
+from genie_common.utils import sort_dict_by_key
 
 from data_collectors.contract import IChartsDataCollector, IManager
 from data_collectors.logic.collectors import ChartsTracksCollector
@@ -32,7 +34,8 @@ class BaseChartsManager(IManager, ABC):
 
         if charts_entries:
             charts_entries_details = await self._charts_tracks_collector.collect(charts_entries)
-            await self._insert_records(charts_entries_details)
+            unique_entries_details = self._filter_unique_entries(charts_entries_details)
+            await self._insert_records(unique_entries_details)
 
         else:
             logger.warn("Did not find any chart entry. Aborting")
@@ -51,3 +54,38 @@ class BaseChartsManager(IManager, ABC):
         records = [detail.entry for detail in charts_entries_details]
         logger.info("Starting to insert chart entries")
         await self._chart_entries_inserter.insert(records)
+
+    def _filter_unique_entries(
+        self, charts_entries_details: List[RadioChartEntryDetails]
+    ) -> List[RadioChartEntryDetails]:
+        filtered_entries = []
+        metadata_entries_map = {}
+
+        for entry_details in charts_entries_details:
+            if entry_details.entry.entry_metadata is None:
+                filtered_entries.append(entry_details)
+            else:
+                serialized_metadata = json.dumps(sort_dict_by_key(entry_details.entry.entry_metadata))
+
+                if serialized_metadata in metadata_entries_map.keys():
+                    metadata_entries_map[serialized_metadata].append(entry_details)
+                else:
+                    metadata_entries_map[serialized_metadata] = [entry_details]
+
+        return filtered_entries + self._extract_unique_values_from_metadata_entries_map(metadata_entries_map)
+
+    @staticmethod
+    def _extract_unique_values_from_metadata_entries_map(
+        metadata_entries_map: Dict[str, List[RadioChartEntryDetails]]
+    ) -> List[RadioChartEntryDetails]:
+        unique_entries = []
+
+        for entries_details in metadata_entries_map.values():
+            entries_with_track = [detail for detail in entries_details if detail.track is not None]
+
+            if entries_with_track:
+                unique_entries.append(entries_with_track[0])
+            else:
+                unique_entries.append(entries_details[0])
+
+        return unique_entries
