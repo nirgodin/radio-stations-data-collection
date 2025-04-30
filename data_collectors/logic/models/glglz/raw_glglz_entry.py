@@ -43,5 +43,6 @@ class RawGlglzEntry(BaseModel):
             date=date,
             position=self.position,
             comment=url,
+            entry_metadata={"raw_value": self.raw_value},
             key=key,
         )
