@@ -65,9 +65,10 @@ class GlglzChartsDataCollector(IChartsDataCollector):
         return True
 
     async def _extract_charts_entries_from_html(self, html: str, url: str) -> List[ChartEntry]:
-        prompt = load_prompt("glglz_charts_prompt.txt")
+        prompt_format = load_prompt("glglz_charts_prompt_format.txt")
+        prompt = prompt_format.format(html=html, url=url)
         response = await self._generative_model.generate_content_async(
-            contents=dedent(prompt) + f"\n```\n{html}\n```",
+            contents=dedent(prompt),
             generation_config={"response_mime_type": "application/json"},
         )
         serialized_response: Optional[GlglzChartDetails] = serialize_generative_model_response(

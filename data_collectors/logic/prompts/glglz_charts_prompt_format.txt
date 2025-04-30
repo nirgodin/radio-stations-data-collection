@@ -43,24 +43,38 @@ Sam Smith - Money On My Mind.8
 The Neighbourhood - Sweater Weather.10
 ```
 
+In addition, you will be supplied with the URL of the page. The URL usually include the chart date in some format. For example:
+```
+https://glz.co.il/גלגלצ/כתבות/המצעד-השבועי-312013
+```
+
 Please return JSON describing the date of the chart, and a list of chart entries using the following schema:
 ```
-{
+{{
     "date": datetime,
     "entries": List[RawEntry],
-}
+}}
 ```
 
 Where:
-RawEntry = {raw_value: str, "artist": LocalizedEntity, "track": LocalizedEntity, "position": int, origin: ChartOrigin}
+RawEntry = {{raw_value: str, "artist": LocalizedEntity, "track": LocalizedEntity, "position": int, origin: ChartOrigin}}
 ChartOrigin = Enum of the following values: ["israeli", "international"]
-LocalizedEntity = {"name": str, "translation": Optional[str]}
+LocalizedEntity = {{"name": str, "translation": Optional[str]}}
 
 General instructions:
+* In case of a conflict between the date encoded in the URL and the date in the HTML page - always prefer the date encoded in the URL
 * datetime fields should use the following format: `%Y-%m-%dT%H:%M:%s`.
 * Position fields should return either an integer between 1-10.
 * In models that ask for translation (LocalizedEntity) you should translate only hebrew to english, not vice versa.
 * Your translation should not be a semantic translation, but a literal. For example, "פרח" should not be translated to "flower", but to "Perach".
 
 Important: Only return a single piece of valid JSON text.
-Here is the HTML:
+Here is the URL:
+```
+{url}
+```
+
+And here is the HTML:
+```
+{html}
+```
