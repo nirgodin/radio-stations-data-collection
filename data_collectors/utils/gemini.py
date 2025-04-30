@@ -1,3 +1,6 @@
+import os
+from inspect import currentframe, getfile
+from pathlib import Path
 from typing import Type, Optional
 
 from genie_common.tools import logger
@@ -18,3 +21,13 @@ def serialize_generative_model_response(
     except ValidationError:
         logger.exception("Was not able to serialize model response. Returning None by default")
         return None
+
+
+def load_prompt(file_name: str) -> str:
+    current_path = getfile(currentframe())
+    file_path = Path(os.path.abspath(current_path))
+    parent_path = file_path.parent.parent
+    prompt_path = os.path.join(parent_path, "logic", "prompts", file_name)
+
+    with open(prompt_path, "r") as f:
+        return f.read()

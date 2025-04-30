@@ -9,7 +9,7 @@ from playwright.async_api import Browser
 
 from data_collectors.contract import IChartsDataCollector
 from data_collectors.logic.models.daily_chart import DailyChart
-from data_collectors.utils.gemini import serialize_generative_model_response
+from data_collectors.utils.gemini import serialize_generative_model_response, load_prompt
 from data_collectors.utils.playwright import get_page_content
 
 
@@ -65,68 +65,9 @@ class GlglzChartsDataCollector(IChartsDataCollector):
         return True
 
     async def _extract_charts_entries_from_html(self, html: str, url: str) -> List[ChartEntry]:
-        prompt = """\
-            In this task you are requested to extract from a raw HTML charts entries of two musical charts and the date
-            of the chart. Each HTML contains total of 20 entries: 10 for each chart. One chart contains israeli songs 
-            exclusively, and the other contains non-israeli songs exclusively. Each chart entries are grouped in a list,
-            usually listed in ascending order, where the number prefix indicating the songs position. Each entry 
-            contains both the name of the artist and the name of the track, usually separated by a colon.
-            
-            For example, a typical page would look like this after the HTML is rendered:
-            
-            ```
-            17:47 | 03.09.2017
-
-            המצעד הישראלי:
-            1.שיר לוי - להשתגע
-            2.דודו טסה - לשים ת'ראש
-            3.Back to Black- עם אסף אבידן Red Band
-            4.אברהם טל - את במרחבים
-            5.שאנן סטריט - July
-            6.אריק איינשטיין - אדם בחדרו
-            7.אסתר רדא - Nanu Ney
-            8.מאור אדרי - לא כואב לה
-            9.אביתר בנאי - גנב
-            10.בית הבובות - איפה היית
-            
-            המצעד הבינלאומי:
-            Avicii -Addicted To You.1
-            Katy Perry feat. Juicy J - Dark Horse.2
-            Coldplay - Magic.3
-            Clean Bandit feat. Jesse Glynne - Rather Be.4
-            5.Lorde - Buzzcut Season
-            Pharrell Williams - Happy.6
-            Indila - Derniere Danse.7
-            Sam Smith - Money On My Mind.8
-            9.Beck - Blue Moon
-            The Neighbourhood - Sweater Weather.10
-            ```
-             
-            Please return JSON describing the date of the chart, and a list of chart entries using the following schema:
-
-            {
-                "date": datetime,
-                "entries": List[RawEntry],
-            }
-
-            RawEntry = {raw_value: str, "artist": EntryArtist, "track": EntryTrack, "position": int, origin: ChartOrigin}
-            ChartOrigin = Enum of the following values: ["israeli", "international"]
-            EntryArtist = {"name": str, "translation": Optional[str]}
-            EntryTrack = {"name": str, "translation": Optional[str]} 
-
-            datetime fields should use the following format: `%Y-%m-%dT%H:%M:%s`.
-            Position fields should return either an integer between 1-10.
-            In models that ask for translation (such as EntryArtist and EntryTrack) you should translate only hebrew to 
-            english, not vice versa. Your translation should not be a semantic translation, but a literal. For example,
-            "פרח" should not be translated to "flower", but to "Perach".
-
-            Important: Only return a single piece of valid JSON text.
-
-            Here is the HTML:
-        """
-
+        prompt = load_prompt("glglz_charts_prompt.txt")
         response = await self._generative_model.generate_content_async(
-            contents=dedent(prompt) + html,
+            contents=dedent(prompt) + f"\n```\n{html}\n```",
             generation_config={"response_mime_type": "application/json"},
         )
         serialized_response: Optional[DailyChart] = serialize_generative_model_response(
