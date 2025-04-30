@@ -8,7 +8,8 @@ from playwright.async_api import Browser
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncEngine
 
-from data_collectors.consts.glglz_consts import WEEKLY_CHART_PREFIX, GLGLZ_CHARTS_ARCHIVE_URL
+from data_collectors.consts.glglz_consts import WEEKLY_CHART_PREFIX, GLGLZ_CHARTS_ARCHIVE_URL, \
+    GLGLZ_CHARTS_LINKS_WEB_ELEMENT
 from data_collectors.logic.collectors import (
     GlglzChartsDataCollector,
     ChartsTracksCollector,
@@ -18,7 +19,6 @@ from data_collectors.logic.inserters.postgres import (
     ChartEntriesDatabaseInserter,
 )
 from data_collectors.logic.managers.charts.base_charts_manager import BaseChartsManager
-from data_collectors.logic.models import WebElement, HTMLElement
 from data_collectors.tools import WebElementsExtractor
 from data_collectors.utils.playwright import get_page_content
 
@@ -54,8 +54,7 @@ class GlglzChartsManager(BaseChartsManager):
     async def _fetch_charts_urls(self) -> List[str]:
         logger.info("Fetching chart urls from glglz web archive")
         html = await self._fetch_charts_archive_page()
-        web_element = WebElement(name="glglz_charts_links", type=HTMLElement.A, multiple=True)
-        elements = WebElementsExtractor().extract(html, web_element)
+        elements = WebElementsExtractor().extract(html, GLGLZ_CHARTS_LINKS_WEB_ELEMENT)
 
         return self._convert_web_elements_to_urls(elements)
 
