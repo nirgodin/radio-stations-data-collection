@@ -52,15 +52,14 @@ Please return JSON describing the date of the chart, and a list of chart entries
 ```
 
 Where:
-RawEntry = {raw_value: str, "artist": EntryArtist, "track": EntryTrack, "position": int, origin: ChartOrigin}
+RawEntry = {raw_value: str, "artist": LocalizedEntity, "track": LocalizedEntity, "position": int, origin: ChartOrigin}
 ChartOrigin = Enum of the following values: ["israeli", "international"]
-EntryArtist = {"name": str, "translation": Optional[str]}
-EntryTrack = {"name": str, "translation": Optional[str]}
+LocalizedEntity = {"name": str, "translation": Optional[str]}
 
 General instructions:
 * datetime fields should use the following format: `%Y-%m-%dT%H:%M:%s`.
 * Position fields should return either an integer between 1-10.
-* In models that ask for translation (such as EntryArtist and EntryTrack) you should translate only hebrew to english, not vice versa.
+* In models that ask for translation (LocalizedEntity) you should translate only hebrew to english, not vice versa.
 * Your translation should not be a semantic translation, but a literal. For example, "פרח" should not be translated to "flower", but to "Perach".
 
 Important: Only return a single piece of valid JSON text.

@@ -1,26 +1,17 @@
 from datetime import datetime
-from typing import List, Optional
+from typing import List
 
 from genie_datastores.postgres.models import ChartEntry
 from pydantic import BaseModel
 
-from data_collectors.logic.models.chart_origin import ChartOrigin
+from data_collectors.logic.models.glglz.chart_origin import ChartOrigin
+from data_collectors.logic.models.glglz.localized_entity import LocalizedEntity
 
 
-class EntryArtist(BaseModel):
-    name: str
-    translation: Optional[str] = None
-
-
-class EntryTrack(BaseModel):
-    name: str
-    translation: Optional[str] = None
-
-
-class RawEntry(BaseModel):
+class RawGlglzEntry(BaseModel):
     raw_value: str
-    artist: EntryArtist
-    track: EntryTrack
+    artist: LocalizedEntity
+    track: LocalizedEntity
     position: int
     origin: ChartOrigin
 

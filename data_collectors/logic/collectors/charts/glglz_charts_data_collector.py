@@ -8,7 +8,7 @@ from google.generativeai import GenerativeModel
 from playwright.async_api import Browser
 
 from data_collectors.contract import IChartsDataCollector
-from data_collectors.logic.models.daily_chart import DailyChart
+from data_collectors.logic.models.glglz.glglz_chart_details import GlglzChartDetails
 from data_collectors.utils.gemini import serialize_generative_model_response, load_prompt
 from data_collectors.utils.playwright import get_page_content
 
@@ -70,8 +70,8 @@ class GlglzChartsDataCollector(IChartsDataCollector):
             contents=dedent(prompt) + f"\n```\n{html}\n```",
             generation_config={"response_mime_type": "application/json"},
         )
-        serialized_response: Optional[DailyChart] = serialize_generative_model_response(
-            response=response, model=DailyChart
+        serialized_response: Optional[GlglzChartDetails] = serialize_generative_model_response(
+            response=response, model=GlglzChartDetails
         )
 
         if serialized_response is None:
