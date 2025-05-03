@@ -3,6 +3,7 @@ from typing import Dict, Optional
 from aiohttp import ClientSession
 from genie_datastores.google.drive import GoogleDriveClient
 from genie_datastores.postgres.models import Chart
+from playwright.async_api import Browser
 from spotipyio import SpotifyClient
 
 from data_collectors.components.tools_component_factory import ToolsComponentFactory
@@ -37,8 +38,12 @@ class ChartsCollectorsComponentFactory:
             wikipedia_text_collector=self._tools.get_wikipedia_text_collector(session),
         )
 
-    def get_glglz_charts_collector(self) -> GlglzChartsDataCollector:
-        return GlglzChartsDataCollector(self._tools.get_pool_executor())
+    def get_glglz_charts_collector(self, browser: Browser) -> GlglzChartsDataCollector:
+        return GlglzChartsDataCollector(
+            pool_executor=self._tools.get_pool_executor(),
+            browser=browser,
+            generative_model=self._tools.get_gemini_model("gemini-2.0-flash"),
+        )
 
     @staticmethod
     def get_playlists_charts_collector(

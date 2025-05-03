@@ -1,0 +1,25 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    depends_on:
+      - playwright
+
+  playwright:
+    image: mcr.microsoft.com/playwright:v1.51.0-noble
+    ports:
+      - "3000:3000"
+    init: true
+    stdin_open: true
+    tty: true
+    working_dir: /home/pwuser
+    user: pwuser
+    command: >
+      /bin/sh -c "npx -y playwright@1.51.0 run-server --port 3000 --host 0.0.0.0"
