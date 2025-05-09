@@ -13,16 +13,14 @@ INTERNATIONAL = b"\xd7\x91\xd7\x99\xd7\xa0\xd7\x9c\xd7\x90\xd7\x95\xd7\x9e\xd7\x
 
 
 class PlaylistDescriptionBuilder:
-    def build(self, chart: Chart, date: datetime, entries: List[ChartEntry]) -> str:
-        description = self._format_base_description(chart, date)
+    def build(self, chart: Chart, formatted_date: str, entries: List[ChartEntry]) -> str:
+        description = self._format_base_description(chart, formatted_date)
         missing_entries = [entry for entry in entries if entry.track_id is None]
 
         return self._add_missing_entries(description, missing_entries) if missing_entries else description
 
-    def _format_base_description(self, chart: Chart, date: datetime) -> str:
-        formatted_date = date.strftime("%d/%m/%Y")
+    def _format_base_description(self, chart: Chart, formatted_date: str) -> str:
         chart_name = self._chart_name_map[chart]
-
         return DESCRIPTION_FORMAT.format(date=formatted_date, chart_type=chart_name)
 
     def _add_missing_entries(self, description: str, missing_entries: List[ChartEntry]) -> str:

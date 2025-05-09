@@ -1,3 +1,4 @@
+from io import BytesIO
 from typing import List
 
 from PIL import Image, ImageDraw
@@ -11,7 +12,7 @@ class CoverCreator:
     def __init__(self, source_path: str):
         self._source_path = source_path
 
-    def create(self, image_texts: List[ImageText]) -> Image:
+    def create(self, image_texts: List[ImageText]) -> bytes:
         image = Image.open(self._source_path).convert("RGB")
         draw = ImageDraw.Draw(image)
 
@@ -23,7 +24,7 @@ class CoverCreator:
                 font=image_text.font.to_image_font(),
             )
 
-        return image
+        return self._convert_image_to_bytes(image)
 
     @staticmethod
     def _pre_process_text(image_text: ImageText) -> str:
@@ -32,3 +33,11 @@ class CoverCreator:
 
         reshaped_text = reshape(image_text.text)
         return get_display(reshaped_text)
+
+    @staticmethod
+    def _convert_image_to_bytes(image: Image) -> bytes:
+        buffer = BytesIO()
+        image.save(buffer, format="JPEG")
+        buffer.seek(0)
+
+        return buffer.getvalue()
