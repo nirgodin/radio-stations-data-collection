@@ -10,8 +10,16 @@ from spotipyio.models import PlaylistCreationRequest, EntityType
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncEngine
 
-from data_collectors.charts_creation.charts_creation_consts import WEEKLY_CHART_IMAGE_TEXT, FONT_PATH, DATE_FONT_SIZE, \
-    DATE_POSITION, DATE_COLOR, ISRAELI_IMAGE_TEXT, INTERNATIONAL_IMAGE_TEXT, PLAYLIST_NAME_FORMAT
+from data_collectors.charts_creation.charts_creation_consts import (
+    WEEKLY_CHART_IMAGE_TEXT,
+    FONT_PATH,
+    DATE_FONT_SIZE,
+    DATE_POSITION,
+    DATE_COLOR,
+    ISRAELI_IMAGE_TEXT,
+    INTERNATIONAL_IMAGE_TEXT,
+    PLAYLIST_NAME_FORMAT,
+)
 from data_collectors.charts_creation.covers.cover_creator import CoverCreator
 from data_collectors.charts_creation.covers.image_text import ImageText, Font
 from data_collectors.charts_creation.playlist_description_builder import PlaylistDescriptionBuilder
@@ -33,23 +41,11 @@ class ChartsCreator:
         self._description_builder = description_builder
 
     async def create(self, date: datetime, chart: Chart) -> None:
-        formatted_date = date.strftime('%Y-%m-%d')
-        entries = await self._query_chart_entries(
-            date=date,
-            chart=chart,
-            formatted_date=formatted_date
-        )
-        playlist_id = await self._create_empty_playlist(
-            entries=entries,
-            chart=chart,
-            formatted_date=formatted_date
-        )
+        formatted_date = date.strftime("%d/%m/%Y")
+        entries = await self._query_chart_entries(date=date, chart=chart, formatted_date=formatted_date)
+        playlist_id = await self._create_empty_playlist(entries=entries, chart=chart, formatted_date=formatted_date)
         await self._add_playlist_items(entries, playlist_id)
-        await self._set_playlist_cover(
-            playlist_id=playlist_id,
-            chart=chart,
-            formatted_date=formatted_date
-        )
+        await self._set_playlist_cover(playlist_id=playlist_id, chart=chart, formatted_date=formatted_date)
 
     async def _query_chart_entries(self, date: datetime, chart: Chart, formatted_date: str) -> List[ChartEntry]:
         logger.info(f"Querying database for charts entries of chart {chart.value} for date {formatted_date}")
@@ -91,10 +87,7 @@ class ChartsCreator:
         logger.info(f"Adding {len(existing_entries)} tracks to playlist with ID: {playlist_id}")
         uris = [to_uri(entity_id=entry.track_id, entity_type=EntityType.TRACK) for entry in existing_entries]
 
-        await self._spotify_client.playlists.add_items.run(
-            playlist_id=playlist_id,
-            uris=uris
-        )
+        await self._spotify_client.playlists.add_items.run(playlist_id=playlist_id, uris=uris)
 
     async def _set_playlist_cover(self, playlist_id: str, chart: Chart, formatted_date: str) -> None:
         logger.info(f"Setting cover for playlist with id: {playlist_id}")
@@ -116,11 +109,7 @@ class ChartsCreator:
             color=DATE_COLOR,
         )
 
-        return [
-            WEEKLY_CHART_IMAGE_TEXT,
-            chart_text,
-            date_image_text
-        ]
+        return [WEEKLY_CHART_IMAGE_TEXT, chart_text, date_image_text]
 
     @property
     def _chart_image_text_map(self) -> Dict[Chart, ImageText]:
@@ -132,6 +121,8 @@ class ChartsCreator:
     @property
     def _chart_name_map(self) -> Dict[Chart, str]:
         return {
-            Chart.GLGLZ_WEEKLY_ISRAELI: b'\xd7\x94\xd7\x99\xd7\xa9\xd7\xa8\xd7\x90\xd7\x9c\xd7\x99'.decode('utf-8'),
-            Chart.GLGLZ_WEEKLY_INTERNATIONAL: b'\xd7\x94\xd7\x91\xd7\x99\xd7\xa0\xd7\x9c\xd7\x90\xd7\x95\xd7\x9e\xd7\x99'.decode('utf-8'),
+            Chart.GLGLZ_WEEKLY_ISRAELI: b"\xd7\x94\xd7\x99\xd7\xa9\xd7\xa8\xd7\x90\xd7\x9c\xd7\x99".decode("utf-8"),
+            Chart.GLGLZ_WEEKLY_INTERNATIONAL: b"\xd7\x94\xd7\x91\xd7\x99\xd7\xa0\xd7\x9c\xd7\x90\xd7\x95\xd7\x9e\xd7\x99".decode(
+                "utf-8"
+            ),
         }

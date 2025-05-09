@@ -23,7 +23,6 @@ ISRAELI_IMAGE_TEXT = ImageText(
 DATE_FONT_SIZE = 60
 DATE_POSITION = (180, 950)
 DATE_COLOR = "#ffffff"
-PLAYLIST_NAME_FORMAT = (
-    b'\xd7\x94\xd7\x9e\xd7\xa6\xd7\xa2\xd7\x93 {chart_type} \xd7\xa9\xd7\x9c '
-    b'\\xd7\x92\xd7\x9c\xd7\x92\xd7\x9c\xd7\xa6 | {chart_date}'
-).decode('utf-8')
+PLAYLIST_NAME_FORMAT = b"\xd7\x94\xd7\x9e\xd7\xa6\xd7\xa2\xd7\x93 {chart_type} \xd7\xa9\xd7\x9c \xd7\x92\xd7\x9c\xd7\x92\xd7\x9c\xd7\xa6 | {chart_date}".decode(
+    "utf-8"
+)
