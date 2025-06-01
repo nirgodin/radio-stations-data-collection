@@ -53,7 +53,7 @@ class TestWikipediaSummariesManager:
             querystring = urlencode(params)
             mock_responses.get(
                 url=f"https://{about.wikipedia_language.lower()}.wikipedia.org/w/api.php?{querystring}",
-                json={"query": {"pages": {"extract": random_alphanumeric_string()}}},
+                json={"query": {"pages": {str(randint(1, 10000)): {"extract": random_alphanumeric_string()}}}},
             )
 
     @fixture
