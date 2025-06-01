@@ -24,7 +24,7 @@ from data_collectors.consts.eurovision_consts import (
     EUROVISION_PLACE_COLUMN,
 )
 from data_collectors.consts.spotify_consts import TRACKS, ITEMS
-from data_collectors.jobs.job_builders.eurovision_chart_job_builder import (
+from data_collectors.jobs.job_builders.charts.eurovision_chart_job_builder import (
     EurovisionChartJobBuilder,
 )
 from data_collectors.jobs.job_id import JobId

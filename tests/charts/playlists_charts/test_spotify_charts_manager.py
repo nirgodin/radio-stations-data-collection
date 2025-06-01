@@ -4,7 +4,7 @@ from _pytest.fixtures import fixture
 from genie_datastores.postgres.models import Chart
 
 from data_collectors.consts.charts_consts import SPOTIFY_PLAYLIST_CHART_MAP
-from data_collectors.jobs.job_builders.spotify_charts_job_builder import (
+from data_collectors.jobs.job_builders.charts.spotify_charts_job_builder import (
     SpotifyChartsJobBuilder,
 )
 from data_collectors.jobs.job_id import JobId
