@@ -21,8 +21,8 @@ class WikipediaManagerFactory(BaseManagerFactory):
         )
 
     async def get_artists_about_manager(self) -> WikipediaArtistsAboutManager:
-        await initialize_mongo()
+        await initialize_mongo(self.tools.get_motor_client())
         return WikipediaArtistsAboutManager(
-            db_engine=get_database_engine(),
+            db_engine=self.tools.get_database_engine(),
             pool_executor=self.tools.get_pool_executor(),
         )
