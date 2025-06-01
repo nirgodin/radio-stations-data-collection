@@ -31,7 +31,7 @@ class TestShazamTopTracksManager:
     async def test_trigger(
         self,
         test_client: TestClient,
-            mock_aioresponses: aioresponses,
+        mock_aioresponses: aioresponses,
         location_playlist_id_map: Dict[ShazamLocation, str],
         location_shazam_tracks_map: Dict[ShazamLocation, List[ShazamTrackResources]],
         shazam_tracks: List[ShazamTrackResources],
@@ -60,7 +60,7 @@ class TestShazamTopTracksManager:
     async def test_scheduled_job(
         self,
         scheduled_test_client: TestClient,
-            mock_aioresponses: aioresponses,
+        mock_aioresponses: aioresponses,
         location_playlist_id_map: Dict[ShazamLocation, str],
         location_shazam_tracks_map: Dict[ShazamLocation, List[ShazamTrackResources]],
         shazam_tracks: List[ShazamTrackResources],

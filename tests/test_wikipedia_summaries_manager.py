@@ -1,14 +1,14 @@
 from http import HTTPStatus
 from random import randint
 from typing import List
+from urllib.parse import urlencode
 
-import responses
 from _pytest.fixtures import fixture
-from aioresponses import aioresponses
 from genie_common.utils import random_alphanumeric_string
 from genie_datastores.postgres.models import SpotifyArtist
 from genie_datastores.postgres.operations import insert_records
 from genie_datastores.testing.postgres import PostgresMockFactory
+from responses import RequestsMock
 from sqlalchemy.ext.asyncio import AsyncEngine
 from starlette.testclient import TestClient
 
@@ -17,17 +17,16 @@ from data_collectors.logic.models import WikipediaArtistAbout
 
 
 class TestWikipediaSummariesManager:
-    @responses.activate
     async def test_trigger(
         self,
         spotify_artists: List[SpotifyArtist],
         db_engine: AsyncEngine,
         wikipedia_artists_abouts: List[WikipediaArtistAbout],
         test_client: TestClient,
-        # mock_responses: aioresponses,
+        mock_responses: RequestsMock,
     ):
         await insert_records(db_engine, spotify_artists)
-        await self._given_valid_wikipedia_responses(wikipedia_artists_abouts)
+        await self._given_valid_wikipedia_responses(mock_responses, wikipedia_artists_abouts)
 
         with test_client as client:
             actual = client.post(f"/jobs/trigger/{JobId.WIKIPEDIA_SUMMARIES.value}")
@@ -38,9 +37,9 @@ class TestWikipediaSummariesManager:
         pass
 
     @staticmethod
-    async def _given_valid_wikipedia_responses(artists_abouts: List[WikipediaArtistAbout]) -> None:
-        urls = []
-
+    async def _given_valid_wikipedia_responses(
+        mock_responses: RequestsMock, artists_abouts: List[WikipediaArtistAbout]
+    ) -> None:
         for about in artists_abouts:
             params = {
                 "action": "query",
@@ -51,25 +50,11 @@ class TestWikipediaSummariesManager:
                 "format": "json",
                 "redirects": 1,
             }
-            normalized_params = "&".join([f"{k}={str(v)}" for k, v in params.items()])
-            url = f"https://{about.wikipedia_language.lower()}.wikipedia.org/w/api.php?{normalized_params}"
-            urls.append(url)
-
-            responses.get(
-                url=url,
-                # params={
-                #     'action': 'query',
-                #     'explaintext': 1,
-                #     'exsectionformat': 'wiki',
-                #     'format': 'json',
-                #     'prop': 'extracts',
-                #     'redirects': 1,
-                #     'titles': about.wikipedia_name,
-                # },
+            querystring = urlencode(params)
+            mock_responses.get(
+                url=f"https://{about.wikipedia_language.lower()}.wikipedia.org/w/api.php?{querystring}",
                 json={"query": {"pages": {"extract": random_alphanumeric_string()}}},
             )
-
-        print(urls)
 
     @fixture
     def wikipedia_artists_abouts(self, spotify_artists: List[SpotifyArtist]) -> List[WikipediaArtistAbout]:

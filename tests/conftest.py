@@ -1,4 +1,5 @@
 import asyncio
+import re
 from asyncio import AbstractEventLoop
 from functools import partial
 
@@ -7,6 +8,7 @@ from _pytest.fixtures import fixture
 from genie_common.utils import random_alphanumeric_string
 from genie_datastores.testing.mongo.mongo_testkit import MongoTestkit
 from genie_datastores.testing.postgres import PostgresTestkit, postgres_session
+from responses import RequestsMock
 from spotipyio.auth import ClientCredentials, SpotifyGrantType
 from spotipyio.logic.utils import random_client_credentials
 from spotipyio.testing import SpotifyTestClient
@@ -88,6 +90,12 @@ def env_component_factory(
 @fixture
 def mock_aioresponses() -> aioresponses:
     with aioresponses() as mock_responses:
+        yield mock_responses
+
+
+@fixture
+def mock_responses() -> RequestsMock:
+    with RequestsMock(passthru_prefixes=(re.compile(r".*docker.*"),)) as mock_responses:
         yield mock_responses
 
 
