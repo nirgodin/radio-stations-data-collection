@@ -86,7 +86,7 @@ def env_component_factory(
 
 
 @fixture
-def mock_responses() -> aioresponses:
+def mock_aioresponses() -> aioresponses:
     with aioresponses() as mock_responses:
         yield mock_responses
 
