@@ -1,5 +1,3 @@
-from genie_datastores.mongo.operations import initialize_mongo
-
 from data_collectors.components.tools_component_factory import ToolsComponentFactory
 from data_collectors.logic.inserters import ShazamArtistsDatabaseInserter
 from data_collectors.logic.inserters.postgres import (
@@ -24,7 +22,6 @@ class ShazamInsertersComponentFactory:
         return ShazamTracksDatabaseInserter(self._tools.get_database_engine())
 
     async def get_artists_inserter(self) -> ShazamArtistsDatabaseInserter:
-        await initialize_mongo(self._tools.get_motor_client())
         return ShazamArtistsDatabaseInserter(
             postgres_inserter=self.get_artists_postgres_inserter(),
             pool_executor=self._tools.get_pool_executor(),
