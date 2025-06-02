@@ -1,10 +1,9 @@
 import asyncio
-import re
 from asyncio import AbstractEventLoop
 from functools import partial
 
-from aioresponses import aioresponses
 from _pytest.fixtures import fixture
+from aioresponses import aioresponses
 from genie_common.utils import random_alphanumeric_string
 from genie_datastores.testing.mongo.mongo_testkit import MongoTestkit
 from genie_datastores.testing.postgres import PostgresTestkit, postgres_session
@@ -95,7 +94,7 @@ def mock_aioresponses() -> aioresponses:
 
 @fixture
 def mock_responses() -> RequestsMock:
-    with RequestsMock(passthru_prefixes=(re.compile(r".*docker.*"),)) as mock_responses:
+    with RequestsMock() as mock_responses:
         yield mock_responses
 
 
