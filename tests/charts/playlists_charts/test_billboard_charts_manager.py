@@ -6,7 +6,7 @@ from genie_datastores.postgres.models import Chart
 from data_collectors.consts.charts_consts import (
     BILLBOARD_PLAYLIST_CHART_MAP,
 )
-from data_collectors.jobs.job_builders.billboard_chart_job_builder import (
+from data_collectors.jobs.job_builders.charts.billboard_chart_job_builder import (
     BillboardChartJobBuilder,
 )
 from data_collectors.jobs.job_id import JobId

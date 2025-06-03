@@ -24,6 +24,7 @@ async def lifespan(
     try:
         scheduler_builder = SchedulerBuilder(component_factory or get_component_factory())
         await scheduler_builder.build(scheduler, jobs)
+        await component_factory.tools.initialize_mongo()
         logger.info("Starting scheduler")
         scheduler.start()
 

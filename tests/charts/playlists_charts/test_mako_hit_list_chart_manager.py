@@ -4,7 +4,7 @@ from _pytest.fixtures import fixture
 from genie_datastores.postgres.models import Chart
 
 from data_collectors.consts.charts_consts import MAKO_PLAYLIST_CHART_MAP
-from data_collectors.jobs.job_builders.mako_hit_list_chart_job_builder import (
+from data_collectors.jobs.job_builders.charts.mako_hit_list_chart_job_builder import (
     MakoHitListChartJobBuilder,
 )
 from data_collectors.jobs.job_id import JobId

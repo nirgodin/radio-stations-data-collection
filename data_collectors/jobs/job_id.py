@@ -11,3 +11,4 @@ class JobId(str, Enum):
     SHAZAM_TOP_TRACKS = "shazam_top_tracks"
     SPOTIFY_CHARTS = "spotify_charts"
     STATUS_REPORTER = "status_reporter"
+    WIKIPEDIA_SUMMARIES = "wikipedia_summaries"

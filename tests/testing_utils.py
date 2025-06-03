@@ -68,7 +68,7 @@ async def build_scheduled_test_client(
     component_factory: ComponentFactory, builder_class: Type[BaseJobBuilder]
 ) -> TestClient:
     job_builder = builder_class(component_factory)
-    next_run_time = datetime.now() + timedelta(seconds=2)
+    next_run_time = datetime.now() + timedelta(seconds=5)
     job = await job_builder.build(next_run_time)
     lifespan_context = partial(
         lifespan,
