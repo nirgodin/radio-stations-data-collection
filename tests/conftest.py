@@ -50,7 +50,7 @@ async def spotify_test_client(
         yield test_client
 
 
-@fixture(scope="session")
+@fixture
 def postgres_testkit() -> PostgresTestkit:
     with PostgresTestkit() as postgres_testkit:
         yield postgres_testkit
