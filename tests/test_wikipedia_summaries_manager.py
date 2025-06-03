@@ -15,9 +15,11 @@ from responses import RequestsMock
 from sqlalchemy.ext.asyncio import AsyncEngine
 from starlette.testclient import TestClient
 
+from data_collectors.components import ComponentFactory
+from data_collectors.jobs.job_builders.wikipedia_summaries_job_builder import WikipediaSummariesJobBuilder
 from data_collectors.jobs.job_id import JobId
 from data_collectors.logic.models import WikipediaArtistAbout
-from tests.testing_utils import until
+from tests.testing_utils import until, build_scheduled_test_client
 
 
 class TestWikipediaSummariesManager:
@@ -36,7 +38,21 @@ class TestWikipediaSummariesManager:
             actual = client.post(f"/jobs/trigger/{JobId.WIKIPEDIA_SUMMARIES.value}")
 
         assert actual.status_code == HTTPStatus.OK
-        await until(partial(self._are_all_documents_were_inserted, wikipedia_artists_abouts))
+        await self._assert_all_documents_were_inserted(wikipedia_artists_abouts)
+
+    async def test_scheduled_job(
+        self,
+        spotify_artists: List[SpotifyArtist],
+        db_engine: AsyncEngine,
+        wikipedia_artists_abouts: List[WikipediaArtistAbout],
+        mock_responses: RequestsMock,
+        scheduled_test_client: TestClient,
+    ):
+        await insert_records(db_engine, spotify_artists)
+        await self._given_valid_wikipedia_responses(mock_responses, wikipedia_artists_abouts)
+
+        with scheduled_test_client:
+            await self._assert_all_documents_were_inserted(wikipedia_artists_abouts)
 
     @staticmethod
     async def _given_valid_wikipedia_responses(
@@ -58,6 +74,43 @@ class TestWikipediaSummariesManager:
                 json={"query": {"pages": {str(randint(1, 10000)): {"extract": about.about}}}},
             )
 
+    async def _assert_all_documents_were_inserted(self, wikipedia_artists_abouts: List[WikipediaArtistAbout]) -> None:
+        await until(partial(self._are_all_documents_were_inserted, wikipedia_artists_abouts))
+
+    async def _are_all_documents_were_inserted(self, wikipedia_artists_abouts: List[WikipediaArtistAbout]) -> bool:
+        for artist_about in wikipedia_artists_abouts:
+            if not await self._is_existing_document(artist_about):
+                return False
+
+        return True
+
+    @staticmethod
+    async def _is_existing_document(artist_about: WikipediaArtistAbout) -> bool:
+        actual = await AboutDocument.find_one(
+            AboutDocument.entity_id == artist_about.id,
+            AboutDocument.source == DataSource.WIKIPEDIA,
+        )
+        if actual is None:
+            return False
+
+        actual.id = None
+        actual.creation_date = None
+        actual.update_date = None
+        expected = artist_about.to_about_document()
+        expected.creation_date = None
+        expected.update_date = None
+
+        return actual == expected
+
+    @fixture
+    async def scheduled_test_client(
+        self,
+        component_factory: ComponentFactory,
+    ) -> TestClient:
+        scheduled_client = await build_scheduled_test_client(component_factory, WikipediaSummariesJobBuilder)
+        with scheduled_client as client:
+            yield client
+
     @fixture
     def wikipedia_artists_abouts(self, spotify_artists: List[SpotifyArtist]) -> List[WikipediaArtistAbout]:
         abouts = []
@@ -72,25 +125,3 @@ class TestWikipediaSummariesManager:
     @fixture
     def spotify_artists(self) -> List[SpotifyArtist]:
         return [PostgresMockFactory.spotify_artist() for _ in range(randint(1, 10))]
-
-    async def _are_all_documents_were_inserted(self, wikipedia_artists_abouts: List[WikipediaArtistAbout]) -> bool:
-        for artist_about in wikipedia_artists_abouts:
-            if not await self._is_existing_document(artist_about):
-                return False
-
-        return True
-
-    @staticmethod
-    async def _is_existing_document(artist_about: WikipediaArtistAbout) -> bool:
-        expected = artist_about.to_about_document()
-        expected.creation_date = None
-        expected.update_date = None
-        actual = await AboutDocument.find_one(
-            AboutDocument.entity_id == artist_about.id,
-            AboutDocument.source == DataSource.WIKIPEDIA,
-        )
-        actual.id = None
-        actual.creation_date = None
-        actual.update_date = None
-
-        return actual == expected

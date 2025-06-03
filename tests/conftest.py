@@ -1,4 +1,5 @@
 import asyncio
+import re
 from asyncio import AbstractEventLoop
 from functools import partial
 
@@ -94,7 +95,9 @@ def mock_aioresponses() -> aioresponses:
 
 @fixture
 def mock_responses() -> RequestsMock:
-    with RequestsMock() as mock_responses:
+    passthru_prefixes = [re.compile(r".*docker.*")]
+
+    with RequestsMock(passthru_prefixes=tuple(passthru_prefixes)) as mock_responses:
         yield mock_responses
 
 
