@@ -9,6 +9,7 @@ from genie_datastores.postgres.models import (
     Track,
     TrackIDMapping,
     SpotifyAlbum,
+    Artist,
 )
 from genie_datastores.postgres.operations import execute_query
 from sqlalchemy import select
@@ -59,7 +60,7 @@ class SpotifyInsertionsVerifier:
         return sorted(expected) == sorted(actual)
 
     async def _inserted_expected_artists_records(self, expected: List[str]) -> bool:
-        query_result = await execute_query(engine=self._db_engine, query=select(SpotifyArtist.id))
+        query_result = await execute_query(engine=self._db_engine, query=select(Artist.id))
         actual = query_result.scalars().all()
 
         return sorted(expected) == sorted(actual)
