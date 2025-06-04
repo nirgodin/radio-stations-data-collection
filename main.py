@@ -20,9 +20,11 @@ async def lifespan(
     jobs: Optional[List[ScheduledJob]] = None,
 ) -> None:
     scheduler = AsyncIOScheduler()
+    if component_factory is None:
+        component_factory = get_component_factory()
 
     try:
-        scheduler_builder = SchedulerBuilder(component_factory or get_component_factory())
+        scheduler_builder = SchedulerBuilder(component_factory)
         await scheduler_builder.build(scheduler, jobs)
         await component_factory.tools.initialize_mongo()
         logger.info("Starting scheduler")
