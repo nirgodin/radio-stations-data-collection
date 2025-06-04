@@ -49,8 +49,7 @@ class ShazamCollectorsComponentFactory:
     async def get_artist_existing_details_collector(
         self,
     ) -> ShazamArtistsExistingDetailsCollector:
-        await initialize_mongo()
         return ShazamArtistsExistingDetailsCollector(
-            db_engine=get_database_engine(),
+            db_engine=self._tools.get_database_engine(),
             pool_executor=self._tools.get_pool_executor(),
         )

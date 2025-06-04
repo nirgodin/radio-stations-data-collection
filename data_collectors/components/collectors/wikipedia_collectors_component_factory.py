@@ -28,6 +28,6 @@ class WikipediaCollectorsComponentFactory:
         self,
     ) -> WikipediaArtistsExistingDetailsCollector:
         return WikipediaArtistsExistingDetailsCollector(
-            db_engine=get_database_engine(),
+            db_engine=self._tools.get_database_engine(),
             pool_executor=self._tools.get_pool_executor(),
         )

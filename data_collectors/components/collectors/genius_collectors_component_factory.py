@@ -43,6 +43,6 @@ class GeniusCollectorsComponentFactory:
     ) -> GeniusArtistsExistingDetailsCollector:
         await initialize_mongo()
         return GeniusArtistsExistingDetailsCollector(
-            db_engine=get_database_engine(),
+            db_engine=self._tools.get_database_engine(),
             pool_executor=self._tools.get_pool_executor(),
         )

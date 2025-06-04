@@ -27,9 +27,8 @@ class SpotifyCollectorsComponentFactory:
     async def get_artist_existing_details_collector(
         self,
     ) -> SpotifyArtistsExistingDetailsCollector:
-        await initialize_mongo()
         return SpotifyArtistsExistingDetailsCollector(
-            db_engine=get_database_engine(),
+            db_engine=self._tools.get_database_engine(),
             pool_executor=self._tools.get_pool_executor(),
         )
 
