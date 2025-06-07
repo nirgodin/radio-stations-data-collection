@@ -6,7 +6,7 @@ from genie_datastores.mongo.models import AboutDocument
 from genie_datastores.postgres.models import Artist, SpotifyArtist
 from genie_datastores.postgres.operations import execute_query
 from sqlalchemy import select, or_
-from sqlalchemy.engine import Row, Result
+from sqlalchemy.engine import Row, Result, ChunkedIteratorResult
 from sqlalchemy.sql.elements import BinaryExpression
 
 from data_collectors.logic.collectors.google.artists_about.base_artist_existing_details_collector import (
@@ -46,7 +46,9 @@ class WikipediaArtistsExistingDetailsCollector(BaseArtistsExistingDetailsCollect
         conditions = [col.is_(None) for col in ARTIST_INSIGHTS_COLUMNS]
         return or_(*conditions)
 
-    async def _to_artists_details(self, query_result: Result, limit: Optional[int]) -> List[ArtistExistingDetails]:
+    async def _to_artists_details(
+        self, query_result: ChunkedIteratorResult, limit: Optional[int]
+    ) -> List[ArtistExistingDetails]:
         artists_details = []
 
         for row in query_result:
