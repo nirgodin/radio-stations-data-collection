@@ -73,15 +73,16 @@ def env_component_factory(
     # TODO: Externalize authorization server url
     token_request_url = spotify_test_client._authorization_server.url_for("")
     default_env = {
+        "DATABASE_URL": postgres_testkit.get_database_url(),
+        "EMAIL_PASSWORD": random_alphanumeric_string(),
+        "EMAIL_USER": random_alphanumeric_string(),
+        "GEMINI_API_KEY": random_alphanumeric_string(),
+        "MONGO_URI": mongo_testkit._container.get_connection_url(),
         "SPOTIPY_CLIENT_ID": spotify_credentials.client_id,
         "SPOTIPY_CLIENT_SECRET": spotify_credentials.client_secret,
         "SPOTIPY_REDIRECT_URI": spotify_credentials.redirect_uri,
         "SPOTIPY_BASE_URL": spotify_test_client.get_base_url(),
         "SPOTIPY_TOKEN_REQUEST_URL": token_request_url.rstrip("/"),
-        "DATABASE_URL": postgres_testkit.get_database_url(),
-        "EMAIL_USER": random_alphanumeric_string(),
-        "EMAIL_PASSWORD": random_alphanumeric_string(),
-        "MONGO_URI": mongo_testkit._container.get_connection_url(),
         "WIKIPEDIA_BASE_URL": wikipedia_test_client.get_base_url(),
     }
     return EnvironmentComponentFactory(default_env)
