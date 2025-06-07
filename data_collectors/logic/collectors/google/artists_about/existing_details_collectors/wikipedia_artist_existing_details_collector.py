@@ -79,4 +79,4 @@ class WikipediaArtistsExistingDetailsCollector(BaseArtistsExistingDetailsCollect
 
     @property
     def data_source(self) -> DataSource:
-        return DataSource.GENERAL_WIKIPEDIA
+        return DataSource.WIKIPEDIA
