@@ -1,3 +1,4 @@
+from functools import partial
 from http import HTTPStatus
 from random import randint, random
 from typing import List, Dict, Tuple
@@ -16,6 +17,8 @@ from sqlalchemy import select, inspect
 from sqlalchemy.ext.asyncio import AsyncEngine
 from starlette.testclient import TestClient
 
+from data_collectors.components import ComponentFactory
+from data_collectors.jobs.job_builders.artists_insights_job_builder import ArtistsInsightsJobBuilder
 from data_collectors.jobs.job_id import JobId
 from data_collectors.logic.models import ArtistExtractedDetails, ArtistDetailsExtractionResponse, ArtistExistingDetails
 from data_collectors.logic.models.artist_about.artist_extracted_details import (
@@ -24,6 +27,7 @@ from data_collectors.logic.models.artist_about.artist_extracted_details import (
     DateDecision,
 )
 from tests.helpers.mock_generate_content_response import MockGenerateContentResponse
+from tests.testing_utils import build_scheduled_test_client, until
 
 
 class TestArtistsInsightsManager:
@@ -34,21 +38,55 @@ class TestArtistsInsightsManager:
         mock_gemini_model: AsyncMock,
         test_client: TestClient,
     ):
-        await self._given_artists_entries(artists_extraction_responses, db_engine)
-        self._given_valid_gemini_responses(
-            mock_gemini_model=mock_gemini_model,
-            artists_extraction_responses=artists_extraction_responses,
-        )
-
         with test_client as client:
             # Must be inside the context manager so Beanie is initialized by the lifespan startup
-            await self._given_artists_about_documents(artists_extraction_responses)
+            await self._given_expected_db_entries_and_gemini_responses(
+                artists_extraction_responses=artists_extraction_responses,
+                db_engine=db_engine,
+                mock_gemini_model=mock_gemini_model,
+            )
+
             actual = client.post(f"/jobs/trigger/{JobId.ARTISTS_INSIGHTS.value}")
 
         assert actual.status_code == HTTPStatus.OK.value
         assert await self._inserted_expected_db_records(
             db_engine=db_engine, artists_extraction_responses=artists_extraction_responses
         )
+
+    async def test_scheduled(
+        self,
+        db_engine: AsyncEngine,
+        artists_extraction_responses: List[ArtistDetailsExtractionResponse],
+        mock_gemini_model: AsyncMock,
+        scheduled_test_client: TestClient,
+    ):
+        condition = partial(
+            self._inserted_expected_db_records,
+            db_engine=db_engine,
+            artists_extraction_responses=artists_extraction_responses,
+        )
+        with scheduled_test_client:
+            # Must be inside the context manager so Beanie is initialized by the lifespan startup
+            await self._given_expected_db_entries_and_gemini_responses(
+                artists_extraction_responses=artists_extraction_responses,
+                db_engine=db_engine,
+                mock_gemini_model=mock_gemini_model,
+            )
+
+            await until(condition)
+
+    async def _given_expected_db_entries_and_gemini_responses(
+        self,
+        artists_extraction_responses: List[ArtistDetailsExtractionResponse],
+        db_engine: AsyncEngine,
+        mock_gemini_model: AsyncMock,
+    ) -> None:
+        await self._given_artists_entries(artists_extraction_responses, db_engine)
+        self._given_valid_gemini_responses(
+            mock_gemini_model=mock_gemini_model,
+            artists_extraction_responses=artists_extraction_responses,
+        )
+        await self._given_artists_about_documents(artists_extraction_responses)
 
     @staticmethod
     async def _given_artists_entries(
@@ -179,15 +217,6 @@ class TestArtistsInsightsManager:
 
         return self._are_identical_records(actual[0], expected, ignore_columns=("id", "creation_date", "update_date"))
 
-    @fixture
-    def artists_extraction_responses(self) -> List[ArtistDetailsExtractionResponse]:
-        return [self._random_artist_details_extraction_response() for _ in range(randint(1, 10))]
-
-    @fixture
-    def mock_gemini_model(self) -> AsyncMock:
-        with patch.object(GenerativeModel, "generate_content_async") as mock_model:
-            yield mock_model
-
     @staticmethod
     def _are_identical_records(
         actual: BaseORMModel, expected: BaseORMModel, ignore_columns: Tuple[str, ...] = ()
@@ -201,3 +230,21 @@ class TestArtistsInsightsManager:
                     return False
 
         return True
+
+    @fixture
+    def artists_extraction_responses(self) -> List[ArtistDetailsExtractionResponse]:
+        return [self._random_artist_details_extraction_response() for _ in range(randint(1, 10))]
+
+    @fixture
+    def mock_gemini_model(self) -> AsyncMock:
+        with patch.object(GenerativeModel, "generate_content_async") as mock_model:
+            yield mock_model
+
+    @fixture
+    async def scheduled_test_client(
+        self,
+        component_factory: ComponentFactory,
+    ) -> TestClient:
+        scheduled_client = await build_scheduled_test_client(component_factory, ArtistsInsightsJobBuilder)
+        with scheduled_client as client:
+            yield client
