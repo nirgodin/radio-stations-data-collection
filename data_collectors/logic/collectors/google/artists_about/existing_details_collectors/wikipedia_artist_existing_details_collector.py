@@ -6,7 +6,7 @@ from genie_datastores.mongo.models import AboutDocument
 from genie_datastores.postgres.models import Artist, SpotifyArtist
 from genie_datastores.postgres.operations import execute_query
 from sqlalchemy import select, or_
-from sqlalchemy.engine import Row, Result, ChunkedIteratorResult
+from sqlalchemy.engine import Row, ChunkedIteratorResult
 from sqlalchemy.sql.elements import BinaryExpression
 
 from data_collectors.logic.collectors.google.artists_about.base_artist_existing_details_collector import (

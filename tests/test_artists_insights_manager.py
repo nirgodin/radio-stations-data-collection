@@ -221,7 +221,7 @@ class TestArtistsInsightsManager:
     def _are_identical_records(
         actual: BaseORMModel, expected: BaseORMModel, ignore_columns: Tuple[str, ...] = ()
     ) -> bool:
-        if type(actual) != type(expected):
+        if type(actual) is not type(expected):
             raise ValueError("Cannot compare objects of different types.")
 
         for column in inspect(actual.__class__).columns:
