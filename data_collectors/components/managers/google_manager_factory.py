@@ -1,8 +1,7 @@
 from aiohttp import ClientSession
-from genie_datastores.postgres.operations import get_database_engine
 
-from data_collectors.logic.collectors import BaseArtistsExistingDetailsCollector
 from data_collectors.components.managers.base_manager_factory import BaseManagerFactory
+from data_collectors.logic.collectors import BaseArtistsExistingDetailsCollector
 from data_collectors.logic.managers import (
     GoogleArtistsOriginGeocodingManager,
     GeminiArtistsAboutManager,
@@ -40,6 +39,6 @@ class GoogleManagerFactory(BaseManagerFactory):
             existing_details_collector=existing_details_collector,
             parsing_collector=self.collectors.google.get_artists_about_parsing_collector(),
             pool_executor=self.tools.get_pool_executor(),
-            db_engine=get_database_engine(),
+            db_engine=self.tools.get_database_engine(),
             db_updater=self.updaters.get_values_updater(),
         )

@@ -2,6 +2,7 @@ from enum import Enum
 
 
 class JobId(str, Enum):
+    ARTISTS_INSIGHTS = "artists_insights"
     BILLBOARD_CHARTS = "billboard_charts"
     EUROVISION_CHARTS = "eurovision_charts"
     FEATURED_ARTISTS_IMPUTER = "featured_artists_imputer"

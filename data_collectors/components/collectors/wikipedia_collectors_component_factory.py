@@ -27,7 +27,4 @@ class WikipediaCollectorsComponentFactory:
     def get_wikipedia_existing_details_collector(
         self,
     ) -> WikipediaArtistsExistingDetailsCollector:
-        return WikipediaArtistsExistingDetailsCollector(
-            db_engine=get_database_engine(),
-            pool_executor=self._tools.get_pool_executor(),
-        )
+        return WikipediaArtistsExistingDetailsCollector(self._tools.get_database_engine())
