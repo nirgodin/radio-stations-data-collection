@@ -1,17 +1,18 @@
 from http import HTTPStatus
 from random import randint, random
-from typing import List, Dict
+from typing import List, Dict, Tuple
 from unittest.mock import AsyncMock, patch
 
 from _pytest.fixtures import fixture
 from genie_common.utils import random_alphanumeric_string, random_datetime, random_enum_value
 from genie_datastores.models import EntityType, DataSource
 from genie_datastores.mongo.models import AboutDocument
-from genie_datastores.postgres.models import Gender
-from genie_datastores.postgres.operations import insert_records
+from genie_datastores.postgres.models import Gender, Artist, Decision, Table, BaseORMModel
+from genie_datastores.postgres.operations import insert_records, execute_query
 from genie_datastores.testing.postgres import PostgresMockFactory
 from google.generativeai import GenerativeModel
 from spotipyio.testing import SpotifyMockFactory
+from sqlalchemy import select, inspect
 from sqlalchemy.ext.asyncio import AsyncEngine
 from starlette.testclient import TestClient
 
@@ -45,6 +46,9 @@ class TestArtistsInsightsManager:
             actual = client.post(f"/jobs/trigger/{JobId.ARTISTS_INSIGHTS.value}")
 
         assert actual.status_code == HTTPStatus.OK.value
+        assert await self._inserted_expected_db_records(
+            db_engine=db_engine, artists_extraction_responses=artists_extraction_responses
+        )
 
     @staticmethod
     async def _given_artists_entries(
@@ -135,6 +139,46 @@ class TestArtistsInsightsManager:
             ),
         )
 
+    async def _inserted_expected_db_records(
+        self, db_engine: AsyncEngine, artists_extraction_responses: List[ArtistDetailsExtractionResponse]
+    ) -> bool:
+        for artist in artists_extraction_responses:
+            updated_expected_artist_record = await self._updated_expected_artist_records(db_engine, artist)
+            inserted_expected_decision_record = await self._inserted_expected_decision_record(db_engine, artist)
+
+            if not (updated_expected_artist_record and inserted_expected_decision_record):
+                return False
+
+        return True
+
+    @staticmethod
+    async def _updated_expected_artist_records(db_engine: AsyncEngine, artist: ArtistDetailsExtractionResponse) -> bool:
+        query = select(Artist.gender).where(Artist.id == artist.existing_details.id)
+        query_result = await execute_query(db_engine, query)
+        actual = query_result.scalar()
+
+        return actual == artist.extracted_details.gender.value
+
+    async def _inserted_expected_decision_record(
+        self, db_engine: AsyncEngine, artist: ArtistDetailsExtractionResponse
+    ) -> bool:
+        expected = Decision(
+            column="gender",
+            source=DataSource.WIKIPEDIA,
+            table=Table.ARTISTS,
+            table_id=artist.existing_details.id,
+            confidence=artist.extracted_details.gender.confidence,
+            evidence=artist.extracted_details.gender.evidence,
+        )
+        query = select(Decision).where(Decision.table_id == artist.existing_details.id)
+        query_result = await execute_query(db_engine, query)
+        actual = query_result.scalars().all()
+
+        if len(actual) != 1:
+            return False
+
+        return self._are_identical_records(actual[0], expected, ignore_columns=("id", "creation_date", "update_date"))
+
     @fixture
     def artists_extraction_responses(self) -> List[ArtistDetailsExtractionResponse]:
         return [self._random_artist_details_extraction_response() for _ in range(randint(1, 10))]
@@ -143,3 +187,17 @@ class TestArtistsInsightsManager:
     def mock_gemini_model(self) -> AsyncMock:
         with patch.object(GenerativeModel, "generate_content_async") as mock_model:
             yield mock_model
+
+    @staticmethod
+    def _are_identical_records(
+        actual: BaseORMModel, expected: BaseORMModel, ignore_columns: Tuple[str, ...] = ()
+    ) -> bool:
+        if type(actual) != type(expected):
+            raise ValueError("Cannot compare objects of different types.")
+
+        for column in inspect(actual.__class__).columns:
+            if column.key not in ignore_columns:
+                if getattr(actual, column.key) != getattr(expected, column.key):
+                    return False
+
+        return True
