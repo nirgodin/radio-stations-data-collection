@@ -17,6 +17,7 @@ from data_collectors.logic.models import ArtistExistingDetails
 ARTIST_INSIGHTS_COLUMNS = [
     Artist.origin,
     Artist.birth_date,
+    Artist.death_date,
     Artist.gender,
 ]
 ARTIST_ABOUT_COLUMNS = [
