@@ -30,4 +30,5 @@ class GoogleCollectorsComponentFactory:
         return GoogleArtistsWebPagesCollector(
             google_search_client=self._tools.get_google_search_client(session),
             pool_executor=self._tools.get_pool_executor(),
+            domains=["wikipedia", "instagram", "facebook", "twitter"],
         )

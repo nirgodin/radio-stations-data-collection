@@ -1,4 +1,4 @@
-from typing import Tuple, Dict, Any, Optional
+from typing import Tuple, Dict, Any, Optional, List
 
 from genie_common.tools import AioPoolExecutor, logger
 
@@ -7,9 +7,10 @@ from data_collectors.tools import GoogleSearchClient
 
 
 class GoogleArtistsWebPagesCollector(ICollector):
-    def __init__(self, google_search_client: GoogleSearchClient, pool_executor: AioPoolExecutor):
+    def __init__(self, google_search_client: GoogleSearchClient, pool_executor: AioPoolExecutor, domains: List[str]):
         self._google_search_client = google_search_client
         self._pool_executor = pool_executor
+        self._domains = domains
 
     async def collect(self, ids_names_map: Dict[str, str]) -> Dict[str, Dict[str, str]]:
         logger.info(f"Searching Google search for {len(ids_names_map)} artists")
@@ -28,12 +29,24 @@ class GoogleArtistsWebPagesCollector(ICollector):
 
         return artist_id, web_pages
 
-    @staticmethod
-    def _extract_relevant_web_pages(response: Dict[str, Any]) -> Dict[str, str]:
+    def _extract_relevant_web_pages(self, response: Dict[str, Any]) -> Dict[str, str]:
+        web_pages: Dict[str, str] = {}
         items = response.get("items", [])
 
         for item in items:
-            link = item.get("link")
+            domain_link = self._extract_single_item_link(item)
 
-            if isinstance(link, str) and link.lower().__contains__("wikipedia"):
-                return {"wikipedia": link}
+            if domain_link is not None:
+                web_pages.update(domain_link)
+
+        return web_pages
+
+    def _extract_single_item_link(self, item: Dict[str, Any]) -> Optional[Dict[str, str]]:
+        link = item.get("link")
+
+        if isinstance(link, str):
+            lower_link = link.lower()
+
+            for domain in self._domains:
+                if lower_link.__contains__(domain):
+                    return {domain: link}
