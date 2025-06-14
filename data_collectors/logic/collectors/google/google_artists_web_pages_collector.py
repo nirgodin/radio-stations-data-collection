@@ -1,4 +1,4 @@
-from typing import Tuple, Dict, Any
+from typing import Tuple, Dict, Any, Optional
 
 from genie_common.tools import AioPoolExecutor, logger
 
@@ -19,12 +19,21 @@ class GoogleArtistsWebPagesCollector(ICollector):
 
         return dict(results)
 
-    async def _collect_single_artist_web_pages(self, artist_id_and_name: Tuple[str, str]) -> Tuple[str, Dict[str, str]]:
+    async def _collect_single_artist_web_pages(
+        self, artist_id_and_name: Tuple[str, str]
+    ) -> Tuple[str, Optional[Dict[str, str]]]:
         artist_id, artist_name = artist_id_and_name
         response = await self._google_search_client.search_single(query=f"{artist_name} musician")
         web_pages = self._extract_relevant_web_pages(response)
 
         return artist_id, web_pages
 
-    def _extract_relevant_web_pages(self, response: Dict[str, Any]) -> Dict[str, str]:
-        print("b")
+    @staticmethod
+    def _extract_relevant_web_pages(response: Dict[str, Any]) -> Dict[str, str]:
+        items = response.get("items", [])
+
+        for item in items:
+            link = item.get("link")
+
+            if isinstance(link, str) and link.lower().__contains__("wikipedia"):
+                return {"wikipedia": link}
