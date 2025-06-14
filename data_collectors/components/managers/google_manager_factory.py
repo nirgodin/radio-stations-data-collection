@@ -33,10 +33,10 @@ class GoogleManagerFactory(BaseManagerFactory):
         existing_details_collector = await self.collectors.genius.get_artists_existing_details_collector()
         return self._get_artists_about_manager(existing_details_collector)
 
-    def get_google_artists_web_pages_manager(self) -> GoogleArtistsWebPagesManager:
+    def get_artists_web_pages_manager(self, session: ClientSession) -> GoogleArtistsWebPagesManager:
         return GoogleArtistsWebPagesManager(
             db_engine=self.tools.get_database_engine(),
-            web_pages_collector=self.collectors.google.get_artists_web_pages_collector(),
+            web_pages_collector=self.collectors.google.get_artists_web_pages_collector(session),
         )
 
     def _get_artists_about_manager(
