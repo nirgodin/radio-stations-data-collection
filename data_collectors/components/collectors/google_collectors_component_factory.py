@@ -5,6 +5,7 @@ from data_collectors.components.tools_component_factory import ToolsComponentFac
 from data_collectors.logic.collectors import (
     GoogleGeocodingCollector,
     GeminiArtistsAboutParsingCollector,
+    GoogleArtistsWebPagesCollector,
 )
 
 
@@ -23,4 +24,10 @@ class GoogleCollectorsComponentFactory:
         return GeminiArtistsAboutParsingCollector(
             pool_executor=self._tools.get_pool_executor(),
             model=self._tools.get_gemini_model(),
+        )
+
+    def get_artists_web_pages_collector(self, session: ClientSession) -> GoogleArtistsWebPagesCollector:
+        return GoogleArtistsWebPagesCollector(
+            google_search_client=self._tools.get_google_search_client(session),
+            pool_executor=self._tools.get_pool_executor(),
         )

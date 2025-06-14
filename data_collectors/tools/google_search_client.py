@@ -1,7 +1,7 @@
 from typing import List, Any, Dict
 
 from aiohttp import ClientSession
-from genie_common.tools import AioPoolExecutor
+from genie_common.tools import AioPoolExecutor, logger
 
 from data_collectors.tools import GoogleSearchConfig
 
@@ -25,6 +25,7 @@ class GoogleSearchClient:
         )
 
     async def search_single(self, query: str) -> Dict[str, Any]:
+        logger.info(f"Searching Google search for `{query}`")
         params = {"key": self._config.api_key, "cx": self._config.cx, "q": query}
 
         async with self._session.get(url=self._config.base_url, params=params) as raw_response:
