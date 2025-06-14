@@ -3,7 +3,7 @@ from typing import List, Any, Dict
 from aiohttp import ClientSession
 from genie_common.tools import AioPoolExecutor, logger
 
-from data_collectors.tools import GoogleSearchConfig
+from data_collectors.tools.google_search_config import GoogleSearchConfig
 
 
 class GoogleSearchClient:
