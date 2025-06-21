@@ -4,9 +4,11 @@ from urllib.parse import ParseResult
 
 from genie_datastores.postgres.models import SpotifyArtist
 
+from data_collectors.logic.models.domain import Domain
+
 
 @dataclass
 class DomainExtractSettings:
-    domain: str
+    domain: Domain
     extract_fn: Callable[[ParseResult], str]
     column: Type[SpotifyArtist]

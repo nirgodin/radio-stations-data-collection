@@ -21,6 +21,7 @@ from data_collectors.logic.models.artist_gender import ArtistGender
 from data_collectors.logic.models.artist_wikipedia_details import ArtistWikipediaDetails
 from data_collectors.logic.models.database_update_request import DBUpdateRequest
 from data_collectors.logic.models.date_range import DateRange
+from data_collectors.logic.models.domain import Domain
 from data_collectors.logic.models.domain_extract_settings import DomainExtractSettings
 from data_collectors.logic.models.eurovision_record import EurovisionRecord
 from data_collectors.logic.models.featured_artist import FeaturedArtist
@@ -48,6 +49,7 @@ __all__ = [
     "BaseDecision",
     "DateRange",
     "DBUpdateRequest",
+    "Domain",
     "DomainExtractSettings",
     "EurovisionRecord",
     "FeaturedArtist",

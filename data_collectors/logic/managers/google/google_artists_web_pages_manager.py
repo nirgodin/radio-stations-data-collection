@@ -11,7 +11,7 @@ from sqlalchemy.ext.asyncio import AsyncEngine
 from data_collectors.logic.updaters import ValuesDatabaseUpdater
 from data_collectors.contract import IManager
 from data_collectors.logic.collectors import GoogleArtistsWebPagesCollector
-from data_collectors.logic.models import DBUpdateRequest, DomainExtractSettings
+from data_collectors.logic.models import DBUpdateRequest, DomainExtractSettings, Domain
 
 
 class GoogleArtistsWebPagesManager(IManager):
@@ -46,7 +46,7 @@ class GoogleArtistsWebPagesManager(IManager):
         return {row.id: row for row in query_result.scalars().all()}
 
     def _to_update_requests(
-        self, ids_artists_map: Dict[str, SpotifyArtist], ids_web_pages_map: Dict[str, Dict[str, str]]
+        self, ids_artists_map: Dict[str, SpotifyArtist], ids_web_pages_map: Dict[str, Dict[Domain, str]]
     ) -> List[DBUpdateRequest]:
         logger.info(f"Building {len(ids_web_pages_map)} update requests")
         requests = []
@@ -58,7 +58,7 @@ class GoogleArtistsWebPagesManager(IManager):
 
         return requests
 
-    def _to_update_request(self, artist: SpotifyArtist, web_pages: Dict[str, str]) -> DBUpdateRequest:
+    def _to_update_request(self, artist: SpotifyArtist, web_pages: Dict[Domain, str]) -> DBUpdateRequest:
         update_values = {SpotifyArtist.update_date: datetime.utcnow()}
 
         for domain, link in web_pages.items():
@@ -90,7 +90,7 @@ class GoogleArtistsWebPagesManager(IManager):
         return parse_result.path.strip("/")
 
     @property
-    def _domain_extract_function_map(self) -> Dict[str, List[DomainExtractSettings]]:
+    def _domain_extract_function_map(self) -> Dict[Domain, List[DomainExtractSettings]]:
         domain_extract_map = {}
 
         for domain_extract in self._domain_extract_functions:
@@ -105,27 +105,27 @@ class GoogleArtistsWebPagesManager(IManager):
     def _domain_extract_functions(self) -> List[DomainExtractSettings]:
         return [
             DomainExtractSettings(
-                domain="wikipedia",
+                domain=Domain.WIKIPEDIA,
                 extract_fn=self._extract_wiki_name,
                 column=SpotifyArtist.wikipedia_name,
             ),
             DomainExtractSettings(
-                domain="wikipedia",
+                domain=Domain.WIKIPEDIA,
                 extract_fn=self._extract_wiki_language,
                 column=SpotifyArtist.wikipedia_language,
             ),
             DomainExtractSettings(
-                domain="facebook",
+                domain=Domain.FACEBOOK,
                 extract_fn=self._extract_domain_route,
                 column=SpotifyArtist.facebook_name,
             ),
             DomainExtractSettings(
-                domain="instagram",
+                domain=Domain.INSTAGRAM,
                 extract_fn=self._extract_domain_route,
                 column=SpotifyArtist.instagram_name,
             ),
             DomainExtractSettings(
-                domain="twitter",
+                domain=Domain.TWITTER,
                 extract_fn=self._extract_domain_route,
                 column=SpotifyArtist.twitter_name,
             ),
