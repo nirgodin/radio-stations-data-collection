@@ -26,34 +26,55 @@ class GoogleArtistsWebPagesManager(IManager):
         self._db_updater = db_updater
 
     async def run(self, limit: Optional[int]) -> None:
-        artists_ids_names_map = await self._query_artists_with_missing_web_pages(limit)
+        ids_to_artists_map = await self._query_artists_with_missing_web_pages(limit)
+        artists_ids_names_map = {artist.id: artist.name for artist in ids_to_artists_map.values()}
         artist_id_web_pages_map = await self._web_pages_collector.collect(artists_ids_names_map)
-        update_requests = [self._to_update_request(id_, pages) for id_, pages in artist_id_web_pages_map.items()]
+        update_requests = self._to_update_requests(ids_to_artists_map, artist_id_web_pages_map)
+
         await self._db_updater.update(update_requests)
 
-    async def _query_artists_with_missing_web_pages(self, limit: Optional[int]) -> Dict[str, str]:
+    async def _query_artists_with_missing_web_pages(self, limit: Optional[int]) -> Dict[str, SpotifyArtist]:
         logger.info(f"Querying {limit} artists with missing web pages")
         query = (
-            select(SpotifyArtist.id, SpotifyArtist.name)
+            select(SpotifyArtist)
             .where(SpotifyArtist.wikipedia_name.is_(None))
             .order_by(SpotifyArtist.update_date.asc())
             .limit(limit)
         )
         query_result = await execute_query(self._db_engine, query)
 
-        return {row.id: row.name for row in query_result.all()}
+        return {row.id: row for row in query_result.scalars().all()}
 
-    def _to_update_request(self, artist_id: str, web_pages_map: Dict[str, str]) -> DBUpdateRequest:
+    def _to_update_requests(
+        self, ids_artists_map: Dict[str, SpotifyArtist], ids_web_pages_map: Dict[str, Dict[str, str]]
+    ) -> List[DBUpdateRequest]:
+        logger.info(f"Building {len(ids_web_pages_map)} update requests")
+        requests = []
+
+        for artist_id, web_pages in ids_web_pages_map.items():
+            artist = ids_artists_map[artist_id]
+            update_request = self._to_update_request(artist, web_pages)
+            requests.append(update_request)
+
+        return requests
+
+    def _to_update_request(self, artist: SpotifyArtist, web_pages: Dict[str, str]) -> DBUpdateRequest:
         update_values = {SpotifyArtist.update_date: datetime.utcnow()}
 
-        for domain, link in web_pages_map.items():
+        for domain, link in web_pages.items():
             parse_result = urlparse(link)
             extract_settings = self._domain_extract_function_map[domain]
 
             for setting in extract_settings:
-                update_values[setting.column] = setting.extract_fn(parse_result)
+                if self._is_missing_column(setting, artist):
+                    update_values[setting.column] = setting.extract_fn(parse_result)
 
-        return DBUpdateRequest(id=artist_id, values=update_values)
+        return DBUpdateRequest(id=artist.id, values=update_values)
+
+    @staticmethod
+    def _is_missing_column(extract_settings: DomainExtractSettings, artist: SpotifyArtist) -> bool:
+        existing_value = getattr(artist, extract_settings.column.key)
+        return existing_value is None
 
     @staticmethod
     def _extract_wiki_name(parse_result: ParseResult) -> str:
