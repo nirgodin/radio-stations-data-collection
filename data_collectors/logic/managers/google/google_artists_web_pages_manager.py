@@ -3,6 +3,7 @@ from typing import Optional, Dict, List
 from urllib.parse import urlparse, ParseResult, unquote
 
 from genie_common.tools import logger
+from genie_common.utils import compute_similarity_score
 from genie_datastores.postgres.models import SpotifyArtist
 from genie_datastores.postgres.operations import execute_query
 from sqlalchemy import select
@@ -67,7 +68,10 @@ class GoogleArtistsWebPagesManager(IManager):
 
             for setting in extract_settings:
                 if self._is_missing_column(setting, artist):
-                    update_values[setting.column] = setting.extract_fn(parse_result)
+                    value = setting.extract_fn(parse_result, artist.name)
+
+                    if value is not None:
+                        update_values[setting.column] = value
 
         return DBUpdateRequest(id=artist.id, values=update_values)
 
@@ -76,18 +80,24 @@ class GoogleArtistsWebPagesManager(IManager):
         existing_value = getattr(artist, extract_settings.column.key)
         return existing_value is None
 
-    @staticmethod
-    def _extract_wiki_name(parse_result: ParseResult) -> str:
+    def _extract_wiki_name(self, parse_result: ParseResult, artist_name: str) -> Optional[str]:
         formatted_path = parse_result.path.replace("wiki", "").strip("/")
-        return unquote(formatted_path)
+        wiki_name = unquote(formatted_path)
 
-    @staticmethod
-    def _extract_wiki_language(parse_result: ParseResult) -> str:
-        return parse_result.hostname.split(".")[0]
+        if self._is_matching_value(wiki_name, artist_name):
+            return unquote(formatted_path)
 
-    @staticmethod
-    def _extract_domain_route(parse_result: ParseResult) -> str:
-        return parse_result.path.strip("/")
+    def _extract_wiki_language(self, parse_result: ParseResult, artist_name: str) -> Optional[str]:
+        wiki_name = self._extract_wiki_name(parse_result, artist_name)
+
+        if wiki_name:
+            return parse_result.hostname.split(".")[0]
+
+    def _extract_domain_route(self, parse_result: ParseResult, artist_name: str) -> Optional[str]:
+        domain_route = parse_result.path.strip("/")
+
+        if self._is_matching_value(domain_route, artist_name):
+            return domain_route
 
     @property
     def _domain_extract_function_map(self) -> Dict[Domain, List[DomainExtractSettings]]:
@@ -130,3 +140,8 @@ class GoogleArtistsWebPagesManager(IManager):
                 column=SpotifyArtist.twitter_name,
             ),
         ]
+
+    @staticmethod
+    def _is_matching_value(web_page_name: str, artist_name: str) -> bool:
+        similarity_score = compute_similarity_score(web_page_name, artist_name)
+        return similarity_score > 0.6
