@@ -22,4 +22,4 @@ class ArtistsWebPagesJobBuilder(BaseJobBuilder):
     async def _task(self) -> None:
         async with self._component_factory.sessions.get_client_session() as session:
             manager = self._component_factory.google.get_artists_web_pages_manager(session)
-            await manager.run(limit=100)
+            await manager.run(limit=50)
