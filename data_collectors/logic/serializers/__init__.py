@@ -1,6 +1,7 @@
 from data_collectors.logic.serializers.artists_about_paragraphs_serializer import (
     ArtistsAboutParagraphsSerializer,
 )
+from data_collectors.logic.serializers.artists_web_pages_serializer import ArtistsWebPagesSerializer
 from data_collectors.logic.serializers.eurovision_charts_serializer import (
     EurovisionChartsSerializer,
 )
@@ -19,6 +20,7 @@ from data_collectors.logic.serializers.tracks_lyrics_serializer import (
 
 __all__ = [
     "ArtistsAboutParagraphsSerializer",
+    "ArtistsWebPagesSerializer",
     "EurovisionChartsSerializer",
     "GoogleGeocodingResponseSerializer",
     "OpenAIBatchEmbeddingsSerializer",

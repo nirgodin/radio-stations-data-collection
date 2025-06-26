@@ -37,6 +37,7 @@ class GoogleManagerFactory(BaseManagerFactory):
         return GoogleArtistsWebPagesManager(
             db_engine=self.tools.get_database_engine(),
             web_pages_collector=self.collectors.google.get_artists_web_pages_collector(session),
+            web_pages_serializer=self.serializers.get_artists_web_pages_serializer(),
             db_updater=self.updaters.get_values_updater(),
         )
 
