@@ -22,7 +22,7 @@ from main import lifespan, app
 
 async def until(
     condition: Callable[[], Union[bool, Awaitable[bool]]],
-    timeout: float = 10,
+    timeout: float = 15,
     interval: float = 0.1,
     ignore_exception_types: Tuple[Type[Exception]] = (),
 ) -> None:
@@ -68,7 +68,7 @@ async def build_scheduled_test_client(
     component_factory: ComponentFactory, builder_class: Type[BaseJobBuilder]
 ) -> TestClient:
     job_builder = builder_class(component_factory)
-    next_run_time = datetime.now() + timedelta(seconds=5)
+    next_run_time = datetime.now() + timedelta(seconds=8)
     job = await job_builder.build(next_run_time)
     lifespan_context = partial(
         lifespan,

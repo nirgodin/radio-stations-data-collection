@@ -13,7 +13,7 @@ services:
       - playwright
 
   playwright:
-    image: mcr.microsoft.com/playwright:v1.51.0-noble
+    image: mcr.microsoft.com/playwright:v1.52.0-noble
     ports:
       - "3000:3000"
     init: true
@@ -22,4 +22,4 @@ services:
     working_dir: /home/pwuser
     user: pwuser
     command: >
-      /bin/sh -c "npx -y playwright@1.51.0 run-server --port 3000 --host 0.0.0.0"
+      /bin/sh -c "npx -y playwright@1.52.0 run-server --port 3000 --host 0.0.0.0"
