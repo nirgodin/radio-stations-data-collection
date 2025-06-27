@@ -13,3 +13,7 @@ class SerializersComponentFactory:
         self,
     ) -> ArtistsAboutParagraphsSerializer:
         return ArtistsAboutParagraphsSerializer(generative_model=self._tools.get_gemini_model())
+
+    @staticmethod
+    def get_artists_web_pages_serializer() -> ArtistsWebPagesSerializer:
+        return ArtistsWebPagesSerializer(similarity_threshold=0.65)

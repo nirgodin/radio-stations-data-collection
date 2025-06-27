@@ -34,7 +34,7 @@ from data_collectors.components.environment_component_factory import (
 from data_collectors.consts.image_gender_detector_consts import (
     GENDER_MODEL_RESOURCES_DIR,
 )
-from data_collectors.tools import ImageGenderDetector, TranslationAdapter
+from data_collectors.tools import ImageGenderDetector, TranslationAdapter, GoogleSearchClient
 
 
 class ToolsComponentFactory:
@@ -146,3 +146,8 @@ class ToolsComponentFactory:
 
     def get_wikipedia_text_collector(self, session: ClientSession) -> WikipediaTextCollector:
         return WikipediaTextCollector(session=session, base_url=self._env.get_wikipedia_base_url())
+
+    def get_google_search_client(self, session: ClientSession) -> GoogleSearchClient:
+        return GoogleSearchClient(
+            config=self._env.get_google_search_config(), session=session, pool_executor=self.get_pool_executor()
+        )

@@ -4,6 +4,7 @@ from data_collectors.components.managers.base_manager_factory import BaseManager
 from data_collectors.logic.collectors import BaseArtistsExistingDetailsCollector
 from data_collectors.logic.managers import (
     GoogleArtistsOriginGeocodingManager,
+    GoogleArtistsWebPagesManager,
     GeminiArtistsAboutManager,
 )
 
@@ -31,6 +32,14 @@ class GoogleManagerFactory(BaseManagerFactory):
     async def get_genius_artists_about_manager(self) -> GeminiArtistsAboutManager:
         existing_details_collector = await self.collectors.genius.get_artists_existing_details_collector()
         return self._get_artists_about_manager(existing_details_collector)
+
+    def get_artists_web_pages_manager(self, session: ClientSession) -> GoogleArtistsWebPagesManager:
+        return GoogleArtistsWebPagesManager(
+            db_engine=self.tools.get_database_engine(),
+            web_pages_collector=self.collectors.google.get_artists_web_pages_collector(session),
+            web_pages_serializer=self.serializers.get_artists_web_pages_serializer(),
+            db_updater=self.updaters.get_values_updater(),
+        )
 
     def _get_artists_about_manager(
         self, existing_details_collector: BaseArtistsExistingDetailsCollector

@@ -5,6 +5,8 @@ from typing import List, Dict, Optional
 from genie_common.utils import env_var_to_list
 from spotipyio.auth import ClientCredentials
 
+from data_collectors.tools import GoogleSearchConfig
+
 
 class EnvironmentComponentFactory:
     def __init__(self, default_env: Optional[Dict[str, str]] = None):
@@ -101,6 +103,13 @@ class EnvironmentComponentFactory:
 
     def get_playwright_endpoint(self) -> str:
         return self._lookup_env_var("PLAYWRIGHT_ENDPOINT", default="ws://127.0.0.1:3000/")
+
+    def get_google_search_config(self) -> GoogleSearchConfig:
+        return GoogleSearchConfig(
+            base_url=self._lookup_env_var("GOOGLE_SEARCH_BASE_URL", "https://www.googleapis.com/customsearch/v1"),
+            api_key=self._lookup_env_var("GOOGLE_SEARCH_API_KEY"),
+            cx=self._lookup_env_var("GOOGLE_SEARCH_CX"),
+        )
 
     def _lookup_env_var(self, key: str, default: Optional[str] = None) -> str:
         if key in self._default_env.keys():
