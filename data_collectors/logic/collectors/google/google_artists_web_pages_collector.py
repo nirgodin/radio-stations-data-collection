@@ -35,14 +35,14 @@ class GoogleArtistsWebPagesCollector(ICollector):
         items = response.get("items", [])
 
         for item in items:
-            domain_link = self._extract_single_item_link(item)
+            domain, link = self._extract_single_item_link(item)
 
-            if domain_link is not None:
-                web_pages.update(domain_link)
+            if self._is_relevant_link(domain, link, web_pages):
+                web_pages[domain] = link
 
         return web_pages
 
-    def _extract_single_item_link(self, item: Dict[str, Any]) -> Optional[Dict[Domain, str]]:
+    def _extract_single_item_link(self, item: Dict[str, Any]) -> Optional[Tuple[Optional[Domain], Optional[str]]]:
         link = item.get("link")
 
         if isinstance(link, str):
@@ -50,4 +50,10 @@ class GoogleArtistsWebPagesCollector(ICollector):
 
             for domain in self._domains:
                 if lower_link.__contains__(domain.value):
-                    return {domain: link}
+                    return domain, link
+
+        return None, None
+
+    @staticmethod
+    def _is_relevant_link(domain: Optional[Domain], link: Optional[str], existing_web_pages: Dict[Domain, str]) -> bool:
+        return (link is not None) and (domain not in existing_web_pages.keys())
