@@ -7,7 +7,7 @@ from genie_common.clients.utils import (
     build_authorization_headers,
 )
 from genie_datastores.redis.operations import get_redis
-from playwright.async_api import Browser, async_playwright
+from playwright.async_api import Browser, async_playwright, Playwright, Error as PlaywrightError
 from spotipyio.auth import SpotifyGrantType, SpotifySession, ClientCredentials
 from spotipyio.extras.redis import RedisSessionCacheHandler
 from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
@@ -40,7 +40,7 @@ class SessionsComponentFactory:
     @asynccontextmanager
     async def enter_browser_session(self) -> AsyncGenerator[Browser, None]:
         async with async_playwright() as p:
-            browser = await p.chromium.connect(self._env.get_playwright_endpoint())
+            browser = await self._connect_to_browser_with_retries(p)
             yield browser
 
     def get_spotify_session(self) -> SpotifySession:
@@ -92,3 +92,12 @@ class SessionsComponentFactory:
     )
     async def _start_spotify_session_with_retries(self, session: SpotifySession) -> None:
         await session.start()
+
+    @retry(
+        retry=retry_if_exception_type(PlaywrightError),
+        stop=stop_after_attempt(3),
+        wait=wait_exponential(multiplier=1, min=1, max=10),
+        reraise=True,
+    )
+    async def _connect_to_browser_with_retries(self, p: Playwright) -> Browser:
+        return await p.chromium.connect(self._env.get_playwright_endpoint())
