@@ -30,7 +30,7 @@ class ChartsTaggedMistakesManager(IManager):
         self._spotify_insertions_manager = spotify_insertions_manager
         self._db_updater = db_updater
 
-    async def run(self):
+    async def run(self) -> None:
         logger.info("Reading tagged mistakes data from sheet")
         data = self._sheets_client.read(
             spreadsheet=os.environ["MISTAKES_DATA_SPREADSHEET_URL"],
