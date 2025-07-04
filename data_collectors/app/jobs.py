@@ -8,7 +8,7 @@ from data_collectors.app.utils import get_jobs_map, get_component_factory
 from data_collectors.components import ComponentFactory
 from data_collectors.jobs.job_id import JobId
 
-jobs_router = APIRouter(prefix="/jobs")
+jobs_router = APIRouter(prefix="/jobs", tags=["Jobs"])
 
 
 @jobs_router.get("/")
