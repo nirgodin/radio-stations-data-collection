@@ -7,6 +7,7 @@ from fastapi import FastAPI
 from genie_common.tools import logger
 
 from data_collectors.app.jobs import jobs_router
+from data_collectors.app.ops import ops_router
 from data_collectors.app.utils import get_component_factory
 from data_collectors.components import ComponentFactory
 from data_collectors.logic.models import ScheduledJob
@@ -39,6 +40,7 @@ async def lifespan(
 
 app = FastAPI(lifespan=lifespan)
 app.include_router(jobs_router)
+app.include_router(ops_router)
 
 
 if __name__ == "__main__":
