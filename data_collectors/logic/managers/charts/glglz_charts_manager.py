@@ -71,8 +71,7 @@ class GlglzChartsManager(BaseChartsManager):
 
         return await get_page_content(page)
 
-    @staticmethod
-    def _convert_web_elements_to_urls(elements: List[Optional[Dict[str, str]]]) -> List[str]:
+    def _convert_web_elements_to_urls(self, elements: List[Optional[Dict[str, str]]]) -> List[str]:
         urls = []
 
         for element in elements:
@@ -82,7 +81,7 @@ class GlglzChartsManager(BaseChartsManager):
             for title, route in element.items():
                 if title.__contains__(WEEKLY_CHART_PREFIX):
                     formatted_route = route.lstrip("/")
-                    url = f"https://glz.co.il/{formatted_route}"
+                    url = f"{self._glglz_base_url}/{formatted_route}"
                     urls.append(url)
 
         return urls
