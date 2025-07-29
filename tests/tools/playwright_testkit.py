@@ -14,7 +14,7 @@ class PlaywrightTestkit:
         self._server.expect_request(uri=uri, method="GET").respond_with_data(html)
 
     def get_server_url(self) -> str:
-        return self._server.url_for("").rstrip("/")
+        return self._server.url_for("").rstrip("/").replace("localhost", "host.docker.internal")
 
     def get_playwright_endpoint(self) -> str:
         host_port = self._playwright_container.get_exposed_port(self._playwright_container.port)
