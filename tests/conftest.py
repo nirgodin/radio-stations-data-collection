@@ -93,6 +93,7 @@ def env_component_factory(
         "SPOTIPY_TOKEN_REQUEST_URL": token_request_url.rstrip("/"),
         "WIKIPEDIA_BASE_URL": wikipedia_test_client.get_base_url(),
         "PLAYWRIGHT_ENDPOINT": playwright_testkit.get_playwright_endpoint(),
+        "GLZ_BASE_URL": playwright_testkit.get_server_url(),
     }
     return EnvironmentComponentFactory(default_env)
 
