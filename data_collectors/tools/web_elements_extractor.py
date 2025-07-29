@@ -1,3 +1,4 @@
+from html import unescape
 from typing import List, Optional, Dict, Union
 
 from bs4 import BeautifulSoup, Tag
@@ -7,7 +8,7 @@ from data_collectors.logic.models import WebElement, HTMLElement
 
 class WebElementsExtractor:
     def extract(self, html: str, web_element: WebElement) -> List[Optional[Dict[str, str]]]:
-        soup = BeautifulSoup(html, "html.parser")
+        soup = BeautifulSoup(unescape(html), "html.parser")
         tag = soup.find(web_element.type.value, class_=web_element.class_)
 
         if web_element.multiple:
