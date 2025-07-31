@@ -2,12 +2,14 @@ import asyncio
 import re
 from asyncio import AbstractEventLoop
 from functools import partial
+from unittest.mock import AsyncMock, patch
 
 from _pytest.fixtures import fixture
 from aioresponses import aioresponses
 from genie_common.utils import random_alphanumeric_string
 from genie_datastores.testing.mongo.mongo_testkit import MongoTestkit
 from genie_datastores.testing.postgres import PostgresTestkit, postgres_session
+from google.generativeai import GenerativeModel
 from responses import RequestsMock
 from spotipyio.auth import ClientCredentials, SpotifyGrantType
 from spotipyio.logic.utils import random_client_credentials
@@ -154,3 +156,9 @@ def shazam_insertions_verifier(db_engine: AsyncEngine) -> ShazamInsertionsVerifi
 def wikipedia_test_client() -> WikipediaTestClient:
     with WikipediaTestClient() as test_client:
         yield test_client
+
+
+@fixture
+def mock_gemini_model(self) -> AsyncMock:
+    with patch.object(GenerativeModel, "generate_content_async") as mock_model:
+        yield mock_model
