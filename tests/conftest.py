@@ -159,6 +159,6 @@ def wikipedia_test_client() -> WikipediaTestClient:
 
 
 @fixture
-def mock_gemini_model(self) -> AsyncMock:
+def mock_gemini_model() -> AsyncMock:
     with patch.object(GenerativeModel, "generate_content_async") as mock_model:
         yield mock_model

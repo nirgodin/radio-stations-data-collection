@@ -1,7 +1,9 @@
+import json
 from datetime import datetime
 from http import HTTPStatus
 from random import randint, shuffle, choice
-from typing import Optional, Dict
+from typing import Optional, Dict, List
+from unittest.mock import AsyncMock
 from urllib.parse import unquote
 
 from _pytest.fixtures import fixture
@@ -12,6 +14,8 @@ from starlette.testclient import TestClient
 
 from data_collectors.consts.glglz_consts import WEEKLY_CHART_PREFIX, GLGLZ_CHARTS_ARCHIVE_ROUTE
 from data_collectors.jobs.job_id import JobId
+from tests.charts.glglz.glglz_chart_resources import GlglzChartResources
+from tests.helpers.mock_generate_content_response import MockGenerateContentResponse
 from tests.tools.playwright_testkit import PlaywrightTestkit
 
 
@@ -21,11 +25,13 @@ class TestGlglzChartsManager:
         db_engine: AsyncEngine,
         test_client: TestClient,
         charts_archive_page: str,
-        charts_dates_to_pages: Dict[datetime, str],
+        charts_resources: List[GlglzChartResources],
         playwright_testkit: PlaywrightTestkit,
+        mock_gemini_model: AsyncMock,
     ):
         self._expect_charts_archive_request(playwright_testkit, charts_archive_page)
-        self._expect_charts_pages_requests(playwright_testkit, charts_dates_to_pages)
+        self._expect_charts_pages_requests(playwright_testkit, charts_resources)
+        self._given_valid_gemini_responses(mock_gemini_model, charts_resources)
 
         with test_client as client:
             actual = client.post(f"jobs/trigger/{JobId.GLGLZ_CHARTS.value}")
@@ -37,11 +43,13 @@ class TestGlglzChartsManager:
         playwright_testkit.expect(uri=f"/{unquote(GLGLZ_CHARTS_ARCHIVE_ROUTE)}", html=charts_archive_page)
 
     def _expect_charts_pages_requests(
-        self, playwright_testkit: PlaywrightTestkit, charts_dates_to_pages: Dict[datetime, str]
+        self,
+        playwright_testkit: PlaywrightTestkit,
+        charts_resources: List[GlglzChartResources],
     ) -> None:
-        for date, page in charts_dates_to_pages.items():
-            route = self._to_glglz_route(date)
-            playwright_testkit.expect(uri=f"/{route}", html=page)
+        for resource in charts_resources:
+            route = self._to_glglz_route(resource.date)
+            playwright_testkit.expect(uri=f"/{route}", html=resource.html)
 
     def _a_glglz_html_link(self, date: datetime) -> str:
         text = self._to_glglz_route(date)
@@ -71,8 +79,8 @@ class TestGlglzChartsManager:
         return f"{protocol}://{subdomain}.{domain}.{tld}"
 
     @fixture
-    def charts_archive_page(self, charts_dates_to_pages: Dict[datetime, str]) -> str:
-        glglz_links = [self._a_glglz_html_link(date) for date in charts_dates_to_pages]
+    def charts_archive_page(self, charts_resources: List[GlglzChartResources]) -> str:
+        glglz_links = [self._a_glglz_html_link(resource.date) for resource in charts_resources]
         non_glglz_links = [self._an_html_link() for _ in range(randint(0, 10))]
         links = glglz_links + non_glglz_links
         shuffle(links)
@@ -81,8 +89,21 @@ class TestGlglzChartsManager:
         return f'<html><head><meta charset="UTF-8"></head><body>{formatted_links}</body></html>'
 
     @fixture
-    def charts_dates_to_pages(self) -> Dict[datetime, str]:
-        return {
-            random_datetime(): random_alphanumeric_string(min_length=10),
-            random_datetime(): random_alphanumeric_string(min_length=10),
-        }
+    def charts_resources(self) -> List[GlglzChartResources]:
+        return [GlglzChartResources.random(), GlglzChartResources.random()]
+
+    @staticmethod
+    def _given_valid_gemini_responses(
+        mock_gemini_model: AsyncMock,
+        charts_resources: List[GlglzChartResources],
+    ) -> None:
+        def _mock_generate_content(contents: str, generation_config: Dict[str, str]) -> MockGenerateContentResponse:
+            for resource in charts_resources:
+                if contents.__contains__(resource.html):
+                    text = resource.chart_details.json()
+                    return MockGenerateContentResponse(
+                        parts=[text],
+                        text=text,
+                    )
+
+        mock_gemini_model.side_effect = _mock_generate_content
