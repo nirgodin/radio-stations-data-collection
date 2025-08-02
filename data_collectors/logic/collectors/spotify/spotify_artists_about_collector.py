@@ -39,15 +39,11 @@ class SpotifyArtistsAboutCollector(ICollector):
             expected_type=SpotifyArtistAbout,
         )
 
-    async def _collect_single_artist_details_wrapper(
-        self, artist_id_and_name: Tuple[str, str]
-    ) -> SpotifyArtistAbout:
+    async def _collect_single_artist_details_wrapper(self, artist_id_and_name: Tuple[str, str]) -> SpotifyArtistAbout:
         artist_id, artist_name = artist_id_and_name
 
         try:
-            return await self._collect_single_artist_details(
-                artist_id=artist_id, artist_name=artist_name
-            )
+            return await self._collect_single_artist_details(artist_id=artist_id, artist_name=artist_name)
 
         except Exception:
             logger.exception("Received exception during artist details collection. Returning empty details by default")

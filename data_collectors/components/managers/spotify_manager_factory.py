@@ -1,5 +1,4 @@
 from aiohttp import ClientSession
-from genie_datastores.mongo.operations import initialize_mongo
 from playwright.async_api import Browser
 from spotipyio.auth import SpotifySession
 

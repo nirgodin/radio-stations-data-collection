@@ -1,7 +1,6 @@
 from datetime import datetime
 
 from apscheduler.triggers.interval import IntervalTrigger
-from apscheduler.util import undefined
 from typing_extensions import Optional
 
 from data_collectors.jobs.base_job_builder import BaseJobBuilder
