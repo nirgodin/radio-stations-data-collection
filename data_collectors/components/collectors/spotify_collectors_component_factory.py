@@ -1,4 +1,5 @@
 from aiohttp import ClientSession
+from playwright.async_api import Browser
 from spotipyio import SpotifyClient
 
 from data_collectors.components.tools_component_factory import ToolsComponentFactory
@@ -30,5 +31,8 @@ class SpotifyCollectorsComponentFactory:
             pool_executor=self._tools.get_pool_executor(),
         )
 
-    def get_spotify_artists_about_collector(self) -> SpotifyArtistsAboutCollector:
-        return SpotifyArtistsAboutCollector(self._tools.get_pool_executor())
+    def get_spotify_artists_about_collector(self, browser: Browser) -> SpotifyArtistsAboutCollector:
+        return SpotifyArtistsAboutCollector(
+            pool_executor=self._tools.get_pool_executor(),
+            browser=browser,
+        )
