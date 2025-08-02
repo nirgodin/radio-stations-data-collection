@@ -15,11 +15,11 @@ class SpotifyArtistsAboutsJobBuilder(BaseJobBuilder):
         return ScheduledJob(
             task=self._task,
             id=JobId.SPOTIFY_ARTISTS_ABOUTS,
-            interval=IntervalTrigger(hours=6),
+            interval=IntervalTrigger(hours=2),
             next_run_time=random_upcoming_time(),
         )
 
     async def _task(self) -> None:
         async with self._component_factory.sessions.enter_browser_session() as browser:
             manager = self._component_factory.spotify.get_artists_about_manager(browser)
-            await manager.run(limit=10)
+            await manager.run(limit=20)
