@@ -6,14 +6,14 @@ from unittest.mock import AsyncMock
 from urllib.parse import unquote
 
 from _pytest.fixtures import fixture
+from genie_common.utils import chain_lists
 from spotipyio.logic.utils import random_alphanumeric_string
 from spotipyio.models import SearchItem, SearchItemMetadata, SpotifySearchType
-from spotipyio.testing import SpotifyTestClient, SpotifyMockFactory
+from spotipyio.testing import SpotifyTestClient
 from sqlalchemy.ext.asyncio import AsyncEngine
 from starlette.testclient import TestClient
 
 from data_collectors.consts.glglz_consts import WEEKLY_CHART_PREFIX, GLGLZ_CHARTS_ARCHIVE_ROUTE
-from data_collectors.consts.spotify_consts import TRACKS
 from data_collectors.jobs.job_id import JobId
 from tests.charts.glglz.glglz_chart_resources import GlglzChartResources
 from tests.helpers.mock_generate_content_response import MockGenerateContentResponse
@@ -37,6 +37,8 @@ class TestGlglzChartsManager:
         self._expect_charts_pages_requests(playwright_testkit, charts_resources)
         self._given_valid_gemini_responses(mock_gemini_model, charts_resources)
         self._given_valid_search_responses(spotify_test_client, charts_resources)
+        self._given_valid_artists_responses(spotify_test_client, charts_resources)
+        self._given_valid_audio_features_responses(spotify_test_client, charts_resources)
 
         with test_client as client:
             actual = client.post(f"jobs/trigger/{JobId.GLGLZ_CHARTS.value}")
@@ -96,7 +98,7 @@ class TestGlglzChartsManager:
 
     @fixture
     def charts_resources(self) -> List[GlglzChartResources]:
-        return [GlglzChartResources.random(), GlglzChartResources.random()]
+        return [GlglzChartResources.random()]
 
     @staticmethod
     def _given_valid_gemini_responses(
@@ -121,28 +123,38 @@ class TestGlglzChartsManager:
         for resource in charts_resources:
             for entry_resources in resource.entries_resources:
                 search_item = SearchItem(
-                    text=f"{entry_resources.entry.artist} - {entry_resources.entry.track}",
+                    text=entry_resources.to_search_query(),
                     metadata=SearchItemMetadata(search_types=[SpotifySearchType.TRACK], quote=False),
                 )
                 spotify_test_client.search.search_item.expect_success(
                     search_item=search_item,
-                    response_json={
-                        TRACKS: [
-                            SpotifyMockFactory.track(
-                                id=entry_resources.track_id,
-                                name=entry_resources.entry.track,
-                                artist=[
-                                    SpotifyMockFactory.artist(
-                                        id=entry_resources.artist_id, name=entry_resources.entry.artist
-                                    )
-                                ],
-                                album=[SpotifyMockFactory.album(id=entry_resources.album_id)],
-                            )
-                        ]
-                    },
+                    response_json=entry_resources.to_search_response(),
                 )
 
-    async def _assert_expected_spotify_entries_inserted(
-        self, charts_resources: List[GlglzChartResources], spotify_insertions_verifier: SpotifyInsertionsVerifier
+    @staticmethod
+    def _given_valid_artists_responses(
+        spotify_test_client: SpotifyTestClient, charts_resources: List[GlglzChartResources]
     ) -> None:
-        pass
+        artists_ids = chain_lists([resource.get_artists_ids() for resource in charts_resources])
+        spotify_test_client.artists.info.expect_success(sorted(artists_ids))
+
+    @staticmethod
+    def _given_valid_audio_features_responses(
+        spotify_test_client: SpotifyTestClient, charts_resources: List[GlglzChartResources]
+    ) -> None:
+        tracks_ids = chain_lists([resource.get_tracks_ids() for resource in charts_resources])
+        spotify_test_client.tracks.audio_features.expect_success(sorted(tracks_ids))
+
+    @staticmethod
+    async def _assert_expected_spotify_entries_inserted(
+        charts_resources: List[GlglzChartResources], spotify_insertions_verifier: SpotifyInsertionsVerifier
+    ) -> None:
+        tracks_ids = chain_lists([resource.get_tracks_ids() for resource in charts_resources])
+        artists_ids = chain_lists([resource.get_artists_ids() for resource in charts_resources])
+        albums_ids = chain_lists([resource.get_albums_ids() for resource in charts_resources])
+
+        assert await spotify_insertions_verifier.verify(
+            artists=artists_ids,
+            tracks=tracks_ids,
+            albums=albums_ids,
+        )
