@@ -7,9 +7,12 @@ from urllib.parse import unquote
 
 from _pytest.fixtures import fixture
 from genie_common.utils import chain_lists
+from genie_datastores.postgres.models import ChartEntry, Chart
+from genie_datastores.postgres.operations import execute_query
 from spotipyio.logic.utils import random_alphanumeric_string
 from spotipyio.models import SearchItem, SearchItemMetadata, SpotifySearchType
 from spotipyio.testing import SpotifyTestClient
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncEngine
 from starlette.testclient import TestClient
 
@@ -44,7 +47,8 @@ class TestGlglzChartsManager:
             actual = client.post(f"jobs/trigger/{JobId.GLGLZ_CHARTS.value}")
 
         assert actual.status_code == HTTPStatus.OK
-        await self._assert_expected_spotify_entries_inserted(charts_resources, spotify_insertions_verifier)
+        assert await self._are_expected_spotify_entries_inserted(charts_resources, spotify_insertions_verifier)
+        assert await self._are_chart_entries_records_inserted(charts_resources, db_engine)
 
     @staticmethod
     def _expect_charts_archive_request(playwright_testkit: PlaywrightTestkit, charts_archive_page: str) -> None:
@@ -146,15 +150,28 @@ class TestGlglzChartsManager:
         spotify_test_client.tracks.audio_features.expect_success(sorted(tracks_ids))
 
     @staticmethod
-    async def _assert_expected_spotify_entries_inserted(
+    async def _are_expected_spotify_entries_inserted(
         charts_resources: List[GlglzChartResources], spotify_insertions_verifier: SpotifyInsertionsVerifier
-    ) -> None:
+    ) -> bool:
         tracks_ids = chain_lists([resource.get_tracks_ids() for resource in charts_resources])
         artists_ids = chain_lists([resource.get_artists_ids() for resource in charts_resources])
         albums_ids = chain_lists([resource.get_albums_ids() for resource in charts_resources])
 
-        assert await spotify_insertions_verifier.verify(
+        return await spotify_insertions_verifier.verify(
             artists=artists_ids,
             tracks=tracks_ids,
             albums=albums_ids,
         )
+
+    @staticmethod
+    async def _are_chart_entries_records_inserted(
+        charts_resources: List[GlglzChartResources], db_engine: AsyncEngine
+    ) -> bool:
+        expected = chain_lists([resource.get_tracks_ids() for resource in charts_resources])
+        query = select(ChartEntry.track_id).where(
+            ChartEntry.chart.in_([Chart.GLGLZ_WEEKLY_ISRAELI, Chart.GLGLZ_WEEKLY_INTERNATIONAL])
+        )
+        query_result = await execute_query(engine=db_engine, query=query)
+        actual = query_result.scalars().all()
+
+        return sorted(actual) == sorted(expected)
