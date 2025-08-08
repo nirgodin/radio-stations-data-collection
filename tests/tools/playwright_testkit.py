@@ -1,4 +1,5 @@
 from pytest_httpserver import HTTPServer
+from pytest_httpserver.httpserver import HandlerType
 
 from tests.tools.playwright_container import PlaywrightContainer
 
@@ -11,7 +12,11 @@ class PlaywrightTestkit:
         self._server = server
 
     def expect(self, uri: str, html: str) -> None:
-        self._server.expect_request(uri=uri, method="GET").respond_with_data(html)
+        self._server.expect_request(
+            uri=uri,
+            method="GET",
+            handler_type=HandlerType.ONESHOT,
+        ).respond_with_data(html)
 
     def get_server_url(self) -> str:
         return self._server.url_for("").rstrip("/").replace("localhost", "host.docker.internal")
