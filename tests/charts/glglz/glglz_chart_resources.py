@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import List, Dict
 
-from genie_common.utils import random_datetime, random_alphanumeric_string, random_boolean, random_enum_value
+from genie_common.utils import random_datetime, random_alphanumeric_string, random_enum_value
 from spotipyio.testing import SpotifyMockFactory
 
 from data_collectors.consts.spotify_consts import TRACKS, ITEMS
