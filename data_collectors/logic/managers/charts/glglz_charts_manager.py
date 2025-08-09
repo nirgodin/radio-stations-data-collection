@@ -10,8 +10,8 @@ from sqlalchemy.ext.asyncio import AsyncEngine
 
 from data_collectors.consts.glglz_consts import (
     WEEKLY_CHART_PREFIX,
-    GLGLZ_CHARTS_ARCHIVE_URL,
     GLGLZ_CHARTS_LINKS_WEB_ELEMENT,
+    GLGLZ_CHARTS_ARCHIVE_ROUTE,
 )
 from data_collectors.logic.collectors import (
     GlglzChartsDataCollector,
@@ -35,6 +35,7 @@ class GlglzChartsManager(BaseChartsManager):
         chart_entries_inserter: ChartEntriesDatabaseInserter,
         browser: Browser,
         db_engine: AsyncEngine,
+        glz_base_url: str,
     ):
         super().__init__(
             charts_data_collector=charts_data_collector,
@@ -44,6 +45,7 @@ class GlglzChartsManager(BaseChartsManager):
         )
         self._browser = browser
         self._db_engine = db_engine
+        self._glglz_base_url = glz_base_url.rstrip("/")
 
     async def _generate_data_collector_kwargs(
         self, dates: Optional[List[datetime]], limit: Optional[int]
@@ -63,12 +65,12 @@ class GlglzChartsManager(BaseChartsManager):
 
     async def _fetch_charts_archive_page(self) -> str:
         page = await self._browser.new_page()
-        await page.goto(GLGLZ_CHARTS_ARCHIVE_URL)
+        charts_archive_url = f"{self._glglz_base_url}/{GLGLZ_CHARTS_ARCHIVE_ROUTE}"
+        await page.goto(charts_archive_url)
 
         return await get_page_content(page)
 
-    @staticmethod
-    def _convert_web_elements_to_urls(elements: List[Optional[Dict[str, str]]]) -> List[str]:
+    def _convert_web_elements_to_urls(self, elements: List[Optional[Dict[str, str]]]) -> List[str]:
         urls = []
 
         for element in elements:
@@ -78,7 +80,7 @@ class GlglzChartsManager(BaseChartsManager):
             for title, route in element.items():
                 if title.__contains__(WEEKLY_CHART_PREFIX):
                     formatted_route = route.lstrip("/")
-                    url = f"https://glz.co.il/{formatted_route}"
+                    url = f"{self._glglz_base_url}/{formatted_route}"
                     urls.append(url)
 
         return urls
