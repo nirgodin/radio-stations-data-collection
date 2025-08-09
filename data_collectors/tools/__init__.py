@@ -1,6 +1,9 @@
 from data_collectors.tools.entity_matching.entity_extractors.genius_artist_entity_extractor import (
     GeniusArtistEntityExtractor,
 )
+from data_collectors.tools.entity_matching.entity_extractors.genius_search_result_artist_extrator import (
+    GeniusSearchResultArtistEntityExtractor,
+)
 from data_collectors.tools.entity_matching.entity_extractors.genius_track_entity_extractor import (
     GeniusTrackEntityExtractor,
 )
@@ -37,6 +40,7 @@ __all__ = [
     "ShazamArtistEntityExtractor",
     "GeniusTrackEntityExtractor",
     "GeniusArtistEntityExtractor",
+    "GeniusSearchResultArtistEntityExtractor",
     "MusixmatchArtistEntityExtractor",
     "MusixmatchTrackEntityExtractor",
 ]

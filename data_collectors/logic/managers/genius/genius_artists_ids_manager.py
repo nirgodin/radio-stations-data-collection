@@ -2,7 +2,7 @@ from typing import Optional, Dict, List
 
 from genie_common.tools import logger
 from genie_common.utils import safe_nested_get
-from genie_datastores.postgres.models import TrackIDMapping, SpotifyTrack, Artist
+from genie_datastores.postgres.models import TrackIDMapping, SpotifyTrack, Artist, SpotifyArtist
 from genie_datastores.postgres.operations import execute_query
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncEngine
@@ -13,43 +13,43 @@ from data_collectors.contract import IManager
 from data_collectors.logic.collectors import GeniusTracksCollector
 from data_collectors.logic.models import GeniusTextFormat, DBUpdateRequest
 from data_collectors.logic.updaters import ValuesDatabaseUpdater
+from data_collectors.tools import GeniusClient
 
 
 class GeniusArtistsIDsManager(IManager):
     def __init__(
         self,
         db_engine: AsyncEngine,
-        tracks_collector: GeniusTracksCollector,
+        genius_client: GeniusClient,
         db_updater: ValuesDatabaseUpdater,
     ):
         self._db_engine = db_engine
-        self._tracks_collector = tracks_collector
+        self._genius_client = genius_client
         self._db_updater = db_updater
 
     async def run(self, limit: Optional[int]) -> None:
         logger.info(f"Starting to search for {limit} artists ids")
-        genius_id_artist_id_mapping = await self._query_genius_id_to_artist_id_map(limit)
+        artist_id_to_name = await self._query_artists_with_missing_genius_id(limit)
 
-        if not genius_id_artist_id_mapping:
-            logger.info("Did not find any missing genius ids. Aborting")
+        if not artist_id_to_name:
+            logger.info("Did not find any artist with missing genius ids. Aborting")
             return
 
-        await self._collect_and_update_artists_ids(genius_id_artist_id_mapping)
+        await self._collect_and_update_artists_ids(artist_id_to_name)
 
-    async def _query_genius_id_to_artist_id_map(self, limit: Optional[int]) -> Dict[str, str]:
-        logger.info("Querying db for genius tracks ids and spotify artists ids")
+    async def _query_artists_with_missing_genius_id(self, limit: Optional[int]) -> Dict[str, str]:
+        logger.info("Querying db for artists with missing genius ids")
         query = (
-            select(TrackIDMapping.genius_id, Artist.id)
-            .where(TrackIDMapping.id == SpotifyTrack.id)
-            .where(SpotifyTrack.artist_id == Artist.id)
-            .where(TrackIDMapping.genius_id.isnot(None))
+            select(SpotifyArtist.id, SpotifyArtist.name)
+            .where(SpotifyArtist.id == Artist.id)
             .where(Artist.genius_id.is_(None))
+            .order_by(Artist.update_date.asc())
             .limit(limit)
         )
         cursor = await execute_query(engine=self._db_engine, query=query)
         query_result = cursor.all()
 
-        return {row.genius_id: row.id for row in query_result}
+        return {row.id: row.name for row in query_result}
 
     def _map_spotify_and_genius_artists_ids(
         self, tracks: List[dict], genius_id_artist_id_mapping: Dict[str, str]
