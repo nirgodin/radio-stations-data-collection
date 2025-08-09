@@ -31,7 +31,9 @@ class GeniusCollectorsComponentFactory:
         )
 
     def get_artists_ids_collector(self, session: ClientSession) -> GeniusArtistsIDsCollector:
-        entity_matcher = EntityMatcher(extractors={GeniusSearchResultArtistEntityExtractor(): 1}, min_present_fields=1)
+        entity_matcher = EntityMatcher(
+            extractors={GeniusSearchResultArtistEntityExtractor(): 1}, threshold=0.9, min_present_fields=1
+        )
         return GeniusArtistsIDsCollector(
             genius_client=self._tools.get_genius_client(session),
             pool_executor=self._tools.get_pool_executor(),

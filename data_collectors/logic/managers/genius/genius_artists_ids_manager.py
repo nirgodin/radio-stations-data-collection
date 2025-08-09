@@ -2,29 +2,28 @@ from typing import Optional, Dict, List
 
 from genie_common.tools import logger
 from genie_common.utils import safe_nested_get
-from genie_datastores.postgres.models import TrackIDMapping, SpotifyTrack, Artist, SpotifyArtist
+from genie_datastores.postgres.models import Artist, SpotifyArtist
 from genie_datastores.postgres.operations import execute_query
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncEngine
 
+from data_collectors.logic.collectors import GeniusArtistsIDsCollector
 from data_collectors.consts.genius_consts import PRIMARY_ARTIST
 from data_collectors.consts.spotify_consts import ID
 from data_collectors.contract import IManager
-from data_collectors.logic.collectors import GeniusTracksCollector
 from data_collectors.logic.models import GeniusTextFormat, DBUpdateRequest
 from data_collectors.logic.updaters import ValuesDatabaseUpdater
-from data_collectors.tools import GeniusClient
 
 
 class GeniusArtistsIDsManager(IManager):
     def __init__(
         self,
         db_engine: AsyncEngine,
-        genius_client: GeniusClient,
+        artists_ids_collector: GeniusArtistsIDsCollector,
         db_updater: ValuesDatabaseUpdater,
     ):
         self._db_engine = db_engine
-        self._genius_client = genius_client
+        self._artists_ids_collector = artists_ids_collector
         self._db_updater = db_updater
 
     async def run(self, limit: Optional[int]) -> None:
@@ -35,7 +34,8 @@ class GeniusArtistsIDsManager(IManager):
             logger.info("Did not find any artist with missing genius ids. Aborting")
             return
 
-        await self._collect_and_update_artists_ids(artist_id_to_name)
+        spotify_to_genius_id = await self._artists_ids_collector.collect(artist_id_to_name)
+        await self._collect_and_update_artists_ids(spotify_to_genius_id)
 
     async def _query_artists_with_missing_genius_id(self, limit: Optional[int]) -> Dict[str, str]:
         logger.info("Querying db for artists with missing genius ids")
