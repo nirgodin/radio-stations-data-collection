@@ -51,8 +51,8 @@ class EnvironmentComponentFactory:
 
     @staticmethod
     @lru_cache
-    def get_genius_access_token() -> str:
-        return os.environ["GENIUS_CLIENT_ACCESS_TOKEN"]
+    def get_genius_bearer_token() -> str:
+        return os.environ["GENIUS_BEARER_TOKEN"]
 
     @staticmethod
     @lru_cache
@@ -113,6 +113,12 @@ class EnvironmentComponentFactory:
 
     def get_glz_base_url(self) -> str:
         return self._lookup_env_var("GLZ_BASE_URL", default="https://glz.co.il")
+
+    def get_genius_api_base_url(self) -> str:
+        return self._lookup_env_var("GENIUS_API_BASE_URL", default="https://api.genius.com")
+
+    def get_genius_public_base_url(self) -> str:
+        return self._lookup_env_var("GENIUS_PUBLIC_BASE_URL", default="https://genius.com/api")
 
     def _lookup_env_var(self, key: str, default: Optional[str] = None) -> str:
         if key in self._default_env.keys():
