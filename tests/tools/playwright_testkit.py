@@ -1,5 +1,6 @@
 from pytest_httpserver import HTTPServer
 from pytest_httpserver.httpserver import HandlerType
+from testcontainers.core.utils import is_mac
 
 from tests.tools.playwright_container import PlaywrightContainer
 
@@ -19,7 +20,12 @@ class PlaywrightTestkit:
         ).respond_with_data(html)
 
     def get_server_url(self) -> str:
-        return self._server.url_for("").rstrip("/").replace("localhost", "host.docker.internal")
+        url = self._server.url_for("").rstrip("/")
+
+        if is_mac():
+            url = url.replace("localhost", "host.docker.internal")
+
+        return url
 
     def get_playwright_endpoint(self) -> str:
         host_port = self._playwright_container.get_exposed_port(self._playwright_container.port)
