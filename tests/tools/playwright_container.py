@@ -12,7 +12,7 @@ class PlaywrightContainer(DockerContainer):
         self.port = port or random_port()
         self.with_exposed_ports(self.port)
         self.with_command(f'/bin/sh -c "npx -y playwright@{version} run-server --port {self.port} --host 0.0.0.0"')
-        extra_hosts = [] if is_mac() else ["host.docker.internal:host-gateway"]
+        extra_hosts = {} if is_mac() else {"hostmachine": "host-gateway"}
         self.with_kwargs(user="pwuser", init=True, privileged=False, extra_hosts=extra_hosts)
 
     def start(self) -> "PlaywrightContainer":
