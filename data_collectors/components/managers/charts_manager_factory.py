@@ -72,7 +72,8 @@ class ChartsManagerFactory(BaseManagerFactory):
             charts_tracks_collector=tracks_collector,
             spotify_insertions_manager=self.inserters.spotify.get_insertions_manager(spotify_client),
             browser=browser,
-            db_engine=get_database_engine(),
+            db_engine=self.tools.get_database_engine(),
+            glz_base_url=self.env.get_glz_base_url(),
         )
 
     def get_spotify_charts_manager(self, spotify_session: SpotifySession) -> PlaylistsChartsManager:
