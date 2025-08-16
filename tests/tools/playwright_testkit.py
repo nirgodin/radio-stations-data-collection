@@ -21,7 +21,7 @@ class PlaywrightTestkit:
 
     def get_server_url(self) -> str:
         url = self._server.url_for("").rstrip("/")
-        host = "host.docker.internal" if is_mac() else "127.0.0.1"
+        host = "host.docker.internal" if is_mac() else "172.17.0.1"
 
         return url.replace("localhost", host)
 
