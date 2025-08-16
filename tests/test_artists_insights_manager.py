@@ -2,7 +2,7 @@ from functools import partial
 from http import HTTPStatus
 from random import randint, random
 from typing import List, Dict, Tuple
-from unittest.mock import AsyncMock, patch
+from unittest.mock import AsyncMock
 
 from _pytest.fixtures import fixture
 from genie_common.utils import random_alphanumeric_string, random_datetime, random_enum_value
@@ -11,7 +11,6 @@ from genie_datastores.mongo.models import AboutDocument
 from genie_datastores.postgres.models import Gender, Artist, Decision, Table, BaseORMModel
 from genie_datastores.postgres.operations import insert_records, execute_query
 from genie_datastores.testing.postgres import PostgresMockFactory
-from google.generativeai import GenerativeModel
 from spotipyio.testing import SpotifyMockFactory
 from sqlalchemy import select, inspect
 from sqlalchemy.ext.asyncio import AsyncEngine
@@ -234,11 +233,6 @@ class TestArtistsInsightsManager:
     @fixture
     def artists_extraction_responses(self) -> List[ArtistDetailsExtractionResponse]:
         return [self._random_artist_details_extraction_response() for _ in range(randint(1, 10))]
-
-    @fixture
-    def mock_gemini_model(self) -> AsyncMock:
-        with patch.object(GenerativeModel, "generate_content_async") as mock_model:
-            yield mock_model
 
     @fixture
     async def scheduled_test_client(
