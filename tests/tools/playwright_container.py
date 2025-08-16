@@ -1,4 +1,3 @@
-from time import sleep
 from typing import Optional
 
 from genie_common.utils import random_port
@@ -19,6 +18,5 @@ class PlaywrightContainer(DockerContainer):
     def start(self) -> "PlaywrightContainer":
         super().start()
         wait_for_logs(self, f"Listening on ws://0.0.0.0:{self.port}/", timeout=60)
-        sleep(10)
 
         return self
