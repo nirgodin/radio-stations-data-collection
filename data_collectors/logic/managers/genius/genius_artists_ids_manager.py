@@ -1,17 +1,14 @@
 from typing import Optional, Dict, List
 
 from genie_common.tools import logger
-from genie_common.utils import safe_nested_get
 from genie_datastores.postgres.models import Artist, SpotifyArtist
 from genie_datastores.postgres.operations import execute_query
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncEngine
 
-from data_collectors.logic.collectors import GeniusArtistsIDsCollector
-from data_collectors.consts.genius_consts import PRIMARY_ARTIST
-from data_collectors.consts.spotify_consts import ID
 from data_collectors.contract import IManager
-from data_collectors.logic.models import GeniusTextFormat, DBUpdateRequest
+from data_collectors.logic.collectors import GeniusArtistsIDsCollector
+from data_collectors.logic.models import DBUpdateRequest
 from data_collectors.logic.updaters import ValuesDatabaseUpdater
 
 
@@ -35,7 +32,7 @@ class GeniusArtistsIDsManager(IManager):
             return
 
         spotify_to_genius_id = await self._artists_ids_collector.collect(artist_id_to_name)
-        await self._collect_and_update_artists_ids(spotify_to_genius_id)
+        await self._update_artists_genius_ids(spotify_to_genius_id)
 
     async def _query_artists_with_missing_genius_id(self, limit: Optional[int]) -> Dict[str, str]:
         logger.info("Querying db for artists with missing genius ids")
@@ -64,34 +61,6 @@ class GeniusArtistsIDsManager(IManager):
                 spotify_genius_artists_ids_map.update(ids_map)
 
         return spotify_genius_artists_ids_map
-
-    async def _collect_and_update_artists_ids(self, genius_id_artist_id_mapping: Dict[str, str]) -> None:
-        track_ids = list(genius_id_artist_id_mapping.keys())
-        tracks = await self._tracks_collector.collect(track_ids, GeniusTextFormat.PLAIN)
-
-        if not tracks:
-            logger.warning("Did not receive any valid response from tracks collector. Aborting")
-            return
-
-        artists_ids_map = self._map_spotify_and_genius_artists_ids(tracks, genius_id_artist_id_mapping)
-        await self._update_artists_genius_ids(artists_ids_map)
-
-    def _map_single_track_ids(
-        self, track: dict, spotify_genius_artists_ids_map: Dict[str, str]
-    ) -> Optional[Dict[str, str]]:
-        track_id = self._extract_genius_id(track, paths=[ID])
-
-        if track_id is not None:
-            spotify_artist_id = spotify_genius_artists_ids_map[track_id]
-            genius_artist_id = self._extract_genius_id(track, [PRIMARY_ARTIST, ID])
-
-            if genius_artist_id is not None:
-                return {spotify_artist_id: genius_artist_id}
-
-    @staticmethod
-    def _extract_genius_id(track: dict, paths: List[str]) -> Optional[str]:
-        id_ = safe_nested_get(track, paths)
-        return None if id_ is None else str(id_)
 
     async def _update_artists_genius_ids(self, artists_ids_map: Dict[str, str]) -> None:
         logger.info("Updating artists genius ids")
