@@ -2,12 +2,14 @@ import asyncio
 import re
 from asyncio import AbstractEventLoop
 from functools import partial
+from unittest.mock import AsyncMock, patch
 
 from _pytest.fixtures import fixture
 from aioresponses import aioresponses
 from genie_common.utils import random_alphanumeric_string
 from genie_datastores.testing.mongo.mongo_testkit import MongoTestkit
 from genie_datastores.testing.postgres import PostgresTestkit, postgres_session
+from google.generativeai import GenerativeModel
 from responses import RequestsMock
 from spotipyio.auth import ClientCredentials, SpotifyGrantType
 from spotipyio.logic.utils import random_client_credentials
@@ -22,6 +24,7 @@ from data_collectors.components.environment_component_factory import (
 )
 from main import lifespan
 from tests.testing_utils import app_test_client_session
+from tests.tools.playwright_testkit import PlaywrightTestkit
 from tests.tools.shazam_insertions_verifier import ShazamInsertionsVerifier
 from tests.tools.spotify_insertions_verifier import SpotifyInsertionsVerifier
 from tests.tools.wikipedia_test_client import WikipediaTestClient
@@ -63,12 +66,19 @@ def mongo_testkit() -> MongoTestkit:
 
 
 @fixture
+def playwright_testkit() -> PlaywrightTestkit:
+    with PlaywrightTestkit() as playwright_testkit:
+        yield playwright_testkit
+
+
+@fixture
 def env_component_factory(
     spotify_credentials: ClientCredentials,
     spotify_test_client: SpotifyTestClient,
     postgres_testkit: PostgresTestkit,
     mongo_testkit: MongoTestkit,
     wikipedia_test_client: WikipediaTestClient,
+    playwright_testkit: PlaywrightTestkit,
 ) -> EnvironmentComponentFactory:
     # TODO: Externalize authorization server url
     token_request_url = spotify_test_client._authorization_server.url_for("")
@@ -84,6 +94,8 @@ def env_component_factory(
         "SPOTIPY_BASE_URL": spotify_test_client.get_base_url(),
         "SPOTIPY_TOKEN_REQUEST_URL": token_request_url.rstrip("/"),
         "WIKIPEDIA_BASE_URL": wikipedia_test_client.get_base_url(),
+        "PLAYWRIGHT_ENDPOINT": playwright_testkit.get_playwright_endpoint(),
+        "GLZ_BASE_URL": playwright_testkit.get_server_url(),
     }
     return EnvironmentComponentFactory(default_env)
 
@@ -144,3 +156,9 @@ def shazam_insertions_verifier(db_engine: AsyncEngine) -> ShazamInsertionsVerifi
 def wikipedia_test_client() -> WikipediaTestClient:
     with WikipediaTestClient() as test_client:
         yield test_client
+
+
+@fixture
+def mock_gemini_model() -> AsyncMock:
+    with patch.object(GenerativeModel, "generate_content_async") as mock_model:
+        yield mock_model
