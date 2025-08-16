@@ -2,7 +2,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from genie_common.tools import AioPoolExecutor, logger
 from genie_common.utils import safe_nested_get
-from spotipyio.models import MatchingEntity, MatchingMethod
+from spotipyio.models import MatchingEntity
 from spotipyio.tools.matching import MultiEntityMatcher
 
 from data_collectors.contract import ICollector
@@ -41,7 +41,6 @@ class GeniusArtistsIDsCollector(ICollector):
         candidate = self._entity_matcher.match(
             entities=[matching_entity],
             candidates=hits,
-            method=MatchingMethod.FIRST_MATCHING,
         )
 
         return None if candidate is None else self._extract_artist_id(candidate)
