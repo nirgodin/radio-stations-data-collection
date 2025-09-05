@@ -20,6 +20,5 @@ class SpotifyArtistsAboutsJobBuilder(BaseJobBuilder):
         )
 
     async def _task(self) -> None:
-        async with self._component_factory.sessions.enter_browser_session() as browser:
-            manager = self._component_factory.spotify.get_artists_about_manager(browser)
-            await manager.run(limit=20)
+        manager = self._component_factory.spotify.get_artists_about_manager()
+        await manager.run(limit=20)
