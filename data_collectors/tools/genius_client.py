@@ -24,7 +24,8 @@ class GeniusClient:
     async def get_artist(self, id_: str, text_format: GeniusTextFormat) -> Optional[Dict[str, Any]]:
         url = f"{self._api_base_url}/artists/{id_}"
         params = {TEXT_FORMAT: text_format.value}
+        headers = {"Authorization": f"Bearer {self._bearer_token}"}
 
-        async with self._session.get(url, params=params) as raw_response:
+        async with self._session.get(url, params=params, headers=headers) as raw_response:
             raw_response.raise_for_status()
             return await raw_response.json()
