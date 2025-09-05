@@ -22,7 +22,7 @@ class GeniusManagerFactory(BaseManagerFactory):
             db_updater=self.updaters.get_values_updater(),
         )
 
-    async def get_artists_manager(self, session: ClientSession) -> GeniusArtistsManager:
+    def get_artists_manager(self, session: ClientSession) -> GeniusArtistsManager:
         return GeniusArtistsManager(
             db_engine=get_database_engine(),
             artists_collector=self.collectors.genius.get_artists_collector(session),
