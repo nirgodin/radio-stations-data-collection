@@ -2,6 +2,7 @@ from aiohttp import ClientSession
 from genie_datastores.mongo.operations import initialize_mongo
 from spotipyio.tools.matching import EntityMatcher
 
+from data_collectors import GeniusArtistsIDsCollector
 from data_collectors.components.tools_component_factory import ToolsComponentFactory
 from data_collectors.logic.collectors import (
     GeniusSearchCollector,
@@ -13,6 +14,7 @@ from data_collectors.logic.collectors import (
 from data_collectors.tools import (
     GeniusTrackEntityExtractor,
     GeniusArtistEntityExtractor,
+    GeniusSearchResultArtistEntityExtractor,
 )
 
 
@@ -24,6 +26,16 @@ class GeniusCollectorsComponentFactory:
         entity_matcher = EntityMatcher({GeniusTrackEntityExtractor(): 0.7, GeniusArtistEntityExtractor(): 0.3})
         return GeniusSearchCollector(
             session=session,
+            pool_executor=self._tools.get_pool_executor(),
+            entity_matcher=self._tools.get_multi_entity_matcher(entity_matcher),
+        )
+
+    def get_artists_ids_collector(self, session: ClientSession) -> GeniusArtistsIDsCollector:
+        entity_matcher = EntityMatcher(
+            extractors={GeniusSearchResultArtistEntityExtractor(): 1}, threshold=0.9, min_present_fields=1
+        )
+        return GeniusArtistsIDsCollector(
+            genius_client=self._tools.get_genius_client(session),
             pool_executor=self._tools.get_pool_executor(),
             entity_matcher=self._tools.get_multi_entity_matcher(entity_matcher),
         )

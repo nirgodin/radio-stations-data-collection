@@ -30,13 +30,12 @@ class GlglzChartsDataCollector(IChartsDataCollector):
             logger.info("GlglzChartsDataCollector did not receive any URL to crawl. Returning empty list")
             return []
 
-        charts_entries = []
         entries = await self._pool_executor.run(
             iterable=urls,
             func=self._collect_single_date_details,
             expected_type=list,
         )
-        charts_entries.extend(chain_lists(entries))
+        charts_entries = chain_lists(entries)
 
         return charts_entries
 
