@@ -1,7 +1,8 @@
+from functools import partial
 from typing import List, Dict, Tuple
 
 from genie_common.tools import AioPoolExecutor, logger
-from playwright.async_api import Browser
+from playwright.async_api import async_playwright, Browser
 
 from data_collectors.consts.spotify_consts import (
     SPOTIFY_OPEN_ARTIST_URL_FORMAT,
@@ -18,12 +19,10 @@ class SpotifyArtistsAboutCollector(ICollector):
     def __init__(
         self,
         pool_executor: AioPoolExecutor,
-        browser: Browser,
         web_elements_extractor: WebElementsExtractor = WebElementsExtractor(),
         artist_about_serializer: SpotifyArtistAboutSerializer = SpotifyArtistAboutSerializer(),
     ):
         self._pool_executor = pool_executor
-        self._browser = browser
         self._web_elements_extractor = web_elements_extractor
         self._artist_about_serializer = artist_about_serializer
 
@@ -33,24 +32,31 @@ class SpotifyArtistsAboutCollector(ICollector):
             return []
 
         logger.info(f"Starting to collect Spotify artists about for {len(id_name_map)} artists")
-        return await self._pool_executor.run(
-            iterable=id_name_map.items(),
-            func=self._collect_single_artist_details_wrapper,
-            expected_type=SpotifyArtistAbout,
-        )
+        async with async_playwright() as p:
+            browser = await p.chromium.launch()
 
-    async def _collect_single_artist_details_wrapper(self, artist_id_and_name: Tuple[str, str]) -> SpotifyArtistAbout:
+            return await self._pool_executor.run(
+                iterable=id_name_map.items(),
+                func=partial(self._collect_single_artist_details_wrapper, browser),
+                expected_type=SpotifyArtistAbout,
+            )
+
+    async def _collect_single_artist_details_wrapper(
+        self, browser: Browser, artist_id_and_name: Tuple[str, str]
+    ) -> SpotifyArtistAbout:
         artist_id, artist_name = artist_id_and_name
 
         try:
-            return await self._collect_single_artist_details(artist_id=artist_id, artist_name=artist_name)
+            return await self._collect_single_artist_details(
+                browser=browser, artist_id=artist_id, artist_name=artist_name
+            )
 
         except Exception:
             logger.exception("Received exception during artist details collection. Returning empty details by default")
             return SpotifyArtistAbout(id=artist_id, name=artist_name)
 
-    async def _collect_single_artist_details(self, artist_id: str, artist_name: str):
-        html = await self._get_page_content(artist_id)
+    async def _collect_single_artist_details(self, browser: Browser, artist_id: str, artist_name: str):
+        html = await self._get_page_content(browser, artist_id)
         details = []
 
         for element in self._web_elements:
@@ -59,9 +65,10 @@ class SpotifyArtistsAboutCollector(ICollector):
 
         return self._artist_about_serializer.serialize(artist_id, artist_name, details)
 
-    async def _get_page_content(self, artist_id: str):
+    @staticmethod
+    async def _get_page_content(browser: Browser, artist_id: str):
         url = SPOTIFY_OPEN_ARTIST_URL_FORMAT.format(id=artist_id)
-        page = await self._browser.new_page()
+        page = await browser.new_page()
         await page.goto(url)
         await page.locator(SPOTIFY_INFOBOX_SELECTOR).get_by_role("button").click()
 

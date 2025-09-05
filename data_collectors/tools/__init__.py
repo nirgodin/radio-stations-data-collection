@@ -1,6 +1,9 @@
 from data_collectors.tools.entity_matching.entity_extractors.genius_artist_entity_extractor import (
     GeniusArtistEntityExtractor,
 )
+from data_collectors.tools.entity_matching.entity_extractors.genius_search_result_artist_extrator import (
+    GeniusSearchResultArtistEntityExtractor,
+)
 from data_collectors.tools.entity_matching.entity_extractors.genius_track_entity_extractor import (
     GeniusTrackEntityExtractor,
 )
@@ -16,6 +19,7 @@ from data_collectors.tools.entity_matching.entity_extractors.shazam_artist_entit
 from data_collectors.tools.entity_matching.entity_extractors.shazam_track_entity_extractor import (
     ShazamTrackEntityExtractor,
 )
+from data_collectors.tools.genius_client import GeniusClient
 from data_collectors.tools.google_search_client import GoogleSearchClient
 from data_collectors.tools.google_search_config import GoogleSearchConfig
 from data_collectors.tools.image_detection.image_gender_detector import (
@@ -25,6 +29,7 @@ from data_collectors.tools.translation_adapter import TranslationAdapter
 from data_collectors.tools.web_elements_extractor import WebElementsExtractor
 
 __all__ = [
+    "GeniusClient",
     "GoogleSearchClient",
     "GoogleSearchConfig",
     "ImageGenderDetector",
@@ -35,6 +40,7 @@ __all__ = [
     "ShazamArtistEntityExtractor",
     "GeniusTrackEntityExtractor",
     "GeniusArtistEntityExtractor",
+    "GeniusSearchResultArtistEntityExtractor",
     "MusixmatchArtistEntityExtractor",
     "MusixmatchTrackEntityExtractor",
 ]

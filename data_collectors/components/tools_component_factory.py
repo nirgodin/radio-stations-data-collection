@@ -34,7 +34,7 @@ from data_collectors.components.environment_component_factory import (
 from data_collectors.consts.image_gender_detector_consts import (
     GENDER_MODEL_RESOURCES_DIR,
 )
-from data_collectors.tools import ImageGenderDetector, TranslationAdapter, GoogleSearchClient
+from data_collectors.tools import ImageGenderDetector, TranslationAdapter, GoogleSearchClient, GeniusClient
 
 
 class ToolsComponentFactory:
@@ -134,6 +134,22 @@ class ToolsComponentFactory:
     ) -> MultiEntityMatcher:
         return MultiEntityMatcher(entity_matcher or EntityMatcher())
 
+    def get_wikipedia_text_collector(self, session: ClientSession) -> WikipediaTextCollector:
+        return WikipediaTextCollector(session=session, base_url=self._env.get_wikipedia_base_url())
+
+    def get_google_search_client(self, session: ClientSession) -> GoogleSearchClient:
+        return GoogleSearchClient(
+            config=self._env.get_google_search_config(), session=session, pool_executor=self.get_pool_executor()
+        )
+
+    def get_genius_client(self, session: ClientSession) -> GeniusClient:
+        return GeniusClient(
+            session=session,
+            api_base_url=self._env.get_genius_api_base_url(),
+            public_base_url=self._env.get_genius_public_base_url(),
+            bearer_token=self._env.get_genius_bearer_token(),
+        )
+
     def _get_google_default_share_settings(self) -> List[ShareSettings]:
         users = self._env.get_google_sheets_users()
         share_settings = []
@@ -143,11 +159,3 @@ class ToolsComponentFactory:
             share_settings.append(user_setting)
 
         return share_settings
-
-    def get_wikipedia_text_collector(self, session: ClientSession) -> WikipediaTextCollector:
-        return WikipediaTextCollector(session=session, base_url=self._env.get_wikipedia_base_url())
-
-    def get_google_search_client(self, session: ClientSession) -> GoogleSearchClient:
-        return GoogleSearchClient(
-            config=self._env.get_google_search_config(), session=session, pool_executor=self.get_pool_executor()
-        )
