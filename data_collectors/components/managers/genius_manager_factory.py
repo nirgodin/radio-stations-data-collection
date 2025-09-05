@@ -1,5 +1,4 @@
 from aiohttp import ClientSession
-from genie_datastores.mongo.operations import initialize_mongo
 from genie_datastores.postgres.operations import get_database_engine
 
 from data_collectors.components.managers.base_manager_factory import BaseManagerFactory
