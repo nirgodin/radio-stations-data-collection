@@ -12,6 +12,7 @@ class JobId(str, Enum):
     MAKO_HIT_LIST = "mako_hit_list"
     RADIO_SNAPSHOTS = "radio_snapshots"
     SHAZAM_TOP_TRACKS = "shazam_top_tracks"
+    SPOTIFY_ARTISTS_ABOUTS = "spotify_artists_abouts"
     SPOTIFY_CHARTS = "spotify_charts"
     STATUS_REPORTER = "status_reporter"
     WIKIPEDIA_SUMMARIES = "wikipedia_summaries"
