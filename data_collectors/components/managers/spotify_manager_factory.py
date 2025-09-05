@@ -1,5 +1,4 @@
 from aiohttp import ClientSession
-from playwright.async_api import Browser
 from spotipyio.auth import SpotifySession
 
 from data_collectors.components.managers.base_manager_factory import BaseManagerFactory
