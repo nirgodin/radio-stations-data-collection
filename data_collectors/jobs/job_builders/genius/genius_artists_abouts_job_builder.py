@@ -1,0 +1,25 @@
+from datetime import datetime
+from typing import Optional
+
+from apscheduler.triggers.interval import IntervalTrigger
+from apscheduler.util import undefined
+
+from data_collectors.jobs.base_job_builder import BaseJobBuilder
+from data_collectors.jobs.job_id import JobId
+from data_collectors.logic.models import ScheduledJob
+from data_collectors.utils.datetime import random_upcoming_time
+
+
+class GeniusArtistsAboutsJobBuilder(BaseJobBuilder):
+    async def build(self, next_run_time: Optional[datetime] = undefined) -> ScheduledJob:
+        return ScheduledJob(
+            task=self._task,
+            id=JobId.GENIUS_ARTISTS_ABOUTS,
+            interval=IntervalTrigger(hours=3),
+            next_run_time=next_run_time or random_upcoming_time(),
+        )
+
+    async def _task(self) -> None:
+        async with self._component_factory.sessions.get_client_session() as client_session:
+            manager = self._component_factory.genius.get_artists_manager(client_session)
+            await manager.run(limit=100)

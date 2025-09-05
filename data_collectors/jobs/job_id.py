@@ -7,6 +7,7 @@ class JobId(str, Enum):
     BILLBOARD_CHARTS = "billboard_charts"
     EUROVISION_CHARTS = "eurovision_charts"
     FEATURED_ARTISTS_IMPUTER = "featured_artists_imputer"
+    GENIUS_ARTISTS_ABOUTS = "genius_artists_abouts"
     GENIUS_ARTISTS_IDS_IMPUTER = "genius_artists_ids_imputer"
     GLGLZ_CHARTS = "glglz_charts"
     MAKO_HIT_LIST = "mako_hit_list"

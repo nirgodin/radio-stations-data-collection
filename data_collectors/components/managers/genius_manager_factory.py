@@ -23,7 +23,6 @@ class GeniusManagerFactory(BaseManagerFactory):
         )
 
     async def get_artists_manager(self, session: ClientSession) -> GeniusArtistsManager:
-        await initialize_mongo()
         return GeniusArtistsManager(
             db_engine=get_database_engine(),
             artists_collector=self.collectors.genius.get_artists_collector(session),
