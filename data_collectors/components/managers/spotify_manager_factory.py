@@ -43,10 +43,10 @@ class SpotifyManagerFactory(BaseManagerFactory):
             db_updater=self.updaters.get_values_updater(),
         )
 
-    def get_artists_about_manager(self, browser: Browser) -> SpotifyArtistsAboutManager:
+    def get_artists_about_manager(self) -> SpotifyArtistsAboutManager:
         return SpotifyArtistsAboutManager(
             db_engine=self.tools.get_database_engine(),
-            abouts_collector=self.collectors.spotify.get_spotify_artists_about_collector(browser),
+            abouts_collector=self.collectors.spotify.get_spotify_artists_about_collector(),
             db_updater=self.updaters.get_values_updater(),
         )
 
