@@ -7,8 +7,8 @@ RUN poetry export -f requirements.txt --output requirements.txt --without-hashes
 
 # Stage 2 - build
 FROM python:3.10-slim
-ENV PYTHONUNBUFFERED True
-ENV APP_HOME /app
+ENV PYTHONUNBUFFERED=True
+ENV APP_HOME=/app
 WORKDIR $APP_HOME
 COPY . ./
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -18,5 +18,6 @@ RUN apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 COPY --from=requirements-stage /tmp/requirements.txt requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
+RUN playwright install --with-deps chromium
 EXPOSE 8080
-CMD exec gunicorn -k uvicorn.workers.UvicornWorker -b 0.0.0.0:8080 main:app
+CMD ["gunicorn", "-k", "uvicorn.workers.UvicornWorker", "-b", "0.0.0.0:8080", "main:app"]

@@ -47,7 +47,9 @@ class GeniusCollectorsComponentFactory:
         return GeniusTracksCollector(session=session, pool_executor=self._tools.get_pool_executor())
 
     def get_artists_collector(self, session: ClientSession) -> GeniusArtistsCollector:
-        return GeniusArtistsCollector(session=session, pool_executor=self._tools.get_pool_executor())
+        return GeniusArtistsCollector(
+            genius_client=self._tools.get_genius_client(session), pool_executor=self._tools.get_pool_executor()
+        )
 
     async def get_artists_existing_details_collector(
         self,
