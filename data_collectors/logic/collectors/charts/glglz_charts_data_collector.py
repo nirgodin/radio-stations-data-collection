@@ -9,6 +9,7 @@ from playwright.async_api import Browser
 
 from data_collectors.contract import IChartsDataCollector
 from data_collectors.logic.models.glglz.glglz_chart_details import GlglzChartDetails
+from data_collectors.utils.charts import is_valid_glglz_chart_url
 from data_collectors.utils.gemini import serialize_generative_model_response, load_prompt
 from data_collectors.utils.playwright import get_page_content
 
@@ -43,7 +44,7 @@ class GlglzChartsDataCollector(IChartsDataCollector):
         logger.info(f"Fetching raw chart HTML from `{url}`")
         page_source = await self._fetch_page_source(url)
 
-        if self._is_ok_response(page_source, url):
+        if is_valid_glglz_chart_url(page_source, url):
             return await self._extract_charts_entries_from_html(page_source, url)
 
         logger.warn(f"Did not find chart page for url `{url}`. Skipping")
@@ -53,15 +54,6 @@ class GlglzChartsDataCollector(IChartsDataCollector):
         await page.goto(url)
 
         return await get_page_content(page, sleep_between=2)
-
-    @staticmethod
-    def _is_ok_response(page_source: str, url: str) -> bool:
-        if "custom 404" in page_source.lower():
-            logger.info(f"Did not manage to find charts entries in url `{url}`. Skipping")
-            return False
-
-        logger.info(f"Found charts entries in url `{url}`! Parsing page source")
-        return True
 
     async def _extract_charts_entries_from_html(self, html: str, url: str) -> List[ChartEntry]:
         prompt_format = load_prompt("glglz_charts_prompt_format.txt")

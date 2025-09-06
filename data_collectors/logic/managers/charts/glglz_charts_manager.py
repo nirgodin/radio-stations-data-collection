@@ -23,6 +23,7 @@ from data_collectors.logic.inserters.postgres import (
 )
 from data_collectors.logic.managers.charts.base_charts_manager import BaseChartsManager
 from data_collectors.tools import WebElementsExtractor
+from data_collectors.utils.charts import is_valid_glglz_chart_url
 from data_collectors.utils.playwright import get_page_content
 
 
@@ -50,7 +51,7 @@ class GlglzChartsManager(BaseChartsManager):
     ) -> Dict[str, Any]:
         charts_urls = await self._fetch_charts_urls()
         existing_urls = await self._query_existing_dates_urls()
-        urls = self._filter_non_existing_urls(charts_urls=charts_urls, existing_urls=existing_urls, limit=limit)
+        urls = await self._filter_non_existing_urls(charts_urls=charts_urls, existing_urls=existing_urls, limit=limit)
 
         return {"urls": urls}
 
@@ -92,8 +93,9 @@ class GlglzChartsManager(BaseChartsManager):
 
         return query_result.scalars().all()
 
-    @staticmethod
-    def _filter_non_existing_urls(charts_urls: List[str], existing_urls: List[str], limit: Optional[int]) -> List[str]:
+    async def _filter_non_existing_urls(
+        self, charts_urls: List[str], existing_urls: List[str], limit: Optional[int]
+    ) -> List[str]:
         if limit is None:
             limit = len(charts_urls)
 
@@ -101,9 +103,27 @@ class GlglzChartsManager(BaseChartsManager):
 
         for url in charts_urls:
             if url not in existing_urls:
-                non_existing_urls.append(url)
+                if await self._is_valid_url(url):
+                    non_existing_urls.append(url)
 
             if len(non_existing_urls) >= limit:
                 break
 
         return non_existing_urls
+
+    async def _is_valid_url(self, url: str) -> bool:
+        page = await self._browser.new_page()
+        await page.goto(url)
+        content = await get_page_content(page, sleep_between=2)
+
+        return is_valid_glglz_chart_url(content, url)
+
+    @staticmethod
+    def _is_ok_response(page_source: str, url: str) -> bool:
+        "is temporarily unavailable"
+        if "custom 404" in page_source.lower():
+            logger.info(f"Did not manage to find charts entries in url `{url}`. Skipping")
+            return False
+
+        logger.info(f"Found charts entries in url `{url}`! Parsing page source")
+        return True
