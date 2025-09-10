@@ -49,10 +49,9 @@ class EnvironmentComponentFactory:
     def get_musixmatch_api_key() -> str:
         return os.environ["MUSIXMATCH_API_KEY"]
 
-    @staticmethod
     @lru_cache
-    def get_genius_bearer_token() -> str:
-        return os.environ["GENIUS_BEARER_TOKEN"]
+    def get_genius_bearer_token(self) -> str:
+        return self._lookup_env_var("GENIUS_BEARER_TOKEN")
 
     @staticmethod
     @lru_cache
