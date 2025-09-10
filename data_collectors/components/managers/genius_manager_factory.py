@@ -16,7 +16,7 @@ class GeniusManagerFactory(BaseManagerFactory):
 
     def get_artists_ids_manager(self, session: ClientSession) -> GeniusArtistsIDsManager:
         return GeniusArtistsIDsManager(
-            db_engine=get_database_engine(),
+            db_engine=self.tools.get_database_engine(),
             artists_ids_collector=self.collectors.genius.get_artists_ids_collector(session),
             db_updater=self.updaters.get_values_updater(),
         )
