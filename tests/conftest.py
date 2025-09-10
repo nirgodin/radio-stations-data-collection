@@ -24,7 +24,7 @@ from main import lifespan
 from tests.testing_utils import app_test_client_session
 from tests.tools.shazam_insertions_verifier import ShazamInsertionsVerifier
 from tests.tools.spotify_insertions_verifier import SpotifyInsertionsVerifier
-from tests.tools.wikipedia_test_client import WikipediaTestClient
+from tests.tools.test_clients.wikipedia_test_client import WikipediaTestClient
 
 
 @fixture

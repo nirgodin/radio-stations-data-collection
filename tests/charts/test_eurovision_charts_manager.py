@@ -31,7 +31,7 @@ from data_collectors.jobs.job_id import JobId
 from tests.helpers.spotify_track_resources import SpotifyTrackResources
 from tests.testing_utils import until, build_scheduled_test_client
 from tests.tools.spotify_insertions_verifier import SpotifyInsertionsVerifier
-from tests.tools.wikipedia_test_client import WikipediaTestClient
+from tests.tools.test_clients.wikipedia_test_client import WikipediaTestClient
 
 
 class TestEurovisionChartsManager:
