@@ -24,6 +24,7 @@ from main import lifespan
 from tests.testing_utils import app_test_client_session
 from tests.tools.shazam_insertions_verifier import ShazamInsertionsVerifier
 from tests.tools.spotify_insertions_verifier import SpotifyInsertionsVerifier
+from tests.tools.test_clients.genius_test_client import GeniusTestClient
 from tests.tools.test_clients.wikipedia_test_client import WikipediaTestClient
 
 
@@ -69,13 +70,18 @@ def env_component_factory(
     postgres_testkit: PostgresTestkit,
     mongo_testkit: MongoTestkit,
     wikipedia_test_client: WikipediaTestClient,
+    genius_test_client: GeniusTestClient,
 ) -> EnvironmentComponentFactory:
     # TODO: Externalize authorization server url
     token_request_url = spotify_test_client._authorization_server.url_for("")
+    genius_base_url = genius_test_client.get_base_url()
     default_env = {
         "DATABASE_URL": postgres_testkit.get_database_url(),
         "EMAIL_PASSWORD": random_alphanumeric_string(),
         "EMAIL_USER": random_alphanumeric_string(),
+        "GENIUS_API_BASE_URL": genius_base_url,
+        "GENIUS_PUBLIC_BASE_URL": genius_base_url,
+        "GENIUS_BEARER_TOKEN": random_alphanumeric_string(),
         "GEMINI_API_KEY": random_alphanumeric_string(),
         "MONGO_URI": mongo_testkit._container.get_connection_url(),
         "SPOTIPY_CLIENT_ID": spotify_credentials.client_id,
@@ -143,4 +149,10 @@ def shazam_insertions_verifier(db_engine: AsyncEngine) -> ShazamInsertionsVerifi
 @fixture
 def wikipedia_test_client() -> WikipediaTestClient:
     with WikipediaTestClient() as test_client:
+        yield test_client
+
+
+@fixture
+def genius_test_client() -> GeniusTestClient:
+    with GeniusTestClient() as test_client:
         yield test_client
