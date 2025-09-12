@@ -1,5 +1,4 @@
 from aiohttp import ClientSession
-from genie_datastores.postgres.operations import get_database_engine
 
 from data_collectors.components.tools_component_factory import ToolsComponentFactory
 from data_collectors.logic.collectors import (
@@ -16,9 +15,9 @@ class GoogleCollectorsComponentFactory:
 
     def get_geocoding_collector(self, session: ClientSession) -> GoogleGeocodingCollector:
         return GoogleGeocodingCollector(
-            db_engine=get_database_engine(),
+            db_engine=self._tools.get_database_engine(),
             pool_executor=self._tools.get_pool_executor(),
-            session=session,
+            rapid_client=self._tools.get_rapid_api_client(session),
         )
 
     def get_artists_about_parsing_collector(self) -> GeminiArtistsAboutParsingCollector:

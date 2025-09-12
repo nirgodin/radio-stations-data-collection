@@ -34,7 +34,13 @@ from data_collectors.components.environment_component_factory import (
 from data_collectors.consts.image_gender_detector_consts import (
     GENDER_MODEL_RESOURCES_DIR,
 )
-from data_collectors.tools import ImageGenderDetector, TranslationAdapter, GoogleSearchClient, GeniusClient
+from data_collectors.tools import (
+    ImageGenderDetector,
+    TranslationAdapter,
+    GoogleSearchClient,
+    GeniusClient,
+    RapidAPIClient,
+)
 
 
 class ToolsComponentFactory:
@@ -148,6 +154,14 @@ class ToolsComponentFactory:
             api_base_url=self._env.get_genius_api_base_url(),
             public_base_url=self._env.get_genius_public_base_url(),
             bearer_token=self._env.get_genius_bearer_token(),
+        )
+
+    def get_rapid_api_client(self, session: ClientSession) -> RapidAPIClient:
+        return RapidAPIClient(
+            session=session,
+            api_key=self._env.get_rapid_api_key(),
+            api_host=self._env.get_rapid_api_host(),
+            base_url=self._env.get_rapid_base_url(),
         )
 
     def _get_google_default_share_settings(self) -> List[ShareSettings]:

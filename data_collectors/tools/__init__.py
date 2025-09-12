@@ -25,6 +25,7 @@ from data_collectors.tools.google_search_config import GoogleSearchConfig
 from data_collectors.tools.image_detection.image_gender_detector import (
     ImageGenderDetector,
 )
+from data_collectors.tools.rapid_api_client import RapidAPIClient
 from data_collectors.tools.translation_adapter import TranslationAdapter
 from data_collectors.tools.web_elements_extractor import WebElementsExtractor
 
@@ -33,6 +34,7 @@ __all__ = [
     "GoogleSearchClient",
     "GoogleSearchConfig",
     "ImageGenderDetector",
+    "RapidAPIClient",
     "TranslationAdapter",
     "WebElementsExtractor",
     # Entity Matching

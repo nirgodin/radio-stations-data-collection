@@ -1,22 +1,16 @@
 from typing import Optional, List
 
-from aiohttp import ClientSession
 from async_lru import alru_cache
 from genie_common.tools import AioPoolExecutor, logger
-from genie_common.clients.utils import jsonify_response
 from genie_datastores.postgres.models import Artist
 from genie_datastores.postgres.operations import execute_query
 from sqlalchemy import select
 from sqlalchemy.engine import Row
 from sqlalchemy.ext.asyncio import AsyncEngine
 
-from data_collectors.consts.google_consts import (
-    GOOGLE_GEOCODING_API_URL,
-    ADDRESS,
-    LANGUAGE,
-)
 from data_collectors.contract import ICollector
 from data_collectors.logic.models.geocoding_response import GeocodingResponse
+from data_collectors.tools import RapidAPIClient
 
 ARTIST_TABLE_GEOCODING_COLUMNS = [
     Artist.origin,
@@ -34,11 +28,11 @@ class GoogleGeocodingCollector(ICollector):
         self,
         db_engine: AsyncEngine,
         pool_executor: AioPoolExecutor,
-        session: ClientSession,
+        rapid_client: RapidAPIClient,
     ):
         self._db_engine = db_engine
         self._pool_executor = pool_executor
-        self._session = session
+        self._rapid_client = rapid_client
 
     async def collect(self, limit: Optional[int]) -> List[GeocodingResponse]:
         missing_location_rows = await self._query_missing_geocoding_locations(limit)
@@ -95,11 +89,7 @@ class GoogleGeocodingCollector(ICollector):
 
     @alru_cache
     async def _send_geocoding_request(self, row: Row) -> GeocodingResponse:
-        params = {ADDRESS: row.origin, LANGUAGE: "en"}
-
-        async with self._session.get(url=GOOGLE_GEOCODING_API_URL, params=params) as raw_response:
-            response = await jsonify_response(raw_response)
-
+        response = await self._rapid_client.geocode(row.origin)
         return GeocodingResponse(id=row.id, result=response, is_from_cache=False)
 
     @staticmethod
