@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Optional
 
 from sqlalchemy.engine import Row
 
@@ -6,7 +7,7 @@ from sqlalchemy.engine import Row
 @dataclass
 class GeocodingResponse:
     id: str
-    result: dict
+    result: Optional[dict]
     is_from_cache: bool
 
     @classmethod

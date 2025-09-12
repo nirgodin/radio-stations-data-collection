@@ -119,6 +119,15 @@ class EnvironmentComponentFactory:
     def get_genius_public_base_url(self) -> str:
         return self._lookup_env_var("GENIUS_PUBLIC_BASE_URL", default="https://genius.com/api")
 
+    def get_rapid_api_key(self) -> str:
+        return self._lookup_env_var("RAPID_API_KEY")
+
+    def get_rapid_api_host(self) -> str:
+        return self._lookup_env_var("RAPID_API_HOST", default="google-map-places.p.rapidapi.com")
+
+    def get_rapid_base_url(self) -> str:
+        return self._lookup_env_var("RAPID_BASE_URL", default="https://google-map-places.p.rapidapi.com")
+
     def _lookup_env_var(self, key: str, default: Optional[str] = None) -> str:
         if key in self._default_env.keys():
             return self._default_env[key]
