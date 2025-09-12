@@ -1,4 +1,4 @@
-from typing import Optional, Dict, List
+from typing import Optional, Dict
 
 from genie_common.tools import logger
 from genie_datastores.postgres.models import Artist, SpotifyArtist
@@ -47,20 +47,6 @@ class GeniusArtistsIDsManager(IManager):
         query_result = cursor.all()
 
         return {row.id: row.name for row in query_result}
-
-    def _map_spotify_and_genius_artists_ids(
-        self, tracks: List[dict], genius_id_artist_id_mapping: Dict[str, str]
-    ) -> Dict[str, str]:
-        logger.info("Mapping found tracks artists ids to spotify ids")
-        spotify_genius_artists_ids_map = {}
-
-        for track in tracks:
-            ids_map = self._map_single_track_ids(track, genius_id_artist_id_mapping)
-
-            if ids_map is not None:
-                spotify_genius_artists_ids_map.update(ids_map)
-
-        return spotify_genius_artists_ids_map
 
     async def _update_artists_genius_ids(self, artists_ids_map: Dict[str, str]) -> None:
         logger.info("Updating artists genius ids")

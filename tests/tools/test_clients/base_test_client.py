@@ -1,25 +1,16 @@
 from typing import Optional
 
 from pytest_httpserver import HTTPServer
-from pytest_httpserver.httpserver import HandlerType
 
 
-class WikipediaTestClient:
+class BaseTestClient:
     def __init__(self, server: Optional[HTTPServer] = None):
         self._server = server
 
     def get_base_url(self) -> str:
         return self._server.url_for("").rstrip("/")
 
-    def given_valid_response(self, title: str, response: str) -> None:
-        request_handler = self._server.expect_request(
-            uri=f"/{title}",
-            method="GET",
-            handler_type=HandlerType.ONESHOT,
-        )
-        request_handler.respond_with_data(response)
-
-    def __enter__(self) -> "WikipediaTestClient":
+    def __enter__(self) -> "BaseTestClient":
         if self._server is None:
             self._server = HTTPServer()
             self._server.start()
