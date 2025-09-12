@@ -21,4 +21,4 @@ class ArtistsOriginsGeocoderJobBuilder(BaseJobBuilder):
     async def _task(self) -> None:
         async with self._component_factory.sessions.get_client_session() as client_session:
             manager = self._component_factory.google.get_artists_origin_geocoding_manager(client_session)
-            await manager.run(limit=5)
+            await manager.run(limit=100)
