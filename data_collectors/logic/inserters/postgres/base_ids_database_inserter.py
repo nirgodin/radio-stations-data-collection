@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List, Type, Iterable, Any
+from typing import List, Type, Iterable, Any, Optional
 
 from genie_datastores.postgres.models.orm.base_orm_model import BaseORMModel
 from genie_datastores.postgres.operations import insert_records_ignoring_conflicts
@@ -16,17 +16,30 @@ class BaseIDsDatabaseInserter(IPostgresDatabaseInserter, ABC):
     async def insert(self, iterable: Iterable[Any]) -> List[BaseORMModel]:
         logger.info(f"Starting to run {self.__class__.__name__}")
         raw_records = await self._get_raw_records(iterable)
-        records = [getattr(self._orm, self._serialization_method)(record) for record in raw_records]
-        valid_records = [record for record in records if isinstance(record, BaseORMModel)]
-        unique_records = self._filter_duplicate_ids(valid_records)
+        unique_records = self._to_records(raw_records)
         existing_ids = await self._query_existing_ids(unique_records)
         await self._insert_non_existing_records(unique_records, existing_ids)
 
         return unique_records
 
+    def _to_records(self, raw_records: Iterable[Any]) -> List[BaseORMModel]:
+        valid_records = []
+
+        for raw_record in raw_records:
+            if self._is_serializable(raw_record):
+                record = getattr(self._orm, self._serialization_method)(raw_record)
+
+                if isinstance(record, BaseORMModel):
+                    valid_records.append(record)
+
+        return self._filter_duplicate_ids(valid_records)
+
     @abstractmethod
     async def _get_raw_records(self, iterable: Iterable[Any]) -> Iterable[Any]:
         raise NotImplementedError
+
+    def _is_serializable(self, raw: Any) -> bool:
+        return True
 
     @property
     @abstractmethod
