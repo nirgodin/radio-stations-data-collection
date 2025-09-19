@@ -80,22 +80,22 @@ class SpotifyArtistsAboutCollector(ICollector):
             WebElement(
                 name="artist_infobox",
                 type=HTMLElement.DIV,
-                class_="T_AmQPlZ6wvE819I7A0D",
+                class_="MO3VNb8yFeMNDAp3u8vc",
                 child_element=WebElement(
                     name="social_links",
                     type=HTMLElement.A,
-                    class_="muHL0_3HjlqTZDoapgc9",
+                    class_="vcaxBkqK2bKJpUMoXqnP",
                     multiple=True,
                 ),
             ),
             WebElement(
                 name="artist_infobox",
                 type=HTMLElement.DIV,
-                class_="TV2j1oIRIkKH_6D1xP82",
+                class_="MO3VNb8yFeMNDAp3u8vc",
                 child_element=WebElement(
                     name="about",
                     type=HTMLElement.P,
-                    class_="Type__TypeElement-sc-goli3j-0",
+                    class_="Type__TypeElement-sc-goli3j-0 cHsoWR",
                     multiple=True,
                     enumerate=False,
                 ),
