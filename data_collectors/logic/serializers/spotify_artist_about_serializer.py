@@ -49,7 +49,7 @@ class SpotifyArtistAboutSerializer(ISerializer):
     ) -> Dict[str, Callable[[List[Dict[str, str]]], Optional[str]]]:
         return {
             "facebook_name": partial(self._extract_url_path, "Facebook"),
-            "twitter_name": partial(self._extract_url_path, "Twitter"),
+            "twitter_name": partial(self._extract_url_path, "X"),
             "instagram_name": partial(self._extract_url_path, "Instagram"),
             "about": self._extract_artist_about,
         }

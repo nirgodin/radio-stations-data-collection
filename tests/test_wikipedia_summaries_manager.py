@@ -117,7 +117,7 @@ class TestWikipediaSummariesManager:
 
         for artist in spotify_artists:
             artist_about = WikipediaArtistAbout.from_row(artist)
-            artist_about.about = random_alphanumeric_string()
+            artist_about.about = random_alphanumeric_string(min_length=10, max_length=20)
             abouts.append(artist_about)
 
         return abouts
