@@ -3426,13 +3426,13 @@ files = [
 
 [[package]]
 name = "spotipyio"
-version = "1.1.0"
+version = "1.1.1"
 description = ""
 optional = false
 python-versions = "<3.13,>=3.8"
 files = [
-    {file = "spotipyio-1.1.0-py3-none-any.whl", hash = "sha256:6470ec7d7c537fec526e832861deada27bbbbf0c9f11e1e3edc45b06082a96be"},
-    {file = "spotipyio-1.1.0.tar.gz", hash = "sha256:01ed943f598d38d23ccf3d8ff6e6b70713833dda9f3c5cd30cbafd67c0d43413"},
+    {file = "spotipyio-1.1.1-py3-none-any.whl", hash = "sha256:7219b20a8b9944bd4d8510abc18d3b2d26d0ebf76d57b558ebc64ac4807c4a53"},
+    {file = "spotipyio-1.1.1.tar.gz", hash = "sha256:f8b551e7e1c8c450d5d5b5056c121e1b35739754c31d48667ab9a466d79d20d3"},
 ]
 
 [package.dependencies]
@@ -4055,4 +4055,4 @@ propcache = ">=0.2.1"
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.12"
-content-hash = "256195e2025b845ef80519f6eb124e5dfdd005c47de294510b81bbe6c62c8ed8"
+content-hash = "90e7852eed8d2d2c7d3ef8a70ff2abc75b80c275c062e786118b202cfe4fe7ed"
