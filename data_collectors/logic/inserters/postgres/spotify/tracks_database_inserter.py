@@ -12,7 +12,7 @@ from data_collectors.logic.inserters.postgres.spotify.base_spotify_database_inse
 class TracksDatabaseInserter(BaseSpotifyDatabaseInserter):
     async def _get_raw_records(self, tracks: List[dict]) -> List[str]:
         ids = {safe_nested_get(track, [TRACK, ID]) for track in tracks}
-        return list(ids)
+        return [id_ for id_ in ids if isinstance(id_, str)]
 
     @property
     def _serialization_method(self) -> str:
