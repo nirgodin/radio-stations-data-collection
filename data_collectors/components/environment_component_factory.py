@@ -128,6 +128,9 @@ class EnvironmentComponentFactory:
     def get_rapid_base_url(self) -> str:
         return self._lookup_env_var("RAPID_BASE_URL", default="https://google-map-places.p.rapidapi.com")
 
+    def get_billboard_base_url(self) -> str:
+        return self._lookup_env_var("BILLBOARD_BASE_URL", default="https://www.billboard.com/charts")
+
     def _lookup_env_var(self, key: str, default: Optional[str] = None) -> str:
         if key in self._default_env.keys():
             return self._default_env[key]

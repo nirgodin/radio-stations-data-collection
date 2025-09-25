@@ -27,12 +27,14 @@ from data_collectors.components.collectors.spotify_collectors_component_factory 
 from data_collectors.components.collectors.wikipedia_collectors_component_factory import (
     WikipediaCollectorsComponentFactory,
 )
+from data_collectors.components.environment_component_factory import EnvironmentComponentFactory
 from data_collectors.components.tools_component_factory import ToolsComponentFactory
 
 
 class CollectorsComponentFactory:
     def __init__(
         self,
+        env: EnvironmentComponentFactory,
         tools: ToolsComponentFactory,
         charts: Optional[ChartsCollectorsComponentFactory] = None,
         genius: Optional[GeniusCollectorsComponentFactory] = None,
@@ -44,7 +46,7 @@ class CollectorsComponentFactory:
         spotify: Optional[SpotifyCollectorsComponentFactory] = None,
         wikipedia: Optional[WikipediaCollectorsComponentFactory] = None,
     ):
-        self.charts = charts or ChartsCollectorsComponentFactory(tools)
+        self.charts = charts or ChartsCollectorsComponentFactory(env, tools)
         self.genius = genius or GeniusCollectorsComponentFactory(tools)
         self.google = google or GoogleCollectorsComponentFactory(tools)
         self.misc = misc or MiscellaneousCollectorsFactory(tools)
