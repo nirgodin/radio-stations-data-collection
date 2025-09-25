@@ -1,3 +1,4 @@
+from data_collectors.logic.managers.charts.billboard_charts_manager import BillboardChartsManager
 from data_collectors.logic.managers.charts.charts_israeli_artists_manager import (
     ChartsIsraeliArtistsManager,
 )
@@ -24,6 +25,7 @@ from data_collectors.logic.managers.charts.radio_charts_manager import (
 )
 
 __all__ = [
+    "BillboardChartsManager",
     "ChartsIsraeliArtistsManager",
     "ChartsTaggedMistakesManager",
     "EurovisionChartsManager",

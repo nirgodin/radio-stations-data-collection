@@ -5,23 +5,22 @@ from genie_datastores.postgres.models import Chart
 from genie_datastores.postgres.operations import get_database_engine
 from playwright.async_api import Browser
 from spotipyio import SpotifyClient
-from spotipyio.tools.matching import EntityMatcher
+from spotipyio.auth import SpotifySession
 from spotipyio.tools.extractors import (
     TrackEntityExtractor,
     PrimaryArtistEntityExtractor,
 )
-from spotipyio.auth import SpotifySession
+from spotipyio.tools.matching import EntityMatcher
 
+from data_collectors.components.managers.base_manager_factory import BaseManagerFactory
 from data_collectors.consts.charts_consts import (
     SPOTIFY_PLAYLIST_CHART_MAP,
     MAKO_PLAYLIST_CHART_MAP,
-    BILLBOARD_PLAYLIST_CHART_MAP,
 )
 from data_collectors.logic.collectors import (
     ChartsTracksCollector,
     ArtistTranslatorChartKeySearcher,
 )
-from data_collectors.components.managers.base_manager_factory import BaseManagerFactory
 from data_collectors.logic.managers import *
 
 
@@ -87,10 +86,18 @@ class ChartsManagerFactory(BaseManagerFactory):
             playlist_id_to_chart_mapping=MAKO_PLAYLIST_CHART_MAP,
         )
 
-    def get_billboard_charts_manager(self, spotify_session: SpotifySession) -> PlaylistsChartsManager:
-        return self._get_playlists_chart_manager(
-            spotify_session=spotify_session,
-            playlist_id_to_chart_mapping=BILLBOARD_PLAYLIST_CHART_MAP,
+    def get_billboard_charts_manager(
+        self, client_session: ClientSession, spotify_session: SpotifySession
+    ) -> BillboardChartsManager:
+        spotify_client = self.tools.get_spotify_client(spotify_session)
+        tracks_collector = self.collectors.charts.get_tracks_collector(spotify_client)
+
+        return BillboardChartsManager(
+            chart_entries_inserter=self.inserters.get_chart_entries_inserter(),
+            charts_data_collector=self.collectors.charts.get_billboard_charts_collector(client_session),
+            charts_tracks_collector=tracks_collector,
+            spotify_insertions_manager=self.inserters.spotify.get_insertions_manager(spotify_client),
+            db_engine=self.tools.get_database_engine(),
         )
 
     def get_tagged_mistakes_manager(self, spotify_session: SpotifySession) -> ChartsTaggedMistakesManager:
