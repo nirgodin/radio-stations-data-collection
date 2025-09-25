@@ -155,6 +155,7 @@ class ChartsManagerFactory(BaseManagerFactory):
             charts_data_collector=data_collector,
             charts_tracks_collector=tracks_collector,
             spotify_insertions_manager=self.inserters.spotify.get_insertions_manager(spotify_client),
+            db_engine=self.tools.get_database_engine(),
         )
 
     def _get_radio_chart_manager(

@@ -4,6 +4,7 @@ from typing import Any, List, Dict
 
 from genie_common.tools import logger
 from genie_common.utils import sort_dict_by_key
+from sqlalchemy.ext.asyncio import AsyncEngine
 
 from data_collectors.contract import IChartsDataCollector, IManager
 from data_collectors.logic.collectors import ChartsTracksCollector
@@ -21,11 +22,13 @@ class BaseChartsManager(IManager, ABC):
         charts_tracks_collector: ChartsTracksCollector,
         spotify_insertions_manager: SpotifyInsertionsManager,
         chart_entries_inserter: ChartEntriesDatabaseInserter,
+        db_engine: AsyncEngine,
     ):
         self._charts_data_collector = charts_data_collector
         self._charts_tracks_collector = charts_tracks_collector
         self._spotify_insertions_manager = spotify_insertions_manager
         self._chart_entries_inserter = chart_entries_inserter
+        self._db_engine = db_engine
 
     async def run(self, *args, **kwargs) -> None:
         logger.info(f"Starting to run `{self.__class__.__name__}` charts manager")
