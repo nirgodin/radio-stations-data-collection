@@ -5,7 +5,7 @@ from typing import List
 from sqlalchemy.ext.asyncio import AsyncEngine
 
 from data_collectors.contract.collector_interface import ICollector
-from data_collectors.logic.models.summary_section import SummarySection
+from data_collectors.logic.models import SummarySection
 
 
 class IStatusCollector(ICollector, ABC):
