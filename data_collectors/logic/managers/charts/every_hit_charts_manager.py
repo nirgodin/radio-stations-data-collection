@@ -5,38 +5,13 @@ from genie_common.utils import get_last_month_day
 from genie_datastores.postgres.models import ChartEntry, Chart
 from genie_datastores.postgres.operations import execute_query
 from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncEngine
 
 from data_collectors.consts.every_hit_consts import LAST_DATE_WITHOUT_EVERY_HIT_CHART
-from data_collectors.logic.collectors import (
-    EveryHitChartsDataCollector,
-    ChartsTracksCollector,
-)
-from data_collectors.logic.inserters.postgres import (
-    SpotifyInsertionsManager,
-    ChartEntriesDatabaseInserter,
-)
 from data_collectors.logic.managers.charts.base_charts_manager import BaseChartsManager
 from data_collectors.logic.models import DateRange
 
 
 class EveryHitChartsManager(BaseChartsManager):
-    def __init__(
-        self,
-        charts_data_collector: EveryHitChartsDataCollector,
-        charts_tracks_collector: ChartsTracksCollector,
-        spotify_insertions_manager: SpotifyInsertionsManager,
-        chart_entries_inserter: ChartEntriesDatabaseInserter,
-        db_engine: AsyncEngine,
-    ):
-        super().__init__(
-            charts_data_collector=charts_data_collector,
-            charts_tracks_collector=charts_tracks_collector,
-            spotify_insertions_manager=spotify_insertions_manager,
-            chart_entries_inserter=chart_entries_inserter,
-        )
-        self._db_engine = db_engine
-
     async def _generate_data_collector_kwargs(
         self, date_ranges: Optional[List[DateRange]], limit: Optional[int]
     ) -> Dict[str, List[DateRange]]:

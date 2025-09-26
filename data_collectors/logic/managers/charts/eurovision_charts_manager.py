@@ -5,37 +5,12 @@ from genie_common.tools import logger
 from genie_datastores.postgres.models import ChartEntry, Chart
 from genie_datastores.postgres.operations import execute_query
 from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncEngine
 
 from data_collectors.consts.eurovision_consts import FIRST_EUROVISION_YEAR
-from data_collectors.logic.collectors import (
-    EurovisionChartsDataCollector,
-    ChartsTracksCollector,
-)
-from data_collectors.logic.inserters.postgres import (
-    SpotifyInsertionsManager,
-    ChartEntriesDatabaseInserter,
-)
 from data_collectors.logic.managers.charts.base_charts_manager import BaseChartsManager
 
 
 class EurovisionChartsManager(BaseChartsManager):
-    def __init__(
-        self,
-        charts_data_collector: EurovisionChartsDataCollector,
-        charts_tracks_collector: ChartsTracksCollector,
-        spotify_insertions_manager: SpotifyInsertionsManager,
-        chart_entries_inserter: ChartEntriesDatabaseInserter,
-        db_engine: AsyncEngine,
-    ):
-        super().__init__(
-            charts_data_collector=charts_data_collector,
-            charts_tracks_collector=charts_tracks_collector,
-            spotify_insertions_manager=spotify_insertions_manager,
-            chart_entries_inserter=chart_entries_inserter,
-        )
-        self._db_engine = db_engine
-
     async def _generate_data_collector_kwargs(
         self, years: Optional[List[int]] = None, limit: Optional[int] = None
     ) -> Dict[str, List[int]]:

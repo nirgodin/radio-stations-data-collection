@@ -1022,7 +1022,6 @@ develop = false
 asyncmy = {version = "0.2.8", optional = true}
 asyncpg = {version = "0.28.0", optional = true}
 beanie = {version = ">=1.26.0,<1.27", optional = true}
-billboard-py = {version = "^7.0.0", optional = true}
 dataclasses-json = {version = ">=0.6,<1.0", optional = true}
 genie-common = {git = "https://github.com/nirgodin/genie-common.git", rev = "4887179064cdbd848afcadf978d6eb093d352d82", extras = ["clients"]}
 google-api-python-client = {version = ">=2.8,<3.0", optional = true}
@@ -1040,7 +1039,7 @@ milvus = ["dataclasses-json (>=0.6,<1.0)"]
 milvus-testing = ["pymilvus (>=2.4.0,<2.5)"]
 mongo = ["beanie (>=1.26.0,<1.27)"]
 mongo-testing = ["beanie (>=1.26.0,<1.27)", "testcontainers (>=3.7.1,<4.0)", "testcontainers-mongodb (==0.0.1rc1)"]
-postgres = ["asyncmy (==0.2.8)", "asyncpg (==0.28.0)", "billboard-py (>=7.0.0,<8.0.0)", "greenlet", "pandas (<2.2)", "sqlalchemy (<2.0.0)"]
+postgres = ["asyncmy (==0.2.8)", "asyncpg (==0.28.0)", "greenlet", "pandas (<2.2)", "sqlalchemy (<2.0.0)"]
 postgres-testing = ["asyncmy (==0.2.8)", "asyncpg (==0.28.0)", "greenlet", "sqlalchemy (<2.0.0)", "testcontainers (>=3.7.1,<4.0)", "testcontainers-postgres (==0.0.1rc1)"]
 redis = ["redis (>=5.0.3,<5.1)"]
 redis-testing = ["redis (>=5.0.3,<5.1)", "testcontainers (>=3.7.1,<4.0)"]
@@ -1048,8 +1047,8 @@ redis-testing = ["redis (>=5.0.3,<5.1)", "testcontainers (>=3.7.1,<4.0)"]
 [package.source]
 type = "git"
 url = "https://github.com/nirgodin/genie-datastores.git"
-reference = "a328aae4"
-resolved_reference = "a328aae4fd72d021bfc2937f5cfd054b7113cd93"
+reference = "2ccaf614"
+resolved_reference = "2ccaf6148c39afbf844cbead2d129b0a43e997de"
 
 [[package]]
 name = "google-ai-generativelanguage"
@@ -4055,4 +4054,4 @@ propcache = ">=0.2.1"
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.12"
-content-hash = "90e7852eed8d2d2c7d3ef8a70ff2abc75b80c275c062e786118b202cfe4fe7ed"
+content-hash = "7ece697c4d9b1a4149c6bd91bc5d571fa16130bf7a0449cb986697eda8f8b497"

@@ -6,6 +6,8 @@ from genie_datastores.postgres.models import Chart
 from playwright.async_api import Browser
 from spotipyio import SpotifyClient
 
+from data_collectors import BillboardChartsCollector
+from data_collectors.components.environment_component_factory import EnvironmentComponentFactory
 from data_collectors.components.tools_component_factory import ToolsComponentFactory
 from data_collectors.logic.collectors import (
     BaseChartKeySearcher,
@@ -23,7 +25,8 @@ from data_collectors.logic.collectors import (
 
 
 class ChartsCollectorsComponentFactory:
-    def __init__(self, tools: ToolsComponentFactory):
+    def __init__(self, env: EnvironmentComponentFactory, tools: ToolsComponentFactory):
+        self._env = env
         self._tools = tools
 
     @staticmethod
@@ -92,3 +95,9 @@ class ChartsCollectorsComponentFactory:
         spotify_client: SpotifyClient,
     ) -> EurovisionMissingTracksCollector:
         return EurovisionMissingTracksCollector(spotify_client)
+
+    def get_billboard_charts_collector(self, session: ClientSession) -> BillboardChartsCollector:
+        return BillboardChartsCollector(
+            billboard_base_url=self._env.get_billboard_base_url(),
+            session=session,
+        )

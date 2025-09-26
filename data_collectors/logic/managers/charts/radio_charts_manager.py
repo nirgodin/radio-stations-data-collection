@@ -30,13 +30,13 @@ class RadioChartsManager(BaseChartsManager):
         drive_client: GoogleDriveClient,
     ):
         super().__init__(
-            charts_data_collector,
-            charts_tracks_collector,
-            spotify_insertions_manager,
-            chart_entries_inserter,
+            charts_data_collector=charts_data_collector,
+            charts_tracks_collector=charts_tracks_collector,
+            spotify_insertions_manager=spotify_insertions_manager,
+            chart_entries_inserter=chart_entries_inserter,
+            db_engine=db_engine,
         )
         self._drive_client = drive_client
-        self._db_engine = db_engine
 
     async def _generate_data_collector_kwargs(self, chart: Chart, limit: Optional[int]) -> Dict[str, Any]:
         existing_files_names = await self._query_existing_files_names(chart)

@@ -42,9 +42,9 @@ class GlglzChartsManager(BaseChartsManager):
             charts_tracks_collector=charts_tracks_collector,
             spotify_insertions_manager=spotify_insertions_manager,
             chart_entries_inserter=chart_entries_inserter,
+            db_engine=db_engine,
         )
         self._browser = browser
-        self._db_engine = db_engine
 
     async def _generate_data_collector_kwargs(
         self, dates: Optional[List[datetime]], limit: Optional[int]

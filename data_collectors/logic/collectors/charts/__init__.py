@@ -1,3 +1,4 @@
+from data_collectors.logic.collectors.charts.billboard_charts_data_collector import BillboardChartsCollector
 from data_collectors.logic.collectors.charts.charts_searchers.artist_translator_chart_key_searcher import (
     ArtistTranslatorChartKeySearcher,
 )
@@ -38,6 +39,7 @@ from data_collectors.logic.collectors.charts.playlists_charts_data_collector imp
 __all__ = [
     "ArtistTranslatorChartKeySearcher",
     "BaseChartKeySearcher",
+    "BillboardChartsCollector",
     "IsraeliChartKeySearcher",
     "ChartsTaggedMistakesCollector",
     "ChartsTaggedMistakesTracksCollector",

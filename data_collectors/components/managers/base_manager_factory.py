@@ -37,7 +37,7 @@ class BaseManagerFactory(ABC):
         self.tools = tools
 
         self.analyzers = analyzers or AnalyzersComponentFactory()
-        self.collectors = collectors or CollectorsComponentFactory(tools)
+        self.collectors = collectors or CollectorsComponentFactory(env, tools)
         self.inserters = inserters or InsertersComponentFactory(tools)
         self.serializers = serializers or SerializersComponentFactory(tools)
         self.updaters = updaters or UpdatersComponentFactory(tools)
