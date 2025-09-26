@@ -56,7 +56,7 @@ class BillboardChartsCollector(IChartsDataCollector):
                 chart=Chart.BILLBOARD_HOT_100,
                 date=date,
                 position=billboard_entry.rank,
-                key=f"{billboard_entry.artists} - {billboard_entry.title}",
+                key=f"{billboard_entry.artist} - {billboard_entry.title}",
             )
             entries.append(entry)
 
