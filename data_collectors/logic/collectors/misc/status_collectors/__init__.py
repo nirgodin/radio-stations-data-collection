@@ -1,4 +1,9 @@
-from data_collectors.logic.collectors.misc.status_collectors.charts_count_status_collector import ChartsCountStatusCollector
+from data_collectors.logic.collectors.misc.status_collectors.charts_count_status_collector import (
+    ChartsCountStatusCollector,
+)
+from data_collectors.logic.collectors.misc.status_collectors.charts_top_tracks_status_collector import (
+    ChartsTopTracksStatusCollector,
+)
 from data_collectors.logic.collectors.misc.status_collectors.radio_tracks_status_collector import (
     RadioTracksStatusCollector,
 )
@@ -13,6 +18,7 @@ from data_collectors.logic.collectors.misc.status_collectors.radio_tracks_top_tr
 
 __all__ = [
     "ChartsCountStatusCollector",
+    "ChartsTopTracksStatusCollector",
     "RadioTracksStatusCollector",
     "ShazamTopTracksStatusCollector",
     "RadioTracksTopTracksStatusCollector",
