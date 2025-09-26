@@ -94,6 +94,7 @@ class MiscellaneousManagerFactory(BaseManagerFactory):
             self.collectors.misc.get_radio_tracks_status_collector(),
             self.collectors.misc.get_shazam_top_tracks_status_collector(),
             self.collectors.misc.get_radio_tracks_top_tracks_status_collector(),
+            self.collectors.misc.get_charts_status_collector(),
         ]
         return StatusReporterManager(
             collectors=collectors,
