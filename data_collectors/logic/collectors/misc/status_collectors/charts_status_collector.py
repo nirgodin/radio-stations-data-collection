@@ -1,11 +1,12 @@
+from collections import defaultdict
 from datetime import timedelta, datetime
 from typing import List, Dict
 
-from genie_common.utils import sort_dict_by_key, safe_nested_get
+import pandas as pd
+from genie_common.utils import safe_nested_get
 from genie_datastores.postgres.models import (
     ChartEntry,
-    SpotifyTrack,
-    SpotifyArtist,
+    Chart,
 )
 from genie_datastores.postgres.operations import execute_query
 from sqlalchemy import select, func
@@ -20,11 +21,11 @@ class ChartsStatusCollector(IStatusCollector):
     async def collect(self, lookback_period: timedelta) -> List[SummarySection]:
         start_date = datetime.now() - lookback_period
         count_records = await self._query_chart_entries_count_by_date(start_date)
-        top_entries_records = await self._query_top_charts_entries(start_date)
+        # top_entries_records = await self._query_top_charts_entries(start_date)
 
-        return self._summarize(count_records, top_entries_records)
+        return self._to_summary_sections(count_records)
 
-    async def _query_chart_entries_count_by_date(self, start_date: datetime) -> Dict[str, Dict[datetime, List[Row]]]:
+    async def _query_chart_entries_count_by_date(self, start_date: datetime) -> Dict[Chart, List[Dict[str, str]]]:
         query = (
             select(
                 ChartEntry.chart,
@@ -39,42 +40,37 @@ class ChartsStatusCollector(IStatusCollector):
 
         return self._group_records_by_chart(records)
 
-    async def _query_top_charts_entries(self, start_date: datetime) -> Dict[str, Dict[datetime, List[Row]]]:
-        query = (
-            select(
-                SpotifyArtist.name.label("artist_name"),
-                SpotifyTrack.name,
-                ChartEntry.chart,
-                ChartEntry.position,
-                ChartEntry.date.label(DAY_LABEL),
-            )
-            .where(ChartEntry.track_id == SpotifyTrack.id)
-            .where(SpotifyTrack.artist_id == SpotifyArtist.id)
-            .where(ChartEntry.creation_date >= start_date)
-            .where(ChartEntry.position <= 5)
-        )
-        query_result = await execute_query(engine=self._db_engine, query=query)
-        records = query_result.all()
-
-        return self._group_records_by_chart(records)
+    # async def _query_top_charts_entries(self, start_date: datetime) -> Dict[Chart, List[Dict[str, str]]]:
+    #     query = (
+    #         select(
+    #             SpotifyArtist.name.label("artist_name"),
+    #             SpotifyTrack.name,
+    #             ChartEntry.chart,
+    #             ChartEntry.position,
+    #             ChartEntry.date.label(DAY_LABEL),
+    #         )
+    #         .where(ChartEntry.track_id == SpotifyTrack.id)
+    #         .where(SpotifyTrack.artist_id == SpotifyArtist.id)
+    #         .where(ChartEntry.creation_date >= start_date)
+    #         .where(ChartEntry.position <= 5)
+    #     )
+    #     query_result = await execute_query(engine=self._db_engine, query=query)
+    #     rows = query_result.all()
+    #
+    #     return self._group_records_by_chart(rows)
 
     @staticmethod
     def _group_records_by_chart(
-        records: List[Row],
-    ) -> Dict[str, Dict[datetime, List[Row]]]:
-        grouped_records = {}
+        rows: List[Row],
+    ) -> Dict[Chart, List[Dict[str, str]]]:
+        grouped_records = defaultdict(list)
 
-        for record in records:
-            if record.chart.name not in grouped_records.keys():
-                grouped_records[record.chart.name] = {}
+        for row in rows:
+            record_day: datetime = getattr(row, DAY_LABEL)
+            record = {"date": record_day.strftime("%d/%m/%Y"), "count": row.count}
+            grouped_records[row.chart].append(record)
 
-            record_day: datetime = getattr(record, DAY_LABEL)
-            if record_day not in grouped_records[record.chart.name].keys():
-                grouped_records[record.chart.name][record_day] = []
-
-            grouped_records[record.chart.name][record_day].append(record)
-
-        return sort_dict_by_key(grouped_records, reverse=False)
+        return grouped_records
 
     def _summarize(
         self,
@@ -113,16 +109,16 @@ class ChartsStatusCollector(IStatusCollector):
         return date_summary
 
     @staticmethod
-    def _to_summary_sections(grouped_records: Dict[SpotifyStation, List[dict]]) -> List[SummarySection]:
+    def _to_summary_sections(grouped_records: Dict[Chart, List[dict]]) -> List[SummarySection]:
         summary_sections = []
 
-        for station, records in grouped_records.items():
+        for chart, records in grouped_records.items():
             data = pd.DataFrame.from_records(records)
-            section = SummarySection(title=station.name, data=data)
+            section = SummarySection(title=chart.name, data=data)
             summary_sections.append(section)
 
-        return summary_sections
+        return sorted(summary_sections, key=lambda x: x.title)
 
     @property
     def name(self) -> str:
-        return "Charts"
+        return "Charts Records Count"
