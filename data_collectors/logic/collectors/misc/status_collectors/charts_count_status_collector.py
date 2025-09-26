@@ -17,7 +17,7 @@ from data_collectors.contract import IStatusCollector
 from data_collectors.logic.models import SummarySection
 
 
-class ChartsStatusCollector(IStatusCollector):
+class ChartsCountStatusCollector(IStatusCollector):
     async def collect(self, lookback_period: timedelta) -> List[SummarySection]:
         start_date = datetime.now() - lookback_period
         count_records = await self._query_chart_entries_count_by_date(start_date)
