@@ -6,10 +6,11 @@ from billboard import ChartData
 from bs4 import BeautifulSoup
 from genie_common.tools import AioPoolExecutor
 from genie_common.utils import chain_lists
-from genie_datastores.postgres.models import BillboardChart, ChartEntry, Chart
+from genie_datastores.postgres.models import ChartEntry, Chart
 
 from data_collectors.consts.billboard_consts import (
     BILLBOARD_DATETIME_FORMAT,
+    BILLBOARD_HOT_100_CHART_NAME,
 )
 from data_collectors.contract import IChartsDataCollector
 
@@ -32,7 +33,7 @@ class BillboardChartsCollector(IChartsDataCollector):
 
     async def _collect_single_date_charts(self, date: datetime) -> List[ChartEntry]:
         formatted_date = date.strftime(BILLBOARD_DATETIME_FORMAT)
-        url = f"{self._billboard_base_url}/{BillboardChart.HOT_100.value}/{formatted_date}"
+        url = f"{self._billboard_base_url}/{BILLBOARD_HOT_100_CHART_NAME}/{formatted_date}"
 
         async with self._session.get(url) as raw_response:
             chart_page_text = await raw_response.text()
@@ -40,7 +41,7 @@ class BillboardChartsCollector(IChartsDataCollector):
         return self._create_chart_data_from_text(chart_page_text, formatted_date)
 
     def _create_chart_data_from_text(self, chart_page_text: str, formatted_date: str) -> List[ChartEntry]:
-        chart_data = ChartData(name=BillboardChart.HOT_100.value, date=formatted_date, fetch=False)
+        chart_data = ChartData(name=BILLBOARD_HOT_100_CHART_NAME, date=formatted_date, fetch=False)
         soup = BeautifulSoup(chart_page_text, "html.parser")
         chart_data._parsePage(soup)
 
