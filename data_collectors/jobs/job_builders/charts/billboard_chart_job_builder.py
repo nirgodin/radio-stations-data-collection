@@ -15,7 +15,7 @@ class BillboardChartJobBuilder(BaseJobBuilder):
         return ScheduledJob(
             task=self._task,
             id=JobId.BILLBOARD_CHARTS,
-            interval=IntervalTrigger(days=1),
+            interval=IntervalTrigger(hours=12),
             next_run_time=next_run_time or random_upcoming_time(),
         )
 
