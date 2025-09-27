@@ -1,5 +1,7 @@
+from data_collectors import ChartsTopTracksStatusCollector
 from data_collectors.components.tools_component_factory import ToolsComponentFactory
 from data_collectors.logic.collectors import (
+    ChartsCountStatusCollector,
     RadioTracksStatusCollector,
     TracksVectorizerTrainDataCollector,
     RadioTracksTopTracksStatusCollector,
@@ -24,3 +26,9 @@ class MiscellaneousCollectorsFactory:
 
     def get_radio_tracks_top_tracks_status_collector(self) -> RadioTracksTopTracksStatusCollector:
         return RadioTracksTopTracksStatusCollector(db_engine=self._tools.get_database_engine())
+
+    def get_charts_count_status_collector(self) -> ChartsCountStatusCollector:
+        return ChartsCountStatusCollector(db_engine=self._tools.get_database_engine())
+
+    def get_charts_top_tracks_status_collector(self) -> ChartsTopTracksStatusCollector:
+        return ChartsTopTracksStatusCollector(db_engine=self._tools.get_database_engine())

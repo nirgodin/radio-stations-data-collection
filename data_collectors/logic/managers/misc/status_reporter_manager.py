@@ -4,7 +4,7 @@ from email.mime.text import MIMEText
 from functools import partial
 from typing import List, Dict, Tuple
 
-from data_collectors.logic.models.summary_section import SummarySection
+from data_collectors.logic.models import SummarySection
 from genie_common.tools import AioPoolExecutor, EmailSender, logger
 
 from data_collectors.contract import IManager, IStatusCollector

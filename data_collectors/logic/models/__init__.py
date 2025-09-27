@@ -36,6 +36,7 @@ from data_collectors.logic.models.artist_about.spotify_artist_about import (
     SpotifyArtistAbout,
 )
 from data_collectors.logic.models.scheduled_job import ScheduledJob
+from data_collectors.logic.models.summary_section import SummarySection
 from data_collectors.logic.models.web_element import WebElement
 
 __all__ = [
@@ -60,6 +61,7 @@ __all__ = [
     "RadioChartEntryDetails",
     "ScheduledJob",
     "SpotifyArtistAbout",
+    "SummarySection",
     "WebElement",
     "WikipediaArtistAbout",
 ]

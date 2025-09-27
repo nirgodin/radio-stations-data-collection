@@ -10,7 +10,7 @@ from sqlalchemy.engine import Row
 
 from data_collectors.consts.general_consts import DAY_LABEL
 from data_collectors.contract import IStatusCollector
-from data_collectors.logic.models.summary_section import SummarySection
+from data_collectors.logic.models import SummarySection
 
 
 class ShazamTopTracksStatusCollector(IStatusCollector):

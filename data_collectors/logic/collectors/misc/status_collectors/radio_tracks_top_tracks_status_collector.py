@@ -15,7 +15,7 @@ from sqlalchemy.ext.asyncio import AsyncEngine
 from sqlalchemy.sql import Subquery
 
 from data_collectors.contract import IStatusCollector
-from data_collectors.logic.models.summary_section import SummarySection
+from data_collectors.logic.models import SummarySection
 
 ARTIST_NAME_LABEL = "artist_name"
 PLAY_COUNT_LABEL = "play_count"
