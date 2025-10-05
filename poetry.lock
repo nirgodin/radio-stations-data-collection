@@ -442,20 +442,6 @@ html5lib = ["html5lib"]
 lxml = ["lxml"]
 
 [[package]]
-name = "billboard-py"
-version = "7.1.0"
-description = "Python API for downloading Billboard charts"
-optional = false
-python-versions = "*"
-files = [
-    {file = "billboard.py-7.1.0-py2.py3-none-any.whl", hash = "sha256:e15b6898fe8c1447d753853456929495b46082188016d38f75b7cb673ba76624"},
-]
-
-[package.dependencies]
-beautifulsoup4 = ">=4.4.1"
-requests = ">=2.2.1"
-
-[[package]]
 name = "black"
 version = "24.10.0"
 description = "The uncompromising code formatter."
@@ -4054,4 +4040,4 @@ propcache = ">=0.2.1"
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.12"
-content-hash = "7ece697c4d9b1a4149c6bd91bc5d571fa16130bf7a0449cb986697eda8f8b497"
+content-hash = "c96b30561f2666ec8ae45aab3c848e889f2efc7fe5958f0683b0c696ab3fe194"
