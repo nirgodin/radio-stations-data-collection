@@ -15,10 +15,10 @@ class ArtistsInsightsJobBuilder(BaseJobBuilder):
         return ScheduledJob(
             task=self._task,
             id=JobId.ARTISTS_INSIGHTS,
-            interval=IntervalTrigger(hours=12),
+            interval=IntervalTrigger(hours=1),
             next_run_time=next_run_time or random_upcoming_time(),
         )
 
     async def _task(self) -> None:
         manager = self._component_factory.google.get_wikipedia_artists_about_manager()
-        await manager.run(limit=100)
+        await manager.run(limit=10)
