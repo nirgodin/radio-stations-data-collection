@@ -130,7 +130,7 @@ class ToolsComponentFactory:
             db_engine=get_database_engine(),
         )
 
-    def get_gemini_model(self, model_name: str = "gemini-2.0-flash") -> GenerativeModel:
+    def get_gemini_model(self, model_name: str = "gemini-2.5-flash") -> GenerativeModel:
         generativeai.configure(api_key=self._env.get_gemini_api_key())
         return GenerativeModel(model_name=model_name)
 
