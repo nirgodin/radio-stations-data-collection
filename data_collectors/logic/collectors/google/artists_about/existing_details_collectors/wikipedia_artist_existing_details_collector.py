@@ -17,11 +17,11 @@ from data_collectors.logic.models import ArtistExistingDetails
 ARTIST_INSIGHTS_COLUMNS = [
     Artist.origin,
     Artist.birth_date,
-    Artist.death_date,
     Artist.gender,
 ]
 ARTIST_ABOUT_COLUMNS = [
     Artist.id,
+    Artist.death_date,
     SpotifyArtist.wikipedia_name,
     SpotifyArtist.wikipedia_language,
 ] + ARTIST_INSIGHTS_COLUMNS
