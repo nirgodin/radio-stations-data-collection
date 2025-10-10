@@ -45,7 +45,7 @@ class ChartsCollectorsComponentFactory:
         return GlglzChartsDataCollector(
             pool_executor=self._tools.get_pool_executor(),
             browser=browser,
-            generative_model=self._tools.get_gemini_model("gemini-2.0-flash"),
+            generative_model=self._tools.get_gemini_model(),
         )
 
     @staticmethod
