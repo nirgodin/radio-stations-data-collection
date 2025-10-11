@@ -14,7 +14,7 @@ from data_collectors.utils.gemini import serialize_generative_model_response, lo
 from data_collectors.utils.playwright import get_page_content
 
 
-class GlglzChartsDataCollector(IChartsDataCollector):
+class GlglzArchivedChartsDataCollector(IChartsDataCollector):
     def __init__(
         self,
         pool_executor: AioPoolExecutor,

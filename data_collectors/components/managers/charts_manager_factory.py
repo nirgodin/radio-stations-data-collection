@@ -61,17 +61,33 @@ class ChartsManagerFactory(BaseManagerFactory):
             chart_entries_inserter=self.inserters.get_chart_entries_inserter(),
         )
 
-    def get_glglz_charts_manager(self, spotify_session: SpotifySession, browser: Browser) -> GlglzChartsManager:
+    def get_glglz_archived_charts_manager(
+        self, spotify_session: SpotifySession, browser: Browser
+    ) -> GlglzArchivedChartsManager:
         spotify_client = self.tools.get_spotify_client(spotify_session)
         tracks_collector = self.collectors.charts.get_tracks_collector(spotify_client)
 
-        return GlglzChartsManager(
+        return GlglzArchivedChartsManager(
             chart_entries_inserter=self.inserters.get_chart_entries_inserter(),
-            charts_data_collector=self.collectors.charts.get_glglz_charts_collector(browser),
+            charts_data_collector=self.collectors.charts.get_glglz_archived_charts_collector(browser),
             charts_tracks_collector=tracks_collector,
             spotify_insertions_manager=self.inserters.spotify.get_insertions_manager(spotify_client),
             browser=browser,
-            db_engine=get_database_engine(),
+            db_engine=self.tools.get_database_engine(),
+        )
+
+    def get_glglz_current_charts_manager(
+        self, spotify_session: SpotifySession, browser: Browser
+    ) -> GlglzCurrentChartsManager:
+        spotify_client = self.tools.get_spotify_client(spotify_session)
+        tracks_collector = self.collectors.charts.get_tracks_collector(spotify_client)
+
+        return GlglzCurrentChartsManager(
+            chart_entries_inserter=self.inserters.get_chart_entries_inserter(),
+            charts_data_collector=self.collectors.charts.get_glglz_current_charts_collector(browser),
+            charts_tracks_collector=tracks_collector,
+            spotify_insertions_manager=self.inserters.spotify.get_insertions_manager(spotify_client),
+            db_engine=self.tools.get_database_engine(),
         )
 
     def get_spotify_charts_manager(self, spotify_session: SpotifySession) -> PlaylistsChartsManager:

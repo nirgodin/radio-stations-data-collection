@@ -6,17 +6,18 @@ from genie_datastores.postgres.models import Chart
 from playwright.async_api import Browser
 from spotipyio import SpotifyClient
 
-from data_collectors import BillboardChartsCollector
 from data_collectors.components.environment_component_factory import EnvironmentComponentFactory
 from data_collectors.components.tools_component_factory import ToolsComponentFactory
 from data_collectors.logic.collectors import (
     BaseChartKeySearcher,
+    BillboardChartsCollector,
     ChartsTaggedMistakesCollector,
     ChartsTaggedMistakesTracksCollector,
     ChartsTracksCollector,
     EurovisionChartsDataCollector,
     EveryHitChartsDataCollector,
-    GlglzChartsDataCollector,
+    GlglzArchivedChartsDataCollector,
+    GlglzCurrentChartsDataCollector,
     IsraeliChartKeySearcher,
     PlaylistsChartsDataCollector,
     RadioChartsDataCollector,
@@ -41,12 +42,15 @@ class ChartsCollectorsComponentFactory:
             wikipedia_text_collector=self._tools.get_wikipedia_text_collector(session),
         )
 
-    def get_glglz_charts_collector(self, browser: Browser) -> GlglzChartsDataCollector:
-        return GlglzChartsDataCollector(
+    def get_glglz_archived_charts_collector(self, browser: Browser) -> GlglzArchivedChartsDataCollector:
+        return GlglzArchivedChartsDataCollector(
             pool_executor=self._tools.get_pool_executor(),
             browser=browser,
             generative_model=self._tools.get_gemini_model(),
         )
+
+    def get_glglz_current_charts_collector(self, browser: Browser) -> GlglzCurrentChartsDataCollector:
+        return GlglzCurrentChartsDataCollector(browser=browser, db_engine=self._tools.get_database_engine())
 
     @staticmethod
     def get_playlists_charts_collector(

@@ -14,9 +14,10 @@ from data_collectors.logic.managers.charts.eurovision_missing_tracks_manager imp
 from data_collectors.logic.managers.charts.every_hit_charts_manager import (
     EveryHitChartsManager,
 )
-from data_collectors.logic.managers.charts.glglz_charts_manager import (
-    GlglzChartsManager,
+from data_collectors.logic.managers.charts.glglz_archived_charts_manager import (
+    GlglzArchivedChartsManager,
 )
+from data_collectors.logic.managers.charts.glglz_current_charts_manager import GlglzCurrentChartsManager
 from data_collectors.logic.managers.charts.playlists_charts_manager import (
     PlaylistsChartsManager,
 )
@@ -31,7 +32,8 @@ __all__ = [
     "EurovisionChartsManager",
     "EurovisionMissingTracksManager",
     "EveryHitChartsManager",
-    "GlglzChartsManager",
+    "GlglzArchivedChartsManager",
+    "GlglzCurrentChartsManager",
     "PlaylistsChartsManager",
     "RadioChartsManager",
 ]
