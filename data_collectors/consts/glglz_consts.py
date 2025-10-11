@@ -18,5 +18,23 @@ WEEKLY_CHART_DATE_SUB_TITLE_ELEMENT = WebElement(
     class_="mainTitle",
     child_element=WebElement(name="chart_date", type=HTMLElement.SPAN, class_="sub"),
 )
-WEEKLY_CHART_ENTRY_ELEMENT = WebElement(name="chart_entry", type=HTMLElement.DIV, class_="content row", multiple=True)
+CHART_ENTRY_WEB_ELEMENT_NAME = "chart_entry"
+CHART_ENTRY_WEB_ELEMENT_TYPE = HTMLElement.DIV
+CHART_ENTRY_WEB_ELEMENT_CLASS = "content row"
+WEEKLY_CHART_ARTIST_ELEMENT = WebElement(
+    name=CHART_ENTRY_WEB_ELEMENT_NAME,
+    type=CHART_ENTRY_WEB_ELEMENT_TYPE,
+    class_=CHART_ENTRY_WEB_ELEMENT_CLASS,
+    multiple=True,
+    child_element=WebElement(name="artist_name", type=HTMLElement.DIV, class_="name"),
+)
+WEEKLY_CHART_SONG_ELEMENT = WebElement(
+    name=CHART_ENTRY_WEB_ELEMENT_NAME,
+    type=CHART_ENTRY_WEB_ELEMENT_TYPE,
+    class_=CHART_ENTRY_WEB_ELEMENT_CLASS,
+    multiple=True,
+    child_element=WebElement(name="song_name", type=HTMLElement.A, class_="info"),
+)
 DD_MM_YYYY_DATETIME_REGEX = r"\b\d{2}/\d{2}/\d{4}\b"
+CHART_TITLE_CSS_SELECTOR = "#tabLink1 > div.titleContainer > h3"
+GLGLZ_CHARTS_DATETIME_FORMAT = "%d/%m/%Y"
