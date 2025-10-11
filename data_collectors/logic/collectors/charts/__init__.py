@@ -29,6 +29,7 @@ from data_collectors.logic.collectors.charts.glglz_charts_data_collector import 
 from data_collectors.logic.collectors.charts.charts_tracks_collector import (
     ChartsTracksCollector,
 )
+from data_collectors.logic.collectors.charts.glglz_current_charts_data_collector import GlglzCurrentChartsDataCollector
 from data_collectors.logic.collectors.charts.radio_charts_data_collector import (
     RadioChartsDataCollector,
 )
@@ -48,6 +49,7 @@ __all__ = [
     "EurovisionMissingTracksCollector",
     "EveryHitChartsDataCollector",
     "GlglzChartsDataCollector",
+    "GlglzCurrentChartsDataCollector",
     "PlaylistsChartsDataCollector",
     "RadioChartsDataCollector",
 ]
