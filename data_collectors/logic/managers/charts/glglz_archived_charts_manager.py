@@ -14,7 +14,7 @@ from data_collectors.consts.glglz_consts import (
     GLGLZ_CHARTS_LINKS_WEB_ELEMENT,
 )
 from data_collectors.logic.collectors import (
-    GlglzChartsDataCollector,
+    GlglzArchivedChartsDataCollector,
     ChartsTracksCollector,
 )
 from data_collectors.logic.inserters.postgres import (
@@ -30,7 +30,7 @@ from data_collectors.utils.playwright import get_page_content
 class GlglzArchivedChartsManager(BaseChartsManager):
     def __init__(
         self,
-        charts_data_collector: GlglzChartsDataCollector,
+        charts_data_collector: GlglzArchivedChartsDataCollector,
         charts_tracks_collector: ChartsTracksCollector,
         spotify_insertions_manager: SpotifyInsertionsManager,
         chart_entries_inserter: ChartEntriesDatabaseInserter,

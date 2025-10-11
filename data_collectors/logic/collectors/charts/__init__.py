@@ -24,7 +24,7 @@ from data_collectors.logic.collectors.charts.every_hit_charts_data_collector imp
     EveryHitChartsDataCollector,
 )
 from data_collectors.logic.collectors.charts.glglz_charts_data_collector import (
-    GlglzChartsDataCollector,
+    GlglzArchivedChartsDataCollector,
 )
 from data_collectors.logic.collectors.charts.charts_tracks_collector import (
     ChartsTracksCollector,
@@ -48,7 +48,7 @@ __all__ = [
     "EurovisionChartsDataCollector",
     "EurovisionMissingTracksCollector",
     "EveryHitChartsDataCollector",
-    "GlglzChartsDataCollector",
+    "GlglzArchivedChartsDataCollector",
     "GlglzCurrentChartsDataCollector",
     "PlaylistsChartsDataCollector",
     "RadioChartsDataCollector",

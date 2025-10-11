@@ -67,7 +67,7 @@ class ChartsManagerFactory(BaseManagerFactory):
 
         return GlglzArchivedChartsManager(
             chart_entries_inserter=self.inserters.get_chart_entries_inserter(),
-            charts_data_collector=self.collectors.charts.get_glglz_charts_collector(browser),
+            charts_data_collector=self.collectors.charts.get_glglz_archived_charts_collector(browser),
             charts_tracks_collector=tracks_collector,
             spotify_insertions_manager=self.inserters.spotify.get_insertions_manager(spotify_client),
             browser=browser,
