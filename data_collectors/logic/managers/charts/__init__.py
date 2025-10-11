@@ -15,7 +15,7 @@ from data_collectors.logic.managers.charts.every_hit_charts_manager import (
     EveryHitChartsManager,
 )
 from data_collectors.logic.managers.charts.glglz_charts_manager import (
-    GlglzChartsManager,
+    GlglzArchivedChartsManager,
 )
 from data_collectors.logic.managers.charts.playlists_charts_manager import (
     PlaylistsChartsManager,
@@ -31,7 +31,7 @@ __all__ = [
     "EurovisionChartsManager",
     "EurovisionMissingTracksManager",
     "EveryHitChartsManager",
-    "GlglzChartsManager",
+    "GlglzArchivedChartsManager",
     "PlaylistsChartsManager",
     "RadioChartsManager",
 ]

@@ -27,7 +27,7 @@ from data_collectors.utils.charts import is_valid_glglz_chart_url
 from data_collectors.utils.playwright import get_page_content
 
 
-class GlglzChartsManager(BaseChartsManager):
+class GlglzArchivedChartsManager(BaseChartsManager):
     def __init__(
         self,
         charts_data_collector: GlglzChartsDataCollector,

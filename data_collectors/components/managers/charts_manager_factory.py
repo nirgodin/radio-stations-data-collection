@@ -61,11 +61,11 @@ class ChartsManagerFactory(BaseManagerFactory):
             chart_entries_inserter=self.inserters.get_chart_entries_inserter(),
         )
 
-    def get_glglz_charts_manager(self, spotify_session: SpotifySession, browser: Browser) -> GlglzChartsManager:
+    def get_glglz_archived_charts_manager(self, spotify_session: SpotifySession, browser: Browser) -> GlglzArchivedChartsManager:
         spotify_client = self.tools.get_spotify_client(spotify_session)
         tracks_collector = self.collectors.charts.get_tracks_collector(spotify_client)
 
-        return GlglzChartsManager(
+        return GlglzArchivedChartsManager(
             chart_entries_inserter=self.inserters.get_chart_entries_inserter(),
             charts_data_collector=self.collectors.charts.get_glglz_charts_collector(browser),
             charts_tracks_collector=tracks_collector,
