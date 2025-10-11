@@ -16,14 +16,6 @@ from data_collectors.consts.glglz_consts import (
     DD_MM_YYYY_DATETIME_REGEX,
 )
 from data_collectors.contract import IChartsDataCollector
-from data_collectors.logic.collectors import (
-    GlglzChartsDataCollector,
-    ChartsTracksCollector,
-)
-from data_collectors.logic.inserters.postgres import (
-    SpotifyInsertionsManager,
-    ChartEntriesDatabaseInserter,
-)
 from data_collectors.tools import WebElementsExtractor
 from data_collectors.utils.playwright import get_page_content
 
@@ -31,21 +23,11 @@ from data_collectors.utils.playwright import get_page_content
 class GlglzCurrentChartsDataCollector(IChartsDataCollector):
     def __init__(
         self,
-        charts_data_collector: GlglzChartsDataCollector,
-        charts_tracks_collector: ChartsTracksCollector,
-        spotify_insertions_manager: SpotifyInsertionsManager,
-        chart_entries_inserter: ChartEntriesDatabaseInserter,
         browser: Browser,
         db_engine: AsyncEngine,
         web_elements_extractor: WebElementsExtractor = WebElementsExtractor(),
     ):
-        super().__init__(
-            charts_data_collector=charts_data_collector,
-            charts_tracks_collector=charts_tracks_collector,
-            spotify_insertions_manager=spotify_insertions_manager,
-            chart_entries_inserter=chart_entries_inserter,
-            db_engine=db_engine,
-        )
+        self._db_engine = db_engine
         self._browser = browser
         self._web_elements_extractor = web_elements_extractor
 
