@@ -15,7 +15,7 @@ class GlglzCurrentChartsJobBuilder(BaseJobBuilder):
         return ScheduledJob(
             task=self._task,
             id=JobId.GLGLZ_CHARTS,
-            interval=IntervalTrigger(hours=6),
+            interval=IntervalTrigger(weeks=1),
             next_run_time=next_run_time or random_upcoming_time(),
         )
 
