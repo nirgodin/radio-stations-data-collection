@@ -53,10 +53,10 @@ class GlglzCurrentChartsDataCollector(IChartsDataCollector):
         is_fresh_chart = await self._is_fresh_chart(date, chart)
 
         if is_fresh_chart:
-            logger.info(f"Found fresh chart entries for date `{formatted_date}`! Parsing")
+            logger.info(f"Found fresh chart entries for chart `{chart.value}` on date `{formatted_date}`! Parsing")
             return self._extract_chart_entries(chart, date, html)
 
-        logger.info(f"Chart entries for date `{formatted_date}` already exist. Aborting")
+        logger.info(f"Chart entries for chart `{chart.value}` on date `{formatted_date}` already exist. Aborting")
         return self._extract_chart_entries(chart, date, html) if is_fresh_chart else []
 
     async def _fetch_chart_page(self, url: str) -> str:
