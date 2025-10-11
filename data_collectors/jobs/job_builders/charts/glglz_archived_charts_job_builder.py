@@ -11,10 +11,7 @@ from data_collectors.logic.models import ScheduledJob
 class GlglzArchivedChartsJobBuilder(BaseJobBuilder):
     async def build(self, next_run_time: Optional[datetime] = None) -> ScheduledJob:
         return ScheduledJob(
-            task=self._task,
-            id=JobId.GLGLZ_CHARTS,
-            interval=IntervalTrigger(hours=6),
-            next_run_time=next_run_time
+            task=self._task, id=JobId.GLGLZ_CHARTS, interval=IntervalTrigger(hours=6), next_run_time=next_run_time
         )
 
     async def _task(self) -> None:
