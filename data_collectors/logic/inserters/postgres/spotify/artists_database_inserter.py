@@ -1,6 +1,6 @@
-from typing import List, Type
+from typing import List, Type, Iterable, Any
 
-from genie_datastores.postgres.models import Artist
+from genie_datastores.postgres.models import Artist, BaseORMModel
 
 from data_collectors.logic.inserters.postgres.base_ids_database_inserter import (
     BaseIDsDatabaseInserter,
@@ -12,9 +12,8 @@ class ArtistsDatabaseInserter(BaseIDsDatabaseInserter):
     async def _get_raw_records(self, tracks: List[dict]) -> List[str]:
         return sorted(extract_unique_artists_ids(*tracks))
 
-    @property
-    def _serialization_method(self) -> str:
-        return "from_id"
+    def _to_records(self, raw_records: Iterable[str]) -> List[Artist]:
+        return [Artist(id=id_) for id_ in raw_records]
 
     @property
     def _orm(self) -> Type[Artist]:
