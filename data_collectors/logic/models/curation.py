@@ -3,7 +3,7 @@ from datetime import datetime
 from typing import Optional
 
 from genie_datastores.models import DataSource
-from genie_datastores.postgres.models import Curator, CuratorCollection
+from genie_datastores.postgres.models import Curator, CuratorCollection, CuratedTrack
 
 
 @dataclass
@@ -18,11 +18,7 @@ class Curation:
     track_id: str
 
     def to_curator(self) -> Curator:
-        return Curator(
-            id=self.curator_id,
-            name=self.curator_name,
-            source=self.source
-        )
+        return Curator(id=self.curator_id, name=self.curator_name, source=self.source)
 
     def to_collection(self) -> CuratorCollection:
         return CuratorCollection(
@@ -30,4 +26,11 @@ class Curation:
             curator_id=self.curator_id,
             title=self.title,
             description=self.description,
+        )
+
+    def to_track(self) -> CuratedTrack:
+        return CuratedTrack(
+            track_id=self.track_id,
+            date=self.date,
+            collection=self.collection_id,
         )
