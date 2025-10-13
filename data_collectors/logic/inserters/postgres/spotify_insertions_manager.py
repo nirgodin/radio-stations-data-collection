@@ -2,6 +2,7 @@ from typing import List, Dict
 
 from genie_datastores.postgres.models import BaseORMModel
 
+from data_collectors.logic.inserters.postgres import BaseIDsDatabaseInserter
 from data_collectors.logic.inserters.postgres.spotify import *
 
 
@@ -36,7 +37,7 @@ class SpotifyInsertionsManager:
         return spotify_records
 
     @property
-    def _ordered_database_inserters(self) -> List[BaseSpotifyDatabaseInserter]:
+    def _ordered_database_inserters(self) -> List[BaseIDsDatabaseInserter]:
         return [
             self._spotify_artists_inserter,
             self._albums_inserter,
