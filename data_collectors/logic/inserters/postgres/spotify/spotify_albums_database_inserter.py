@@ -17,8 +17,8 @@ from data_collectors.consts.spotify_consts import (
     ALBUM_TYPE,
     TOTAL_TRACKS,
     NAME,
-    SPOTIFY_RELEASE_DATE_ORDERED_FORMATS,
 )
+from data_collectors.consts.datetime_consts import SPOTIFY_RELEASE_DATE_ORDERED_FORMATS
 from data_collectors.logic.inserters.postgres import BaseIDsDatabaseInserter
 
 

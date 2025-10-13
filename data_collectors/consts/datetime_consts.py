@@ -1,0 +1,1 @@
+SPOTIFY_RELEASE_DATE_ORDERED_FORMATS = ["%Y-%m-%d", "%Y-%m", "%Y"]
