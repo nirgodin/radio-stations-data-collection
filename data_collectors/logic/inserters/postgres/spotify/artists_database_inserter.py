@@ -1,6 +1,6 @@
-from typing import List, Type, Iterable, Any
+from typing import List, Type, Iterable
 
-from genie_datastores.postgres.models import Artist, BaseORMModel
+from genie_datastores.postgres.models import Artist
 
 from data_collectors.logic.inserters.postgres.base_ids_database_inserter import (
     BaseIDsDatabaseInserter,

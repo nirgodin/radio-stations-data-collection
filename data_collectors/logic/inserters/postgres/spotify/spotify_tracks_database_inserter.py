@@ -8,8 +8,17 @@ from genie_datastores.postgres.models.orm.spotify.base_spotify_orm_model import 
     BaseSpotifyORMModel,
 )
 
-from data_collectors.consts.spotify_consts import TRACKS, TRACK, ID, NAME, ALBUM, RELEASE_DATE, \
-    EXPLICIT, TRACK_NUMBER, ARTISTS
+from data_collectors.consts.spotify_consts import (
+    TRACKS,
+    TRACK,
+    ID,
+    NAME,
+    ALBUM,
+    RELEASE_DATE,
+    EXPLICIT,
+    TRACK_NUMBER,
+    ARTISTS,
+)
 from data_collectors.consts.datetime_consts import SPOTIFY_RELEASE_DATE_ORDERED_FORMATS
 from data_collectors.logic.inserters.postgres import BaseIDsDatabaseInserter
 
