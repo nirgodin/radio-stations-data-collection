@@ -34,7 +34,6 @@ __all__ = [
     "SpotifyFeaturedArtistsDatabaseInserter",
     "TrackIDMappingDatabaseInserter",
     "ArtistsDatabaseInserter",
-    "BaseSpotifyDatabaseInserter",
     "SpotifyInsertionsManager",
     "TracksDatabaseInserter",
     # Shazam
