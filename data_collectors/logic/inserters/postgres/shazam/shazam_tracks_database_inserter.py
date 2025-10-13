@@ -1,4 +1,4 @@
-from typing import Iterable, Type, List, Optional
+from typing import Iterable, Type, Optional
 
 from genie_common.utils import safe_nested_get
 from genie_datastores.postgres.inner_utils.spotify_utils import extract_artist_id

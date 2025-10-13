@@ -2,11 +2,12 @@ from typing import List, Optional, Type
 
 from genie_common.utils import to_datetime
 from genie_datastores.postgres.inner_utils.spotify_utils import extract_artist_id
-from genie_datastores.postgres.models import SpotifyAlbum, BaseORMModel, SpotifyAlbumType
+from genie_datastores.postgres.models import SpotifyAlbum, SpotifyAlbumType
 from genie_datastores.postgres.models.orm.spotify.base_spotify_orm_model import (
     BaseSpotifyORMModel,
 )
 
+from data_collectors.consts.datetime_consts import SPOTIFY_RELEASE_DATE_ORDERED_FORMATS
 from data_collectors.consts.spotify_consts import (
     TRACK,
     ALBUM,
@@ -18,7 +19,6 @@ from data_collectors.consts.spotify_consts import (
     TOTAL_TRACKS,
     NAME,
 )
-from data_collectors.consts.datetime_consts import SPOTIFY_RELEASE_DATE_ORDERED_FORMATS
 from data_collectors.logic.inserters.postgres import BaseIDsDatabaseInserter
 
 
