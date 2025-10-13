@@ -39,17 +39,6 @@ class SpotifyAudioFeaturesDatabaseInserter(BaseIDsDatabaseInserter):
 
         return await self._spotify_client.tracks.audio_features.run(valid_ids)
 
-    def _to_records(self, raw_records: List[dict]) -> List[AudioFeatures]:
-        serialized_records = []
-
-        for raw_record in raw_records:
-            record = self._to_record(raw_record)
-
-            if isinstance(record, AudioFeatures):
-                serialized_records.append(record)
-
-        return serialized_records
-
     def _to_record(self, response: Any) -> Optional[AudioFeatures]:
         if not self._is_valid_response(response):
             logger.warning("Received invalid audio features response from Spotify. Returning None")

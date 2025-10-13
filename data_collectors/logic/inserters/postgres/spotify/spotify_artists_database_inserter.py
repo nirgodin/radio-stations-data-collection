@@ -21,15 +21,12 @@ class SpotifyArtistsDatabaseInserter(BaseIDsDatabaseInserter):
         artists_ids = extract_unique_artists_ids(*tracks)
         return await self._spotify_client.artists.info.run(sorted(artists_ids))
 
-    def _to_records(self, raw_records: List[dict]) -> List[SpotifyArtist]:
-        return [self._to_record(response) for response in raw_records]
-
-    def _to_record(self, response: dict) -> SpotifyArtist:
-        return SpotifyArtist(id=response[ID], name=response[NAME], genres=self._extract_genres(response))
+    def _to_record(self, raw_record: dict) -> SpotifyArtist:
+        return SpotifyArtist(id=raw_record[ID], name=raw_record[NAME], genres=self._extract_genres(raw_record))
 
     @staticmethod
-    def _extract_genres(response: dict) -> Optional[List[str]]:
-        genres = response.get(GENRES)
+    def _extract_genres(raw_record: dict) -> Optional[List[str]]:
+        genres = raw_record.get(GENRES)
         return genres if genres else None
 
     @property

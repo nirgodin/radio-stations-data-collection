@@ -17,11 +17,7 @@ class SpotifyFeaturedArtistsDatabaseInserter(BaseIDsDatabaseInserter):
 
         return [artist.dict() for artist in chained_featured_artists]
 
-    def _to_records(self, raw_records: List[dict]) -> List[SpotifyFeaturedArtist]:
-        return [self._to_record(record) for record in raw_records]
-
-    @staticmethod
-    def _to_record(raw_record: dict) -> SpotifyFeaturedArtist:
+    def _to_record(self, raw_record: dict) -> SpotifyFeaturedArtist:
         return SpotifyFeaturedArtist(
             track_id=raw_record["track_id"],
             artist_id=raw_record[ID],

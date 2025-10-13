@@ -14,17 +14,6 @@ class TrackIDMappingDatabaseInserter(BaseIDsDatabaseInserter):
     async def _get_raw_records(self, tracks: List[dict]) -> List[dict]:
         return tracks
 
-    def _to_records(self, raw_records: List[dict]) -> List[TrackIDMapping]:
-        serialized_records = []
-
-        for raw_record in raw_records:
-            record = self._to_record(raw_record)
-
-            if isinstance(record, TrackIDMapping):
-                serialized_records.append(record)
-
-        return serialized_records
-
     def _to_record(self, raw_record: dict) -> Optional[TrackIDMapping]:
         if self._is_serializable(raw_record):
             return TrackIDMapping(id=safe_nested_get(raw_record, [TRACK, ID]))

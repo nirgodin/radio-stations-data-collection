@@ -1,4 +1,4 @@
-from typing import Type, List, Iterable
+from typing import Type, List
 
 from genie_common.utils import safe_nested_get
 from genie_datastores.postgres.models import Track
@@ -12,8 +12,8 @@ class TracksDatabaseInserter(BaseIDsDatabaseInserter):
         ids = {safe_nested_get(track, [TRACK, ID]) for track in tracks}
         return [id_ for id_ in ids if isinstance(id_, str)]
 
-    def _to_records(self, raw_records: Iterable[str]) -> List[Track]:
-        return [Track(id=id_) for id_ in raw_records]
+    def _to_record(self, raw_record: str) -> Track:
+        return Track(id=raw_record)
 
     @property
     def _orm(self) -> Type[Track]:

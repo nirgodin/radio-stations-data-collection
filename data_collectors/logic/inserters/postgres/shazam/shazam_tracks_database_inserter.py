@@ -16,17 +16,6 @@ class ShazamTracksDatabaseInserter(BaseIDsDatabaseInserter):
     async def _get_raw_records(self, iterable: Iterable[dict]) -> Iterable[dict]:
         return iterable
 
-    def _to_records(self, raw_records: Iterable[dict]) -> List[ShazamTrack]:
-        serialized_records = []
-
-        for raw_record in raw_records:
-            record = self._to_record(raw_record)
-
-            if isinstance(record, ShazamTrack):
-                serialized_records.append(record)
-
-        return serialized_records
-
     def _to_record(self, response: dict) -> Optional[ShazamTrack]:
         artist_id = extract_artist_id(response, ADAM_ID)
         if artist_id:

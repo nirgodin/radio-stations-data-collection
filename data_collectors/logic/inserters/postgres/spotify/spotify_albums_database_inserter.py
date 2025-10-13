@@ -47,9 +47,6 @@ class SpotifyAlbumsDatabaseInserter(BaseIDsDatabaseInserter):
                 album[ARTISTS][0][ID] = artist_id
                 return album
 
-    def _to_records(self, raw_records: List[dict]) -> List[BaseORMModel]:
-        return [self._to_record(response) for response in raw_records]
-
     def _to_record(self, response: dict) -> SpotifyAlbum:
         album_type = self._extract_album_type(response)
         return SpotifyAlbum(

@@ -1,4 +1,4 @@
-from typing import List, Type, Iterable
+from typing import List, Type
 
 from genie_datastores.postgres.models import Artist
 
@@ -12,8 +12,8 @@ class ArtistsDatabaseInserter(BaseIDsDatabaseInserter):
     async def _get_raw_records(self, tracks: List[dict]) -> List[str]:
         return sorted(extract_unique_artists_ids(*tracks))
 
-    def _to_records(self, raw_records: Iterable[str]) -> List[Artist]:
-        return [Artist(id=id_) for id_ in raw_records]
+    def _to_record(self, raw_record: str) -> Artist:
+        return Artist(id=raw_record)
 
     @property
     def _orm(self) -> Type[Artist]:
