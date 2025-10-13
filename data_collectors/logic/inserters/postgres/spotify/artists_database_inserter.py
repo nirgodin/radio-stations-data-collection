@@ -12,9 +12,8 @@ class ArtistsDatabaseInserter(BaseIDsDatabaseInserter):
     async def _get_raw_records(self, tracks: List[dict]) -> List[str]:
         return sorted(extract_unique_artists_ids(*tracks))
 
-    @property
-    def _serialization_method(self) -> str:
-        return "from_id"
+    def _to_record(self, raw_record: str) -> Artist:
+        return Artist(id=raw_record)
 
     @property
     def _orm(self) -> Type[Artist]:
