@@ -52,10 +52,6 @@ class SpotifyFeaturedArtistImputerManager(IManager):
 
         return [{TRACK: track} for track in tracks]
 
-    async def _insert_spotify_records(self, tracks: List[Dict[str, dict]]) -> None:
-        await self._
-        await self._featured_artists_inserter.insert(tracks)
-
     async def _update_spotify_tracks_update_date(self, tracks_ids: List[str]) -> None:
         logger.info("Updating Spotify tracks update date")
         now = datetime.utcnow()
