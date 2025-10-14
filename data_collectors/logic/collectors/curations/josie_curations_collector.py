@@ -3,7 +3,7 @@ from html import unescape
 from typing import List, Dict, Any, Optional, Generator
 
 from bs4 import BeautifulSoup
-from genie_common.tools import AioPoolExecutor
+from genie_common.tools import AioPoolExecutor, logger
 from genie_common.utils import chain_lists
 from genie_common.utils import safe_nested_get
 from genie_datastores.models import DataSource
@@ -46,15 +46,19 @@ class JosieCurationsCollector(ICollector):
         return curations
 
     async def _fetch_single_post_curations(self, post: Dict[str, Any]) -> List[Curation]:
-        is_new_post = await self._is_new_post(post["id"])
+        post_id = post["id"]
+        is_new_post = await self._is_new_post(post_id)
 
         if is_new_post:
+            logger.info(f"Post `{post_id}` is new! Retrieving tracks")
             tracks_ids = self._extract_post_tracks_ids(post)
             return list(self._to_curations(post, tracks_ids))
 
+        logger.info(f"Post `{post_id}` was already processed in the past. Skipping")
         return []
 
     async def _is_new_post(self, post_id: str) -> bool:
+        logger.info(f"Querying DB to find whether post `{post_id}` was already processed in the past")
         query = select(CuratorCollection.id).where(CuratorCollection.id == post_id).limit(1)
         cursor = await execute_query(engine=self._db_engine, query=query)
         query_result = cursor.scalars().first()
