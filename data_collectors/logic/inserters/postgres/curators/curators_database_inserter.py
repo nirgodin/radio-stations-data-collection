@@ -1,18 +1,12 @@
 from typing import Type, Iterable
 
 from genie_datastores.postgres.models import Curator
-from spotipyio import SpotifyClient
-from sqlalchemy.ext.asyncio import AsyncEngine
 
 from data_collectors.logic.inserters.postgres import BaseIDsDatabaseInserter
 from data_collectors.logic.models import Curation
 
 
 class CuratorsDatabaseInserter(BaseIDsDatabaseInserter):
-    def __init__(self, db_engine: AsyncEngine, spotify_client: SpotifyClient):
-        super().__init__(db_engine)
-        self._spotify_client = spotify_client
-
     async def _get_raw_records(self, curations: Iterable[Curation]) -> Iterable[Curation]:
         return curations
 
