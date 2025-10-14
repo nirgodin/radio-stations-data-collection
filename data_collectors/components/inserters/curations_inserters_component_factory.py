@@ -3,7 +3,8 @@ from data_collectors.logic.inserters.postgres import (
     ChunksDatabaseInserter,
     CuratorsDatabaseInserter,
     CuratorsCollectionsDatabaseInserter,
-    CuratedTracksDatabaseInserter, CurationsInsertionManager,
+    CuratedTracksDatabaseInserter,
+    CurationsInsertionManager,
 )
 
 

@@ -20,6 +20,7 @@ class JosieCurationsJobBuilder(BaseJobBuilder):
         )
 
     async def _task(self) -> None:
-        async with self._component_factory.sessions.get_client_session() as client_session:
-            manager = self._component_factory.curations.get_josie_curations_manager(client_session)
-            await manager.run()
+        async with self._component_factory.sessions.enter_spotify_session() as spotify_session:
+            async with self._component_factory.sessions.get_client_session() as client_session:
+                manager = self._component_factory.curations.get_josie_curations_manager(spotify_session, client_session)
+                await manager.run()
