@@ -1,4 +1,5 @@
 from data_collectors.logic.collectors.charts import *
+from data_collectors.logic.collectors.curations import *
 from data_collectors.logic.collectors.genius import *
 from data_collectors.logic.collectors.google import *
 from data_collectors.logic.collectors.misc import *

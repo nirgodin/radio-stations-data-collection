@@ -3,13 +3,20 @@ from data_collectors.logic.inserters.postgres import (
     ChunksDatabaseInserter,
     CuratorsDatabaseInserter,
     CuratorsCollectionsDatabaseInserter,
-    CuratedTracksDatabaseInserter,
+    CuratedTracksDatabaseInserter, CurationsInsertionManager,
 )
 
 
 class CurationsInsertersComponentFactory:
     def __init__(self, tools: ToolsComponentFactory):
         self._tools = tools
+
+    def get_curations_insertion_manager(self) -> CurationsInsertionManager:
+        return CurationsInsertionManager(
+            curators_inserter=self.get_curators_inserter(),
+            curators_collections_inserter=self.get_curators_collections_inserter(),
+            curated_tracks_inserter=self.get_curated_tracks_inserter(),
+        )
 
     def get_curators_inserter(self) -> CuratorsDatabaseInserter:
         return CuratorsDatabaseInserter(db_engine=self._tools.get_database_engine())

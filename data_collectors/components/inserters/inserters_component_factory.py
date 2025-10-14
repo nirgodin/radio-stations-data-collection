@@ -43,7 +43,7 @@ class InsertersComponentFactory:
         self.spotify = spotify or SpotifyInsertersComponentFactory(tools)
         self.shazam = shazam or ShazamInsertersComponentFactory(tools)
         self._serializers = serializers or SerializersComponentFactory(tools)
-        self._curations = curations
+        self.curations = curations or CurationsInsertersComponentFactory(tools)
 
     def get_radio_tracks_inserter(self) -> RadioTracksDatabaseInserter:
         return RadioTracksDatabaseInserter(
