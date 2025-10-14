@@ -1,3 +1,4 @@
+from data_collectors.components.managers.curations_manager_factory import CurationsManagerFactory
 from data_collectors.components.managers.genius_manager_factory import (
     GeniusManagerFactory,
 )
@@ -30,6 +31,7 @@ from data_collectors.components.managers.wikipedia_manager_factory import (
 )
 
 __all__ = [
+    "CurationsManagerFactory",
     "GeniusManagerFactory",
     "GenresManagerFactory",
     "GoogleManagerFactory",

@@ -4,7 +4,7 @@ from aiohttp import ClientSession
 
 
 class JosieClient:
-    def __init__(self, session: ClientSession, base_url: str = "https://josieapp.com/api"):
+    def __init__(self, session: ClientSession, base_url: str):
         self._session = session
         self._base_url = base_url
 

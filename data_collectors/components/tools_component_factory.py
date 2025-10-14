@@ -41,6 +41,7 @@ from data_collectors.tools import (
     GeniusClient,
     RapidAPIClient,
 )
+from data_collectors.tools.josie_client import JosieClient
 
 
 class ToolsComponentFactory:
@@ -163,6 +164,9 @@ class ToolsComponentFactory:
             api_host=self._env.get_rapid_api_host(),
             base_url=self._env.get_rapid_base_url(),
         )
+
+    def get_josie_client(self, session: ClientSession) -> JosieClient:
+        return JosieClient(session=session, base_url=self._env.get_josie_base_url())
 
     def _get_google_default_share_settings(self) -> List[ShareSettings]:
         users = self._env.get_google_sheets_users()
