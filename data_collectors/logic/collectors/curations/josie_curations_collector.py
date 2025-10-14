@@ -80,7 +80,9 @@ class JosieCurationsCollector(ICollector):
     @staticmethod
     def _extract_paragraph_tracks_ids(paragraph: Dict[str, Any]) -> List[str]:
         tracks = safe_nested_get(paragraph, ["content", "tracks"])
-        return [track["id"] for track in tracks]
+        tracks_ids = filter(lambda x: isinstance(x, str), [track.get("id") for track in tracks])
+
+        return list(tracks_ids)
 
     def _to_curations(self, post: Dict[str, Any], tracks_ids: List[str]) -> Generator[Curation, None, None]:
         curator_id = safe_nested_get(post, ["author", "id"])
