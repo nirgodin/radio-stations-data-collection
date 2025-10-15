@@ -11,6 +11,7 @@ class JobId(str, Enum):
     GENIUS_ARTISTS_ABOUTS = "genius_artists_abouts"
     GENIUS_ARTISTS_IDS_IMPUTER = "genius_artists_ids_imputer"
     GLGLZ_CHARTS = "glglz_charts"
+    JOSIE_CURATIONS = "josie_curations"
     MAKO_HIT_LIST = "mako_hit_list"
     RADIO_SNAPSHOTS = "radio_snapshots"
     SHAZAM_TOP_TRACKS = "shazam_top_tracks"

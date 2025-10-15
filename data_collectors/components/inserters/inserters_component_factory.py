@@ -3,6 +3,9 @@ from typing import Optional
 from genie_datastores.milvus import MilvusClient
 from genie_datastores.mongo.operations import initialize_mongo
 
+from data_collectors.components.inserters.curations_inserters_component_factory import (
+    CurationsInsertersComponentFactory,
+)
 from data_collectors.components.inserters.shazam_inserters_compoent_factory import (
     ShazamInsertersComponentFactory,
 )
@@ -33,12 +36,14 @@ class InsertersComponentFactory:
         spotify: Optional[SpotifyInsertersComponentFactory] = None,
         shazam: Optional[ShazamInsertersComponentFactory] = None,
         serializers: Optional[SerializersComponentFactory] = None,
+        curations: Optional[CurationsInsertersComponentFactory] = None,
     ):
         self._tools = tools
 
         self.spotify = spotify or SpotifyInsertersComponentFactory(tools)
         self.shazam = shazam or ShazamInsertersComponentFactory(tools)
         self._serializers = serializers or SerializersComponentFactory(tools)
+        self.curations = curations or CurationsInsertersComponentFactory(tools)
 
     def get_radio_tracks_inserter(self) -> RadioTracksDatabaseInserter:
         return RadioTracksDatabaseInserter(

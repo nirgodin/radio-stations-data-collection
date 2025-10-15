@@ -10,6 +10,14 @@ from data_collectors.logic.inserters.postgres.chart_entries_database_inserter im
 from data_collectors.logic.inserters.postgres.chunks_database_inserter import (
     ChunksDatabaseInserter,
 )
+from data_collectors.logic.inserters.postgres.curators.curated_tracks_database_inserter import (
+    CuratedTracksDatabaseInserter,
+)
+from data_collectors.logic.inserters.postgres.curators.curations_insertion_manager import CurationsInsertionManager
+from data_collectors.logic.inserters.postgres.curators.curators_collections_database_inserter import (
+    CuratorsCollectionsDatabaseInserter,
+)
+from data_collectors.logic.inserters.postgres.curators.curators_database_inserter import CuratorsDatabaseInserter
 from data_collectors.logic.inserters.postgres.genres_database_inserter import (
     GenresDatabaseInserter,
 )
@@ -48,4 +56,9 @@ __all__ = [
     "BaseIDsDatabaseInserter",
     "BaseUniqueDatabaseInserter",
     "ChunksDatabaseInserter",
+    # Curators
+    "CuratorsDatabaseInserter",
+    "CuratorsCollectionsDatabaseInserter",
+    "CuratedTracksDatabaseInserter",
+    "CurationsInsertionManager",
 ]

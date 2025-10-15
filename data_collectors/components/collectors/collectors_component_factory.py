@@ -1,5 +1,8 @@
 from typing import Optional
 
+from data_collectors.components.collectors.curations_collections_component_factory import (
+    CurationsCollectorsComponentFactory,
+)
 from data_collectors.components.collectors.genius_collectors_component_factory import (
     GeniusCollectorsComponentFactory,
 )
@@ -37,6 +40,7 @@ class CollectorsComponentFactory:
         env: EnvironmentComponentFactory,
         tools: ToolsComponentFactory,
         charts: Optional[ChartsCollectorsComponentFactory] = None,
+        curations: Optional[CurationsCollectorsComponentFactory] = None,
         genius: Optional[GeniusCollectorsComponentFactory] = None,
         google: Optional[GoogleCollectorsComponentFactory] = None,
         misc: Optional[MiscellaneousCollectorsFactory] = None,
@@ -47,6 +51,7 @@ class CollectorsComponentFactory:
         wikipedia: Optional[WikipediaCollectorsComponentFactory] = None,
     ):
         self.charts = charts or ChartsCollectorsComponentFactory(env, tools)
+        self.curations = curations or CurationsCollectorsComponentFactory(tools)
         self.genius = genius or GeniusCollectorsComponentFactory(tools)
         self.google = google or GoogleCollectorsComponentFactory(tools)
         self.misc = misc or MiscellaneousCollectorsFactory(tools)

@@ -21,6 +21,7 @@ class ComponentFactory:
         self,
         env: EnvironmentComponentFactory = EnvironmentComponentFactory(),
         charts: Optional[ChartsManagerFactory] = None,
+        curations: Optional[CurationsManagerFactory] = None,
         deleters: Optional[DeletersComponentFactory] = None,
         exporters: Optional[ExportersComponentFactory] = None,
         genius: Optional[GeniusManagerFactory] = None,
@@ -42,6 +43,11 @@ class ComponentFactory:
         self.sessions = sessions_factory
         self.tools = tools_factory
         self.charts = charts or ChartsManagerFactory(
+            env=env,
+            sessions=sessions_factory,
+            tools=tools_factory,
+        )
+        self.curations = curations or CurationsManagerFactory(
             env=env,
             sessions=sessions_factory,
             tools=tools_factory,
