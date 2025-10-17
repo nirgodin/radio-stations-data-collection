@@ -8,6 +8,7 @@ from spotipyio import SpotifyClient
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncEngine
 
+from data_collectors.logic.collectors import SpotifyPlaylistsCurationsCollector
 from data_collectors.consts.spotify_consts import TRACK, ID, SNAPSHOT_ID
 from data_collectors.contract import IManager
 from data_collectors.logic.inserters.postgres import CurationsInsertionManager, SpotifyInsertionsManager
@@ -21,26 +22,30 @@ class SpotifyUserPlaylistsCurationsManager(IManager):
         self,
         spotify_client: SpotifyClient,
         db_engine: AsyncEngine,
+        spotify_playlists_curations_collector: SpotifyPlaylistsCurationsCollector,
         spotify_insertions_manager: SpotifyInsertionsManager,
         curations_insertion_manager: CurationsInsertionManager,
         pool_executor: AioPoolExecutor = AioPoolExecutor(),
     ):
         self._spotify_client = spotify_client
         self._db_engine = db_engine
+        self._spotify_playlists_curations_collector = spotify_playlists_curations_collector
         self._spotify_insertions_manager = spotify_insertions_manager
         self._curations_insertion_manager = curations_insertion_manager
         self._pool_executor = pool_executor
 
     async def run(self) -> None:
-        playlists = await self._query_relevant_playlists()
+        playlists_ids = await self._fetch_relevant_playlists_ids()
 
-        if not playlists:
+        if not playlists_ids:
             logger.info(f"Did not find any relevant playlist. Aborting")
             return
 
-        logger.info(f"Found {len(playlists)} relevant playlists. Starting to fetching curated tracks")
+        logger.info(f"Found {len(playlists_ids)} relevant playlists. Starting to fetching curated tracks")
+        curations = await self._spotify_playlists_curations_collector.collect(playlists_ids)
+        print("b")
 
-    async def _query_relevant_playlists(self) -> List[str]:
+    async def _fetch_relevant_playlists_ids(self) -> List[str]:
         logger.info("Querying curators playlists")
         playlists = await self._spotify_client.users.playlists.run(ids=SPOTIFY_CURATORS_USER_IDS, max_pages=2)
         logger.info(f"Found {len(playlists)} users playlists. Filtering playlists with new tracks")

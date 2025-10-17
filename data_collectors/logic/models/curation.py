@@ -16,6 +16,7 @@ class Curation:
     source: DataSource
     title: Optional[str]
     track_id: str
+    collection_comment: Optional[str] = None
 
     def to_curator(self) -> Curator:
         return Curator(id=self.curator_id, name=self.curator_name, source=self.source)
