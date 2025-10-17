@@ -21,5 +21,5 @@ class SpotifyUserPlaylistsCurationsJobBuilder(BaseJobBuilder):
 
     async def _task(self) -> None:
         async with self._component_factory.sessions.enter_spotify_session() as spotify_session:
-            manager = self._component_factory.curations.get_josie_curations_manager(spotify_session, client_session)
+            manager = self._component_factory.curations.get_josie_curations_manager(spotify_session)
             await manager.run()
