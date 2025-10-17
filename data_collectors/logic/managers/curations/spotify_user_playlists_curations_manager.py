@@ -3,18 +3,19 @@ from typing import List, Tuple, Any, Dict
 from genie_common.tools import logger, AioPoolExecutor
 from genie_datastores.postgres.models import CuratorCollection
 from genie_datastores.postgres.operations import execute_query
-from numpy.lib.function_base import iterable
 from spotipyio import SpotifyClient
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncEngine
 
-from data_collectors.logic.collectors import SpotifyPlaylistsCurationsCollector
-from data_collectors.consts.spotify_consts import TRACK, ID, SNAPSHOT_ID
+from data_collectors.consts.spotify_consts import ID, SNAPSHOT_ID, ITEMS
 from data_collectors.contract import IManager
+from data_collectors.logic.collectors import SpotifyPlaylistsCurationsCollector
 from data_collectors.logic.inserters.postgres import CurationsInsertionManager, SpotifyInsertionsManager
-from data_collectors.logic.models import Curation
 
-SPOTIFY_CURATORS_USER_IDS = ["guyhajaja"]
+SPOTIFY_CURATORS_NAMES_TO_USER_IDS = {
+    "Nir Godin": "v4saf4cq6t00r5t5z0hupb7hu",
+    "Guy Hajaj": "guyhajaja",
+}
 
 
 class SpotifyUserPlaylistsCurationsManager(IManager):
@@ -47,9 +48,22 @@ class SpotifyUserPlaylistsCurationsManager(IManager):
 
     async def _fetch_relevant_playlists_ids(self) -> List[str]:
         logger.info("Querying curators playlists")
-        playlists = await self._spotify_client.users.playlists.run(ids=SPOTIFY_CURATORS_USER_IDS, max_pages=2)
+        relevant_playlists = []
+        users_playlists = await self._spotify_client.users.playlists.run(
+            ids=list(SPOTIFY_CURATORS_NAMES_TO_USER_IDS.values()),
+            max_pages=2
+        )
+
+        for user_playlists in users_playlists:
+            user_relevant_playlists = await self._extract_user_relevant_playlists(user_playlists)
+            relevant_playlists.extend(user_relevant_playlists)
+
+        return relevant_playlists
+
+    async def _extract_user_relevant_playlists(self, user_playlists: Dict[str, Any]) -> List[str]:
+        playlists = user_playlists[ITEMS]
         logger.info(f"Found {len(playlists)} users playlists. Filtering playlists with new tracks")
-        playlists_relevance: List[Tuple[str, bool]] = self._pool_executor.run(
+        playlists_relevance: List[Tuple[str, bool]] = await self._pool_executor.run(
             iterable=playlists,
             func=self._is_relevant_playlist,
             expected_type=tuple,
