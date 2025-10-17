@@ -23,6 +23,7 @@ class CurationsManagerFactory(BaseManagerFactory):
         spotify_client = self.tools.get_spotify_client(spotify_session)
         return SpotifyUserPlaylistsCurationsManager(
             spotify_client=spotify_client,
+            db_engine=self.tools.get_database_engine(),
             spotify_insertions_manager=self.inserters.spotify.get_insertions_manager(spotify_client),
             curations_insertion_manager=self.inserters.curations.get_curations_insertion_manager(),
         )
