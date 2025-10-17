@@ -17,6 +17,7 @@ TOTAL_TRACKS = "total_tracks"
 ALBUM_TYPE = "album_type"
 EXPLICIT = "explicit"
 TRACK_NUMBER = "track_number"
+DISPLAY_NAME = "display_name"
 
 # Open
 SPOTIFY_OPEN_BASE_URL = "https://open.spotify.com"
