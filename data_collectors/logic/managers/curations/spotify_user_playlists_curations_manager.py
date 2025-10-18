@@ -17,6 +17,7 @@ from data_collectors.logic.models import PlaylistCurations
 SPOTIFY_CURATORS_NAMES_TO_USER_IDS = {
     "Nir Godin": "v4saf4cq6t00r5t5z0hupb7hu",
     "Guy Hajaj": "guyhajaja",
+    "Kan 88": "r13s18fnwtz99s92ml28l40do",
 }
 
 
