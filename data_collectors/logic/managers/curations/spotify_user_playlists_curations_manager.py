@@ -41,7 +41,7 @@ class SpotifyUserPlaylistsCurationsManager(IManager):
         playlists_ids = await self._fetch_relevant_playlists_ids()
 
         if not playlists_ids:
-            logger.info(f"Did not find any relevant playlist. Aborting")
+            logger.info("Did not find any relevant playlist. Aborting")
             return
 
         logger.info(f"Found {len(playlists_ids)} relevant playlists. Starting to fetching curated tracks")
