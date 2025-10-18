@@ -30,6 +30,7 @@ from data_collectors.logic.models.genius_text_format import GeniusTextFormat
 from data_collectors.logic.models.html_element import HTMLElement
 from data_collectors.logic.models.lyrics_source_details import LyricsSourceDetails
 from data_collectors.logic.models.missing_track import MissingTrack
+from data_collectors.logic.models.playlist_curations import PlaylistCurations
 from data_collectors.logic.models.radio_chart_entry_details import (
     RadioChartEntryDetails,
 )
@@ -60,6 +61,7 @@ __all__ = [
     "GeniusTextFormat",
     "LyricsSourceDetails",
     "MissingTrack",
+    "PlaylistCurations",
     "RadioChartEntryDetails",
     "ScheduledJob",
     "SpotifyArtistAbout",
