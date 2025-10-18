@@ -19,7 +19,9 @@ class SpotifyArtistsDatabaseInserter(BaseIDsDatabaseInserter):
 
     async def _get_raw_records(self, tracks: List[dict]) -> List[dict]:
         artists_ids = extract_unique_artists_ids(*tracks)
-        return await self._spotify_client.artists.info.run(sorted(artists_ids))
+        valid_artists_ids = [id_ for id_ in artists_ids if isinstance(id_, str)]
+
+        return await self._spotify_client.artists.info.run(sorted(valid_artists_ids))
 
     def _to_record(self, raw_record: dict) -> SpotifyArtist:
         return SpotifyArtist(id=raw_record[ID], name=raw_record[NAME], genres=self._extract_genres(raw_record))
