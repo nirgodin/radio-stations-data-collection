@@ -1,6 +1,7 @@
 from typing import List, Tuple, Any, Dict
 
 from genie_common.tools import logger, AioPoolExecutor
+from genie_common.utils import chain_lists
 from genie_datastores.postgres.models import CuratorCollection
 from genie_datastores.postgres.operations import execute_query
 from spotipyio import SpotifyClient
@@ -11,6 +12,7 @@ from data_collectors.consts.spotify_consts import ID, SNAPSHOT_ID, ITEMS
 from data_collectors.contract import IManager
 from data_collectors.logic.collectors import SpotifyPlaylistsCurationsCollector
 from data_collectors.logic.inserters.postgres import CurationsInsertionManager, SpotifyInsertionsManager
+from data_collectors.logic.models import PlaylistCurations
 
 SPOTIFY_CURATORS_NAMES_TO_USER_IDS = {
     "Nir Godin": "v4saf4cq6t00r5t5z0hupb7hu",
@@ -43,15 +45,14 @@ class SpotifyUserPlaylistsCurationsManager(IManager):
             return
 
         logger.info(f"Found {len(playlists_ids)} relevant playlists. Starting to fetching curated tracks")
-        curations = await self._spotify_playlists_curations_collector.collect(playlists_ids)
-        print("b")
+        playlists_curations = await self._spotify_playlists_curations_collector.collect(playlists_ids)
+        await self._insert_playlist_curations(playlists_curations)
 
     async def _fetch_relevant_playlists_ids(self) -> List[str]:
         logger.info("Querying curators playlists")
         relevant_playlists = []
         users_playlists = await self._spotify_client.users.playlists.run(
-            ids=list(SPOTIFY_CURATORS_NAMES_TO_USER_IDS.values()),
-            max_pages=2
+            ids=list(SPOTIFY_CURATORS_NAMES_TO_USER_IDS.values()), max_pages=2
         )
 
         for user_playlists in users_playlists:
@@ -88,3 +89,12 @@ class SpotifyUserPlaylistsCurationsManager(IManager):
         stored_snapshot_id = cursor.scalars().first()
 
         return stored_snapshot_id != current_snapshot_id
+
+    async def _insert_playlist_curations(self, playlists_curations: List[PlaylistCurations]) -> None:
+        tracks = chain_lists([curations.tracks for curations in playlists_curations])
+        if tracks:
+            await self._spotify_insertions_manager.insert(tracks)
+
+        curations = chain_lists([curations.curations for curations in playlists_curations])
+        if curations:
+            await self._curations_insertion_manager.insert(curations)

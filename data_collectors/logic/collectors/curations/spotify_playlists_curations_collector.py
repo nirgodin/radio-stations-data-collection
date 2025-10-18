@@ -10,14 +10,14 @@ from spotipyio.logic.consts.spotify_consts import OWNER, DESCRIPTION
 
 from data_collectors.consts.spotify_consts import TRACKS, ITEMS, TRACK, ID, DISPLAY_NAME, NAME, SNAPSHOT_ID
 from data_collectors.contract import ICollector
-from data_collectors.logic.models import Curation
+from data_collectors.logic.models import Curation, PlaylistCurations
 
 
 class SpotifyPlaylistsCurationsCollector(ICollector):
     def __init__(self, spotify_client: SpotifyClient):
         self._spotify_client = spotify_client
 
-    async def collect(self, playlists_ids: List[str]) -> List[Curation]:
+    async def collect(self, playlists_ids: List[str]) -> List[PlaylistCurations]:
         playlists = await self._spotify_client.playlists.info.run(
             ids=playlists_ids,
             max_pages=30,
@@ -26,19 +26,20 @@ class SpotifyPlaylistsCurationsCollector(ICollector):
 
         for playlist in playlists:
             playlist_curations = self._build_single_playlist_curations(playlist)
-            curations.extend(playlist_curations)
+            curations.append(playlist_curations)
 
         return curations
 
-    def _build_single_playlist_curations(self, playlist: Dict[str, Any]) -> List[Curation]:
+    def _build_single_playlist_curations(self, playlist: Dict[str, Any]) -> PlaylistCurations:
         tracks = safe_nested_get(playlist, [TRACKS, ITEMS], [])
         if not tracks:
-            return []
+            return PlaylistCurations.empty()
 
         tracks_ids = self._extract_playlist_tracks(tracks)
         update_date = self._extract_playlist_update_date(tracks)
+        curations = list(self._to_curations(playlist, tracks_ids, update_date))
 
-        return list(self._to_curations(playlist, tracks_ids, update_date))
+        return PlaylistCurations(curations=curations, tracks=tracks)
 
     @staticmethod
     def _extract_playlist_tracks(tracks: List[Dict[str, Any]]) -> List[str]:
