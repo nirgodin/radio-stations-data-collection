@@ -48,26 +48,19 @@ class InsertersComponentFactory:
     def get_radio_tracks_inserter(self) -> RadioTracksDatabaseInserter:
         return RadioTracksDatabaseInserter(
             db_engine=self._tools.get_database_engine(),
-            chunks_inserter=self.get_chunks_database_inserter(),
+            chunks_inserter=self._tools.get_chunks_database_inserter(),
         )
 
     def get_chart_entries_inserter(self) -> ChartEntriesDatabaseInserter:
         return ChartEntriesDatabaseInserter(
             db_engine=self._tools.get_database_engine(),
-            chunks_inserter=self.get_chunks_database_inserter(),
-        )
-
-    def get_chunks_database_inserter(self) -> ChunksDatabaseInserter:
-        chunks_generator = self._tools.get_chunks_generator()
-        return ChunksDatabaseInserter(
-            db_engine=self._tools.get_database_engine(),
-            chunks_generator=chunks_generator,
+            chunks_inserter=self._tools.get_chunks_database_inserter(),
         )
 
     def get_genres_inserter(self) -> GenresDatabaseInserter:
         return GenresDatabaseInserter(
             db_engine=self._tools.get_database_engine(),
-            chunks_inserter=self.get_chunks_database_inserter(),
+            chunks_inserter=self._tools.get_chunks_database_inserter(),
         )
 
     def get_milvus_chunks_inserter(self, milvus_client: MilvusClient) -> MilvusChunksDatabaseInserter:

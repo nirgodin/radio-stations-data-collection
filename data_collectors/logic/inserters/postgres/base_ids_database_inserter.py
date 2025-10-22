@@ -3,16 +3,21 @@ from typing import List, Type, Iterable, Any, Optional
 
 from genie_common.tools import logger
 from genie_datastores.postgres.models.orm.base_orm_model import BaseORMModel
-from genie_datastores.postgres.operations import insert_records_ignoring_conflicts
 from genie_datastores.postgres.utils import query_existing_column_values
+from sqlalchemy.ext.asyncio import AsyncEngine
 
 from data_collectors.consts.spotify_consts import ID
 from data_collectors.contract.inserters.postgres_database_inserter_interface import (
     IPostgresDatabaseInserter,
 )
+from data_collectors.logic.inserters.postgres.chunks_database_inserter import ChunksDatabaseInserter
 
 
 class BaseIDsDatabaseInserter(IPostgresDatabaseInserter, ABC):
+    def __init__(self, db_engine: AsyncEngine, chunks_inserter: ChunksDatabaseInserter):
+        super().__init__(db_engine)
+        self._chunks_inserter = chunks_inserter
+
     async def insert(self, iterable: Iterable[Any]) -> List[BaseORMModel]:
         logger.info(f"Starting to run {self.__class__.__name__}")
         raw_records = await self._get_raw_records(iterable)
@@ -82,7 +87,7 @@ class BaseIDsDatabaseInserter(IPostgresDatabaseInserter, ABC):
 
         if non_existing_records:
             logger.info(f"Inserting {len(non_existing_records)} records to table {self._orm.__tablename__}")
-            await insert_records_ignoring_conflicts(engine=self._db_engine, records=non_existing_records)
+            await self._chunks_inserter.insert(non_existing_records)
 
         self._log_summary(records, non_existing_records)
 

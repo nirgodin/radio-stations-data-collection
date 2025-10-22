@@ -28,5 +28,5 @@ class GenresManagerFactory(BaseManagerFactory):
         return GenresArtistsOriginManager(
             db_engine=get_database_engine(),
             db_updater=self.updaters.get_values_updater(),
-            db_inserter=self.inserters.get_chunks_database_inserter(),
+            db_inserter=self.tools.get_chunks_database_inserter(),
         )

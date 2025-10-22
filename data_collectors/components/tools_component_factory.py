@@ -34,6 +34,7 @@ from data_collectors.components.environment_component_factory import (
 from data_collectors.consts.image_gender_detector_consts import (
     GENDER_MODEL_RESOURCES_DIR,
 )
+from data_collectors.logic.inserters.postgres import ChunksDatabaseInserter
 from data_collectors.tools import (
     ImageGenderDetector,
     TranslationAdapter,
@@ -167,6 +168,12 @@ class ToolsComponentFactory:
 
     def get_josie_client(self, session: ClientSession) -> JosieClient:
         return JosieClient(session=session, base_url=self._env.get_josie_base_url())
+
+    def get_chunks_database_inserter(self) -> ChunksDatabaseInserter:
+        return ChunksDatabaseInserter(
+            db_engine=self.get_database_engine(),
+            chunks_generator=self.get_chunks_generator(),
+        )
 
     def _get_google_default_share_settings(self) -> List[ShareSettings]:
         users = self._env.get_google_sheets_users()
