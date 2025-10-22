@@ -24,7 +24,6 @@ from data_collectors.logic.inserters.mongo import (
 from data_collectors.logic.inserters.postgres import (
     RadioTracksDatabaseInserter,
     ChartEntriesDatabaseInserter,
-    ChunksDatabaseInserter,
     GenresDatabaseInserter,
 )
 
