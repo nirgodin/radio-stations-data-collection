@@ -10,7 +10,10 @@ from data_collectors.utils.spotify import extract_unique_artists_ids
 
 class ArtistsDatabaseInserter(BaseIDsDatabaseInserter):
     async def _get_raw_records(self, tracks: List[dict]) -> List[str]:
-        return sorted(extract_unique_artists_ids(*tracks))
+        artists_ids = extract_unique_artists_ids(*tracks)
+        valid_artists_ids = [id_ for id_ in artists_ids if isinstance(id_, str)]
+
+        return sorted(valid_artists_ids)
 
     def _to_record(self, raw_record: str) -> Artist:
         return Artist(id=raw_record)
