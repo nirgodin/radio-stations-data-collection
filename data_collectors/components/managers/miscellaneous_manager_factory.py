@@ -71,7 +71,7 @@ class MiscellaneousManagerFactory(BaseManagerFactory):
     def get_lyrics_missing_ids_manager(self) -> TracksLyricsMissingIDsManager:
         return TracksLyricsMissingIDsManager(
             db_engine=get_database_engine(),
-            chunks_inserter=self.inserters.get_chunks_database_inserter(),
+            chunks_inserter=self.tools.get_chunks_database_inserter(),
         )
 
     def get_tracks_vectorizer_manager(self, milvus_client: MilvusClient) -> TracksVectorizerManager:

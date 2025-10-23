@@ -25,12 +25,12 @@ from data_collectors.consts.audio_features_consts import (
     VALENCE,
 )
 from data_collectors.consts.spotify_consts import TRACK, ID
-from data_collectors.logic.inserters.postgres import BaseIDsDatabaseInserter
+from data_collectors.logic.inserters.postgres import BaseIDsDatabaseInserter, ChunksDatabaseInserter
 
 
 class SpotifyAudioFeaturesDatabaseInserter(BaseIDsDatabaseInserter):
-    def __init__(self, db_engine: AsyncEngine, spotify_client: SpotifyClient):
-        super().__init__(db_engine)
+    def __init__(self, db_engine: AsyncEngine, chunks_inserter: ChunksDatabaseInserter, spotify_client: SpotifyClient):
+        super().__init__(db_engine, chunks_inserter)
         self._spotify_client = spotify_client
 
     async def _get_raw_records(self, tracks: List[dict]) -> List[dict]:

@@ -8,13 +8,13 @@ from spotipyio import SpotifyClient
 from sqlalchemy.ext.asyncio import AsyncEngine
 
 from data_collectors.consts.spotify_consts import ARTISTS, ID, NAME, GENRES
-from data_collectors.logic.inserters.postgres import BaseIDsDatabaseInserter
+from data_collectors.logic.inserters.postgres import BaseIDsDatabaseInserter, ChunksDatabaseInserter
 from data_collectors.utils.spotify import extract_unique_artists_ids
 
 
 class SpotifyArtistsDatabaseInserter(BaseIDsDatabaseInserter):
-    def __init__(self, db_engine: AsyncEngine, spotify_client: SpotifyClient):
-        super().__init__(db_engine)
+    def __init__(self, db_engine: AsyncEngine, chunks_inserter: ChunksDatabaseInserter, spotify_client: SpotifyClient):
+        super().__init__(db_engine, chunks_inserter)
         self._spotify_client = spotify_client
 
     async def _get_raw_records(self, tracks: List[dict]) -> List[dict]:

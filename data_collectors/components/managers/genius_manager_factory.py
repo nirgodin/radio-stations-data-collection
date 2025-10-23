@@ -25,6 +25,6 @@ class GeniusManagerFactory(BaseManagerFactory):
         return GeniusArtistsManager(
             db_engine=get_database_engine(),
             artists_collector=self.collectors.genius.get_artists_collector(session),
-            chunks_inserter=self.inserters.get_chunks_database_inserter(),
+            chunks_inserter=self.tools.get_chunks_database_inserter(),
             text_format=GeniusTextFormat.PLAIN,
         )

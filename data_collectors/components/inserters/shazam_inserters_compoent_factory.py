@@ -19,7 +19,9 @@ class ShazamInsertersComponentFactory:
         return ShazamTopTracksDatabaseInserter(chunks_inserter)
 
     def get_tracks_inserter(self) -> ShazamTracksDatabaseInserter:
-        return ShazamTracksDatabaseInserter(self._tools.get_database_engine())
+        return ShazamTracksDatabaseInserter(
+            db_engine=self._tools.get_database_engine(), chunks_inserter=self._tools.get_chunks_database_inserter()
+        )
 
     async def get_artists_inserter(self) -> ShazamArtistsDatabaseInserter:
         return ShazamArtistsDatabaseInserter(
@@ -29,4 +31,6 @@ class ShazamInsertersComponentFactory:
         )
 
     def get_artists_postgres_inserter(self) -> ShazamArtistsPostgresDatabaseInserter:
-        return ShazamArtistsPostgresDatabaseInserter(self._tools.get_database_engine())
+        return ShazamArtistsPostgresDatabaseInserter(
+            db_engine=self._tools.get_database_engine(), chunks_inserter=self._tools.get_chunks_database_inserter()
+        )

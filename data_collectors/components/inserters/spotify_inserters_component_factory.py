@@ -11,55 +11,76 @@ class SpotifyInsertersComponentFactory:
 
     def get_insertions_manager(self, spotify_client: SpotifyClient) -> SpotifyInsertionsManager:
         database_engine = self._tools.get_database_engine()
+        chunks_inserter = self._tools.get_chunks_database_inserter()
+
         return SpotifyInsertionsManager(
-            spotify_artists_inserter=self.get_spotify_artists_inserter(spotify_client, database_engine),
-            albums_inserter=self.get_albums_inserter(database_engine),
-            spotify_tracks_inserter=self.get_spotify_tracks_inserter(database_engine),
-            audio_features_inserter=self.get_audio_features_inserter(spotify_client, database_engine),
-            track_id_mapping_inserter=self.get_track_id_mapping_inserter(database_engine),
-            artists_inserter=self.get_artists_inserter(database_engine),
-            tracks_inserter=self.get_tracks_inserter(database_engine),
-            featured_artists_inserter=self.get_featured_artists_inserter(database_engine),
+            spotify_artists_inserter=self.get_spotify_artists_inserter(
+                spotify_client, database_engine, chunks_inserter
+            ),
+            albums_inserter=self.get_albums_inserter(database_engine, chunks_inserter),
+            spotify_tracks_inserter=self.get_spotify_tracks_inserter(database_engine, chunks_inserter),
+            audio_features_inserter=self.get_audio_features_inserter(spotify_client, database_engine, chunks_inserter),
+            track_id_mapping_inserter=self.get_track_id_mapping_inserter(database_engine, chunks_inserter),
+            artists_inserter=self.get_artists_inserter(database_engine, chunks_inserter),
+            tracks_inserter=self.get_tracks_inserter(database_engine, chunks_inserter),
+            featured_artists_inserter=self.get_featured_artists_inserter(database_engine, chunks_inserter),
         )
 
     @staticmethod
     def get_spotify_artists_inserter(
-        spotify_client: SpotifyClient, db_engine: AsyncEngine
+        spotify_client: SpotifyClient,
+        db_engine: AsyncEngine,
+        chunks_inserter: ChunksDatabaseInserter,
     ) -> SpotifyArtistsDatabaseInserter:
-        return SpotifyArtistsDatabaseInserter(spotify_client=spotify_client, db_engine=db_engine)
+        return SpotifyArtistsDatabaseInserter(
+            db_engine=db_engine, chunks_inserter=chunks_inserter, spotify_client=spotify_client
+        )
 
     @staticmethod
-    def get_albums_inserter(db_engine: AsyncEngine) -> SpotifyAlbumsDatabaseInserter:
-        return SpotifyAlbumsDatabaseInserter(db_engine)
+    def get_albums_inserter(
+        db_engine: AsyncEngine, chunks_inserter: ChunksDatabaseInserter
+    ) -> SpotifyAlbumsDatabaseInserter:
+        return SpotifyAlbumsDatabaseInserter(db_engine, chunks_inserter)
 
     @staticmethod
     def get_spotify_tracks_inserter(
         db_engine: AsyncEngine,
+        chunks_inserter: ChunksDatabaseInserter,
     ) -> SpotifyTracksDatabaseInserter:
-        return SpotifyTracksDatabaseInserter(db_engine)
+        return SpotifyTracksDatabaseInserter(db_engine, chunks_inserter)
 
     @staticmethod
     def get_audio_features_inserter(
-        spotify_client: SpotifyClient, db_engine: AsyncEngine
+        spotify_client: SpotifyClient,
+        db_engine: AsyncEngine,
+        chunks_inserter: ChunksDatabaseInserter,
     ) -> SpotifyAudioFeaturesDatabaseInserter:
-        return SpotifyAudioFeaturesDatabaseInserter(spotify_client=spotify_client, db_engine=db_engine)
+        return SpotifyAudioFeaturesDatabaseInserter(
+            db_engine=db_engine,
+            chunks_inserter=chunks_inserter,
+            spotify_client=spotify_client,
+        )
 
     @staticmethod
     def get_track_id_mapping_inserter(
         db_engine: AsyncEngine,
+        chunks_inserter: ChunksDatabaseInserter,
     ) -> TrackIDMappingDatabaseInserter:
-        return TrackIDMappingDatabaseInserter(db_engine)
+        return TrackIDMappingDatabaseInserter(db_engine, chunks_inserter)
 
     @staticmethod
-    def get_artists_inserter(db_engine: AsyncEngine) -> ArtistsDatabaseInserter:
-        return ArtistsDatabaseInserter(db_engine)
+    def get_artists_inserter(
+        db_engine: AsyncEngine, chunks_inserter: ChunksDatabaseInserter
+    ) -> ArtistsDatabaseInserter:
+        return ArtistsDatabaseInserter(db_engine, chunks_inserter)
 
     @staticmethod
-    def get_tracks_inserter(db_engine: AsyncEngine) -> TracksDatabaseInserter:
-        return TracksDatabaseInserter(db_engine)
+    def get_tracks_inserter(db_engine: AsyncEngine, chunks_inserter: ChunksDatabaseInserter) -> TracksDatabaseInserter:
+        return TracksDatabaseInserter(db_engine, chunks_inserter)
 
     @staticmethod
     def get_featured_artists_inserter(
         db_engine: AsyncEngine,
+        chunks_inserter: ChunksDatabaseInserter,
     ) -> SpotifyFeaturedArtistsDatabaseInserter:
-        return SpotifyFeaturedArtistsDatabaseInserter(db_engine)
+        return SpotifyFeaturedArtistsDatabaseInserter(db_engine, chunks_inserter)
