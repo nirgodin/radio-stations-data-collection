@@ -65,7 +65,9 @@ class SpotifyTracksDatabaseInserter(BaseIDsDatabaseInserter):
     @staticmethod
     def _extract_release_date(inner_track: dict) -> Optional[datetime]:
         release_date = safe_nested_get(inner_track, [ALBUM, RELEASE_DATE])
-        return to_datetime(release_date, SPOTIFY_RELEASE_DATE_ORDERED_FORMATS)
+
+        if isinstance(release_date, str):
+            return to_datetime(release_date, SPOTIFY_RELEASE_DATE_ORDERED_FORMATS)
 
     @property
     def _orm(self) -> Type[BaseSpotifyORMModel]:
