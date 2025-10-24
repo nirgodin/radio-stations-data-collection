@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 
 from apscheduler.triggers.interval import IntervalTrigger
 from apscheduler.util import undefined
