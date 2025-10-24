@@ -22,7 +22,7 @@ class SpotifyCollectorsComponentFactory:
             pool_executor=self._tools.get_pool_executor(),
         )
 
-    async def get_artist_existing_details_collector(
+    def get_artist_existing_details_collector(
         self,
     ) -> SpotifyArtistsExistingDetailsCollector:
         return SpotifyArtistsExistingDetailsCollector(

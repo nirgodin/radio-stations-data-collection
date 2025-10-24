@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from apscheduler.triggers.interval import IntervalTrigger
 from apscheduler.util import undefined
@@ -20,5 +20,5 @@ class ArtistsInsightsJobBuilder(BaseJobBuilder):
         )
 
     async def _task(self) -> None:
-        manager = self._component_factory.google.get_wikipedia_artists_about_manager()
+        manager = self._component_factory.google.get_artists_about_manager()
         await manager.run(limit=10)

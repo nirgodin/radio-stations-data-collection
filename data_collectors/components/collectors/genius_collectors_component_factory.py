@@ -51,10 +51,9 @@ class GeniusCollectorsComponentFactory:
             genius_client=self._tools.get_genius_client(session), pool_executor=self._tools.get_pool_executor()
         )
 
-    async def get_artists_existing_details_collector(
+    def get_artists_existing_details_collector(
         self,
     ) -> GeniusArtistsExistingDetailsCollector:
-        await initialize_mongo()
         return GeniusArtistsExistingDetailsCollector(
             db_engine=self._tools.get_database_engine(),
             pool_executor=self._tools.get_pool_executor(),

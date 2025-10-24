@@ -18,21 +18,6 @@ class GoogleManagerFactory(BaseManagerFactory):
             db_updater=self.updaters.get_values_updater(),
         )
 
-    async def get_spotify_artists_about_manager(self) -> GeminiArtistsAboutManager:
-        existing_details_collector = await self.collectors.spotify.get_artist_existing_details_collector()
-        return self._get_artists_about_manager(existing_details_collector)
-
-    async def get_shazam_artists_about_manager(self) -> GeminiArtistsAboutManager:
-        existing_details_collector = await self.collectors.shazam.get_artist_existing_details_collector()
-        return self._get_artists_about_manager(existing_details_collector)
-
-    def get_wikipedia_artists_about_manager(self) -> GeminiArtistsAboutManager:
-        return self._get_artists_about_manager(self.collectors.wikipedia.get_wikipedia_existing_details_collector())
-
-    async def get_genius_artists_about_manager(self) -> GeminiArtistsAboutManager:
-        existing_details_collector = await self.collectors.genius.get_artists_existing_details_collector()
-        return self._get_artists_about_manager(existing_details_collector)
-
     def get_artists_web_pages_manager(self, session: ClientSession) -> GoogleArtistsWebPagesManager:
         return GoogleArtistsWebPagesManager(
             db_engine=self.tools.get_database_engine(),
@@ -41,11 +26,14 @@ class GoogleManagerFactory(BaseManagerFactory):
             db_updater=self.updaters.get_values_updater(),
         )
 
-    def _get_artists_about_manager(
-        self, existing_details_collector: BaseArtistsExistingDetailsCollector
-    ) -> GeminiArtistsAboutManager:
+    def get_artists_about_manager(self) -> GeminiArtistsAboutManager:
+        existing_details_collectors = [
+            self.collectors.spotify.get_artist_existing_details_collector(),
+            self.collectors.genius.get_artists_existing_details_collector(),
+            self.collectors.wikipedia.get_wikipedia_existing_details_collector(),
+        ]
         return GeminiArtistsAboutManager(
-            existing_details_collector=existing_details_collector,
+            existing_details_collectors=existing_details_collectors,
             parsing_collector=self.collectors.google.get_artists_about_parsing_collector(),
             pool_executor=self.tools.get_pool_executor(),
             db_engine=self.tools.get_database_engine(),

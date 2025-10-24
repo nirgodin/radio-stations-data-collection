@@ -1,7 +1,9 @@
+from asyncio import sleep
 from datetime import datetime
-from typing import Optional, List, Type, Any
+from typing import Optional, List, Type, Any, Dict
 
 from genie_common.tools import AioPoolExecutor, logger
+from genie_datastores.models import DataSource
 from genie_datastores.postgres.models import Artist, Decision, Table
 from genie_datastores.postgres.operations import insert_records
 from sqlalchemy.ext.asyncio import AsyncEngine
@@ -21,13 +23,13 @@ from data_collectors.logic.updaters import ValuesDatabaseUpdater
 class GeminiArtistsAboutManager(IManager):
     def __init__(
         self,
-        existing_details_collector: BaseArtistsExistingDetailsCollector,
+        existing_details_collectors: List[BaseArtistsExistingDetailsCollector],
         parsing_collector: GeminiArtistsAboutParsingCollector,
         pool_executor: AioPoolExecutor,
         db_engine: AsyncEngine,
         db_updater: ValuesDatabaseUpdater,
     ):
-        self._existing_details_collector = existing_details_collector
+        self._existing_details_collectors = existing_details_collectors
         self._db_engine = db_engine
         self._parsing_collector = parsing_collector
         self._pool_executor = pool_executor
@@ -35,24 +37,42 @@ class GeminiArtistsAboutManager(IManager):
 
     async def run(self, limit: Optional[int]) -> None:
         logger.info(f"Starting to run artists about manager for {limit} artists")
-        artists_existing_details = await self._existing_details_collector.collect(limit)
+        artists_existing_details = await self._collect_existing_details(limit)
 
         if artists_existing_details:
             await self._parse_artists_about(artists_existing_details)
         else:
             logger.info("Did not find any relevant artist about to parse. Aborting")
 
-    async def _parse_artists_about(self, artists_existing_details: List[ArtistExistingDetails]) -> None:
-        responses = await self._parsing_collector.collect(
-            existing_details=artists_existing_details,
-            data_source=self._existing_details_collector.data_source,
-        )
-        logger.info(f"Received {len(responses)} valid extraction responses. Updating artists database entries")
-        await self._pool_executor.run(
-            iterable=responses,
-            func=self._update_artist_entries,
-            expected_type=type(None),
-        )
+    async def _collect_existing_details(self, limit: Optional[int]) -> Dict[DataSource, List[ArtistExistingDetails]]:
+        existing_details = {}
+
+        for collector in self._existing_details_collectors:
+            logger.info(f"Running `{collector.__class__.__name__}` existing details collector")
+            collector_details = await collector.collect(limit)
+
+            if collector_details:
+                logger.info(f"Retrieved {len(collector_details)} artists details from `{collector.data_source.value}`")
+                existing_details[collector.data_source] = collector_details
+
+        return existing_details
+
+    async def _parse_artists_about(
+        self, artists_existing_details: Dict[DataSource, List[ArtistExistingDetails]]
+    ) -> None:
+        for date_source, existing_details in artists_existing_details.items():
+            responses = await self._parsing_collector.collect(
+                existing_details=existing_details,
+                data_source=date_source,
+            )
+            logger.info(f"Received {len(responses)} valid extraction responses. Updating artists database entries")
+            await self._pool_executor.run(
+                iterable=responses,
+                func=self._update_artist_entries,
+                expected_type=type(None),
+            )
+            logger.info("Sleeping 60 seconds to avoid reaching Gemini's rate limit")
+            await sleep(60)
 
     async def _update_artist_entries(self, response: ArtistDetailsExtractionResponse) -> None:
         missing_fields = self._extract_missing_fields(response)

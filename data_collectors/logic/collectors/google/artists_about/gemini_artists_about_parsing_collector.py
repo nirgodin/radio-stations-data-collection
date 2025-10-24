@@ -23,7 +23,9 @@ class GeminiArtistsAboutParsingCollector(ICollector):
     async def collect(
         self, existing_details: List[ArtistExistingDetails], data_source: DataSource
     ) -> List[ArtistDetailsExtractionResponse]:
-        logger.info(f"Sending {len(existing_details)} extraction requests to Gemini")
+        logger.info(
+            f"Sending {len(existing_details)} requests to Gemini for documents retrieved from `{data_source.value}`"
+        )
         return await self._pool_executor.run(
             iterable=existing_details,
             func=partial(self._extract_artist_details, data_source),
