@@ -15,7 +15,7 @@ class ArtistsInsightsJobBuilder(BaseJobBuilder):
         return ScheduledJob(
             task=self._task,
             id=JobId.ARTISTS_INSIGHTS,
-            interval=IntervalTrigger(hours=1),
+            interval=IntervalTrigger(hours=3),
             next_run_time=next_run_time or random_upcoming_time(),
         )
 
