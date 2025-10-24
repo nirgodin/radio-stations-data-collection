@@ -1,5 +1,4 @@
 from aiohttp import ClientSession
-from genie_datastores.mongo.operations import initialize_mongo
 from spotipyio.tools.matching import EntityMatcher
 
 from data_collectors import GeniusArtistsIDsCollector
@@ -54,7 +53,4 @@ class GeniusCollectorsComponentFactory:
     def get_artists_existing_details_collector(
         self,
     ) -> GeniusArtistsExistingDetailsCollector:
-        return GeniusArtistsExistingDetailsCollector(
-            db_engine=self._tools.get_database_engine(),
-            pool_executor=self._tools.get_pool_executor(),
-        )
+        return GeniusArtistsExistingDetailsCollector(self._tools.get_database_engine())

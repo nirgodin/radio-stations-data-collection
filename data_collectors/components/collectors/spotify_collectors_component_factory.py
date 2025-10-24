@@ -25,10 +25,7 @@ class SpotifyCollectorsComponentFactory:
     def get_artist_existing_details_collector(
         self,
     ) -> SpotifyArtistsExistingDetailsCollector:
-        return SpotifyArtistsExistingDetailsCollector(
-            db_engine=self._tools.get_database_engine(),
-            pool_executor=self._tools.get_pool_executor(),
-        )
+        return SpotifyArtistsExistingDetailsCollector(self._tools.get_database_engine())
 
     def get_spotify_artists_about_collector(self) -> SpotifyArtistsAboutCollector:
         return SpotifyArtistsAboutCollector(self._tools.get_pool_executor())

@@ -1,7 +1,6 @@
 from aiohttp import ClientSession
 
 from data_collectors.components.managers.base_manager_factory import BaseManagerFactory
-from data_collectors.logic.collectors import BaseArtistsExistingDetailsCollector
 from data_collectors.logic.managers import (
     GoogleArtistsOriginGeocodingManager,
     GoogleArtistsWebPagesManager,
