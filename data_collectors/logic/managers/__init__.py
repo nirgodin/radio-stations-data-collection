@@ -1,6 +1,5 @@
 from data_collectors.logic.managers.charts import *
 from data_collectors.logic.managers.curations import *
-from data_collectors.logic.managers.embeddings import *
 from data_collectors.logic.managers.genius import *
 from data_collectors.logic.managers.genres import *
 from data_collectors.logic.managers.google import *
