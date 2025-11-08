@@ -11,23 +11,6 @@ from data_collectors.logic.models import LyricsSourceDetails
 
 
 class MiscellaneousManagerFactory(BaseManagerFactory):
-    def get_track_names_embeddings_manager(self) -> TrackNamesEmbeddingsManager:
-        embeddings_collector = self.collectors.openai.get_track_names_embeddings_collector()
-
-        return TrackNamesEmbeddingsManager(
-            db_engine=get_database_engine(),
-            embeddings_collector=embeddings_collector,
-            db_updater=self.updaters.get_values_updater(),
-        )
-
-    def get_track_names_embeddings_retriever(self, milvus_client: MilvusClient) -> TrackNamesEmbeddingsRetrievalManager:
-        return TrackNamesEmbeddingsRetrievalManager(
-            db_engine=get_database_engine(),
-            embeddings_retriever=self.collectors.openai.get_track_names_embeddings_retrieval_collector(),
-            milvus_client=milvus_client,
-            db_updater=self.updaters.get_values_updater(),
-        )
-
     def get_radio_snapshots_manager(self, spotify_session: SpotifySession) -> RadioStationsSnapshotsManager:
         spotify_client = self.tools.get_spotify_client(spotify_session)
 

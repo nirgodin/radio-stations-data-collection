@@ -8,9 +8,6 @@ from data_collectors.logic.serializers.eurovision_charts_serializer import (
 from data_collectors.logic.serializers.google_geocoding_response_serializer import (
     GoogleGeocodingResponseSerializer,
 )
-from data_collectors.logic.serializers.openai_batch_embeddings_serializer import (
-    OpenAIBatchEmbeddingsSerializer,
-)
 from data_collectors.logic.serializers.spotify_artist_about_serializer import (
     SpotifyArtistAboutSerializer,
 )
@@ -23,7 +20,6 @@ __all__ = [
     "ArtistsWebPagesSerializer",
     "EurovisionChartsSerializer",
     "GoogleGeocodingResponseSerializer",
-    "OpenAIBatchEmbeddingsSerializer",
     "SpotifyArtistAboutSerializer",
     "TracksLyricsSerializer",
 ]

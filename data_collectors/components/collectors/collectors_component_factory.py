@@ -1,5 +1,8 @@
 from typing import Optional
 
+from data_collectors.components.collectors.charts_collectors_component_factory import (
+    ChartsCollectorsComponentFactory,
+)
 from data_collectors.components.collectors.curations_collections_component_factory import (
     CurationsCollectorsComponentFactory,
 )
@@ -14,12 +17,6 @@ from data_collectors.components.collectors.miscellaneous_collectors_factory impo
 )
 from data_collectors.components.collectors.musixmatch_collectors_component_factory import (
     MusixmatchCollectorsComponentFactory,
-)
-from data_collectors.components.collectors.openai_collectors_component_factory import (
-    OpenAICollectorsComponentFactory,
-)
-from data_collectors.components.collectors.charts_collectors_component_factory import (
-    ChartsCollectorsComponentFactory,
 )
 from data_collectors.components.collectors.shazam_collectors_component_factory import (
     ShazamCollectorsComponentFactory,
@@ -45,7 +42,6 @@ class CollectorsComponentFactory:
         google: Optional[GoogleCollectorsComponentFactory] = None,
         misc: Optional[MiscellaneousCollectorsFactory] = None,
         musixmatch: Optional[MusixmatchCollectorsComponentFactory] = None,
-        openai: Optional[OpenAICollectorsComponentFactory] = None,
         shazam: Optional[ShazamCollectorsComponentFactory] = None,
         spotify: Optional[SpotifyCollectorsComponentFactory] = None,
         wikipedia: Optional[WikipediaCollectorsComponentFactory] = None,
@@ -56,7 +52,6 @@ class CollectorsComponentFactory:
         self.google = google or GoogleCollectorsComponentFactory(tools)
         self.misc = misc or MiscellaneousCollectorsFactory(tools)
         self.musixmatch = musixmatch or MusixmatchCollectorsComponentFactory(tools)
-        self.openai = openai or OpenAICollectorsComponentFactory(tools)
         self.shazam = shazam or ShazamCollectorsComponentFactory(tools)
         self.spotify = spotify or SpotifyCollectorsComponentFactory(tools)
         self.wikipedia = wikipedia or WikipediaCollectorsComponentFactory(tools)
