@@ -10,10 +10,6 @@ from data_collectors.logic.analyzers import *
 
 class AnalyzersComponentFactory:
     @staticmethod
-    def get_wikipedia_age_analyzer() -> WikipediaAgeAnalyzer:
-        return WikipediaAgeAnalyzer()
-
-    @staticmethod
     async def get_primary_genre_analyzer() -> PrimaryGenreAnalyzer:
         genres_mapper = await AnalyzersComponentFactory.get_genre_mapper_analyzer()
         return PrimaryGenreAnalyzer(genres_mapper)
