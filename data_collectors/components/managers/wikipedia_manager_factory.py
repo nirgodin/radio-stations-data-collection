@@ -3,20 +3,6 @@ from data_collectors.logic.managers import *
 
 
 class WikipediaManagerFactory(BaseManagerFactory):
-    def get_artists_age_name_manager(self) -> WikipediaArtistsAgeManager:
-        return WikipediaArtistsAgeManager(
-            age_collector=self.collectors.wikipedia.get_wikipedia_age_name_collector(),
-            age_analyzer=self.analyzers.get_wikipedia_age_analyzer(),
-            db_updater=self.updaters.get_values_updater(),
-        )
-
-    def get_artists_age_link_manager(self) -> WikipediaArtistsAgeManager:
-        return WikipediaArtistsAgeManager(
-            age_collector=self.collectors.wikipedia.get_wikipedia_age_link_collector(),
-            age_analyzer=self.analyzers.get_wikipedia_age_analyzer(),
-            db_updater=self.updaters.get_values_updater(),
-        )
-
     async def get_artists_about_manager(self) -> WikipediaArtistsAboutManager:
         return WikipediaArtistsAboutManager(
             db_engine=self.tools.get_database_engine(),
