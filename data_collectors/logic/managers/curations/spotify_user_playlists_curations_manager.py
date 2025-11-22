@@ -1,7 +1,6 @@
 from typing import List, Tuple, Any, Dict
 
 from genie_common.tools import logger, AioPoolExecutor
-from genie_common.utils import chain_lists
 from genie_datastores.postgres.models import CuratorCollection
 from genie_datastores.postgres.operations import execute_query
 from spotipyio import SpotifyClient
@@ -41,14 +40,13 @@ class SpotifyUserPlaylistsCurationsManager(IManager):
 
     async def run(self) -> None:
         playlists_ids = await self._fetch_relevant_playlists_ids()
-
         if not playlists_ids:
             logger.info("Did not find any relevant playlist. Aborting")
             return
 
         logger.info(f"Found {len(playlists_ids)} relevant playlists. Starting to fetching curated tracks")
-        playlists_curations = await self._spotify_playlists_curations_collector.collect(playlists_ids)
-        await self._insert_playlist_curations(playlists_curations)
+        async for curations in self._spotify_playlists_curations_collector.collect(playlists_ids):
+            await self._insert_playlist_curations(curations)
 
     async def _fetch_relevant_playlists_ids(self) -> List[str]:
         logger.info("Querying curators playlists")
@@ -92,11 +90,9 @@ class SpotifyUserPlaylistsCurationsManager(IManager):
 
         return stored_snapshot_id != current_snapshot_id
 
-    async def _insert_playlist_curations(self, playlists_curations: List[PlaylistCurations]) -> None:
-        tracks = chain_lists([curations.tracks for curations in playlists_curations])
-        if tracks:
-            await self._spotify_insertions_manager.insert(tracks)
+    async def _insert_playlist_curations(self, playlist_curations: PlaylistCurations) -> None:
+        if playlist_curations.tracks:
+            await self._spotify_insertions_manager.insert(playlist_curations.tracks)
 
-        curations = chain_lists([curations.curations for curations in playlists_curations])
-        if curations:
-            await self._curations_insertion_manager.insert(curations)
+        if playlist_curations.curations:
+            await self._curations_insertion_manager.insert(playlist_curations.curations)
