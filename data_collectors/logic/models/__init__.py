@@ -25,7 +25,6 @@ from data_collectors.logic.models.date_range import DateRange
 from data_collectors.logic.models.domain import Domain
 from data_collectors.logic.models.domain_extract_settings import DomainExtractSettings
 from data_collectors.logic.models.eurovision_record import EurovisionRecord
-from data_collectors.logic.models.featured_artist import FeaturedArtist
 from data_collectors.logic.models.genius_text_format import GeniusTextFormat
 from data_collectors.logic.models.html_element import HTMLElement
 from data_collectors.logic.models.lyrics_source_details import LyricsSourceDetails
@@ -56,7 +55,6 @@ __all__ = [
     "Domain",
     "DomainExtractSettings",
     "EurovisionRecord",
-    "FeaturedArtist",
     "HTMLElement",
     "GeniusTextFormat",
     "LyricsSourceDetails",
