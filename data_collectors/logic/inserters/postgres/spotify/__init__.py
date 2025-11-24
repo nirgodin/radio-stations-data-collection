@@ -13,7 +13,7 @@ from data_collectors.logic.inserters.postgres.spotify.spotify_artists_database_i
 from data_collectors.logic.inserters.postgres.spotify.spotify_audio_features_database_inserter import (
     SpotifyAudioFeaturesDatabaseInserter,
 )
-from data_collectors.logic.inserters.postgres.spotify.spotify_featured_artists_database_artists import (
+from data_collectors.logic.inserters.postgres.spotify.spotify_featured_artists_database_inserter import (
     SpotifyFeaturedArtistsDatabaseInserter,
 )
 from data_collectors.logic.inserters.postgres.spotify.spotify_tracks_database_inserter import (

@@ -1,9 +1,12 @@
 from typing import List, Dict
 
-from genie_datastores.postgres.models import BaseORMModel
+from genie_common.utils import safe_nested_get, chain_lists
+from genie_datastores.postgres.models import BaseORMModel, SpotifyFeaturedArtist
 
+from data_collectors.consts.spotify_consts import TRACK, ID
 from data_collectors.logic.inserters.postgres import BaseIDsDatabaseInserter
 from data_collectors.logic.inserters.postgres.spotify import *
+from data_collectors.utils.spotify import get_track_artists
 
 
 class SpotifyInsertionsManager:
@@ -34,7 +37,29 @@ class SpotifyInsertionsManager:
             records = await inserter.insert(tracks)
             spotify_records[inserter.name] = records
 
+        featured_artists = self._build_featured_artists_records(tracks)
+        spotify_records["featured_artists"] = featured_artists
+        await self._featured_artists_inserter.insert(featured_artists)
+
         return spotify_records
+
+    def _build_featured_artists_records(self, tracks: List[dict]) -> List[SpotifyFeaturedArtist]:
+        records: List[List[SpotifyFeaturedArtist]] = [self._to_featured_artists(track) for track in tracks]
+        return chain_lists(records)
+
+    @staticmethod
+    def _to_featured_artists(track: dict) -> List[SpotifyFeaturedArtist]:
+        track_id = safe_nested_get(track, [TRACK, ID])
+        if track_id is None:
+            return []
+
+        raw_artists = get_track_artists(track)
+        featured_artists = raw_artists[1:]
+
+        return [
+            SpotifyFeaturedArtist(track_id=track_id, artist_id=artist[ID], position=i + 1)
+            for i, artist in enumerate(featured_artists)
+        ]
 
     @property
     def _ordered_database_inserters(self) -> List[BaseIDsDatabaseInserter]:
@@ -42,7 +67,6 @@ class SpotifyInsertionsManager:
             self._spotify_artists_inserter,
             self._albums_inserter,
             self._spotify_tracks_inserter,
-            self._featured_artists_inserter,
             self._audio_features_inserter,
             self._track_id_mapping_inserter,
             self._artists_inserter,

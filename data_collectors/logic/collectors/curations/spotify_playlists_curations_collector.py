@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import List, Dict, Any, Generator
+from typing import List, Dict, Any, Generator, AsyncGenerator
 from venv import logger
 
 from genie_common.utils import safe_nested_get
@@ -17,18 +17,15 @@ class SpotifyPlaylistsCurationsCollector(ICollector):
     def __init__(self, spotify_client: SpotifyClient):
         self._spotify_client = spotify_client
 
-    async def collect(self, playlists_ids: List[str]) -> List[PlaylistCurations]:
-        playlists = await self._spotify_client.playlists.info.run(
-            ids=playlists_ids,
-            max_pages=30,
-        )
-        curations = []
+    async def collect(self, playlists_ids: List[str]) -> AsyncGenerator[PlaylistCurations, None]:
+        for playlist_id in playlists_ids:
+            playlists = await self._spotify_client.playlists.info.run(
+                ids=[playlist_id],
+                max_pages=30,
+            )
 
-        for playlist in playlists:
-            playlist_curations = self._build_single_playlist_curations(playlist)
-            curations.append(playlist_curations)
-
-        return curations
+            for playlist in playlists:
+                yield self._build_single_playlist_curations(playlist)
 
     def _build_single_playlist_curations(self, playlist: Dict[str, Any]) -> PlaylistCurations:
         tracks = safe_nested_get(playlist, [TRACKS, ITEMS], [])
