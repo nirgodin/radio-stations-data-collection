@@ -1,5 +1,4 @@
 from aiohttp import ClientSession
-from genie_datastores.milvus import MilvusClient
 from genie_datastores.models import DataSource
 from genie_datastores.postgres.models import TrackIDMapping
 from genie_datastores.postgres.operations import get_database_engine
@@ -55,14 +54,6 @@ class MiscellaneousManagerFactory(BaseManagerFactory):
         return TracksLyricsMissingIDsManager(
             db_engine=get_database_engine(),
             chunks_inserter=self.tools.get_chunks_database_inserter(),
-        )
-
-    def get_tracks_vectorizer_manager(self, milvus_client: MilvusClient) -> TracksVectorizerManager:
-        return TracksVectorizerManager(
-            train_data_collector=self.collectors.misc.get_tracks_vectorizer_train_data_collector(),
-            milvus_inserter=self.inserters.get_milvus_chunks_inserter(milvus_client),
-            drive_folder_id=self.env.get_tracks_features_column_transformer_folder_id(),
-            google_drive_client=self.tools.get_google_drive_client(),
         )
 
     def get_release_radar_manager(self, spotify_authorized_session: SpotifySession) -> ReleaseRadarManager:
