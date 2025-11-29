@@ -7,7 +7,7 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = ">=3.10,<3.12"
-genie-datastores = { git = "https://github.com/nirgodin/genie-datastores.git", rev = "17f5d70b", extras = ["postgres", "milvus", "google_drive", "google_sheets", "mongo"] }
+genie-datastores = { git = "https://github.com/nirgodin/genie-datastores.git", rev = "142ccd15", extras = ["postgres", "milvus", "google_drive", "google_sheets", "mongo"] }
 spotipyio = { version = ">=1.1.1,<2", extras = ["redis"] }
 shazamio = ">=0.6.0,<0.7"
 asyncio-pool = "^0.6.0"
@@ -37,7 +37,7 @@ pytest-cov = ">=5.0.0,<6"
 aioresponses = ">=0.7.7,<1"
 responses = ">=0.25.7,<1"
 spotipyio = { version = "*", extras = ["testing"] }
-genie-datastores = { git = "https://github.com/nirgodin/genie-datastores.git", rev = "17f5d70b", extras = ["postgres-testing"] }
+genie-datastores = { git = "https://github.com/nirgodin/genie-datastores.git", rev = "142ccd15", extras = ["postgres-testing"] }
 black = ">=24.8.0,<25"
 ruff = ">=0.6.8,<1"
 
