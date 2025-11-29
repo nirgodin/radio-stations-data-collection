@@ -1033,8 +1033,8 @@ redis-testing = ["redis (>=5.0.3,<5.1)", "testcontainers (>=3.7.1,<4.0)"]
 [package.source]
 type = "git"
 url = "https://github.com/nirgodin/genie-datastores.git"
-reference = "142ccd15"
-resolved_reference = "142ccd1586834607c1c0f483602904d12309b15f"
+reference = "b47f0c83"
+resolved_reference = "b47f0c8318c04a8f8b405461b81858e44113f361"
 
 [[package]]
 name = "google-ai-generativelanguage"
@@ -4040,4 +4040,4 @@ propcache = ">=0.2.1"
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.12"
-content-hash = "72c184a151cf111204a7b9d7e41d485d85fe48838eefbe1e8df91df0c93dd87f"
+content-hash = "d7feffe08974ebee2133a92310142cec52982dd9feddb68edfac6bc5636538e7"
