@@ -13,9 +13,6 @@ from data_collectors.logic.managers.misc.tracks_lyrics_manager import (
 from data_collectors.logic.managers.misc.tracks_lyrics_missing_ids_manager import (
     TracksLyricsMissingIDsManager,
 )
-from data_collectors.logic.managers.misc.tracks_vectorizer_manager import (
-    TracksVectorizerManager,
-)
 from data_collectors.logic.managers.misc.artists_images_gender_manager import (
     ArtistsImagesGenderManager,
 )
@@ -27,5 +24,4 @@ __all__ = [
     "StatusReporterManager",
     "TracksLyricsManager",
     "TracksLyricsMissingIDsManager",
-    "TracksVectorizerManager",
 ]
