@@ -18,7 +18,6 @@ from data_collectors.logic.models.artist_about.wikipedia_artist_about import (
     WikipediaArtistAbout,
 )
 from data_collectors.logic.models.artist_gender import ArtistGender
-from data_collectors.logic.models.artist_wikipedia_details import ArtistWikipediaDetails
 from data_collectors.logic.models.curation import Curation
 from data_collectors.logic.models.database_update_request import DBUpdateRequest
 from data_collectors.logic.models.date_range import DateRange
@@ -47,7 +46,6 @@ __all__ = [
     "ArtistExistingDetails",
     "ArtistDetailsExtractionResponse",
     "ArtistGender",
-    "ArtistWikipediaDetails",
     "BaseDecision",
     "Curation",
     "DateRange",
