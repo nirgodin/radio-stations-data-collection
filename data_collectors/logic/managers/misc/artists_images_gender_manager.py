@@ -1,7 +1,6 @@
 from typing import List, Optional, Dict
 
 from genie_datastores.postgres.models import Gender, Artist
-from genie_datastores.models import DataSource
 from genie_datastores.postgres.operations import execute_query
 from numpy import ndarray
 from sqlalchemy import select
@@ -48,7 +47,6 @@ class ArtistsImagesGenderManager(IManager):
                 id=artist_id,
                 values={
                     Artist.gender: self._determine_artist_gender(image),
-                    Artist.gender_source: DataSource.SPOTIFY_IMAGES,
                 },
             )
             update_requests.append(request)

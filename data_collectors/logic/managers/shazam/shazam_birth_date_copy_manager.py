@@ -2,15 +2,14 @@ from typing import Optional, List
 
 from genie_common.tools import logger
 from genie_datastores.postgres.models import Artist, ShazamArtist, Gender
-from genie_datastores.models import DataSource
 from genie_datastores.postgres.operations import execute_query
 from sqlalchemy import select
 from sqlalchemy.engine import Row
 from sqlalchemy.ext.asyncio import AsyncEngine
 
-from data_collectors.logic.updaters import ValuesDatabaseUpdater
 from data_collectors.contract import IManager
 from data_collectors.logic.models import DBUpdateRequest
+from data_collectors.logic.updaters import ValuesDatabaseUpdater
 
 
 class ShazamBirthDateCopyManager(IManager):
@@ -48,6 +47,5 @@ class ShazamBirthDateCopyManager(IManager):
             id=row.id,
             values={
                 Artist.birth_date: row.birth_date,
-                Artist.birth_date_source: DataSource.SHAZAM,
             },
         )
