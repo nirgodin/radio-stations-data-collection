@@ -1,28 +1,27 @@
 from typing import List, Tuple, Optional, Dict
 
-from aiohttp import ClientSession, ClientResponse
 from genie_common.tools import AioPoolExecutor, logger
-from genie_common.utils import sub_all_digits
+from genie_common.utils import sub_all_digits, safe_nested_get
 
 from data_collectors.consts.genius_consts import (
-    GENIUS_LYRICS_URL_FORMAT,
     GENIUS_LYRICS_WEB_ELEMENT,
     GENIUS_LYRICS_ELEMENT_NAME,
-    INVALID_LYRICS_ROWS,
+    INVALID_LYRICS_ROWS, RESPONSE, SONG, URL,
 )
 from data_collectors.contract import ILyricsCollector
-from data_collectors.tools import WebElementsExtractor
+from data_collectors.logic.models import GeniusTextFormat
+from data_collectors.tools import WebElementsExtractor, GeniusClient
 
 
 class GeniusLyricsCollector(ILyricsCollector):
     def __init__(
         self,
-        session: ClientSession,
         pool_executor: AioPoolExecutor,
+        genius_client: GeniusClient,
         web_elements_extractor: WebElementsExtractor = WebElementsExtractor(),
     ):
-        self._session = session
         self._pool_executor = pool_executor
+        self._genius_client = genius_client
         self._web_elements_extractor = web_elements_extractor
 
     async def collect(self, ids: List[str]) -> Dict[str, List[str]]:
@@ -34,16 +33,16 @@ class GeniusLyricsCollector(ILyricsCollector):
         return dict(results)
 
     async def _collect_single_track_lyrics(self, track_id: str) -> Optional[Tuple[str, List[str]]]:
-        url = GENIUS_LYRICS_URL_FORMAT.format(id=track_id)
+        song = await self._genius_client.get_song(id_=track_id, text_format=GeniusTextFormat.PLAIN)
+        url = safe_nested_get(song, [RESPONSE, SONG, URL])
 
-        async with self._session.get(url) as raw_response:
-            if raw_response.ok:
-                return await self._serialize_response(track_id, raw_response)
-            else:
-                logger.warn(f"Did not find lyrics page for track `{track_id}`. Ignoring")
+        if url:
+            page = await self._genius_client.get_song_page(url)
+            return self._serialize_response(track_id, page)
+        else:
+            logger.warning(f"Did not find valid URL for track `{track_id}`. Skipping")
 
-    async def _serialize_response(self, track_id: str, raw_response: ClientResponse) -> Optional[Tuple[str, List[str]]]:
-        page_content = await raw_response.text()
+    def _serialize_response(self, track_id: str, page_content: str) -> Optional[Tuple[str, List[str]]]:
         raw_html_elements = self._web_elements_extractor.extract(
             html=page_content, web_element=GENIUS_LYRICS_WEB_ELEMENT
         )
@@ -56,9 +55,9 @@ class GeniusLyricsCollector(ILyricsCollector):
             return track_id, lyrics
 
     @staticmethod
-    def _extract_lyrics_from_html(raw_html_elements: Optional[List[Dict[str, str]]]) -> Optional[str]:
+    def _extract_lyrics_from_html(raw_html_elements: Optional[List[Dict[str, str]]]) -> Optional[List[str]]:
         if raw_html_elements:
-            return raw_html_elements[0][GENIUS_LYRICS_ELEMENT_NAME]
+            return [elem[GENIUS_LYRICS_ELEMENT_NAME] for elem in raw_html_elements]
 
     @staticmethod
     def _is_valid_row(row: str) -> bool:
