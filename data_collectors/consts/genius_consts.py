@@ -23,7 +23,7 @@ GENIUS_LYRICS_WEB_ELEMENT = WebElement(
         name=GENIUS_LYRICS_ELEMENT_NAME,
         type=HTMLElement.DIV,
         class_="Lyrics__Container-sc-1ynbvzw-1 kUgSbL",
-        expected_type=list,
+        split_breaks=True,
     ),
 )
 INVALID_LYRICS_ROWS = ["contributor", "contributors", "embed", "you might also like"]
