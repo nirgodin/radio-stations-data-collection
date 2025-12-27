@@ -24,6 +24,7 @@ from data_collectors.logic.models.date_range import DateRange
 from data_collectors.logic.models.domain import Domain
 from data_collectors.logic.models.domain_extract_settings import DomainExtractSettings
 from data_collectors.logic.models.eurovision_record import EurovisionRecord
+from data_collectors.logic.models.formatted_lyrics import FormattedLyrics
 from data_collectors.logic.models.genius_text_format import GeniusTextFormat
 from data_collectors.logic.models.html_element import HTMLElement
 from data_collectors.logic.models.lyrics_source_details import LyricsSourceDetails
@@ -35,6 +36,7 @@ from data_collectors.logic.models.radio_chart_entry_details import (
 from data_collectors.logic.models.artist_about.spotify_artist_about import (
     SpotifyArtistAbout,
 )
+from data_collectors.logic.models.raw_lyrics import RawLyrics
 from data_collectors.logic.models.scheduled_job import ScheduledJob
 from data_collectors.logic.models.summary_section import SummarySection
 from data_collectors.logic.models.web_element import WebElement
@@ -53,12 +55,14 @@ __all__ = [
     "Domain",
     "DomainExtractSettings",
     "EurovisionRecord",
+    "FormattedLyrics",
     "HTMLElement",
     "GeniusTextFormat",
     "LyricsSourceDetails",
     "MissingTrack",
     "PlaylistCurations",
     "RadioChartEntryDetails",
+    "RawLyrics",
     "ScheduledJob",
     "SpotifyArtistAbout",
     "SummarySection",
