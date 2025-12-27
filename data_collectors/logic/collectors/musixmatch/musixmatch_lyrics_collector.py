@@ -11,13 +11,13 @@ MUSIXMATCH_LYRICS_END_SIGN = "..."
 
 
 class MusixmatchLyricsCollector(BaseMusixmatchCollector, ILyricsCollector):
-    async def collect(self, ids: List[str]) -> Dict[str, List[str]]:
+    async def collect(self, ids: List[str]) -> Dict[str, str]:
         results = await self._pool_executor.run(
             iterable=ids, func=self._collect_single_track_lyrics, expected_type=tuple
         )
         return dict(results)
 
-    async def _collect_single_track_lyrics(self, track_id: str) -> Tuple[str, List[str]]:
+    async def _collect_single_track_lyrics(self, track_id: str) -> Tuple[str, str]:
         response = await self._get(params={"track_id": track_id})
         lyrics = safe_nested_get(response, ["message", "body", "lyrics", "lyrics_body"])
 
@@ -26,7 +26,7 @@ class MusixmatchLyricsCollector(BaseMusixmatchCollector, ILyricsCollector):
             return track_id, serialized_lyrics
 
     @staticmethod
-    def _serialize_lyrics(raw_lyrics: str) -> List[str]:
+    def _serialize_lyrics(raw_lyrics: str) -> str:
         lyrics = []
 
         for row in raw_lyrics.split("\n"):
@@ -38,7 +38,7 @@ class MusixmatchLyricsCollector(BaseMusixmatchCollector, ILyricsCollector):
             if formatted_row != "":
                 lyrics.append(formatted_row)
 
-        return lyrics
+        return "\n".join(lyrics)
 
     @property
     def _route(self) -> str:
