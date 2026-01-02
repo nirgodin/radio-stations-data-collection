@@ -1,4 +1,5 @@
 from genie_common.tools import AioPoolExecutor
+from playwright.async_api import Browser
 from shazamio import Shazam
 from spotipyio.tools.matching import EntityMatcher
 
@@ -29,8 +30,8 @@ class ShazamCollectorsComponentFactory:
         )
 
     @staticmethod
-    def get_top_tracks_collector(shazam: Shazam, pool_executor: AioPoolExecutor) -> ShazamTopTracksCollector:
-        return ShazamTopTracksCollector(shazam, pool_executor)
+    def get_top_tracks_collector(browser: Browser) -> ShazamTopTracksCollector:
+        return ShazamTopTracksCollector(browser)
 
     @staticmethod
     def get_artists_collector(shazam: Shazam, pool_executor: AioPoolExecutor) -> ShazamArtistsCollector:
