@@ -14,6 +14,10 @@ SHAZAM_LYRICS_WEB_ELEMENT = WebElement(
     type=HTMLElement.P,
     class_="lyrics",
 )
+SHAZAM_TOP_TRACKS_CSS_SELECTOR = "body > div:nth-child(3) > div:nth-child(1) > main > div.PageGrid-module_grid__SjmKd.PageGrid-module_right__1113p.PageGrid-module_fullWidth__c9UaO > div > div > div > div.ListShowMoreLess_container__t4TNB.page_chartList__aBclW"
+SHAZAM_TOP_TRACK_WEB_ELEMENT = WebElement(
+    name="shazam_top_track", type=HTMLElement.A, class_="common_link__7If7r", multiple=True
+)
 DATA = "data"
 ATTRIBUTES = "attributes"
 ARTIST_BIO = "artistBio"
