@@ -22,8 +22,9 @@ class ShazamTopTracksJobBuilder(BaseJobBuilder):
         )
 
     async def _task(self) -> None:
-        manager = await self._component_factory.shazam.get_top_tracks_manager()
-        await manager.run()
+        async with self._component_factory.sessions.enter_browser_session() as browser:
+            manager = await self._component_factory.shazam.get_top_tracks_manager(browser)
+            await manager.run()
 
     async def _calculate_next_run_time(self) -> datetime:
         engine = self._component_factory.tools.get_database_engine()
