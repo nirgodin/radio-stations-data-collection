@@ -81,7 +81,7 @@ class TracksLyricsManager(IManager):
 
         for spotify_id, documents in spotify_ids_to_documents.items():
             insertion_result = await LyricsSectionDocument.insert_many(documents)
-            spotify_id_to_documents_ids[spotify_id] = insertion_result.inserted_ids
+            spotify_id_to_documents_ids[spotify_id] = [str(object_id) for object_id in insertion_result.inserted_ids]
 
         return spotify_id_to_documents_ids
 
