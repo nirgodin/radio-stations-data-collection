@@ -20,34 +20,19 @@ class MiscellaneousManagerFactory(BaseManagerFactory):
         )
 
     def get_tracks_lyrics_manager(self, session: ClientSession) -> TracksLyricsManager:
-        pool_executor = self.tools.get_pool_executor()
-        musixmatch_collector = self.collectors.musixmatch.get_lyrics_collector(
-            session=session,
-            pool_executor=pool_executor,
-            api_key=self.env.get_musixmatch_api_key(),
-        )
         prioritized_sources = [
             LyricsSourceDetails(
                 column=TrackIDMapping.genius_id,
                 collector=self.collectors.genius.get_lyrics_collector(session),
                 data_source=DataSource.GENIUS,
             ),
-            LyricsSourceDetails(
-                column=TrackIDMapping.shazam_id,
-                collector=self.collectors.shazam.get_lyrics_collector(pool_executor),
-                data_source=DataSource.SHAZAM,
-            ),
-            LyricsSourceDetails(
-                column=TrackIDMapping.musixmatch_id,
-                collector=musixmatch_collector,
-                data_source=DataSource.MUSIXMATCH,
-            ),
         ]
 
         return TracksLyricsManager(
-            db_engine=get_database_engine(),
+            db_engine=self.tools.get_database_engine(),
             prioritized_sources=prioritized_sources,
-            records_serializer=self.serializers.get_tracks_lyrics_serializer(),
+            lyrics_formatter=self.collectors.misc.get_tracks_lyrics_formatter(),
+            chunks_database_inserter=self.tools.get_chunks_database_inserter(),
         )
 
     def get_lyrics_missing_ids_manager(self) -> TracksLyricsMissingIDsManager:
