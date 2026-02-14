@@ -2,8 +2,8 @@ from textwrap import dedent
 from typing import List, Optional
 
 from genie_common.tools import AioPoolExecutor
+from genie_common.utils import chain_lists
 from genie_datastores.mongo.models import LyricsSectionDocument
-from genie_datastores.postgres.models import TrackLyrics
 from google.generativeai import GenerativeModel
 
 from data_collectors.contract import ICollector
@@ -23,10 +23,11 @@ class TracksLyricsFormatterCollector(ICollector):
     async def collect(
         self,
         raw_lyrics: List[RawLyrics],
-    ) -> List[TrackLyrics]:
-        return self._pool_executor.run(
+    ) -> List[LyricsSectionDocument]:
+        results: List[List[LyricsSectionDocument]] = self._pool_executor.run(
             iterable=raw_lyrics, func=self._serialize_single_track_lyrics, expected_type=list
         )
+        return chain_lists(results)
 
     async def _serialize_single_track_lyrics(
         self,
