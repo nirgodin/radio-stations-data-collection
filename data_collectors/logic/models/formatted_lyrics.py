@@ -23,4 +23,4 @@ class FormattedLyrics(BaseModel):
     sections: List[FormattedLyricsSection]
 
     def to_documents(self, entity_id: str, source: DataSource) -> List[LyricsSectionDocument]:
-        return [section.to_document(entity_id, source, i + 1) for i, section in self.sections]
+        return [section.to_document(entity_id, source, i + 1) for i, section in enumerate(self.sections)]
