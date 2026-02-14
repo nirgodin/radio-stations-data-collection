@@ -1,4 +1,5 @@
 from collections import defaultdict
+from datetime import datetime
 from typing import List, Optional, Dict
 
 from genie_common.tools import logger
@@ -9,10 +10,11 @@ from sqlalchemy import select
 from sqlalchemy.engine import Row
 from sqlalchemy.ext.asyncio import AsyncEngine
 
+from data_collectors.logic.updaters import ValuesDatabaseUpdater
 from data_collectors.contract import IManager
 from data_collectors.logic.collectors import TracksLyricsFormatterCollector
 from data_collectors.logic.inserters.postgres import ChunksDatabaseInserter
-from data_collectors.logic.models import LyricsSourceDetails, RawLyrics
+from data_collectors.logic.models import LyricsSourceDetails, RawLyrics, DBUpdateRequest
 
 
 class TracksLyricsManager(IManager):
@@ -22,11 +24,13 @@ class TracksLyricsManager(IManager):
         prioritized_sources: List[LyricsSourceDetails],
         lyrics_formatter: TracksLyricsFormatterCollector,
         chunks_database_inserter: ChunksDatabaseInserter,
+        database_updater: ValuesDatabaseUpdater,
     ):
         self._db_engine = db_engine
         self._prioritized_sources = prioritized_sources
         self._lyrics_formatter = lyrics_formatter
         self._chunks_database_inserter = chunks_database_inserter
+        self._database_updater = database_updater
 
     async def run(self, limit: Optional[int]) -> None:
         logger.info("Starting to run `TracksLyricsManager`")
@@ -38,6 +42,7 @@ class TracksLyricsManager(IManager):
 
             spotify_ids_to_documents_ids = await self._insert_documents(spotify_ids_to_documents)
             await self._insert_records(spotify_ids_to_documents_ids)
+            await self._update_track_ids_mapping_update_time(list(spotify_ids_to_documents.keys()))
 
     async def _query_tracks_without_lyrics(
         self, source_details: LyricsSourceDetails, limit: Optional[int]
@@ -93,3 +98,9 @@ class TracksLyricsManager(IManager):
                 records.append(LyricsSection(id=document_id, track_id=track_id))
 
         await self._chunks_database_inserter.insert(records)
+
+    async def _update_track_ids_mapping_update_time(self, spotify_ids: List[str]) -> None:
+        now = datetime.utcnow()
+        update_requests = [DBUpdateRequest(id=id_, values={TrackIDMapping.update_date: now}) for id_ in spotify_ids]
+
+        await self._database_updater.update(update_requests)

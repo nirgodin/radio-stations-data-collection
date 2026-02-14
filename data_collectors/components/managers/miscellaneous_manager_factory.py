@@ -33,6 +33,7 @@ class MiscellaneousManagerFactory(BaseManagerFactory):
             prioritized_sources=prioritized_sources,
             lyrics_formatter=self.collectors.misc.get_tracks_lyrics_formatter(),
             chunks_database_inserter=self.tools.get_chunks_database_inserter(),
+            database_updater=self.updaters.get_values_updater(),
         )
 
     def get_lyrics_missing_ids_manager(self) -> TracksLyricsMissingIDsManager:
