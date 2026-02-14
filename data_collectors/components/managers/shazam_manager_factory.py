@@ -1,5 +1,6 @@
 from genie_common.tools import AioPoolExecutor
 from genie_datastores.postgres.operations import get_database_engine
+from playwright.async_api import Browser
 from shazamio import Shazam
 
 from data_collectors.components.managers.base_manager_factory import BaseManagerFactory
@@ -8,14 +9,14 @@ from data_collectors.logic.managers import *
 
 
 class ShazamManagerFactory(BaseManagerFactory):
-    async def get_top_tracks_manager(self) -> ShazamTopTracksManager:
+    async def get_top_tracks_manager(self, browser: Browser) -> ShazamTopTracksManager:
         shazam = self.tools.get_shazam()
         pool_executor = self.tools.get_pool_executor()
         chunks_inserter = self.tools.get_chunks_database_inserter()
         insertions_manager = await self.get_insertions_manager(shazam, pool_executor)
 
         return ShazamTopTracksManager(
-            top_tracks_collector=self.collectors.shazam.get_top_tracks_collector(shazam, pool_executor),
+            top_tracks_collector=self.collectors.shazam.get_top_tracks_collector(browser),
             insertions_manager=insertions_manager,
             top_tracks_inserter=self.inserters.shazam.get_top_tracks_inserter(chunks_inserter),
         )

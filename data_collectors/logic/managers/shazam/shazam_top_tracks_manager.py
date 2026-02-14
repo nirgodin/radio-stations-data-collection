@@ -1,7 +1,5 @@
 from genie_common.tools import logger
-from genie_common.utils import chain_lists
 
-from data_collectors.consts.spotify_consts import ID
 from data_collectors.contract import IManager
 from data_collectors.logic.collectors import ShazamTopTracksCollector
 from data_collectors.logic.inserters import ShazamInsertionsManager
@@ -21,8 +19,5 @@ class ShazamTopTracksManager(IManager):
 
     async def run(self):
         logger.info("Starting to run shazam top tracks manager")
-        top_tracks = await self._top_tracks_collector.collect()
-        flattened_tracks = chain_lists(list(top_tracks.values()))
-        tracks_ids = {track[ID] for track in flattened_tracks}
-        await self._insertions_manager.insert(list(tracks_ids))
-        await self._top_tracks_inserter.insert(top_tracks)
+        location_top_tracks_ids_map = await self._top_tracks_collector.collect()
+        await self._top_tracks_inserter.insert(location_top_tracks_ids_map)
