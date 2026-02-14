@@ -40,7 +40,8 @@ class GeniusCollectorsComponentFactory:
         )
 
     def get_lyrics_collector(self, session: ClientSession) -> GeniusLyricsCollector:
-        return GeniusLyricsCollector(session=session, pool_executor=self._tools.get_pool_executor())
+        genius_client = self._tools.get_genius_client(session)
+        return GeniusLyricsCollector(genius_client=genius_client, pool_executor=self._tools.get_pool_executor())
 
     def get_tracks_collector(self, session: ClientSession) -> GeniusTracksCollector:
         return GeniusTracksCollector(session=session, pool_executor=self._tools.get_pool_executor())

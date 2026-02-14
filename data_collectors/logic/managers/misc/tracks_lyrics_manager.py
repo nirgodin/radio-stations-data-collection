@@ -1,15 +1,20 @@
-from typing import List, Optional
+from collections import defaultdict
+from datetime import datetime
+from typing import List, Optional, Dict
 
 from genie_common.tools import logger
-from genie_datastores.postgres.models import TrackIDMapping, TrackLyrics
-from genie_datastores.postgres.operations import execute_query, insert_records
-from sqlalchemy import select, or_
+from genie_datastores.mongo.models import LyricsSectionDocument
+from genie_datastores.postgres.models import TrackIDMapping, LyricsSection
+from genie_datastores.postgres.operations import execute_query
+from sqlalchemy import select
 from sqlalchemy.engine import Row
 from sqlalchemy.ext.asyncio import AsyncEngine
 
+from data_collectors.logic.updaters import ValuesDatabaseUpdater
 from data_collectors.contract import IManager
-from data_collectors.logic.models import LyricsSourceDetails
-from data_collectors.logic.serializers import TracksLyricsSerializer
+from data_collectors.logic.collectors import TracksLyricsFormatterCollector
+from data_collectors.logic.inserters.postgres import ChunksDatabaseInserter
+from data_collectors.logic.models import LyricsSourceDetails, RawLyrics, DBUpdateRequest
 
 
 class TracksLyricsManager(IManager):
@@ -17,90 +22,85 @@ class TracksLyricsManager(IManager):
         self,
         db_engine: AsyncEngine,
         prioritized_sources: List[LyricsSourceDetails],
-        records_serializer: TracksLyricsSerializer,
+        lyrics_formatter: TracksLyricsFormatterCollector,
+        chunks_database_inserter: ChunksDatabaseInserter,
+        database_updater: ValuesDatabaseUpdater,
     ):
         self._db_engine = db_engine
         self._prioritized_sources = prioritized_sources
-        self._records_serializer = records_serializer
+        self._lyrics_formatter = lyrics_formatter
+        self._chunks_database_inserter = chunks_database_inserter
+        self._database_updater = database_updater
 
     async def run(self, limit: Optional[int]) -> None:
         logger.info("Starting to run `TracksLyricsManager`")
-        tracks_without_lyrics = await self._query_tracks_without_lyrics(limit)
-        records = await self._collect_tracks_lyrics(tracks_without_lyrics)
-        logger.info("Inserting lyrics records to db")
 
-        await insert_records(engine=self._db_engine, records=records)
+        for source_details in self._prioritized_sources:
+            tracks_without_lyrics = await self._query_tracks_without_lyrics(source_details, limit)
+            spotify_ids_to_documents = await self._collect_single_source_records(tracks_without_lyrics, source_details)
+            logger.info("Inserting lyrics documents to db")
 
-    async def _query_tracks_without_lyrics(self, limit: Optional[int]) -> List[Row]:
-        logger.info("Querying database for tracks without lyrics")
-        non_null_condition = or_(
-            TrackIDMapping.genius_id.isnot(None),
-            TrackIDMapping.shazam_id.isnot(None),
-            TrackIDMapping.musixmatch_id.isnot(None),
-        )
-        track_lyrics_subquery = (
-            select(TrackLyrics.id).where(TrackLyrics.lyrics.isnot(None)).order_by(TrackLyrics.update_date.asc())
-        )
+            spotify_ids_to_documents_ids = await self._insert_documents(spotify_ids_to_documents)
+            await self._insert_records(spotify_ids_to_documents_ids)
+            await self._update_track_ids_mapping_update_time(list(spotify_ids_to_documents.keys()))
+
+    async def _query_tracks_without_lyrics(
+        self, source_details: LyricsSourceDetails, limit: Optional[int]
+    ) -> List[Row]:
+        lyrics_sections_subquery = select(LyricsSection.track_id)
         query = (
-            select(
-                TrackIDMapping.id,
-                TrackIDMapping.genius_id,
-                TrackIDMapping.musixmatch_id,
-                TrackIDMapping.shazam_id,
-            )
-            .where(TrackIDMapping.id.notin_(track_lyrics_subquery))
-            .where(non_null_condition)
+            select(TrackIDMapping.id, source_details.column)
+            .where(source_details.column.isnot(None))
+            .where(TrackIDMapping.id.notin_(lyrics_sections_subquery))
+            .order_by(TrackIDMapping.update_date.asc())
             .limit(limit)
         )
         query_result = await execute_query(engine=self._db_engine, query=query)
 
         return query_result.all()
 
-    async def _collect_tracks_lyrics(self, tracks_without_lyrics: List[Row]) -> List[TrackLyrics]:
-        records = []
-
-        for source_details in self._prioritized_sources:
-            source_records = await self._collect_single_source_records(tracks_without_lyrics, source_details)
-            records.extend(source_records)
-            self._remove_found_tracks_from_missing_ids(
-                tracks_without_lyrics=tracks_without_lyrics,
-                source_records=source_records,
-            )
-
-        missing_lyrics_records = [TrackLyrics(id=row.id) for row in tracks_without_lyrics]
-        return records + missing_lyrics_records
-
     async def _collect_single_source_records(
         self, tracks_without_lyrics: List[Row], source_details: LyricsSourceDetails
-    ) -> List[TrackLyrics]:
+    ) -> Dict[str, List[LyricsSectionDocument]]:
         logger.info(f"Collecting lyrics from `{source_details.data_source.value}` source")
-        non_missing_ids = self._extract_non_missing_collector_ids(tracks_without_lyrics, source_details.column)
-        ids_lyrics_mapping = await source_details.collector.collect(non_missing_ids)
+        source_id_to_spotify_id = {getattr(row, source_details.column.key): row.id for row in tracks_without_lyrics}
+        ids_lyrics_mapping = await source_details.collector.collect(list(source_id_to_spotify_id.keys()))
+        raw_lyrics = [
+            RawLyrics(id=id_, source=source_details.data_source, lyrics=lyrics)
+            for id_, lyrics in ids_lyrics_mapping.items()
+        ]
+        documents = await self._lyrics_formatter.collect(raw_lyrics)
+        records = defaultdict(list)
 
-        return self._records_serializer.serialize(
-            ids_lyrics_mapping=ids_lyrics_mapping,
-            source_details=source_details,
-            track_ids_mapping=tracks_without_lyrics,
-        )
+        for document in documents:
+            spotify_id = source_id_to_spotify_id[document.entity_id]
+            records[spotify_id].append(document)
 
-    @staticmethod
-    def _extract_non_missing_collector_ids(tracks_without_lyrics: List[Row], column: TrackIDMapping) -> List[str]:
-        non_missing_ids = set()
-
-        for row in tracks_without_lyrics:
-            row_id = getattr(row, column.key)
-
-            if row_id is not None:
-                non_missing_ids.add(row_id)
-
-        return list(non_missing_ids)
+        return dict(records)
 
     @staticmethod
-    def _remove_found_tracks_from_missing_ids(
-        tracks_without_lyrics: List[Row], source_records: List[TrackLyrics]
-    ) -> None:
-        source_ids = [record.id for record in source_records]
+    async def _insert_documents(
+        spotify_ids_to_documents: Dict[str, List[LyricsSectionDocument]]
+    ) -> Dict[str, List[str]]:
+        spotify_id_to_documents_ids = {}
 
-        for i, row in enumerate(tracks_without_lyrics):
-            if row.id in source_ids:
-                tracks_without_lyrics.pop(i)
+        for spotify_id, documents in spotify_ids_to_documents.items():
+            insertion_result = await LyricsSectionDocument.insert_many(documents)
+            spotify_id_to_documents_ids[spotify_id] = [str(object_id) for object_id in insertion_result.inserted_ids]
+
+        return spotify_id_to_documents_ids
+
+    async def _insert_records(self, spotify_ids_to_documents_ids: Dict[str, List[str]]) -> None:
+        records = []
+
+        for track_id, documents_ids in spotify_ids_to_documents_ids.items():
+            for document_id in documents_ids:
+                records.append(LyricsSection(id=document_id, track_id=track_id))
+
+        await self._chunks_database_inserter.insert(records)
+
+    async def _update_track_ids_mapping_update_time(self, spotify_ids: List[str]) -> None:
+        now = datetime.utcnow()
+        update_requests = [DBUpdateRequest(id=id_, values={TrackIDMapping.update_date: now}) for id_ in spotify_ids]
+
+        await self._database_updater.update(update_requests)

@@ -11,9 +11,6 @@ from data_collectors.logic.serializers.google_geocoding_response_serializer impo
 from data_collectors.logic.serializers.spotify_artist_about_serializer import (
     SpotifyArtistAboutSerializer,
 )
-from data_collectors.logic.serializers.tracks_lyrics_serializer import (
-    TracksLyricsSerializer,
-)
 
 __all__ = [
     "ArtistsAboutParagraphsSerializer",
@@ -21,5 +18,4 @@ __all__ = [
     "EurovisionChartsSerializer",
     "GoogleGeocodingResponseSerializer",
     "SpotifyArtistAboutSerializer",
-    "TracksLyricsSerializer",
 ]

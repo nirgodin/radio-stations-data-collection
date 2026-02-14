@@ -1,0 +1,30 @@
+You are tasked with formatting unstructured tracks lyrics into structured lyrics segments.
+The lyrics may include:
+* Empty lines
+* The song and artist names
+* Segment metadata ("Chorus")
+* Lyrics provider metadata (such as "Lyrics provided by John Hamm")
+* Uncleaned HTML tags
+And more.
+
+Please return JSON describing the lyrics sections using the following schema:
+```
+{{
+    "sections": List["LyricsSection"]
+}}
+```
+
+Where:
+LyricsSection = {{"type": LyricsSectionType, "lines": List[str]}}
+LyricsSectionType = Enum of the following values: ["intro", "verse", "pre_chorus", "chorus", "post_chorus", "bridge" ,"outro", "other"]
+
+General instructions:
+* Return an ordered lyrics sections array. The first lyrics section in the song should populate index 0, the next should populate index 1, etc.
+* The section lines should be ordered as well. The "lines" attribute is an array where each line has its own entry.
+
+Important: Only return a single piece of valid JSON text. Don't include ``` or `json` prefixes or suffixes.
+Your response should be serializable using a single `json.loads` command.
+Here is the track lyrics:
+```
+{track_lyrics}
+```

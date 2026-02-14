@@ -6,9 +6,6 @@ class SerializersComponentFactory:
     def __init__(self, tools: ToolsComponentFactory):
         self._tools = tools
 
-    def get_tracks_lyrics_serializer(self) -> TracksLyricsSerializer:
-        return TracksLyricsSerializer(self._tools.get_language_identifier())
-
     def get_artists_about_paragraphs_serializer(
         self,
     ) -> ArtistsAboutParagraphsSerializer:
