@@ -24,7 +24,7 @@ class TracksLyricsFormatterCollector(ICollector):
         self,
         raw_lyrics: List[RawLyrics],
     ) -> List[LyricsSectionDocument]:
-        results: List[List[LyricsSectionDocument]] = self._pool_executor.run(
+        results: List[List[LyricsSectionDocument]] = await self._pool_executor.run(
             iterable=raw_lyrics, func=self._serialize_single_track_lyrics, expected_type=list
         )
         return chain_lists(results)
