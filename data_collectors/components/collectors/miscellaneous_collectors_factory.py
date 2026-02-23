@@ -30,5 +30,5 @@ class MiscellaneousCollectorsFactory:
 
     def get_tracks_lyrics_formatter(self) -> TracksLyricsFormatterCollector:
         return TracksLyricsFormatterCollector(
-            generative_model=self._tools.get_gemini_model(),
+            generative_model=self._tools.get_gemini_model(model_name="gemini-3-flash-preview"),
         )
